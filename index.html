@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Oyun Denemesi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div id="game-container">
+
+        <div id="log-container">
+            <h3>Oyun Günlüğü</h3>
+            <div id="log"></div>
+        </div>
+
+        <div id="main-screen-area">
+            
+            <div id="start-screen" class="screen active">
+                <h1>🛡️ Basit Harita Tabanlı RPG ⚔️</h1>
+                <p>Kahramanını zindanlara gönder ve haritada ilerle!</p>
+                <button id="start-button">Maceraya Başla</button>
+            </div>
+
+            <div id="cutscene-screen" class="screen hidden">
+                <h2 id="cutscene-text">Hazırlanılıyor...</h2>
+                <div class="loading-bar"></div>
+                <button id="skip-cutscene" class="skip-button">Atla</button>
+            </div>
+
+            <div id="map-screen" class="screen hidden">
+                
+                <div id="map-display">
+                    <img src="images/map_background.png" alt="Harita Arka Planı" id="map-background">
+
+                    <div id="player-marker-container">
+                        <img src="images/player_marker.png" alt="Kahraman" id="player-marker">
+                    </div>
+
+                    <button id="node-1" class="map-node start-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-2" class="map-node choice-node"><img src="images/choice_icon.png" alt="Seçim"></button>
+                    <button id="node-3" class="map-node encounter-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-4" class="map-node encounter-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-5" class="map-node encounter-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-6" class="map-node encounter-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-7" class="map-node encounter-node"><img src="images/skull_icon.png" alt="Savaş"></button>
+                    <button id="node-8" class="map-node end-node"><img src="images/village_icon.png" alt="Köy"></button>
+                    
+                </div>
+
+                <div id="map-info-box">
+                    <h2 id="current-node-name">Harita Yükleniyor...</h2>
+                    <p id="map-description">Mevcut konum açıklaması burada yer alacak.</p>
+                    <div id="map-action-buttons">
+                        </div>
+                </div>
+
+            </div>
+
+            <div id="battle-screen" class="screen hidden">
+                
+                <div id="arena">
+                    
+                    <div id="hero-display" class="character-display">
+                        <div id="hero-hp-overlay" class="hp-overlay-container">
+                            <h3 id="hero-name">Kahraman</h3>
+                            <div class="hp-bar-container">
+                                <div id="hero-hp-bar" class="hp-bar"></div>
+                            </div>
+                            <span id="hero-hp-text">100 / 100</span>
+                            
+                            <div class="hp-bar-container rage-bar-container">
+                                <div id="hero-rage-bar" class="rage-bar"></div>
+                            </div>
+                            <span id="hero-rage-text" class="rage-text">0 / 100</span>
+                        </div>
+                        <img src="" alt="Kahraman Görseli">
+                    </div>
+                    
+                    <div id="monster-display" class="character-display">
+                         <div id="monster-intention-overlay" class="intention-overlay">?</div>
+                         
+                         <div id="monster-hp-overlay" class="hp-overlay-container">
+                            <h3 id="monster-name">Canavar</h3>
+                            <div class="hp-bar-container">
+                                <div id="monster-hp-bar" class="hp-bar"></div>
+                            </div>
+                            <span id="monster-hp-text">100 / 100</span>
+                        </div>
+                        <img src="" alt="Canavar Görseli">
+                    </div>
+                </div>
+                
+                <div id="battle-controls">
+                    <button id="attack-button">
+                        <i class="fas fa-sword"></i> Saldır
+                    </button>
+                    <button id="defend-button">
+                        <i class="fas fa-shield-alt"></i> Savun
+                    </button>
+                    
+                    <div id="skill-buttons-container">
+                        </div>
+                </div>
+
+            </div>
+            
+            <div id="game-over-screen" class="screen hidden">
+                <h1 class="game-over-title">ÖLDÜN!</h1>
+                <button id="return-to-menu-button">Ana Menüye Dön</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="enemy_data.js"></script>
+    <script src="game_data.js"></script>
+    <script src="game_logic.js" defer></script>
+</body>
+</html>
