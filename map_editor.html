@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>RPG Map Editor</title>
+    <style>
+        body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; background: #222; color: #fff; }
+        
+        /* SOL PANEL (HARİTA) */
+        #editor-area { flex-grow: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #333; }
+        #map-container { position: relative; width: 800px; height: 600px; border: 2px solid #555; background-size: cover; background-position: center; }
+        #map-image { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; pointer-events: none; }
+        
+        /* DÜĞÜMLER */
+        .node {
+            position: absolute; width: 40px; height: 40px; background: #f0e68c; border: 2px solid #fff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; color: #000; font-weight: bold; cursor: grab; user-select: none; z-index: 10;
+            transform: translate(-50%, -50%); /* Merkezi hizalama */
+        }
+        .node:active { cursor: grabbing; }
+        .node.selected { border-color: #f00; box-shadow: 0 0 10px #f00; background: #fff; }
+        .node.town { background: #4caf50; }
+        .node.campfire { background: #ff9800; }
+        .node.encounter { background: #f44336; }
+        .node.choice { background: #2196f3; }
+
+        /* BAĞLANTI ÇİZGİLERİ (SVG) */
+        #connections-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        line { stroke: #fff; stroke-width: 2; opacity: 0.6; }
+
+        /* SAĞ PANEL (AYARLAR) */
+        #sidebar { width: 300px; background: #1a1a1a; padding: 20px; border-left: 1px solid #444; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        h2, h3 { color: #f0e68c; margin: 0 0 10px 0; }
+        label { font-size: 0.8em; color: #aaa; }
+        input, select, textarea { width: 100%; background: #333; border: 1px solid #555; color: #fff; padding: 5px; margin-bottom: 10px; box-sizing: border-box;}
+        button { background: #5d4a30; color: #f0e68c; border: 1px solid #7c6843; padding: 10px; cursor: pointer; width: 100%; margin-bottom: 5px; }
+        button:hover { background: #6d5a3f; }
+        button.delete { background: #8b0000; border-color: #a00; }
+        
+        #output-area { height: 150px; font-family: monospace; font-size: 0.8em; }
+        .hint { font-size: 0.7em; color: #888; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div id="editor-area">
+        <div id="map-container">
+            <!-- Arka plan resmi -->
+            <img id="map-image" src="images/map_background.png" alt="Map BG">
+            <!-- Çizgiler -->
+            <svg id="connections-layer"></svg>
+            <!-- Düğümler JS ile buraya eklenecek -->
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <h2>🗺️ Map Editor</h2>
+        <p class="hint">Haritaya tıklayarak düğüm ekle. Sürükleyerek taşı. Sağ taraftan düzenle.</p>
+        
+        <div id="node-properties" style="display: none;">
+            <h3>Düğüm Ayarları (ID: <span id="lbl-id"></span>)</h3>
+            
+            <label>Tür:</label>
+            <select id="inp-type">
+                <option value="encounter">Savaş (Encounter)</option>
+                <option value="choice">Seçim (Choice)</option>
+                <option value="town">Şehir (Town)</option>
+                <option value="campfire">Kamp Ateşi (Campfire)</option>
+            </select>
+
+            <label>Düşman Adı (Sadece Savaş ise):</label>
+            <input type="text" id="inp-enemy" placeholder="Örn: Goblin Savaşçısı">
+
+            <label>Hikaye Metni:</label>
+            <textarea id="inp-text" rows="3"></textarea>
+
+            <label>Bağlantılar (Next IDs):</label>
+            <div style="display: flex; gap: 5px;">
+                <input type="text" id="inp-next" placeholder="Örn: 2, 3" readonly>
+                <button onclick="toggleLinkMode()" id="btn-link" style="width: auto;">🔗 Bağla</button>
+            </div>
+            <p class="hint" id="link-status">Bağlamak için 'Bağla'ya bas sonra hedefe tıkla.</p>
+
+            <button onclick="deleteNode()" class="delete">🗑️ Düğümü Sil</button>
+        </div>
+
+        <div id="no-selection">
+            <p>Bir düğüm seçilmedi.</p>
+        </div>
+
+        <hr>
+        <h3>Dışa Aktar</h3>
+        <label>Act İsmi (Değişken Adı):</label>
+        <input type="text" id="inp-act-name" value="ACT_2_MAP">
+        <button onclick="generateCode()">Kodu Oluştur</button>
+        <textarea id="output-area"></textarea>
+    </div>
+
+    <script>
+        const mapContainer = document.getElementById('map-container');
+        const svgLayer = document.getElementById('connections-layer');
+        
+        // Veri Yapısı
+        let nodes = [];
+        let nextId = 1;
+        let selectedNodeId = null;
+        let isLinkingMode = false;
+
+        // --- HARİTA TIKLAMA (EKLEME) ---
+        mapContainer.addEventListener('mousedown', (e) => {
+            if (e.target !== mapContainer && e.target.id !== 'map-image' && e.target.id !== 'connections-layer') return;
+            
+            // Konumu hesapla (Yüzde olarak)
+            const rect = mapContainer.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+            createNode(x, y);
+        });
+
+        function createNode(x, y) {
+            const nodeData = {
+                id: nextId++,
+                type: 'encounter',
+                enemy: '',
+                text: 'Yeni bir macera noktası.',
+                next: [],
+                x: x,
+                y: y
+            };
+            nodes.push(nodeData);
+            renderNode(nodeData);
+            selectNode(nodeData.id);
+        }
+
+        // --- DÜĞÜM GÖRSELLEŞTİRME ---
+        function renderNode(data) {
+            const el = document.createElement('div');
+            el.className = `node ${data.type}`;
+            el.id = `node-${data.id}`;
+            el.textContent = data.id;
+            el.style.left = data.x + '%';
+            el.style.top = data.y + '%';
+            
+            // Sürükle Bırak Mantığı
+            let isDragging = false;
+
+            el.addEventListener('mousedown', (e) => {
+                e.stopPropagation(); // Haritaya tıklamayı engelle
+                
+                if (isLinkingMode) {
+                    completeLink(data.id);
+                    return;
+                }
+
+                selectNode(data.id);
+                isDragging = true;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const rect = mapContainer.getBoundingClientRect();
+                let newX = ((e.clientX - rect.left) / rect.width) * 100;
+                let newY = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                // Sınırları koru
+                newX = Math.max(0, Math.min(100, newX));
+                newY = Math.max(0, Math.min(100, newY));
+
+                data.x = newX;
+                data.y = newY;
+                el.style.left = newX + '%';
+                el.style.top = newY + '%';
+                drawConnections(); // Çizgileri güncelle
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            mapContainer.appendChild(el);
+        }
+
+        // --- SEÇİM VE ÖZELLİKLER ---
+        function selectNode(id) {
+            selectedNodeId = id;
+            isLinkingMode = false;
+            document.getElementById('link-status').textContent = "Bağlamak için 'Bağla'ya bas.";
+
+            // Görsel seçim
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('selected'));
+            document.getElementById(`node-${id}`).classList.add('selected');
+
+            // Paneli güncelle
+            const node = nodes.find(n => n.id === id);
+            document.getElementById('node-properties').style.display = 'block';
+            document.getElementById('no-selection').style.display = 'none';
+
+            document.getElementById('lbl-id').textContent = node.id;
+            document.getElementById('inp-type').value = node.type;
+            document.getElementById('inp-enemy').value = node.enemy || '';
+            document.getElementById('inp-text').value = node.text;
+            document.getElementById('inp-next').value = node.next.join(', ');
+        }
+
+        // --- GÜNCELLEME ---
+        document.getElementById('inp-type').addEventListener('change', (e) => {
+            const node = nodes.find(n => n.id === selectedNodeId);
+            node.type = e.target.value;
+            const el = document.getElementById(`node-${node.id}`);
+            el.className = `node selected ${node.type}`; // Sınıfı güncelle
+        });
+
+        document.getElementById('inp-enemy').addEventListener('input', (e) => {
+            nodes.find(n => n.id === selectedNodeId).enemy = e.target.value;
+        });
+
+        document.getElementById('inp-text').addEventListener('input', (e) => {
+            nodes.find(n => n.id === selectedNodeId).text = e.target.value;
+        });
+
+        // --- BAĞLANTI SİSTEMİ ---
+        function toggleLinkMode() {
+            isLinkingMode = !isLinkingMode;
+            const status = document.getElementById('link-status');
+            if (isLinkingMode) {
+                status.textContent = "HEDEF DÜĞÜME TIKLA...";
+                status.style.color = "#f0e68c";
+            } else {
+                status.textContent = "İptal edildi.";
+                status.style.color = "#888";
+            }
+        }
+
+        function completeLink(targetId) {
+            if (selectedNodeId === targetId) return; // Kendine bağlama
+            const node = nodes.find(n => n.id === selectedNodeId);
+            
+            if (!node.next.includes(targetId)) {
+                node.next.push(targetId);
+                // ID sırasına göre diz ki düzgün görünsün
+                node.next.sort((a,b) => a-b);
+                document.getElementById('inp-next').value = node.next.join(', ');
+                drawConnections();
+                alert(`${selectedNodeId} -> ${targetId} bağlandı!`);
+            }
+            
+            isLinkingMode = false;
+            document.getElementById('link-status').textContent = "Bağlantı başarılı.";
+            document.getElementById('link-status').style.color = "#888";
+        }
+
+        // --- ÇİZGİLERİ ÇİZME ---
+        function drawConnections() {
+            svgLayer.innerHTML = ''; // Temizle
+            
+            nodes.forEach(node => {
+                node.next.forEach(nextId => {
+                    const target = nodes.find(n => n.id === nextId);
+                    if (target) {
+                        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                        // Yüzdeleri container boyutuna göre piksele çevir
+                        const w = mapContainer.offsetWidth;
+                        const h = mapContainer.offsetHeight;
+
+                        line.setAttribute('x1', (node.x / 100) * w);
+                        line.setAttribute('y1', (node.y / 100) * h);
+                        line.setAttribute('x2', (target.x / 100) * w);
+                        line.setAttribute('y2', (target.y / 100) * h);
+                        svgLayer.appendChild(line);
+                    }
+                });
+            });
+        }
+
+        function deleteNode() {
+            if (!confirm('Bu düğümü silmek istediğine emin misin?')) return;
+            
+            // Düğümü sil
+            nodes = nodes.filter(n => n.id !== selectedNodeId);
+            // DOM'dan sil
+            const el = document.getElementById(`node-${selectedNodeId}`);
+            if (el) el.remove();
+            
+            // Diğer düğümlerin bağlantılarından sil
+            nodes.forEach(n => {
+                n.next = n.next.filter(id => id !== selectedNodeId);
+            });
+
+            drawConnections();
+            document.getElementById('node-properties').style.display = 'none';
+            document.getElementById('no-selection').style.display = 'block';
+            selectedNodeId = null;
+        }
+
+        // --- KOD OLUŞTURMA (EXPORT) ---
+        function generateCode() {
+            const varName = document.getElementById('inp-act-name').value;
+            
+            // JS Objesi formatında string oluştur
+            let output = `const ${varName} = {\n`;
+            output += `    totalNodes: ${nodes.length},\n`;
+            output += `    currentNodeId: ${nodes.length > 0 ? nodes[0].id : 1},\n`;
+            output += `    nodes: {\n`;
+
+            nodes.sort((a,b) => a.id - b.id).forEach(node => {
+                output += `        ${node.id}: { `;
+                output += `type: '${node.type}', `;
+                if (node.type === 'encounter') {
+                    output += `enemy: '${node.enemy}', `;
+                }
+                output += `text: "${node.text.replace(/"/g, '\\"')}", `;
+                output += `next: [${node.next.join(', ')}], `;
+                // Konum bilgilerini css stil dosyası için yorum satırı veya stil objesi olarak ekleyebiliriz
+                // Ama şimdilik sadece oyun mantığına uygun veriyoruz.
+                // CSS konumlarını da ayrı bir çıktı olarak verelim ki map.css'e yapıştırsın.
+                output += `},\n`;
+            });
+
+            output += `    }\n};\n\n`;
+
+            // CSS Çıktısı Ekleyelim
+            output += `/* ${varName} CSS Konumları (map.css içine ekleyin) */\n`;
+            nodes.forEach(node => {
+                output += `#node-${node.id} { top: ${Math.round(node.y)}%; left: ${Math.round(node.x)}%; }\n`;
+            });
+
+            document.getElementById('output-area').value = output;
+        }
+
+        // Ekran boyutu değişirse çizgileri güncelle
+        window.addEventListener('resize', drawConnections);
+
+    </script>
+</body>
+</html>

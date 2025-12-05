@@ -1,0 +1,56 @@
+/* css/map.css - Harita Ekranı */
+
+#map-screen { flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0; }
+#map-display { position: relative; width: 100%; height: 75%; }
+#map-background { width: 100%; height: 100%; object-fit: cover; }
+#map-info-box { width: 100%; height: 25%; padding: 20px; background-color: #1f1f1f; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
+#map-action-buttons { display: flex; flex-wrap: wrap; margin-top: 10px; }
+
+/* Düğümler */
+.map-node {
+    position: absolute; width: 60px; height: 60px; border-radius: 50%; padding: 0;
+    background: rgba(107, 92, 59, 0.8); border: 3px solid #f0e68c; z-index: 10; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.map-node:hover:not(:disabled) { background: rgba(139, 126, 88, 0.9); transform: scale(1.1); box-shadow: 0 0 15px rgba(240, 230, 140, 0.8); }
+.map-node img { width: 80%; height: 80%; padding: 6px; filter: drop-shadow(1px 1px 1px #000); }
+.map-node:disabled { background: rgba(56, 56, 56, 0.5); border-color: #444; cursor: not-allowed; }
+
+/* Özel Node Tipleri */
+.map-node.campfire-node { border-color: #ff9800; }
+.map-node.boss-node { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+
+/* --- 12 DÜĞÜM KOORDİNATLARI (SNAKE PATH) --- */
+#node-1 { top: 85%; left: 10%; }
+#node-2 { top: 70%; left: 15%; }
+#node-3 { top: 55%; left: 10%; }
+#node-4 { top: 60%; left: 25%; }
+#node-5 { top: 45%; left: 20%; }
+#node-6 { top: 40%; left: 35%; }
+#node-7 { top: 25%; left: 30%; }
+#node-8 { top: 35%; left: 50%; }
+#node-9 { top: 20%; left: 55%; }
+#node-10 { top: 30%; left: 70%; }
+#node-11 { top: 15%; left: 80%; }
+#node-12 { top: 10%; left: 90%; }
+
+/* --- OYUNCU --- */
+#player-marker-container { position: absolute; width: 60px; height: 60px; z-index: 20; transition: left 0.5s, top 0.5s; pointer-events: none; display: none; }
+#player-marker { width: 100%; height: 100%; filter: drop-shadow(0 0 5px #f0e68c); }
+
+/* --- İZ (TRAIL) KATMANI --- */
+#map-trails-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+
+/* Kalıcı İz (Gidilen Yol - Altın Rengi) */
+.map-trail-line {
+    stroke: #f0e68c; stroke-width: 4; stroke-dasharray: 10, 10;
+    opacity: 0.7; stroke-linecap: round; animation: dash-animation 60s linear infinite;
+}
+
+/* YENİ: İpucu İzi (Gidilebilecek Yol - Beyaz Kesikli) */
+.map-path-hint {
+    stroke: #ffffff; stroke-width: 2; stroke-dasharray: 5, 5;
+    opacity: 0.3; stroke-linecap: round;
+}
+
+@keyframes dash-animation { to { stroke-dashoffset: -1000; } }

@@ -1,0 +1,68 @@
+/* base.css - Temel Ayarlar ve Layout */
+
+body {
+    font-family: 'Georgia', serif; 
+    background-color: #1a1a1a; 
+    color: #c0c0c0; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+h1, h2, h3 {
+    color: #f0e68c; 
+    text-shadow: 1px 1px 2px #000000;
+    margin-top: 0;
+}
+
+/* --- ANA KONTEYNER --- */
+#game-container {
+    display: block; /* Flex'e gerek kalmadı çünkü tek çocuk var */
+    width: 95%; /* Genişliği artırdık */
+    max-width: 1400px; /* Maksimum genişliği artırdık */
+    height: 90vh;
+    background-color: #2b2b2b; 
+    border: 3px solid #6b5c3b; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); 
+    position: relative; 
+    overflow: hidden;
+}
+
+#main-screen-area {
+    position: relative; 
+    width: 100%; /* Tüm alanı kapla */
+    height: 100%;
+    overflow: hidden;
+}
+
+/* --- EKRAN YÖNETİMİ --- */
+.screen {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #2b2b2b;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: opacity 0.5s ease-in-out;
+    z-index: 1; 
+    opacity: 0;
+    pointer-events: none; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.active {
+    opacity: 1;
+    pointer-events: all;
+    z-index: 10; 
+}
+
+.hidden {
+    display: none; 
+}
