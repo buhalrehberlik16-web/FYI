@@ -339,4 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnAttack) btnAttack.addEventListener('click', () => setSkillTab('attack'));
     if(btnPassion) btnPassion.addEventListener('click', () => setSkillTab('passion'));
     if(btnCloseStat) btnCloseStat.addEventListener('click', toggleStatScreen);
+    if(btnOpenSkills) btnOpenSkills.addEventListener('click', toggleSkillBook);
+    if(btnOpenStats) btnOpenStats.addEventListener('click', toggleStatScreen);
 });
