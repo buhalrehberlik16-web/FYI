@@ -16,6 +16,8 @@ const btnLeaveTown = document.getElementById('btn-leave-town');
 
 // Skill Bar
 const skillButtonsContainer = document.getElementById('skill-bar-container');
+const btnOpenSkills = document.getElementById('btn-open-skills');
+const btnOpenStats = document.getElementById('btn-open-stats');
 
 // Ekranlar
 const startScreen = document.getElementById('start-screen');
