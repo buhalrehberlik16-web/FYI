@@ -12,6 +12,7 @@ button {
     text-transform: uppercase;
     font-weight: bold; 
     box-shadow: 0 4px 0 #3e3221;
+    font-family: 'Georgia', serif;
 }
 button:active { transform: translateY(4px); box-shadow: none; }
 button:hover:not(:disabled) { background-color: #6d5a3f; filter: brightness(1.1); }
@@ -26,45 +27,46 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 }
 .skill-button:hover:not(:disabled) { background-color: #5a3f6d; }
 
-/* --- SKILL SLOTLARI (SAVAŞ VE MENÜ İÇİN ORTAK) --- */
+/* --- ÜST BİLGİ ÇUBUĞU --- */
+#top-info-bar {
+    position: absolute; top: 0; left: 0; width: 100%; height: 40px;
+    background: linear-gradient(to bottom, #111, #222);
+    border-bottom: 2px solid #6b5c3b;
+    z-index: 200;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 20px; box-sizing: border-box; box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    color: #fff; font-family: 'Georgia', serif;
+}
+#top-info-bar.hidden { display: none !important; }
+
+.top-info-item { display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 1.1em; }
+.gold-container { color: gold; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+
+/* --- ANA OYUN ALANI DÜZENİ --- */
+#game-container {
+    position: relative; display: block; width: 95%; max-width: 1400px; height: 90vh;
+    background-color: #2b2b2b; border: 3px solid #6b5c3b; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); overflow: hidden; 
+}
+#main-screen-area {
+    position: absolute; top: 40px; left: 0; width: 100%; height: calc(100% - 40px); overflow: hidden;
+    transition: top 0.3s, height 0.3s;
+}
+
+/* --- SKILL VE MENU SLOTLARI --- */
 .skill-slot, .menu-slot {
-    position: relative; 
-    width: 60px; 
-    height: 60px;
-    background-color: #222; 
-    border: 2px solid #555; 
-    border-radius: 6px;
-    cursor: pointer; 
-    transition: all 0.2s; 
-    box-shadow: inset 0 0 10px #000;
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
-    overflow: hidden; /* Cooldown perdesi taşmasın diye */
+    position: relative; width: 60px; height: 60px;
+    background-color: #222; border: 2px solid #555; border-radius: 6px;
+    cursor: pointer; transition: all 0.2s; box-shadow: inset 0 0 10px #000;
+    display: flex; justify-content: center; align-items: center; overflow: hidden;
 }
 
-.skill-slot img, .menu-slot img { 
-    width: 100%; 
-    height: 100%; 
-    border-radius: 4px; 
-    object-fit: cover; 
-}
+.skill-slot img, .menu-slot img { width: 100%; height: 100%; border-radius: 4px; object-fit: cover; }
+.skill-slot:hover, .menu-slot:hover { border-color: #f0e68c; box-shadow: 0 0 10px #f0e68c; transform: translateY(-2px); }
 
-.skill-slot:hover, .menu-slot:hover { 
-    border-color: #f0e68c; 
-    box-shadow: 0 0 10px #f0e68c; 
-    transform: translateY(-2px); 
-}
-
-.skill-slot.disabled { 
-    filter: grayscale(100%); 
-    cursor: not-allowed; 
-    opacity: 0.8; 
-    border-color: #444; 
-}
+.skill-slot.disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.8; border-color: #444; }
 .skill-slot.disabled:hover { transform: none; border-color: #444; box-shadow: none; }
 
-/* Klavye İpucu (1, 2, 3, 4) */
 .key-hint {
     position: absolute; top: 2px; left: 2px;
     background: rgba(0, 0, 0, 0.7); color: #fff; font-size: 0.7em;
@@ -72,34 +74,18 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     z-index: 20; pointer-events: none;
 }
 
-/* Sürükle Bırak Efekti */
-.drag-over { 
-    border-color: #00ff00 !important; 
-    background-color: rgba(0, 255, 0, 0.1) !important; 
-    box-shadow: 0 0 10px #00ff00 !important; 
-}
+.drag-over { border-color: #00ff00 !important; background-color: rgba(0, 255, 0, 0.1) !important; box-shadow: 0 0 10px #00ff00 !important; }
 
-/* --- COOLDOWN PERDESİ --- */
+/* Cooldown Perdesi */
 .cooldown-overlay {
-    position: absolute;
-    bottom: 0; left: 0;
-    width: 100%; 
-    height: 0%; /* JS ile değişir */
-    background-color: rgba(0, 0, 0, 0.75); 
-    z-index: 15;
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; 
+    background-color: rgba(0, 0, 0, 0.75); z-index: 15;
     display: flex; justify-content: center; align-items: center;
-    transition: height 0.3s ease; 
-    pointer-events: none; 
+    transition: height 0.3s ease; pointer-events: none; 
 }
+.cooldown-text { color: #fff; font-weight: bold; font-size: 1.4em; text-shadow: 0 0 5px #000, 0 0 10px red; }
 
-.cooldown-text {
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.4em;
-    text-shadow: 0 0 5px #000, 0 0 10px red;
-}
-
-/* --- TOOLTIP (BİLGİ KUTUSU) --- */
+/* Tooltip */
 .skill-tooltip {
     visibility: hidden; position: absolute; bottom: 75px; left: 50%; transform: translateX(-50%);
     width: 200px; background-color: rgba(20, 20, 20, 0.95); border: 1px solid #f0e68c;
@@ -118,7 +104,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 .rage-bar { height: 100%; background-color: #3498db; width: 0%; transition: width 0.3s ease-in-out; }
 .rage-text, #hero-hp-text, #monster-hp-text { font-size: 0.7em; display: block; color: #f0e68c; text-shadow: 1px 1px 1px #000; }
 
-/* --- UÇAN METİNLER (FLOATING TEXT) --- */
+/* --- FLOATING TEXT --- */
 .floating-text {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
     font-size: 2.5em; font-weight: 900; pointer-events: none; z-index: 100;
@@ -132,27 +118,34 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     100% { opacity: 0; transform: translate(-50%, -150%) scale(1); }
 }
 
-/* --- KAMP VE EVENT EKRANLARI --- */
-#campfire-screen, #event-screen { 
-    background-color: #110a05; 
-    color: #ffdcb0; 
-    text-align: center; 
-    overflow: hidden; 
-}
+/* --- KAMP, EVENT, REWARD --- */
+#campfire-screen, #event-screen, #reward-screen { background-color: #110a05; color: #ffdcb0; text-align: center; overflow: hidden; }
+#event-screen, #reward-screen { background-color: #0f0f15; color: #e0e0e0; justify-content: center; align-items: center; display: flex; }
 
-#event-screen { 
-    background-color: #0f0f15; 
-    color: #e0e0e0; 
-    justify-content: center; 
-    align-items: center; 
-    display: flex; 
-}
-
-.event-content {
-    max-width: 700px; padding: 40px;
+.event-content, .reward-content {
+    max-width: 450px; min-height: 300px; padding: 40px;
     background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
     border: 2px solid #9b59b6; border-radius: 10px; box-shadow: 0 0 30px rgba(155, 89, 182, 0.3);
+    display: flex; flex-direction: column; justify-content: center;
 }
+
+/* Ödül Ekranı Özel */
+.reward-content { border-color: gold; box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); }
+.reward-content h2 { color: gold; text-shadow: 0 0 10px orange; margin-top: 0; font-size: 3em; }
+.reward-subtitle { color: #aaa; margin-bottom: 20px; }
+#reward-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 100px; justify-content: center; }
+
+.reward-item {
+    background: #333; border: 1px solid gold; padding: 15px; cursor: pointer; border-radius: 5px;
+    display: flex; align-items: center; gap: 15px; transition: transform 0.2s;
+}
+.reward-item:hover { background: #444; transform: scale(1.02); }
+.reward-item i { font-size: 1.5em; color: gold; }
+.reward-item span { font-weight: bold; font-size: 1.2em; color: #fff; }
+.reward-continue-btn { width: 100%; background: #444; border-color: #666; color: #aaa; cursor: default; }
+.reward-continue-btn.active { background: #5d4a30; border-color: #f0e68c; color: #f0e68c; cursor: pointer; }
+
+/* Event Ekranı Özel */
 #event-title { font-size: 2.5em; color: #9b59b6; margin-bottom: 10px; text-shadow: 0 0 10px #000; }
 #event-desc { font-size: 1.1em; margin-bottom: 30px; font-style: italic; color: #aaa; }
 #event-choices-container { display: flex; flex-direction: column; gap: 15px; }
@@ -188,7 +181,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 #campfire-result h2 { color: #43FF64; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* --- İYİLEŞME PARTİKÜLLERİ --- */
+/* PARTİKÜLLER */
 .healing-particle {
     position: absolute; width: 20px; height: 20px;
     background-image: url('../images/healing_particles.png'); background-size: contain; background-repeat: no-repeat; background-position: center;
@@ -201,11 +194,8 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     100% { opacity: 0; transform: translate(var(--move-x), -180px) scale(0.2) rotate(180deg); }
 }
 
-/* --- DURUM İKONLARI (STATUS ICONS) --- */
-.status-icons {
-    position: absolute; top: -30px; left: 0; width: 100%;
-    display: flex; justify-content: center; gap: 5px;
-}
+/* Status Icons */
+.status-icons { position: absolute; top: -30px; left: 0; width: 100%; display: flex; justify-content: center; gap: 5px; }
 .status-icon {
     width: 20px; height: 20px; background-color: #333; border: 1px solid #fff; border-radius: 50%;
     font-size: 10px; display: flex; justify-content: center; align-items: center; color: #fff; cursor: help;
@@ -213,17 +203,17 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 .status-buff { border-color: #43FF64; color: #43FF64; }
 .status-debuff { border-color: #ff4d4d; color: #ff4d4d; }
 
-/* --- ÖLÜM EFEKTİ --- */
+/* ÖLÜM EFEKTİ */
 #fade-overlay {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background-color: black; opacity: 0; z-index: 100; pointer-events: none; transition: opacity 2.5s ease-in;
 }
 #fade-overlay.active-fade { opacity: 1; }
 
-/* --- PENCERE SİSTEMLERİ (SKILLBOOK & STAT SCREEN) --- */
+/* --- PENCERE SİSTEMLERİ --- */
 #skill-book-screen, #stat-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); z-index: 200;
+    background-color: rgba(0, 0, 0, 0.7); z-index: 300;
     display: none; justify-content: center; align-items: center;
 }
 #skill-book-screen:not(.hidden), #stat-screen:not(.hidden) { display: flex; }
@@ -240,7 +230,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 }
 .skill-book-header h2, .stat-header h2 { margin: 0; color: #f0e68c; }
 
-.close-btn, #close-stat-screen {
+.close-btn {
     width: 30px; height: 30px; padding: 0; background: #8b0000; border: 1px solid #ff4d4d; color: white;
     display: flex; justify-content: center; align-items: center; cursor: pointer;
 }
@@ -250,7 +240,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 .tab-btn { flex: 1; background: #333; border-color: #555; opacity: 0.7; }
 .tab-btn.active { background: #5d4a30; border-color: #f0e68c; opacity: 1; box-shadow: 0 0 10px rgba(240, 230, 140, 0.3); }
 
-.skill-list-container { flex-grow: 1; overflow-y: auto; background: #222; padding: 10px; border: 1px inset #111; height: 300px;}
+.skill-list-container { flex-grow: 1; overflow-y: auto; background: #222; padding: 10px; border: 1px inset #111; height: 300px; }
 .hint-text { color: #888; font-size: 0.8em; text-align: center; margin-top: 0; margin-bottom: 10px; }
 .skill-grid { display: flex; flex-direction: column; gap: 10px; }
 
@@ -261,27 +251,52 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 }
 .skill-book-item:hover { background: #3a3a3a; border-color: #666; }
 .skill-book-item:active { cursor: grabbing; }
-.skill-book-icon { width: 50px; height: 50px; border: 1px solid #000; border-radius: 4px; object-fit: cover; }
-.skill-info h4 { margin: 0 0 5px 0; color: #f0e68c; }
-.skill-info p { margin: 0; font-size: 0.8em; color: #ccc; line-height: 1.3; }
+.skill-book-icon { width: 50px; height: 50px; border: 1px solid #000; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+.skill-info h4 { margin: 0 0 5px 0; color: #f0e68c; font-size: 1.1em; }
+.skill-info p { margin: 0; font-size: 0.85em; color: #ccc; line-height: 1.3; }
 
-/* KİLİTLİ YETENEK STİLİ */
-.skill-book-item.locked {
-    background: #222;
-    border-color: #333;
-    opacity: 0.5;
-    cursor: not-allowed;
+/* YENİ HALİ */
+.skill-book-item.locked { 
+    background: #1a1a1a; 
+    border-color: #333; 
+    /* opacity: 0.5;  <-- Bunu kaldırdık çünkü butonu da şeffaflaştırıyordu */
+    cursor: default; 
+    /* filter: grayscale(100%); <-- SORUNLU KOD BUYDU, KALDIRDIK */
+}
+
+/* Sadece kilitli öğenin ikonunu gri yap */
+.skill-book-item.locked .skill-book-icon {
     filter: grayscale(100%);
-}
-.skill-book-item.locked:hover { background: #222; border-color: #333; }
-.skill-book-item.locked .skill-info h4::after {
-    content: " (KİLİTLİ)";
-    color: #ff4d4d;
-    font-size: 0.8em;
-    margin-left: 10px;
+    opacity: 0.5;
 }
 
-/* MENÜ İÇİNDEKİ ALT BAR */
+/* Kilitli öğenin yazılarını soluklaştır */
+.skill-book-item.locked .skill-info h4,
+.skill-book-item.locked .skill-info p {
+    color: #666; /* Gri yazı rengi */
+}
+
+/* Ancak butonun canlı ve tıklanabilir görünmesini sağla */
+.skill-book-item.locked .btn-learn-skill {
+    opacity: 1 !important;
+    filter: none !important;
+    cursor: pointer;
+}
+
+/* (KİLİTLİ) yazısının rengini koru */
+.skill-book-item.locked .skill-info h4::after { 
+    content: " (KİLİTLİ)"; 
+    color: #a04040; /* Biraz daha koyu kırmızı yaptık ki gri temaya uysun */
+    font-size: 0.8em; 
+    margin-left: 10px; 
+}
+
+.skill-book-item.locked:hover { 
+    background: #1a1a1a; 
+    border-color: #333; 
+}
+
+/* Menü İçindeki Alt Bar */
 .equipped-area-title {
     margin-top: 15px; margin-bottom: 5px; font-size: 0.9em; color: #888;
     text-align: center; border-top: 1px solid #444; padding-top: 10px; letter-spacing: 1px;
@@ -291,12 +306,272 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     background: #222; border-radius: 8px; border: 1px solid #444;
 }
 
-/* STAT EKRANI İÇERİK */
+/* --- STAT EKRANI GÜZELLEŞTİRME --- */
 .stat-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1em; }
 .stat-row.main-info { font-weight: bold; color: #fff; font-size: 1.3em; }
+
+/* Savaş Statları (Atak/Defans) - Şık Kutular */
+.combat-stats-row {
+    display: flex; justify-content: space-between; gap: 20px; margin-bottom: 15px;
+}
+.c-stat {
+    flex: 1; 
+    background: linear-gradient(145deg, #2b2b2b, #1a1a1a);
+    padding: 15px; 
+    border-radius: 6px; 
+    border: 1px solid #444; 
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    font-size: 1.1em; color: #ccc; font-weight: bold;
+}
+.c-stat span { display: block; color: #fff; margin-top: 5px; font-size: 1.5em; text-shadow: 0 0 5px rgba(255,255,255,0.2); }
+
+/* Temel Statlar Grid */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
-.stat-item { background: #2b2b2b; padding: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;}
-.stat-item.highlight { border: 1px solid #444; }
-.stat-item label { color: #aaa; font-size: 0.9em; }
-.stat-item span { color: #f0e68c; font-weight: bold; }
+
+.stat-item { 
+    background: #2b2b2b; padding: 10px 15px; border-radius: 6px; 
+    display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid #444; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.stat-item.highlight { border-color: #555; }
+.stat-item label { color: #aaa; font-size: 0.9em; font-weight: 600; }
+.stat-item span { color: #f0e68c; font-weight: bold; font-size: 1.1em; }
+
+.stat-val-group { display: flex; align-items: center; gap: 10px; }
+
+/* + BUTONU GÜZELLEŞTİRME */
+.btn-stat-plus, .btn-learn-skill {
+    width: 26px; height: 26px; padding: 0; 
+    background: linear-gradient(to bottom, #27ae60, #1e8449); /* Yeşil Gradyan */
+    border: 1px solid #145a32;
+    color: white; font-size: 16px; font-weight: bold; line-height: 1;
+    display: flex; justify-content: center; align-items: center;
+    border-radius: 4px; cursor: pointer;
+    box-shadow: 0 2px 0 #145a32; /* 3D Efekt */
+    transition: all 0.1s;
+}
+.btn-stat-plus:hover, .btn-learn-skill:hover { filter: brightness(1.2); transform: translateY(-1px); }
+.btn-stat-plus:active, .btn-learn-skill:active { transform: translateY(2px); box-shadow: none; }
+.btn-stat-plus.hidden { display: none !important; }
+
+/* Kalan Puan Kutusu */
+.stat-points-box, .skill-points-box {
+    background-color: #3e2723; border: 2px solid #f0e68c; padding: 12px;
+    text-align: center; border-radius: 6px; color: #fff; font-weight: bold; font-size: 1.1em;
+    margin: 15px 0; box-shadow: 0 0 15px rgba(240, 230, 140, 0.2);
+}
+.stat-points-box.hidden { display: none !important; }
+
 .stat-footer { margin-top: 20px; text-align: center; font-size: 0.8em; color: #666; }
+.tier-badge { position: absolute; bottom: 0; right: 0; background-color: #333; color: #ffd700; font-size: 0.7em; padding: 1px 3px; border-radius: 2px; border: 1px solid #ffd700; font-weight: bold; z-index: 5; }
+/* --- KÖY (TOWN) ARAYÜZÜ --- */
+#town-screen {
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+}
+
+.town-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px; /* Görselin çok büyümesini engellemek için */
+    aspect-ratio: 16/9; /* Görsel oranını korumak için */
+    margin: 0 auto;
+    overflow: hidden;
+    border: 2px solid #3e3221;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.town-background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* veya contain, görsele göre değişir */
+    display: block;
+}
+
+/* Tıklanabilir Bina Kutuları */
+.town-building {
+    position: absolute;
+    cursor: pointer;
+    /* Ayarlama yaparken görebilmek için geçici kenarlık, iş bitince kaldırılabilir: */
+    border: 2px solid rgba(255, 255, 255, 0.3); 
+    background-color: rgba(0, 0, 0, 0.1); 
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 10px;
+}
+
+/* Hover Efekti */
+.town-building:hover {
+    background-color: rgba(255, 215, 0, 0.15); /* Hafif sarı parlama */
+    border-color: rgba(240, 230, 140, 0.8);
+    box-shadow: 0 0 15px rgba(240, 230, 140, 0.4);
+}
+
+/* Bina İsim Etiketi */
+.building-label {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #f0e68c;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+    border: 1px solid #6b5c3b;
+}
+
+.town-building:hover .building-label {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- BİNA KONUMLARI (GÖRSELİNE GÖRE AYARLA!) --- */
+
+/* 1. Han (Sol Alt) */
+#building-inn {
+    bottom: 10%; left: 5%;
+    width: 15%; height: 30%;
+}
+
+/* 2. Demirci (Sol Orta) */
+#building-blacksmith {
+    bottom: 20%; left: 25%;
+    width: 18%; height: 35%;
+}
+
+/* 3. Tüccar (Merkez) */
+#building-merchant {
+    bottom: 15%; left: 45%;
+    width: 15%; height: 25%;
+}
+
+/* 4. Simyacı (Sağ Orta) */
+#building-alchemist {
+    bottom: 20%; right: 20%;
+    width: 15%; height: 35%;
+}
+
+/* 5. Ahır (Sağ Alt/Köşe) */
+#building-stable {
+    bottom: 10%; right: 2%;
+    width: 15%; height: 25%;
+}
+
+/* Çıkış Butonu */
+.town-exit-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    background-color: #8b0000;
+    border-color: #ff4d4d;
+    color: white;
+    padding: 10px 30px;
+    font-size: 1.2em;
+}
+.town-exit-btn:hover {
+    background-color: #a00000;
+}
+.levelup-halo {
+    position: absolute;
+    left: 50%;
+    /* Başlangıç noktası (ayaklar) */
+    bottom: 0; 
+    
+    /* Halkanın Boyutları (Karakterin genişliğine göre ayarlı) */
+    width: 160px; 
+    height: 40px; 
+    
+    /* Halka Görünümü */
+    background: transparent; /* İçi boş */
+    border: 4px solid #ffd700; /* Altın kenarlık */
+    border-radius: 50%; /* Oval şekil (Perspektif için) */
+    
+    /* Parlama Efektleri */
+    box-shadow: 
+        0 0 15px #ffd700,        /* Dış parlama */
+        inset 0 0 15px #ffd700;  /* İç parlama */
+    
+    /* Tıklamayı engelle ve diğer öğelerin üstünde dur */
+    pointer-events: none;
+    z-index: 50;
+    
+    /* Animasyon */
+    animation: levelUpScan 1.5s ease-out forwards;
+    
+    /* Merkezleme */
+    transform: translateX(-50%);
+}
+
+@keyframes levelUpScan {
+    0% {
+        bottom: 0; /* Ayaklarda başla */
+        opacity: 0;
+        width: 10px; /* Çok küçük bir nokta olarak başla */
+        height: 5px;
+    }
+    10% {
+        opacity: 1; /* Hemen parla */
+        width: 160px; /* Gerçek boyutuna ulaş */
+        height: 40px;
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        bottom: 100%; /* Karakterin boyunu aş */
+        opacity: 0;   /* Kaybol */
+        width: 180px; /* Yukarı çıkarken hafifçe genişle */
+        height: 50px;
+        border-color: #fff; /* Sona doğru beyaza çalsın */
+    }
+}
+/* --- MOBİL UYUMLULUK (UI) --- */
+@media (max-width: 768px) {
+    /* Üst Bilgi Çubuğu */
+    #top-info-bar {
+        height: 50px;
+        padding: 0 10px;
+        font-size: 0.9em;
+    }
+
+    /* Stat ve Skill Pencereleri (Pop-up) */
+    .stat-window, .skill-book-window {
+        width: 95%; /* Ekranın tamamını kaplasın */
+        height: 80%; /* Yüksekliği sınırla */
+        padding: 10px;
+        overflow-y: auto; /* İçerik taşarsa kaydır */
+    }
+
+    .skill-list-container {
+        height: 200px; /* Liste çok uzamasın */
+    }
+
+    /* Butonlar */
+    button {
+        padding: 12px; /* Dokunmatik için daha geniş alan */
+    }
+
+    /* Font Ayarları */
+    h1 { font-size: 1.5em; }
+    h2 { font-size: 1.2em; }
+    p { font-size: 0.9em; }
+    
+    /* Town (Köy) Binaları */
+    .building-label {
+        font-size: 0.7em;
+        padding: 2px 5px;
+        /* Mobilde hover olmadığı için isimler hep görünsün mü? */
+        opacity: 1 !important; 
+        transform: translateY(0) !important;
+        background-color: rgba(0,0,0,0.6);
+    }
+}

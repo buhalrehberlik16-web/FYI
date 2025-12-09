@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale1.0, user-scalable=no">
     <title>RPG Oyun Denemesi</title>
 
     <!-- CSS MODÜLLERİ -->
@@ -16,6 +16,18 @@
 <body>
 
     <div id="game-container">
+        
+        <!-- ÜST BİLGİ ÇUBUĞU -->
+        <div id="top-info-bar">
+            <div class="top-info-item">
+                <span id="top-hero-name">Barbar</span> <span id="top-hero-level" style="color:#f0e68c; font-size:0.8em;">(Lv.1)</span>
+            </div>
+            <div class="top-info-item gold-container">
+                <i class="fas fa-coins" style="color: gold;"></i> 
+                <span id="gold-display">0</span>
+            </div>
+        </div>
+
         <div id="main-screen-area">
             
             <!-- 1. BAŞLANGIÇ -->
@@ -33,45 +45,34 @@
             </div>
 
             <!-- 3. HARİTA -->
-            <div id="map-screen" class="screen hidden">
-                <div id="map-display">
-                    <img src="images/map_background.png" alt="Harita Arka Planı" id="map-background">
-                    <svg id="map-trails-layer"></svg>
-                    <div id="player-marker-container">
-                        <img src="images/player_marker.png" alt="Kahraman" id="player-marker">
-                    </div>
-                    <!-- Düğümler -->
-                    <button id="node-1" class="map-node start-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-2" class="map-node choice-node"><img src="images/choice_icon.png"></button>
-                    <button id="node-3" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-4" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-5" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-6" class="map-node campfire-node"><img src="images/campfire_icon.png" alt="Kamp"></button>
-                    <button id="node-7" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-8" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-9" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-10" class="map-node encounter-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-11" class="map-node boss-node"><img src="images/skull_icon.png"></button>
-                    <button id="node-12" class="map-node end-node"><img src="images/village_icon.png"></button>
-                </div>
-                <div id="map-info-box">
-                    <h2 id="current-node-name">Harita Yükleniyor...</h2>
-                    <p id="map-description">...</p>
-                    <div id="map-action-buttons"></div>
-                </div>
+<div id="map-screen" class="screen hidden">
+    <!-- DIŞ KUTU (Pencere) -->
+    <div id="map-display">
+        <!-- İÇERİK KUTUSU (Geniş Harita - Scroll edilecek olan bu) -->
+        <div id="map-content">
+            <img src="images/map_background.png" alt="Harita Arka Planı" id="map-background">
+            <svg id="map-trails-layer"></svg>
+            <div id="player-marker-container">
+                <img src="images/player_marker.png" alt="Kahraman" id="player-marker">
             </div>
+            <!-- Node butonları JS ile buraya eklenecek -->
+        </div>
+    </div>
+    
+    <div id="map-info-box">
+        <h2 id="current-node-name">Harita Yükleniyor...</h2>
+        <p id="map-description">...</p>
+        <div id="map-action-buttons"></div>
+    </div>
+</div>
 
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
                 <div id="arena">
-                    <!-- KAHRAMAN -->
                     <div id="hero-display" class="character-display">
                         <div id="hero-hp-overlay" class="hp-overlay-container">
                             <h3 id="hero-name">Kahraman</h3>
-                            
-                            <!-- YENİ: STATUS ICONS -->
                             <div id="hero-status-container" class="status-icons"></div>
-
                             <div class="hp-bar-container"><div id="hero-hp-bar" class="hp-bar"></div></div>
                             <span id="hero-hp-text">100 / 100</span>
                             <div class="hp-bar-container rage-bar-container"><div id="hero-rage-bar" class="rage-bar"></div></div>
@@ -80,7 +81,6 @@
                         <img src="" alt="Kahraman Görseli">
                     </div>
                     
-                    <!-- CANAVAR -->
                     <div id="monster-display" class="character-display">
                          <div id="monster-intention-overlay" class="intention-overlay">?</div>
                          <div id="monster-hp-overlay" class="hp-overlay-container">
@@ -92,12 +92,11 @@
                     </div>
                 </div>
                 
-                <!-- ACTION BAR -->
                 <div id="battle-controls">
                     <div id="action-bar">
                         <div class="basic-actions">
                             <button id="attack-button"><i class="fas fa-sword"></i> Saldır</button>
-                            <button id="defend-button"><i class="fas fa-shield-alt"></i> Savun</button>
+                            <button id="defend-button">Savun</button>
                         </div>
                         <div class="separator"></div>
                         <div id="skill-bar-container"></div>
@@ -123,34 +122,53 @@
                 </div>
             </div>
 
-            <!-- 6. YENİ: EVENT EKRANI -->
+            <!-- 6. OLAY (EVENT) -->
             <div id="event-screen" class="screen hidden">
                 <div class="event-content">
                     <h1 id="event-title">Gizemli Sunak</h1>
-                    <p id="event-desc">Eski bir sunak parlıyor. Bir feda karşılığında güç vadediyor.</p>
+                    <p id="event-desc">Eski bir sunak parlıyor.</p>
                     <div id="event-choices-container"></div>
                 </div>
             </div>
+
+            <!-- 7. ÖDÜL (REWARD) -->
+            <div id="reward-screen" class="screen hidden">
+                <div class="reward-content">
+                    <h2>ZAFER!</h2>
+                    <p class="reward-subtitle">Düşmanı alt ettin.</p>
+                    <hr style="border-color: #444; width: 100%; margin: 15px 0;">
+                    <div id="reward-list"></div>
+                    <button id="btn-reward-continue" class="reward-continue-btn">Yola Devam Et</button>
+                </div>
+            </div>
             
-            <!-- 7. GAME OVER -->
+            <!-- 8. GAME OVER -->
             <div id="game-over-screen" class="screen hidden">
                 <h1 class="game-over-title">ÖLDÜN!</h1>
                 <button id="return-to-menu-button">Ana Menüye Dön</button>
             </div>
 
-            <!-- 8. SKILL BOOK -->
+            <!-- 9. SKILL BOOK (YENİLENEN YAPI) -->
             <div id="skill-book-screen" class="hidden">
                 <div class="skill-book-window">
                     <div class="skill-book-header">
                         <h2>📖 Yetenek Kitabı</h2>
                         <button id="btn-close-skill-book" class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
-                    <div class="skill-tabs">
-                        <button id="tab-attack" class="tab-btn active">ATAK</button>
-                        <button id="tab-defense" class="tab-btn">DEFANS</button>
+                    
+                    <!-- YENİ: Skill Puanı Göstergesi -->
+                    <div id="skill-points-header" class="skill-points-box">
+                        YETENEK PUANI: <span id="skill-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
                     </div>
+
+                    <div class="skill-tabs">
+                        <button id="tab-common" class="tab-btn active">GENEL (Common)</button>
+                        <button id="tab-attack" class="tab-btn">SALDIRI (Attack)</button>
+                        <button id="tab-passion" class="tab-btn">TUTKU (Passion)</button>
+                    </div>
+
                     <div class="skill-list-container">
-                        <p class="hint-text">Yetenekleri aşağıdaki slotlara sürükleyip bırakın.</p>
+                        <p class="hint-text">Açık yetenekleri aşağıdaki slotlara sürükleyin. Kilitlileri puanla açın.</p>
                         <div id="skill-book-list" class="skill-grid"></div>
                     </div>
                     <div class="equipped-area-title">KUŞANILAN YETENEKLER</div>
@@ -158,7 +176,7 @@
                 </div>
             </div>
 
-            <!-- 9. STAT EKRANI -->
+            <!-- 10. STAT EKRANI -->
             <div id="stat-screen" class="hidden">
                 <div class="stat-window">
                     <div class="stat-header">
@@ -175,23 +193,91 @@
                             <label>XP:</label>
                             <span id="stat-xp">0 / 100</span>
                         </div>
-                        <hr style="border-color: #444; margin: 15px 0;">
+                        
+                        <div id="points-container" class="stat-points-box hidden">
+                            DAĞITILABİLİR PUAN: <span id="stat-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
+                        </div>
+
+                        <hr style="border-color: #444; margin: 10px 0;">
+						<div class="stat-row-detail">
+                            <label>Sağlık (HP):</label> <span id="stat-hp" style="color:#fff;">100 / 100</span>
+                        </div>
+                        <hr style="border-color: #444; margin: 10px 0;">
+
+                        <div class="combat-stats-row">
+                            <div class="c-stat">Saldırı: <span id="stat-atk">20</span></div>
+                            <div class="c-stat">Defans: <span id="stat-def">5</span></div>
+                        </div>
+
+                        <hr style="border-color: #444; margin: 10px 0;">
+                        
                         <div class="stat-grid">
-                            <div class="stat-item"><label>HP (Sağlık):</label> <span id="stat-hp">100</span></div>
-                            <div class="stat-item"><label>Saldırı:</label> <span id="stat-atk">20</span></div>
-                            <div class="stat-item"><label>Defans:</label> <span id="stat-def">5</span></div>
-                            
-                            <div class="stat-item highlight"><label>Strength (STR):</label> <span id="stat-str">15</span></div>
-                            <div class="stat-item highlight"><label>Dexterity (DEX):</label> <span id="stat-dex">10</span></div>
-                            <div class="stat-item highlight"><label>Intelligence (INT):</label> <span id="stat-int">5</span></div>
-                            <div class="stat-item highlight"><label>Magic Power (MP):</label> <span id="stat-mp">0</span></div>
+                            <div class="stat-item highlight">
+                                <label>STR (Güç)</label> 
+                                <div class="stat-val-group">
+                                    <span id="stat-str">15</span>
+                                    <button class="btn-stat-plus hidden" onclick="increaseStat('str')">+</button>
+                                </div>
+                            </div>
+                            <div class="stat-item highlight">
+                                <label>DEX (Çeviklik)</label> 
+                                <div class="stat-val-group">
+                                    <span id="stat-dex">10</span>
+                                    <button class="btn-stat-plus hidden" onclick="increaseStat('dex')">+</button>
+                                </div>
+                            </div>
+                            <div class="stat-item highlight">
+                                <label>INT (Zeka)</label> 
+                                <div class="stat-val-group">
+                                    <span id="stat-int">5</span>
+                                    <button class="btn-stat-plus hidden" onclick="increaseStat('int')">+</button>
+                                </div>
+                            </div>
+                            <div class="stat-item highlight">
+                                <label>VIT (Canlılık)</label> 
+                                <div class="stat-val-group">
+                                    <span id="stat-vit">10</span>
+                                    <button class="btn-stat-plus hidden" onclick="increaseStat('vit')">+</button>
+                                </div>
+                            </div>
+                            <div class="stat-item highlight">
+                                <label>MP (Büyü Gücü)</label> 
+                                <div class="stat-val-group">
+                                    <span id="stat-mp">0</span>
+                                    <button class="btn-stat-plus hidden" onclick="increaseStat('mp_pow')">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="stat-footer">
-                        <p class="hint-text">Pencereyi kapatmak için 'U' veya 'X' tuşuna basın.</p>
+                        <p class="hint-text">Kapatmak için 'U' veya 'X' tuşuna basın.</p>
                     </div>
                 </div>
             </div>
+                     <!-- 11. KÖY (TOWN) EKRANI -->
+            <div id="town-screen" class="screen hidden">
+                <div class="town-container">
+                    <img src="images/town_bg.png" alt="Köy Meydanı" class="town-background">
+                    
+                    <div class="town-building" id="building-inn" data-name="Han (Inn)">
+                        <div class="building-label">HAN</div>
+                    </div>
+                    <div class="town-building" id="building-blacksmith" data-name="Demirci (Blacksmith)">
+                        <div class="building-label">DEMİRCİ</div>
+                    </div>
+                    <div class="town-building" id="building-merchant" data-name="Tüccar (Merchant)">
+                        <div class="building-label">TÜCCAR</div>
+                    </div>
+                    <div class="town-building" id="building-alchemist" data-name="Simyacı (Alchemist)">
+                        <div class="building-label">SİMYACI</div>
+                    </div>
+                    <div class="town-building" id="building-stable" data-name="Ahır (Stable)">
+                        <div class="building-label">AHIR</div>
+                    </div>
+                </div>
+                <button id="btn-leave-town" class="town-exit-btn">Maceraya Dön</button>
+            </div>
+            <!-- KÖY EKRANI BİTİŞİ -->
 
         </div>
         <div id="fade-overlay"></div>

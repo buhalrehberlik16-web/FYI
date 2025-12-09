@@ -7,43 +7,19 @@ const HERO_DEAD_SRC = 'images/barbarian_dead.png';
 let heroDefenseBonus = 0; let isHeroDefending = false;
 let monsterDefenseBonus = 0; let isMonsterDefending = false; let monsterNextAction = 'attack'; 
 
-// --- YENİ: HASAR MODİFİKASYON FONKSİYONU (SKILLER İÇİN) ---
-// Bu fonksiyon herhangi bir kaynaktan gelen hasarı (Skill veya Düz vuruş)
-// karakterin üzerindeki buff/debufflara göre günceller.
-function applyDamageModifiers(baseDamage) {
-    let finalDamage = baseDamage;
-
-    // 1. Insta-Kill Kontrolü
-    const instaKill = hero.statusEffects.find(e => e.id === 'insta_kill' && !e.waitForCombat);
-    if (instaKill) return 9999;
-
-    // 2. Flat (Sabit) Artış/Azalışlar
-    const atkBuff = hero.statusEffects.find(e => e.id === 'atk_up' && !e.waitForCombat);
-    if (atkBuff) finalDamage += atkBuff.value;
-
-    const atkDebuff = hero.statusEffects.find(e => e.id === 'atk_down' && !e.waitForCombat);
-    if (atkDebuff) finalDamage -= atkDebuff.value;
-
-    // 3. Yüzdelik Harita Etkileri (Map Debuffs)
-    const mapAtkWeak = hero.mapEffects.find(e => e.id === 'map_atk_weak');
-    if (mapAtkWeak) finalDamage = Math.floor(finalDamage * mapAtkWeak.value); // Örn: 0.6 ile çarp
-
-    // 4. Yüzdelik Savaş Etkileri (Combat Debuffs)
-    const atkHalf = hero.statusEffects.find(e => e.id === 'atk_half' && !e.waitForCombat);
-    if (atkHalf) finalDamage = Math.floor(finalDamage * 0.5);
-
-    return Math.max(1, finalDamage); // En az 1 vursun
-}
-
-// --- YARDIMCI: EFEKTİF STAT HESAPLAMA (UI İÇİN) ---
+// --- EFEKTİF STAT HESAPLAMA (GÜNCELLENDİ) ---
 function getHeroEffectiveStats() {
-    let currentAtk = hero.attack;
+    // Temel Statlar
+    let currentStr = hero.str;
     let currentDef = hero.defense;
+    let currentAtk = hero.attack;
 
-    currentAtk += Math.floor((hero.str || 0) * 0.5);
-
+    // 1. Buffları İşle (STR Artışı vb.)
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
+            // Battle Cry gibi skillerden gelen STR artışı
+            if (e.id === 'str_up') currentStr += e.value;
+            
             if (e.id === 'atk_up') currentAtk += e.value;
             if (e.id === 'atk_down') currentAtk -= e.value;
             if (e.id === 'def_up') currentDef += e.value;
@@ -51,11 +27,12 @@ function getHeroEffectiveStats() {
         }
     });
 
+    // 2. Harita Etkileri
     hero.mapEffects.forEach(e => {
         if (e.id === 'map_atk_weak') currentAtk = Math.floor(currentAtk * e.value);
     });
 
-    return { atk: Math.max(0, currentAtk), def: Math.max(0, currentDef) };
+    return { atk: Math.max(0, currentAtk), def: Math.max(0, currentDef), str: currentStr };
 }
 
 // --- KİLİT KONTROLÜ ---
@@ -71,7 +48,7 @@ function checkIfSkillBlocked(skillKey) {
     });
 }
 
-// === SKILL BAR OLUŞTURMA ===
+// --- SKILL BAR VE BUTONLAR (AYNI KALDI, KOPYALA-YAPIŞTIR YAPABİLİRSİN) ---
 function initializeSkillButtons() {
     if (!skillButtonsContainer) return;
     skillButtonsContainer.innerHTML = ''; 
@@ -141,25 +118,42 @@ function handleSkillUse(skillKey) {
     skillObj.onCast(hero, monster);
 }
 
-// --- DÜZ VURUŞ HASAR HESAPLAMA ---
+// --- HASAR HESAPLAMA (GÜNCELLENDİ) ---
 function calculateDamage(attacker, defender) {
     let rawDamage = attacker.attack;
     
+    // HERO SALDIRISI
     if (attacker === hero) {
-        // Düz vuruş için temel hasar
-        rawDamage += Math.floor((hero.str || 0) * 0.5);
-        // Modifikatörleri uygula (Buff/Debuff)
-        rawDamage = applyDamageModifiers(rawDamage);
+        const stats = getHeroEffectiveStats();
+        
+        // NORMAL SALDIRI DENGESİ:
+        // Normal saldırı (Sol tık) artık STR'den çok az etkileniyor.
+        // Amaç: Rage kasmak, hasar vurmak değil.
+        // Formül: Base ATK (20) + (STR * 0.2)
+        rawDamage = stats.atk + Math.floor(stats.str * 0.2);
+
+        const instaKill = hero.statusEffects.find(e => e.id === 'insta_kill' && !e.waitForCombat);
+        if (instaKill) return 9999;
     }
 
     let effectiveDefense = defender.defense;
+    
+    // HERO DEFANSI
     if (defender === hero) {
         const stats = getHeroEffectiveStats();
         effectiveDefense = stats.def;
         if (isHeroDefending) effectiveDefense += heroDefenseBonus;
     } 
-    else if (defender === monster && isMonsterDefending) {
-        effectiveDefense += monsterDefenseBonus;
+    // CANAVAR DEFANSI
+    else if (defender === monster) {
+        if (isMonsterDefending) effectiveDefense += monsterDefenseBonus;
+        
+        // Armor Break Kontrolü (Ignore Def)
+        const ignoreDef = hero.statusEffects.find(e => e.id === 'ignore_def' && !e.waitForCombat);
+        if (ignoreDef) {
+            effectiveDefense = 0;
+            // Görsel efekt için log atabiliriz ama spam olmasın
+        }
     }
 
     return Math.max(1, Math.floor(rawDamage - effectiveDefense)); 
@@ -194,7 +188,10 @@ function handleAttackSequence(attacker, defender) {
                 animateDamage(defenderIsHero); 
                 showFloatingText(targetContainer, damage, 'damage');
                 writeLog(`${attacker.name} -> ${defender.name}: ${damage}`);
-                if (attackerIsHero) hero.rage = Math.min(hero.maxRage, hero.rage + 15);
+                
+                // RAGE KAZANCI (ARTIRILDI: +20)
+                if (attackerIsHero) hero.rage = Math.min(hero.maxRage, hero.rage + 20);
+                
                 updateStats();
                 if (attackerIsHero && isMonsterDefending) { isMonsterDefending = false; monsterDefenseBonus = 0; }
             }
@@ -211,22 +208,29 @@ function handleAttackSequence(attacker, defender) {
 function animateCustomAttack(rawDamage, skillFrames, skillName) {
     const attackerImgElement = heroDisplayImg;
     const targetContainer = document.getElementById('monster-display');
-    const customAttacker = { attack: rawDamage, defense: 0 };
+    
+    // Custom Attack (Skill) için Defans Kontrolü
+    // Armor Break gibi skillerde defansın 0 sayılması için logic burada da olmalı
+    // Ama basitlik adına: Skillerde 'def' parametresini hesaplayarak gönderiyoruz genelde.
+    // calculateDamage fonksiyonunu skill için çağırmıyoruz, direkt rawDamage kullanıyoruz.
+    // Ancak düşmanın 'Savunma (Defend)' bonusunu (monsterDefenseBonus) düşmeliyiz.
+    
+    let effectiveDef = monster.defense;
+    
+    // Armor Break etkisi varsa defansı sıfırla
+    const ignoreDef = hero.statusEffects.find(e => e.id === 'ignore_def' && !e.waitForCombat);
+    if(ignoreDef) effectiveDef = 0;
+
+    if(isMonsterDefending) effectiveDef += monsterDefenseBonus;
+
+    // Hasar Hesabı (Skill Raw Hasarı - Efektif Defans)
+    const finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
+
     let frameIndex = 0;
     function showNextFrame() {
         if (frameIndex < skillFrames.length) {
             attackerImgElement.src = skillFrames[frameIndex]; 
             if (frameIndex === 1) { 
-                // DİKKAT: Burada calculateDamage çağırmıyoruz çünkü skill hasarı zaten hesaplanmış geliyor.
-                // Sadece defans düşüyoruz.
-                let finalDamage = rawDamage;
-                
-                // Canavarın defansını hesapla
-                let monsterDef = monster.defense;
-                if(isMonsterDefending) monsterDef += monsterDefenseBonus;
-                
-                finalDamage = Math.max(1, finalDamage - monsterDef);
-                
                 monster.hp = Math.max(0, monster.hp - finalDamage);
                 animateDamage(false); 
                 showFloatingText(targetContainer, finalDamage, 'damage');
@@ -244,10 +248,7 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
     showNextFrame();
 }
 
-function handleHellBlade(skill) { }
-function handleMinorHealing(skill) { }
-function handleRestoreHealing(skill) { }
-
+// ... startBattle, nextTurn, checkGameOver aynı (önceki düzeltmelerle)
 function startBattle(enemyType) {
     switchScreen(battleScreen);
     const stats = ENEMY_STATS[enemyType];
@@ -257,17 +258,12 @@ function startBattle(enemyType) {
     
     let activatedCount = 0;
     hero.statusEffects.forEach(e => {
-        if (e.waitForCombat) {
-            e.waitForCombat = false; 
-            activatedCount++;
-        }
+        if (e.waitForCombat) { e.waitForCombat = false; activatedCount++; }
     });
     if (activatedCount > 0) writeLog(`⚔️ Savaşla birlikte ${activatedCount} etki aktifleşti!`);
 
     updateStats(); initializeSkillButtons(); determineMonsterAction(); showMonsterIntention(monsterNextAction);
-    
-    isHeroTurn = false; 
-    nextTurn();
+    isHeroTurn = false; nextTurn();
 }
 
 function nextTurn() {
@@ -286,7 +282,8 @@ function nextTurn() {
         });
         const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);
         if (stunEffect) {
-            stunApplied = true; writeLog(`😵 **DAZZY!** Başın döndüğü için bu turu pas geçiyorsun.`);
+            stunApplied = true;
+            writeLog(`😵 **DAZZY!** Başın döndüğü için bu turu pas geçiyorsun.`);
             showFloatingText(document.getElementById('hero-display'), "DAZZY!", 'damage');
         }
         if (hero.statusEffects.length > 0) {
@@ -299,7 +296,6 @@ function nextTurn() {
         }
         updateStats(); toggleSkillButtons(false);
         if (stunApplied) { setTimeout(() => { nextTurn(); }, 1500); return; }
-        hero.rage = Math.min(hero.maxRage, hero.rage + 10); 
         updateStats(); determineMonsterAction(); showMonsterIntention(monsterNextAction);
         attackButton.disabled = false; defendButton.disabled = false; toggleSkillButtons(false); 
         writeLog("... Senin Sıran ...");
@@ -326,7 +322,15 @@ function checkGameOver() {
         monster.hp = 0; updateStats(); monsterDisplayImg.src = `images/${monster.dead}`; monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)';
         gainXP(monster.xp); 
         if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
-        setTimeout(() => { monster = null; switchScreen(mapScreen); updateMapScreen(); }, 1000); 
+        
+        hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
+        updateStats(); toggleSkillButtons(false);
+
+        setTimeout(() => { 
+            const goldReward = Math.floor(Math.random() * 11) + 1;
+            openRewardScreen([{ type: 'gold', value: goldReward }]);
+            monster = null; 
+        }, 1000); 
         return true;
     }
     return false;

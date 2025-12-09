@@ -66,3 +66,23 @@ h1, h2, h3 {
 .hidden {
     display: none; 
 }
+/* --- MOBİL UYUMLULUK (BASE) --- */
+@media (max-width: 768px) {
+    body {
+        background-color: #000; /* Kenarlar siyah olsun */
+        overflow: hidden; /* Sayfa kaymasını engelle */
+    }
+
+    #game-container {
+        width: 100%;
+        height: 100vh; /* Tam ekran yükseklik */
+        max-width: none;
+        border: none; /* Mobilde sınıra gerek yok */
+        box-shadow: none;
+    }
+
+    #main-screen-area {
+        top: 50px; /* Üst bar için biraz daha yer */
+        height: calc(100% - 50px);
+    }
+}

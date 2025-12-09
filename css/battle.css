@@ -85,3 +85,71 @@
 .intention-overlay.attack { background-color: #ff4d4d; }
 .intention-overlay.defend { background-color: #3cb371; }
 .intention-overlay.active { opacity: 1; }
+/* --- MOBİL UYUMLULUK (BATTLE) --- */
+@media (max-width: 768px) {
+    /* Arena Düzeni: Karakterleri sıkıştır */
+    #arena {
+        flex-direction: row; /* Yan yana kalsınlar ama küçülsünler */
+        align-items: flex-end;
+        padding: 0 10px;
+        height: 60%; /* Savaş alanı biraz daralsın, butonlara yer kalsın */
+    }
+
+    /* Karakter Görselleri */
+    .character-display {
+        width: 50%; /* Ekranı yarı yarıya paylaşsınlar */
+    }
+    
+    .character-display img {
+        max-height: 180px; /* Görselleri küçült */
+        max-width: 100%; 
+    }
+
+    /* HP Barları ve Yazılar */
+    .hp-overlay-container {
+        bottom: 190px; /* Görselin hemen üstüne */
+        width: 100px;
+    }
+    #hero-name, #monster-name {
+        font-size: 0.9em;
+    }
+
+    /* Kontrol Paneli (Action Bar) */
+    #battle-controls {
+        height: 40%; /* Alt kısmı genişlet */
+        padding-bottom: 10px;
+        flex-direction: column; /* İçeriği dikey hizala */
+    }
+
+    #action-bar {
+        flex-direction: column; /* Butonları alt alta diz */
+        width: 95%;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    /* Saldır/Savun Butonları */
+    .basic-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .basic-actions > button {
+        flex: 1; /* Eşit genişlik */
+        height: 50px;
+        font-size: 1em;
+    }
+
+    .separator { display: none; } /* Çizgiyi gizle */
+
+    /* Skill Bar */
+    #skill-bar-container {
+        width: 100%;
+        justify-content: space-between;
+        gap: 5px;
+    }
+
+    .skill-slot {
+        width: 55px; /* Mobilde parmak için ideal boyut */
+        height: 55px;
+    }
+}
