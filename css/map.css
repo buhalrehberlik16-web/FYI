@@ -1,56 +1,136 @@
-/* css/map.css - Harita Ekranı */
+/* css/map.css */
 
-#map-screen { flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0; }
-#map-display { position: relative; width: 100%; height: 75%; }
-#map-background { width: 100%; height: 100%; object-fit: cover; }
-#map-info-box { width: 100%; height: 25%; padding: 20px; background-color: #1f1f1f; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; }
-#map-action-buttons { display: flex; flex-wrap: wrap; margin-top: 10px; }
-
-/* Düğümler */
-.map-node {
-    position: absolute; width: 60px; height: 60px; border-radius: 50%; padding: 0;
-    background: rgba(107, 92, 59, 0.8); border: 3px solid #f0e68c; z-index: 10; cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+#map-screen { 
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start; 
+    padding: 0; 
+    overflow: hidden;
 }
-.map-node:hover:not(:disabled) { background: rgba(139, 126, 88, 0.9); transform: scale(1.1); box-shadow: 0 0 15px rgba(240, 230, 140, 0.8); }
-.map-node img { width: 80%; height: 80%; padding: 6px; filter: drop-shadow(1px 1px 1px #000); }
-.map-node:disabled { background: rgba(56, 56, 56, 0.5); border-color: #444; cursor: not-allowed; }
 
-/* Özel Node Tipleri */
-.map-node.campfire-node { border-color: #ff9800; }
-.map-node.boss-node { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
+/* DIŞ ÇERÇEVE: Sadece görünür alanı sınırlar ve scroll bar ekler */
+#map-display { 
+    position: relative; 
+    width: 100%; 
+    height: 75%; 
+    overflow-x: auto; /* Yatay scroll */
+    overflow-y: hidden;
+    background-color: #111;
+}
 
-/* --- 12 DÜĞÜM KOORDİNATLARI (SNAKE PATH) --- */
-#node-1 { top: 85%; left: 10%; }
-#node-2 { top: 70%; left: 15%; }
-#node-3 { top: 55%; left: 10%; }
-#node-4 { top: 60%; left: 25%; }
-#node-5 { top: 45%; left: 20%; }
-#node-6 { top: 40%; left: 35%; }
-#node-7 { top: 25%; left: 30%; }
-#node-8 { top: 35%; left: 50%; }
-#node-9 { top: 20%; left: 55%; }
-#node-10 { top: 30%; left: 70%; }
-#node-11 { top: 15%; left: 80%; }
-#node-12 { top: 10%; left: 90%; }
+/* İÇERİK: Tüm harita elemanlarını tutan geniş kutu */
+#map-content {
+    position: relative;
+    width: 200%; /* Harita ekranın 2 katı genişliğinde */
+    height: 100%;
+}
 
-/* --- OYUNCU --- */
-#player-marker-container { position: absolute; width: 60px; height: 60px; z-index: 20; transition: left 0.5s, top 0.5s; pointer-events: none; display: none; }
-#player-marker { width: 100%; height: 100%; filter: drop-shadow(0 0 5px #f0e68c); }
+/* Arka plan artık map-content boyutuna uyacak */
+#map-background { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    opacity: 0.4;
+    position: absolute; /* Sabitle */
+    top: 0; left: 0;
+    z-index: 0;
+}
 
-/* --- İZ (TRAIL) KATMANI --- */
-#map-trails-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+/* SVG Katmanı */
+#map-trails-layer { 
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 5; 
+    pointer-events: none; 
+}
 
-/* Kalıcı İz (Gidilen Yol - Altın Rengi) */
+/* Gidilen Yol (Kalıcı - Parlak Sarı) */
 .map-trail-line {
-    stroke: #f0e68c; stroke-width: 4; stroke-dasharray: 10, 10;
-    opacity: 0.7; stroke-linecap: round; animation: dash-animation 60s linear infinite;
+    stroke: #ffd700; /* Altın Sarısı */
+    stroke-width: 4; 
+    stroke-dasharray: 10, 10;
+    opacity: 1.0; /* Tam görünür */
+    stroke-linecap: round; 
+    animation: dash-animation 60s linear infinite;
+    filter: drop-shadow(0 0 3px #000); /* Arkasına gölge attık ki belli olsun */
 }
 
-/* YENİ: İpucu İzi (Gidilebilecek Yol - Beyaz Kesikli) */
+/* Gidilebilecek Yollar (Hint - Kesikli Gri/Beyaz) */
 .map-path-hint {
-    stroke: #ffffff; stroke-width: 2; stroke-dasharray: 5, 5;
-    opacity: 0.3; stroke-linecap: round;
+     stroke: #cccccc; /* Hafif Gri */
+     stroke-width: 3; /* Biraz kalınlaştırdık */
+     stroke-dasharray: 5, 8;
+     opacity: 0.6; /* Görünürlüğü artırdık */
+     stroke-linecap: round;
+     filter: drop-shadow(0 0 2px #000); /* Arkasına gölge attık */
 }
 
 @keyframes dash-animation { to { stroke-dashoffset: -1000; } }
+
+
+/* Düğümler */
+.map-node {
+    position: absolute; 
+    width: 50px; height: 50px; 
+    border-radius: 50%; 
+    padding: 0;
+    background: #333; 
+    border: 2px solid #777; 
+    z-index: 10; 
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.map-node:hover:not(:disabled) { 
+    transform: scale(1.2); 
+    box-shadow: 0 0 15px rgba(240, 230, 140, 0.8); 
+    z-index: 15;
+}
+
+.map-node img { width: 70%; height: 70%; pointer-events: none; }
+
+/* Node Renkleri */
+.map-node.start-node { border-color: #fff; background: #555; }
+.map-node.encounter-node { border-color: #ff4d4d; }
+.map-node.campfire-node { border-color: #ffa500; }
+.map-node.choice-node { border-color: #3498db; }
+.map-node.town-node { border-color: #f0e68c; box-shadow: 0 0 10px #f0e68c; }
+.map-node.boss-node { border-color: #ff0000; width: 70px; height: 70px; }
+.map-node.city-node { border-color: #00ff00; width: 70px; height: 70px; }
+
+/* Durumlar */
+.map-node:disabled { filter: grayscale(100%) brightness(0.5); cursor: not-allowed; border-style: dashed; }
+.map-node.available { filter: none; border-color: #43FF64; box-shadow: 0 0 10px #43FF64; animation: pulse-node 1.5s infinite; }
+.map-node.visited { border-color: #ffd700; opacity: 0.6; }
+
+@keyframes pulse-node { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* Oyuncu İkonu */
+#player-marker-container { 
+    position: absolute; width: 50px; height: 50px; z-index: 20; 
+    transition: left 0.5s ease-in-out, top 0.5s ease-in-out; 
+    pointer-events: none; display: none; 
+}
+/* İkon Resmi Küçültme Düzeltmesi */
+#player-marker { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px #f0e68c); }
+/* --- MOBİL UYUMLULUK (MAP) --- */
+@media (max-width: 768px) {
+    /* Harita içeriğini mobilde daha geniş yap ki düğümler arası açılsın */
+    #map-content {
+        width: 300%; /* Masaüstünde 200% idi, mobilde 300% olsun */
+    }
+
+    .map-node {
+        width: 60px; /* Parmakla basmak için büyüttük */
+        height: 60px;
+    }
+    
+    /* Boss ve City daha da büyük */
+    .map-node.boss-node, .map-node.city-node {
+        width: 80px;
+        height: 80px;
+    }
+}

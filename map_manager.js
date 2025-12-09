@@ -1,44 +1,206 @@
-// map_manager.js
+// map_manager.js - CAMPFIRE PENALTY (PEŞ PEŞE KAMP CEZASI) SÜRÜMÜ
 
-function movePlayerMarkerToNode(nodeId, isInstant = false) {
-    const nodeElement = document.getElementById(`node-${nodeId}`);
-    const markerContainer = document.getElementById('player-marker-container');
+// --- HARİTA ÜRETİM (GENERATOR) ---
+
+function generateMap() {
+    const mapContent = document.getElementById('map-content');
     
-    if (nodeElement && markerContainer) {
-        const rect = nodeElement.getBoundingClientRect();
-        const mapRect = mapDisplay.getBoundingClientRect();
-        
-        if (mapRect.width === 0) return;
+    // Temizlik
+    const existingNodes = document.querySelectorAll('.map-node');
+    existingNodes.forEach(n => n.remove());
+    clearTrails();
 
-        const leftPos = rect.left - mapRect.left + (rect.width / 2);
-        const topPos = rect.top - mapRect.top + (rect.height / 2);
-        
-        if (isInstant) markerContainer.style.transition = 'none';
-        else markerContainer.style.transition = 'left 0.5s, top 0.5s';
-        
-        markerContainer.style.left = `${leftPos}px`;
-        markerContainer.style.top = `${topPos}px`;
-        markerContainer.style.display = 'block';
+    GAME_MAP.nodes = [];
+    GAME_MAP.connections = [];
+    GAME_MAP.completedNodes = []; 
 
-        if (isInstant) setTimeout(() => { markerContainer.style.transition = 'left 0.5s, top 0.5s'; }, 50);
+    let nodeIdCounter = 0;
+
+    // 1. DÜĞÜMLERİ OLUŞTUR
+    for (let stage = 0; stage < MAP_CONFIG.totalStages; stage++) {
+        let nodeCountInStage = 0;
+        let isChokepoint = false;
+
+        // Stage Kuralları
+        if (stage === 0) { 
+            nodeCountInStage = 3; 
+        } else if (stage === MAP_CONFIG.totalStages - 1) { 
+            nodeCountInStage = 1; isChokepoint = true; // Şehir
+        } else if (stage === MAP_CONFIG.totalStages - 2) { 
+            nodeCountInStage = 1; isChokepoint = true; // Boss
+        } else if (MAP_CONFIG.townStages.includes(stage)) { 
+            nodeCountInStage = 1; isChokepoint = true; // Town
+        } else {
+            nodeCountInStage = Math.random() > 0.2 ? 3 : 2;
+        }
+
+        // Lane (Şerit) Seçimi
+        let availableLanes = [0, 1, 2];
+        if (isChokepoint) {
+            availableLanes = [1];
+        } else {
+            availableLanes.sort(() => Math.random() - 0.5);
+            availableLanes = availableLanes.slice(0, nodeCountInStage);
+            availableLanes.sort(); 
+        }
+
+        // --- İÇERİK BELİRLEME ---
+        let nodesInThisStage = [];
+        
+        availableLanes.forEach(lane => {
+            const nodeType = determineNodeType(stage);
+            
+            // Jitter & Wave
+            const jitterX = (Math.random() * 6 - 3); 
+            const waveOffset = Math.sin(stage * 0.5) * 40; 
+            const jitterY = (Math.random() * 16 - 8) + waveOffset; 
+
+            const node = {
+                id: nodeIdCounter++,
+                stage: stage,
+                lane: lane,
+                type: nodeType,
+                jitterX: jitterX,
+                jitterY: jitterY,
+                next: []
+            };
+            nodesInThisStage.push(node);
+        });
+
+        // Anti-Pacifist (Zorunlu Savaş)
+        if (!isChokepoint && stage !== 0) {
+            const hasCombat = nodesInThisStage.some(n => n.type === 'encounter');
+            if (!hasCombat) {
+                const randIndex = Math.floor(Math.random() * nodesInThisStage.length);
+                nodesInThisStage[randIndex].type = 'encounter';
+            }
+        }
+
+        nodesInThisStage.forEach(n => GAME_MAP.nodes.push(n));
+    }
+
+    // 2. BAĞLANTILARI OLUŞTUR
+    for (let stage = 0; stage < MAP_CONFIG.totalStages - 1; stage++) {
+        const currentNodes = GAME_MAP.nodes.filter(n => n.stage === stage);
+        const nextNodes = GAME_MAP.nodes.filter(n => n.stage === stage + 1);
+
+        currentNodes.forEach(current => {
+            nextNodes.forEach(next => {
+                const isNextChokepoint = (nextNodes.length === 1);
+                const isCurrentChokepoint = (currentNodes.length === 1);
+                
+                if (isNextChokepoint || isCurrentChokepoint || Math.abs(current.lane - next.lane) <= 1) {
+                    current.next.push(next.id);
+                    GAME_MAP.connections.push({ from: current.id, to: next.id });
+                }
+            });
+        });
+    }
+
+    renderMap();
+    const marker = document.getElementById('player-marker-container');
+    if(marker) marker.style.display = 'none';
+}
+
+function determineNodeType(stage) {
+    if (stage === MAP_CONFIG.totalStages - 1) return 'city';
+    if (stage === MAP_CONFIG.totalStages - 2) return 'boss';
+    if (MAP_CONFIG.townStages.includes(stage)) return 'town';
+    if (stage === 0) return 'start';
+
+    // Köy Çevresi Koruması
+    const isNextTown = MAP_CONFIG.townStages.includes(stage + 1);
+    const isPrevTown = MAP_CONFIG.townStages.includes(stage - 1);
+
+    const rand = Math.random();
+
+    if (isNextTown || isPrevTown) {
+        if (rand < 0.65) return 'encounter';
+        return 'choice';
+    } else {
+        if (rand < 0.55) return 'encounter'; 
+        if (rand < 0.85) return 'choice';    
+        return 'campfire';                   
+    }
+}
+
+function renderMap() {
+    const mapContent = document.getElementById('map-content');
+    
+    document.getElementById('current-node-name').textContent = "Maceraya Başla";
+    document.getElementById('map-description').textContent = "Haritadan bir başlangıç noktası seç.";
+
+    GAME_MAP.nodes.forEach(node => {
+        const btn = document.createElement('button');
+        btn.id = `node-${node.id}`;
+        btn.className = `map-node ${node.type}-node`;
+        
+        const baseLeft = (node.stage / (MAP_CONFIG.totalStages - 1)) * 92 + 4;
+        
+        let baseTop = 50;
+        if (node.lane === 0) baseTop = 15; 
+        if (node.lane === 1) baseTop = 50;
+        if (node.lane === 2) baseTop = 85; 
+
+        btn.style.left = `calc(${baseLeft}% + ${node.jitterX}px)`;
+        btn.style.top = `calc(${baseTop}% + ${node.jitterY}px)`; 
+
+        const img = document.createElement('img');
+        if (node.type === 'encounter') img.src = 'images/skull_icon.png';
+        else if (node.type === 'town') img.src = 'images/village_icon.png';
+        else if (node.type === 'campfire') img.src = 'images/campfire_icon.png';
+        else if (node.type === 'choice') img.src = 'images/choice_icon.png';
+        else if (node.type === 'boss') img.src = 'images/skull_icon.png';
+        else if (node.type === 'city') img.src = 'images/village_icon.png';
+        else if (node.type === 'start') img.src = 'images/skull_icon.png';
+        
+        btn.appendChild(img);
+        btn.onclick = () => handleNodeClick(node);
+        btn.disabled = true;
+
+        mapContent.appendChild(btn);
+    });
+
+    setTimeout(() => {
+        drawAllConnections();
+    }, 200);
+    
+    updateAvailableNodes();
+}
+
+// --- ÇİZGİ SİSTEMİ ---
+
+function drawAllConnections() {
+    clearTrails();
+
+    if (GAME_MAP.completedNodes && GAME_MAP.completedNodes.length > 1) {
+        for (let i = 0; i < GAME_MAP.completedNodes.length - 1; i++) {
+            const fromId = GAME_MAP.completedNodes[i];
+            const toId = GAME_MAP.completedNodes[i+1];
+            drawTrail(fromId, toId, 'permanent');
+        }
+    }
+
+    if (GAME_MAP.currentNodeId !== null) {
+        const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+        if (currentNode && currentNode.next) {
+            currentNode.next.forEach(nextId => {
+                drawTrail(currentNode.id, nextId, 'hint');
+            });
+        }
     }
 }
 
 function drawTrail(fromNodeId, toNodeId, type = 'permanent') {
     const fromEl = document.getElementById(`node-${fromNodeId}`);
     const toEl = document.getElementById(`node-${toNodeId}`);
+    const svgLayer = document.getElementById('map-trails-layer');
 
-    if (fromEl && toEl && mapTrailsLayer) {
-        const mapRect = mapDisplay.getBoundingClientRect();
-        const fromRect = fromEl.getBoundingClientRect();
-        const toRect = toEl.getBoundingClientRect();
-
-        if (mapRect.width === 0) return;
-
-        const x1 = ((fromRect.left - mapRect.left + fromRect.width / 2) / mapRect.width) * 100 + "%";
-        const y1 = ((fromRect.top - mapRect.top + fromRect.height / 2) / mapRect.height) * 100 + "%";
-        const x2 = ((toRect.left - mapRect.left + toRect.width / 2) / mapRect.width) * 100 + "%";
-        const y2 = ((toRect.top - mapRect.top + toRect.height / 2) / mapRect.height) * 100 + "%";
+    if (fromEl && toEl && svgLayer) {
+        const x1 = fromEl.offsetLeft + fromEl.offsetWidth / 2;
+        const y1 = fromEl.offsetTop + fromEl.offsetHeight / 2;
+        const x2 = toEl.offsetLeft + toEl.offsetWidth / 2;
+        const y2 = toEl.offsetTop + toEl.offsetHeight / 2;
 
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", x1);
@@ -51,168 +213,163 @@ function drawTrail(fromNodeId, toNodeId, type = 'permanent') {
         } else {
             line.setAttribute("class", "map-trail-line");
         }
-        
-        mapTrailsLayer.appendChild(line);
+        svgLayer.appendChild(line);
     }
-}
-
-function clearHintTrails() {
-    if (!mapTrailsLayer) return;
-    const hints = mapTrailsLayer.querySelectorAll('.map-path-hint');
-    hints.forEach(line => line.remove());
 }
 
 function clearTrails() {
-    if (mapTrailsLayer) {
-        mapTrailsLayer.innerHTML = '';
-    }
+    const layer = document.getElementById('map-trails-layer');
+    if(layer) layer.innerHTML = '';
 }
 
-function showAvailablePaths() {
-    clearHintTrails();
-    const currentNode = ACT_1_MAP.nodes[ACT_1_MAP.currentNodeId];
-    if (currentNode && currentNode.next) {
-        currentNode.next.forEach(nextId => {
-            drawTrail(ACT_1_MAP.currentNodeId, nextId, 'hint');
-        });
-    }
+// --- OYUNCU İLERLEME ---
+
+function handleNodeClick(node) {
+    GAME_MAP.currentNodeId = node.id;
+    GAME_MAP.completedNodes.push(node.id);
+
+    processMapEffects();
+    drawAllConnections();
+
+    const typeNames = {
+        'start': 'Başlangıç', 'encounter': 'Düşman', 'town': 'Köy',
+        'campfire': 'Kamp', 'choice': 'Olay', 'boss': 'BOSS', 'city': 'Şehir'
+    };
+    document.getElementById('current-node-name').textContent = `Aşama ${node.stage + 1}: ${typeNames[node.type]}`;
+    document.getElementById('map-description').textContent = "İlerleniyor...";
+
+    movePlayerMarkerToNode(node.id);
+    updateAvailableNodes();
+    triggerNodeAction(node);
 }
 
-function updateMapScreen() {
-    const currentNode = ACT_1_MAP.nodes[ACT_1_MAP.currentNodeId];
-    document.getElementById('current-node-name').textContent = `#${ACT_1_MAP.currentNodeId}: ${currentNode.type.toUpperCase()}`;
-    document.getElementById('map-description').textContent = currentNode.text;
-    mapActionButtons.innerHTML = '';
-
-    const nodeButtons = mapDisplay.querySelectorAll('.map-node');
-    nodeButtons.forEach(button => {
-        const id = parseInt(button.id.split('-')[1]);
-        button.disabled = true; button.classList.remove('available'); button.onclick = null;
-        if (currentNode.next && currentNode.next.includes(id)) { 
-            button.disabled = false; 
-            button.classList.add('available'); 
-            button.onclick = () => advanceMap(id); 
-        }
-    });
-    showAvailablePaths();
-
-    if (currentNode.type === 'town') {
-        const restButton = document.createElement('button');
-        restButton.innerHTML = '<i class="fas fa-bed"></i> Köyde Dinlen (Full HP)';
-        restButton.onclick = () => {
-            hero.hp = hero.maxHp; hero.rage = hero.maxRage; 
-            writeLog(`Köyde dinlendin.`); updateStats();
-            restButton.disabled = true; restButton.textContent = "Dinlenildi";
-        };
-        mapActionButtons.appendChild(restButton);
-    }
-}
-
-function checkCurrentNodeAction() {
-    const currentNode = ACT_1_MAP.nodes[ACT_1_MAP.currentNodeId];
-    if (currentNode.type === 'encounter') {
-        startBattle(currentNode.enemy); 
-    } else if (currentNode.type === 'campfire') {
-        startCampfireEvent();
-    } else if (currentNode.type === 'choice') {
-        triggerRandomEvent();
-    } else if (currentNode.type === 'town') {
-        updateMapScreen();
-    }
-}
-
-// --- KRİTİK DÜZELTME BURADA: advanceMap ---
-function advanceMap(nextNodeId) {
-    const allNodes = document.querySelectorAll('.map-node');
-    allNodes.forEach(btn => btn.disabled = true);
-
-    clearHintTrails();
-    const previousNodeId = ACT_1_MAP.currentNodeId;
-    drawTrail(previousNodeId, nextNodeId, 'permanent');
-    
-    ACT_1_MAP.currentNodeId = nextNodeId;
-    
-    // DÜZELTME: Savaş İçi Buffları Temizle AMA 'waitForCombat' Olanları Koru!
-    // Eğer bunu yapmazsak, Event'ten aldığımız buff savaşa giderken yolda silinir.
-    hero.statusEffects = hero.statusEffects.filter(e => e.id.startsWith('map_') || e.waitForCombat === true);
-    
-    updateStats(); 
-
-    // --- MAP EFFECTS GÜNCELLEME ---
+function processMapEffects() {
     if (hero.mapEffects.length > 0) {
         hero.mapEffects.forEach(e => e.nodesLeft--);
-        
-        // Süresi Bitenleri Bul (< 0 ise bitmiştir)
         const expired = hero.mapEffects.filter(e => e.nodesLeft < 0);
-        
         expired.forEach(e => {
-            writeLog(`Harita Etkisi Bitti: ${e.name}`);
+            writeLog(`ℹ️ Harita Etkisi Bitti: ${e.name}`);
             if (e.id === 'map_hp_boost') {
                 hero.maxHp -= e.val;
-                hero.hp = Math.max(1, hero.hp - 30);
+                hero.hp = Math.max(1, hero.hp - 30); 
                 writeLog("Adrenalin etkisi geçti. (-30 HP).");
-                updateStats();
             }
         });
-
-        // Listeyi temizle (0 olanlar kalsın, -1 olanlar gitsin)
         hero.mapEffects = hero.mapEffects.filter(e => e.nodesLeft >= 0);
+        updateStats(); 
     }
+}
 
-    movePlayerMarkerToNode(nextNodeId, false);
+function movePlayerMarkerToNode(nodeId, isInstant = false) {
+    const nodeElement = document.getElementById(`node-${nodeId}`);
+    const markerContainer = document.getElementById('player-marker-container');
+    const mapDisplay = document.getElementById('map-display');
+
+    if (nodeElement && markerContainer) {
+        markerContainer.style.display = 'block';
+        
+        const leftPos = nodeElement.offsetLeft + (nodeElement.offsetWidth / 2) - (markerContainer.offsetWidth / 2);
+        const topPos = nodeElement.offsetTop + (nodeElement.offsetHeight / 2) - (markerContainer.offsetHeight / 2);
+        
+        if (isInstant) markerContainer.style.transition = 'none';
+        else markerContainer.style.transition = 'left 0.5s, top 0.5s';
+        
+        markerContainer.style.left = `${leftPos}px`;
+        markerContainer.style.top = `${topPos}px`;
+
+        if (isInstant) setTimeout(() => { markerContainer.style.transition = 'left 0.5s, top 0.5s'; }, 50);
+
+        const scrollTarget = leftPos - (mapDisplay.clientWidth / 2);
+        mapDisplay.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+    }
+}
+
+function updateAvailableNodes() {
+    const allBtns = document.querySelectorAll('.map-node');
+    allBtns.forEach(b => {
+        b.disabled = true; 
+        b.classList.remove('available');
+    });
+
+    if (GAME_MAP.currentNodeId === null) {
+        GAME_MAP.nodes.filter(n => n.stage === 0).forEach(node => {
+            const btn = document.getElementById(`node-${node.id}`);
+            if(btn) { btn.disabled = false; btn.classList.add('available'); }
+        });
+    } else {
+        const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+        if (currentNode) {
+            currentNode.next.forEach(nextId => {
+                const btn = document.getElementById(`node-${nextId}`);
+                if(btn) { btn.disabled = false; btn.classList.add('available'); }
+            });
+            const currentBtn = document.getElementById(`node-${currentNode.id}`);
+            if(currentBtn) currentBtn.classList.add('visited');
+        }
+    }
+}
+
+// --- AKSİYONLAR ---
+
+function triggerNodeAction(node) {
     setTimeout(() => {
-        checkCurrentNodeAction();
-    }, 500); 
+        if (node.type === 'encounter' || node.type === 'start') {
+             const enemy = RANDOM_ENEMY_POOL[Math.floor(Math.random() * RANDOM_ENEMY_POOL.length)];
+             document.getElementById('map-description').textContent = `Vahşi bir ${enemy} belirdi!`;
+             startBattle(enemy);
+        } else if (node.type === 'town') {
+            document.getElementById('map-description').textContent = "Güvenli bölge.";
+            enterTown();
+        } else if (node.type === 'campfire') {
+            document.getElementById('map-description').textContent = "Dinlen ve güçlen.";
+            // YENİ: Node bilgisini gönderiyoruz
+            startCampfireEvent(node);
+        } else if (node.type === 'choice') {
+            document.getElementById('map-description').textContent = "Karşına bir şey çıktı.";
+            triggerRandomEvent();
+        } else if (node.type === 'boss') {
+            document.getElementById('map-description').textContent = "BÖLÜM SONU CANAVARI!";
+            startBattle("Goblin Şefi");
+        } else if (node.type === 'city') {
+            alert("TEBRİKLER! Zindandan sağ salim çıktın.");
+        }
+    }, 600);
 }
 
-function randomizeMap() {
-    const nodesToRandomize = [2, 3, 4, 5, 6, 7, 8, 9];
-    let contentDeck = [];
-    contentDeck.push({ type: 'campfire', text: "Yol kenarında sönmüş bir ateş buldun." });
-    contentDeck.push({ type: 'choice', text: "Gizemli bir geçit görüyorsun." });
-    contentDeck.push({ type: 'choice', text: "Tuhaf bir anıt taşı." });
-    
-    while (contentDeck.length < nodesToRandomize.length) {
-        const randEnemy = RANDOM_ENEMY_POOL[Math.floor(Math.random() * RANDOM_ENEMY_POOL.length)];
-        contentDeck.push({ type: 'encounter', enemy: randEnemy, text: `Vahşi bir ${randEnemy} yolunu kesti!` });
+// -- EKRAN FONKSİYONLARI --
+
+function enterTown() {
+    switchScreen(townScreen);
+    writeLog("🏰 Köye giriş yaptın.");
+    if(btnLeaveTown) {
+        btnLeaveTown.onclick = () => {
+            writeLog("Köyden ayrıldın.");
+            switchScreen(mapScreen);
+        };
     }
-
-    for (let i = contentDeck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [contentDeck[i], contentDeck[j]] = [contentDeck[j], contentDeck[i]];
-    }
-
-    nodesToRandomize.forEach((nodeId, index) => {
-        const content = contentDeck[index];
-        const node = ACT_1_MAP.nodes[nodeId];
-        if (!node) return;
-        
-        node.type = content.type; node.text = content.text;
-        if (content.type === 'encounter') node.enemy = content.enemy; else delete node.enemy;
-    });
-    updateMapIcons();
-}
-
-function updateMapIcons() {
-    const nodesToUpdate = [2, 3, 4, 5, 6, 7, 8, 9];
-    nodesToUpdate.forEach(nodeId => {
-        const nodeData = ACT_1_MAP.nodes[nodeId];
-        const btn = document.getElementById(`node-${nodeId}`);
-        if (!nodeData || !btn) return;
-        
-        const img = btn.querySelector('img');
-        btn.className = 'map-node';
-        if (nodeData.type === 'encounter') { btn.classList.add('encounter-node'); img.src = 'images/skull_icon.png'; }
-        else if (nodeData.type === 'campfire') { btn.classList.add('campfire-node'); img.src = 'images/campfire_icon.png'; }
-        else if (nodeData.type === 'choice') { btn.classList.add('choice-node'); img.src = 'images/choice_icon.png'; }
+    const buildings = document.querySelectorAll('.town-building');
+    buildings.forEach(building => {
+        building.onclick = () => {
+            const buildingName = building.getAttribute('data-name');
+            handleBuildingClick(building.id, buildingName);
+        };
     });
 }
 
-function startCampfireEvent() {
+function handleBuildingClick(buildingId, buildingName) {
+    writeLog(`🏛️ ${buildingName} binasına tıkladın.`);
+    if (buildingId === 'building-inn') {
+        if (hero.gold >= 10) {
+            // Logic
+        }
+    }
+}
+
+// --- GÜNCELLENMİŞ KAMP SİSTEMİ (CEZALI) ---
+function startCampfireEvent(node) {
     const screen = document.getElementById('campfire-screen');
     const optionsDiv = document.getElementById('campfire-options');
     const resultDiv = document.getElementById('campfire-result');
-
     switchScreen(screen);
     if(optionsDiv) { optionsDiv.classList.remove('hidden'); optionsDiv.style.display = 'flex'; }
     if(resultDiv) resultDiv.classList.add('hidden');
@@ -221,29 +378,55 @@ function startCampfireEvent() {
     const btnTrain = document.getElementById('btn-camp-train');
     const btnCont = document.getElementById('btn-camp-continue');
 
-    // Event Listener temizleme ve yeniden atama
-    btnRest.onclick = null; btnTrain.onclick = null; btnCont.onclick = null;
+    // --- CEZA KONTROLÜ ---
+    let efficiency = 1.0;
+    let penaltyText = "";
+
+    // Eğer son kamp yapılan stage ile şu anki stage farkı 1 veya daha azsa (peş peşe)
+    // hero.lastCampfireStage'i ilk seferde undefined olabilir, kontrol et.
+    if (typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
+        efficiency = 0.3; // %30 Verim
+        penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin, savaşmaktan bu kadar mı korkuyorsun? (%30 Etki)</span>";
+    }
+
+    // Bu kampı kaydet
+    hero.lastCampfireStage = node.stage;
 
     btnRest.onclick = () => {
-        let healAmount = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
-        const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
-        updateStats(); showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${hero.hp - oldHp} HP** kazandın.`);
+        // Base: 15-21 veya 21-45 arası (Şanslı/Normal)
+        let baseHeal = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
+        
+        // Verimlilik uygula
+        let finalHeal = Math.floor(baseHeal * efficiency);
+        if(finalHeal < 1) finalHeal = 1;
+
+        const oldHp = hero.hp; 
+        hero.hp = Math.min(hero.maxHp, hero.hp + finalHeal);
+        
+        updateStats(); 
+        showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${finalHeal} HP** kazandın.${penaltyText}`);
     };
 
     btnTrain.onclick = () => {
-        let xpGain = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
-        gainXP(xpGain); updateStats(); showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${xpGain} XP** kazandın!`);
+        // Base: 100-200 veya 200-1000 arası
+        let baseXp = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
+        
+        // Verimlilik uygula
+        let finalXp = Math.floor(baseXp * efficiency);
+        if(finalXp < 1) finalXp = 1;
+
+        gainXP(finalXp); 
+        updateStats(); 
+        showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${finalXp} XP** kazandın!${penaltyText}`);
     };
 
-    btnCont.onclick = () => { 
-        switchScreen(mapScreen); 
-        updateMapScreen(); 
-    };
+    btnCont.onclick = () => switchScreen(mapScreen);
 }
 
 function showCampfireResult(title, text) {
     document.getElementById('campfire-options').style.display = 'none';
-    document.getElementById('campfire-result').classList.remove('hidden');
+    const res = document.getElementById('campfire-result');
+    res.classList.remove('hidden');
     document.getElementById('campfire-result-title').textContent = title;
     document.getElementById('campfire-result-text').innerHTML = text;
 }
@@ -252,61 +435,34 @@ function triggerRandomEvent() {
     const eScreen = document.getElementById('event-screen');
     const eContainer = document.getElementById('event-choices-container');
     if (!eContainer) return;
-
     switchScreen(eScreen);
     eContainer.innerHTML = ''; 
-
-    if (typeof EVENT_POOL === 'undefined') return;
-    
     const evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-    
     document.getElementById('event-title').textContent = evt.title;
     document.getElementById('event-desc').textContent = evt.desc;
 
-    const btn1 = document.createElement('button');
-    btn1.className = 'event-btn';
-    btn1.innerHTML = `<span class="choice-title">${evt.option1.text}</span>
-                      <span class="choice-detail">${evt.option1.buff}</span>
-                      <span class="choice-detail">${evt.option1.debuff}</span>`;
-    btn1.onclick = () => {
-        evt.option1.action(hero);
-        updateStats();
-        writeLog(`Seçim yapıldı: ${evt.option1.text}`);
-        switchScreen(mapScreen); 
-        updateMapScreen();
+    const createBtn = (opt) => {
+        const btn = document.createElement('button');
+        btn.className = 'event-btn';
+        btn.innerHTML = `<span class="choice-title">${opt.text}</span>
+                         <span class="choice-detail">${opt.buff}</span>
+                         <span class="choice-detail">${opt.debuff}</span>`;
+        btn.onclick = () => { opt.action(hero); updateStats(); writeLog(`Seçim: ${opt.text}`); switchScreen(mapScreen); };
+        eContainer.appendChild(btn);
     };
-    eContainer.appendChild(btn1);
-
-    const btn2 = document.createElement('button');
-    btn2.className = 'event-btn';
-
-    let isFleeOption = false;
+    
+    createBtn(evt.option1);
+    
     if (evt.type === 'permanent' && Math.random() < 0.30) {
-        isFleeOption = true;
-    }
-
-    if (isFleeOption) {
-        btn2.innerHTML = `<span class="choice-title">Korkup Kaç</span>
-                          <span class="choice-detail">Hiçbir şey yapma</span>
-                          <span class="choice-detail debuff">-10 HP Kaybet</span>`;
-        btn2.onclick = () => {
-            hero.hp = Math.max(1, hero.hp - 10);
-            updateStats();
-            writeLog(`Korkup kaçtın (-10 HP).`);
-            switchScreen(mapScreen); 
-            updateMapScreen();
+        const fleeBtn = document.createElement('button');
+        fleeBtn.className = 'event-btn';
+        fleeBtn.innerHTML = `<span class="choice-title">Korkup Kaç</span><span class="choice-detail debuff">-10 HP</span>`;
+        fleeBtn.onclick = () => {
+            hero.hp = Math.max(1, hero.hp - 10); updateStats();
+            writeLog("Kaçtın (-10 HP)."); switchScreen(mapScreen);
         };
+        eContainer.appendChild(fleeBtn);
     } else {
-        btn2.innerHTML = `<span class="choice-title">${evt.option2.text}</span>
-                          <span class="choice-detail">${evt.option2.buff}</span>
-                          <span class="choice-detail">${evt.option2.debuff}</span>`;
-        btn2.onclick = () => {
-            evt.option2.action(hero);
-            updateStats();
-            writeLog(`Seçim yapıldı: ${evt.option2.text}`);
-            switchScreen(mapScreen); 
-            updateMapScreen();
-        };
+        createBtn(evt.option2);
     }
-    eContainer.appendChild(btn2);
 }

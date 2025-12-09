@@ -1,68 +1,60 @@
-// skills.js
+// skills.js - BALANCED VERSION
 
 const SKILL_DATABASE = {
     
-    // --- 1. CEHENNEM KILICI (BUFFLARLA UYUMLU) ---
-    hell_blade: {
+    // --- COMMON (GENEL) ---
+    
+    // SLASH: Temel Rage harcayıcı. Normal vuruştan güçlü.
+    slash: {
         data: {
-            name: "Cehennem Kılıcı",
-            description: "Riskli ateş saldırısı.",
-            menuDescription: "Kılıcını cehennem ateşiyle kaplar. 40 Öfke harcar.<br>Hasar: <b style='color:orange'>(0.8 x STR)</b> + Büyü Hasarı.<br><span style='color:#ff4d4d'>%15 Kritik Şansı</span>.",
-            rageCost: 40,
+            name: "Kesik",
+            description: "Hızlı bir kılıç darbesi.",
+            menuDescription: "Temel saldırı. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>1.5 x STR</b> + Base ATK.",
+            rageCost: 15,
             levelReq: 1,
-            icon: 'icon_hell_blade.png',
-            type: 'attack'
+            icon: 'icon_slash.png',
+            type: 'attack',
+            category: 'common', 
+            tier: 1
         },
         onCast: function(attacker, defender) {
-            // 1. Temel Hasar Hesabı
-            const strBonus = Math.floor((hero.str || 0) * 0.8);
-            const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
-            let rawDamage = 0;
-
-            if (Math.random() < 0.15) {
-                const critBase = Math.floor(Math.random() * (65 - 45 + 1)) + 45;
-                rawDamage = critBase + strBonus;
-                writeLog(`⭐ **KRİTİK VURUŞ!** Alevler parladı!`);
-            } else {
-                const normalBase = Math.floor(Math.random() * (25 - 15 + 1)) + 15;
-                rawDamage = normalBase + strBonus;
-            }
+            // Formül: 1.5 * STR + BaseATK (20 civarı)
+            const stats = getHeroEffectiveStats();
+            const strBonus = Math.floor(stats.str * 1.5);
+            // Hasar aralığı: STR + 20-25
+            const damage = Math.floor(Math.random() * 6) + 20 + strBonus;
             
-            // YENİ: Buff ve Debuffları Uygula (applyDamageModifiers combat_manager'dan gelir)
-            if (typeof applyDamageModifiers === 'function') {
-                rawDamage = applyDamageModifiers(rawDamage);
-            }
-
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
-            animateCustomAttack(rawDamage, fullPathFrames, this.data.name);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
         }
     },
 
-    // --- 2. KÜÇÜK İYİLEŞME ---
+    // MINOR HEALING: Güvenilir küçük iyileştirme.
     minor_healing: {
         data: {
             name: "Küçük İyileşme",
             description: "Az miktarda can yeniler.",
-            menuDescription: "Büyülü bir sargı bezi kullanır. 15 Öfke harcar. <br><span style='color:#43FF64'>%40 Şansla Güçlü</span> (5-15 HP), <span style='color:#ffff00'>%60 Şansla Zayıf</span> (1-5 HP) iyileştirme yapar.",
-            rageCost: 15,
+            menuDescription: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).",
+            rageCost: 20,
             levelReq: 1,
             icon: 'icon_minor_healing.png',
-            type: 'defense'
+            type: 'defense',
+            category: 'common', 
+            tier: 1
         },
         onCast: function(attacker, defender) {
-            const minHeal = 1; const maxHeal = 15; const weakThreshold = 5; const weakChance = 0.60;
-            let healAmount = 0;
-            if (Math.random() < weakChance) {
-                healAmount = Math.floor(Math.random() * (weakThreshold - minHeal + 1)) + minHeal;
-            } else {
-                healAmount = Math.floor(Math.random() * (maxHeal - weakThreshold)) + weakThreshold + 1;
-            }
+            // Formül: 15 + 0.5 * INT
+            const healAmount = 15 + Math.floor((hero.int || 0) * 0.5);
+            
             const oldHp = hero.hp;
             hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
             const actualHeal = hero.hp - oldHp;
+            
             updateStats(); 
             if (actualHeal > 0) {
-                showFloatingText(heroDisplayContainer, actualHeal, 'heal');
+                showFloatingText(document.getElementById('hero-display'), actualHeal, 'heal');
                 animateHealingParticles();
                 writeLog(`💚 **${this.data.name}**: ${actualHeal} HP iyileşti.`);
                 setTimeout(() => { nextTurn(); }, 1500); 
@@ -73,56 +65,165 @@ const SKILL_DATABASE = {
         }
     },
 
-    // --- 3. YENİLENME ---
-    restore_healing: {
+    // BATTLE CRY: Patlayıcı güç için hazırlık.
+    battle_cry: {
         data: {
-            name: "Yenilenme",
-            description: "Zamanla can yeniler. (3 Tur Bekleme)",
-            menuDescription: "Vücudun doğal iyileşmesini hızlandırır. <b style='color:orange'>Seviye 3 Gerekir.</b><br><span style='color:#43FF64'>2-3 Tur boyunca Heal</span><br><span style='color:#ff4d4d'>%20 Şansla:</span> Yüksek heal ama sonraki tur <b style='color:yellow'>SERSEM</b> olursun.<br><b style='color:cyan'>Kullandıktan sonra 3 tur beklenmeli.</b>",
-            rageCost: 25,
-            levelReq: 3,
-            icon: 'restore_healing.png',
-            type: 'defense'
+            name: "Savaş Çığlığı",
+            description: "Gücünü topla!",
+            menuDescription: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>.<br><span style='color:yellow'>Bekleme: 4 Tur</span>",
+            rageCost: 20,
+            levelReq: 2,
+            icon: 'icon_battle_cry.png',
+            type: 'buff',
+            category: 'common', 
+            tier: 2
         },
         onCast: function(attacker, defender) {
-            const roll = Math.random();
-            let turns = 0; let minVal = 0; let maxVal = 0;
-            let effectName = ""; let isDizzy = false;
+            // Yüzde hesabı: Mevcut STR'nin %40'ı kadar bonus ekle
+            const bonusStr = Math.floor(hero.str * 0.40);
 
-            if (roll < 0.20) { 
-                turns = 3; minVal = 1; maxVal = 5; effectName = "Hafif Yenilenme";
-                writeLog(`✨ Büyü zayıf tuttu. (3 Tur / 1-5 HP)`);
-            } else if (roll < 0.50) { 
-                turns = 3; minVal = 6; maxVal = 10; effectName = "Yenilenme";
-                writeLog(`✨ Büyü başarılı. (3 Tur / 6-10 HP)`);
-            } else if (roll < 0.80) { 
-                turns = 2; minVal = 11; maxVal = 15; effectName = "Güçlü Yenilenme";
-                writeLog(`✨ Büyü çok güçlü! (2 Tur / 11-15 HP)`);
-            } else { 
-                turns = 2; minVal = 16; maxVal = 20; effectName = "Aşırı Yükleme";
-                isDizzy = true;
-                writeLog(`⚡ **AŞIRI YÜKLEME!** (2 Tur / 16-20 HP) ama başın dönüyor...`);
-            }
+            hero.statusEffects.push({ 
+                id: 'str_up', 
+                name: 'Savaş Çığlığı', 
+                turns: 3, 
+                value: bonusStr,
+                waitForCombat: false,
+                resetOnCombatEnd: true 
+            });
 
-            // Regen
-            hero.statusEffects.push({ id: 'regen', name: effectName, turns: turns, min: minVal, max: maxVal });
-
-            // COOLDOWN
             hero.statusEffects.push({ 
                 id: 'block_skill', 
                 name: 'Soğuma', 
+                blockedSkill: 'battle_cry', 
+                turns: 4, 
+                maxTurns: 4,
+                resetOnCombatEnd: true 
+            });
+            
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), `+${bonusStr} STR`, 'heal');
+            writeLog(`📢 **${this.data.name}**: STR ${bonusStr} arttı!`);
+            
+            setTimeout(() => { nextTurn(); }, 1000); 
+        }
+    },
+
+    // ARMOR BREAK: Tank katili.
+    armor_break: {
+        data: {
+            name: "Zırh Kıran",
+            description: "Savunmayı yok sayar.",
+            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b>.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
+            rageCost: 30,
+            levelReq: 2,
+            icon: 'icon_armor_break.png',
+            type: 'attack',
+            category: 'common', 
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            // Cooldown
+            hero.statusEffects.push({ 
+                id: 'block_skill', 
+                name: 'Soğuma', 
+                blockedSkill: 'armor_break',
                 turns: 3, 
-                maxTurns: 3, 
-                blockedSkill: 'restore_healing' 
+                maxTurns: 3,
+                resetOnCombatEnd: true 
             });
 
-            // Dizzy
-            if (isDizzy) {
-                hero.statusEffects.push({ id: 'stun', name: 'Sersem', turns: 1 });
+            // Defans Kırma Etkisi (Hero'ya ekleniyor, combat_manager kontrol edecek)
+            hero.statusEffects.push({
+                id: 'ignore_def',
+                name: 'Zırh Kırıldı',
+                turns: 2,
+                waitForCombat: false,
+                resetOnCombatEnd: true
+            });
+
+            const stats = getHeroEffectiveStats();
+            const strBonus = Math.floor(stats.str * 1.2);
+            // Defans 0 kabul edilecek (ignore_def sayesinde)
+            const damage = 10 + strBonus;
+
+            const animFrames = ['barbarian_attack3.png']; 
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
+            writeLog(`🔨 **${this.data.name}**: Zırh parçalandı!`);
+        }
+    },
+
+    // --- CLASS SKILLS (ATTACK) ---
+    
+    // HELL BLADE: Yüksek risk, yüksek ödül.
+    hell_blade: {
+        data: {
+            name: "Cehennem Kılıcı",
+            description: "Canını feda edip vur.",
+            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>2.2 x STR</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
+            rageCost: 25,
+            levelReq: 1,
+            icon: 'icon_hell_blade.png',
+            type: 'attack',
+            category: 'attack', 
+            tier: 1
+        },
+        onCast: function(attacker, defender) {
+            // Bedel ödeme (%10 HP)
+            const hpCost = Math.floor(hero.hp * 0.10);
+            hero.hp = Math.max(1, hero.hp - hpCost); // Ölmez, 1 can kalır en az
+            showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
+
+            const stats = getHeroEffectiveStats();
+            const strBonus = Math.floor(stats.str * 2.2);
+            const damage = 25 + strBonus;
+
+            const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            // Kritik Şansı (%20)
+            let finalDmg = damage;
+            if (Math.random() < 0.20) {
+                finalDmg = Math.floor(damage * 1.5);
+                writeLog(`🔥 **KRİTİK!** Cehennem ateşi parladı!`);
             }
 
-            animateHealingParticles(); 
-            updateStats();
+            animateCustomAttack(finalDmg, fullPathFrames, this.data.name);
+        }
+    },
+
+    // --- CLASS SKILLS (PASSION) ---
+
+    // RESTORE HEALING: Boss savaşları için HOT (Heal Over Time).
+    restore_healing: {
+        data: {
+            name: "Yenilenme",
+            description: "Zamanla can yeniler.",
+            menuDescription: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.<br><span style='color:yellow'>Bekleme: 5 Tur</span>.",
+            rageCost: 50,
+            levelReq: 3,
+            icon: 'restore_healing.png',
+            type: 'defense',
+            category: 'passion', 
+            tier: 3
+        },
+        onCast: function(attacker, defender) {
+            // Anlık Heal
+            const initialHeal = 30;
+            const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
+            const actualHeal = hero.hp - oldHp;
+            
+            if (actualHeal > 0) showFloatingText(document.getElementById('hero-display'), actualHeal, 'heal');
+
+            // Regen Etkisi
+            hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
+            
+            // Cooldown
+            hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', turns: 5, maxTurns: 5, blockedSkill: 'restore_healing', resetOnCombatEnd: true });
+
+            animateHealingParticles(); updateStats();
+            writeLog(`✨ **${this.data.name}**: Yenilenme başladı.`);
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
