@@ -9,7 +9,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Kesik",
             description: "Hızlı bir kılıç darbesi.",
-            menuDescription: "Temel saldırı. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>1.5 x STR</b> + Base ATK.",
+            menuDescription: "Temel saldırı. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b> + 10.",
             rageCost: 15,
             levelReq: 1,
             icon: 'icon_slash.png',
@@ -18,11 +18,10 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-            // Formül: 1.5 * STR + BaseATK (20 civarı)
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 1.5);
-            // Hasar aralığı: STR + 20-25
-            const damage = Math.floor(Math.random() * 6) + 20 + strBonus;
+            // 15 STR ile: (18) + 10 = 28 Hasar.
+            const strBonus = Math.floor(stats.str * 1.2);
+            const damage = Math.floor(Math.random() * 4) + 10 + strBonus;
             
             const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
@@ -113,7 +112,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Zırh Kıran",
             description: "Savunmayı yok sayar.",
-            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b>.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
+            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>0.8 x STR</b>.<br><span style='color:cyan'>Defans Yok Sayar</span>.",
             rageCost: 30,
             levelReq: 2,
             icon: 'icon_armor_break.png',
@@ -142,9 +141,9 @@ const SKILL_DATABASE = {
             });
 
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 1.2);
-            // Defans 0 kabul edilecek (ignore_def sayesinde)
-            const damage = 10 + strBonus;
+            // 15 STR ile: 12 Hasar (Ama defans 0 olduğu için net girer)
+            const strBonus = Math.floor(stats.str * 0.8);
+            const damage = 5 + strBonus; // Base hasarı çok düşük
 
             const animFrames = ['barbarian_attack3.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
@@ -161,7 +160,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Cehennem Kılıcı",
             description: "Canını feda edip vur.",
-            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>2.2 x STR</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
+            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>1.8 x STR</b> + 15.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_hell_blade.png',
@@ -176,8 +175,9 @@ const SKILL_DATABASE = {
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
 
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 2.2);
-            const damage = 25 + strBonus;
+            // 15 STR ile: (27) + 15 = 42 Hasar. (Slash'ten %50 daha güçlü)
+            const strBonus = Math.floor(stats.str * 1.8);
+            const damage = 15 + strBonus;
 
             const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);

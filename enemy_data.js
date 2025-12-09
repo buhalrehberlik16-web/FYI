@@ -3,7 +3,7 @@
 const ENEMY_STATS = {
     // --- TIER 1 (Çerezler - Düşük HP, Hızlı Ölüm) ---
     "Zehirli Mantar": { 
-        maxHp: 50, attack: 10, defense: 0, xp: 40, 
+        maxHp: 40, attack: 10, defense: 0, xp: 40, 
         idle: 'zehirli_mantar.png',
         attackFrames: ['zehirli_mantar_attack1.png', 'zehirli_mantar_attack2.png', 'zehirli_mantar_attack3.png'],
         dead: 'zehirli_mantar_dead.png'
@@ -49,7 +49,7 @@ const ENEMY_STATS = {
         dead: 'goblin_savascisi_dead.png'
     },
     "Kaya Golemi": { 
-        maxHp: 250, attack: 14, defense: 20, xp: 180, // Armor Break olmadan zor
+        maxHp: 180, attack: 14, defense: 8, xp: 180, // Armor Break olmadan zor
         idle: 'kaya_golemi.png',
         attackFrames: ['kaya_golemi_attack1.png', 'kaya_golemi_attack2.png', 'kaya_golemi_attack3.png', 'kaya_golemi_attack4.png'],
         dead: 'kaya_golemi_dead.png'

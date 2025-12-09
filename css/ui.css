@@ -575,3 +575,48 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
         background-color: rgba(0,0,0,0.6);
     }
 }
+#top-nav-menu {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav-btn {
+    background: linear-gradient(to bottom, #4a3b2a, #2b2218);
+    border: 1px solid #7c6843;
+    color: #f0e68c;
+    padding: 5px 12px;
+    font-size: 0.85em;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 0 #1a150e;
+    transition: all 0.1s;
+    height: 30px; /* Sabit yükseklik */
+}
+
+.nav-btn:hover {
+    background: linear-gradient(to bottom, #5d4a35, #3e3221);
+    border-color: #f0e68c;
+    transform: translateY(-1px);
+}
+
+.nav-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+/* --- MOBİL UYUM (Sadece İkon Göster, Yazıyı Gizle) --- */
+@media (max-width: 600px) {
+    .nav-text {
+        display: none; /* Mobilde (K) ve (U) yazılarını gizle */
+    }
+    .nav-btn {
+        padding: 5px 10px; /* Sadece ikon kalsın */
+    }
+    #top-nav-menu {
+        gap: 5px;
+    }
+}

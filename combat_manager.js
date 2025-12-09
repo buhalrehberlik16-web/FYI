@@ -127,10 +127,7 @@ function calculateDamage(attacker, defender) {
         const stats = getHeroEffectiveStats();
         
         // NORMAL SALDIRI DENGESİ:
-        // Normal saldırı (Sol tık) artık STR'den çok az etkileniyor.
-        // Amaç: Rage kasmak, hasar vurmak değil.
-        // Formül: Base ATK (20) + (STR * 0.2)
-        rawDamage = stats.atk + Math.floor(stats.str * 0.2);
+        rawDamage = 8 + Math.floor(stats.str * 0.5);
 
         const instaKill = hero.statusEffects.find(e => e.id === 'insta_kill' && !e.waitForCombat);
         if (instaKill) return 9999;
