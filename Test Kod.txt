@@ -1,0 +1,3 @@
+// Test Broşu Ekleme Kodu
+hero.brooches[0] = { name: "Yakut Broş", type: "brooch", icon: "icon_slash.png" }; // Geçici ikon
+renderInventory();

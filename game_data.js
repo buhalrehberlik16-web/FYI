@@ -237,7 +237,28 @@ const EVENT_POOL = [
         }
     }
 ];
-const RANDOM_ENEMY_POOL = ["Goblin Devriyesi", "Yaban Domuzu", "Goblin Savaşçısı", "Zehirli Mantar", "Orman Örümceği", "Kaçak Haydut", "Kurt Sürüsü", "Kaya Golemi"];
+const TIER_1_ENEMIES = [
+    "Zehirli Mantar", 
+    "Orman Örümceği", 
+    "Hırsız Kobold",
+    "Kan Yarasası"
+];
+
+const TIER_2_ENEMIES = [
+    "Goblin Devriyesi", 
+    "Kaçak Haydut", 
+    "Vahşi Kurtlar"
+];
+
+const TIER_3_ENEMIES = [
+    "Yaban Domuzu", 
+    "Goblin Savaşçısı", 
+    "Kaya Golemi",
+];
+const TIER_4_ENEMIES = [
+	"Orc Fedaisi"
+	
+];	
 const MAP_CONFIG = {
     totalStages: 15, // Toplam sütun sayısı (Soldan sağa uzunluk)
     lanes: 3,        // Satır sayısı (Yukarıdan aşağı genişlik)

@@ -314,9 +314,12 @@ function updateAvailableNodes() {
 function triggerNodeAction(node) {
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
-             const enemy = RANDOM_ENEMY_POOL[Math.floor(Math.random() * RANDOM_ENEMY_POOL.length)];
+             // YENİ: Düşmanı stage'e göre seç
+             const enemy = getEnemyForStage(node.stage);
+             
              document.getElementById('map-description').textContent = `Vahşi bir ${enemy} belirdi!`;
              startBattle(enemy);
+
         } else if (node.type === 'town') {
             document.getElementById('map-description').textContent = "Güvenli bölge.";
             enterTown();
@@ -330,6 +333,38 @@ function triggerNodeAction(node) {
             alert("TEBRİKLER! Zindandan sağ salim çıktın.");
         }
     }, 600);
+}
+
+// --- YENİ YARDIMCI FONKSİYON: Aşamalı Düşman Seçimi ---
+function getEnemyForStage(stage) {
+    const rand = Math.random();
+    let selectedPool = [];
+
+    // MAP_CONFIG.townStages genelde [4, 8, 12]
+    const town1 = MAP_CONFIG.townStages[0]; // 4
+    const town2 = MAP_CONFIG.townStages[1]; // 8
+
+    if (stage <= town1) {
+        // BÖLGE 1 (Başlangıç -> 1. Köy)
+        // %80 Tier 1, %20 Tier 2
+        if (rand < 0.80) selectedPool = TIER_1_ENEMIES;
+        else selectedPool = TIER_2_ENEMIES;
+
+    } else if (stage <= town2) {
+        // BÖLGE 2 (1. Köy -> 2. Köy)
+        // %80 Tier 2, %20 Tier 3
+        if (rand < 0.80) selectedPool = TIER_2_ENEMIES;
+        else selectedPool = TIER_3_ENEMIES;
+
+    } else {
+        // BÖLGE 3 (2. Köy -> Son)
+        // %100 Tier 3 (Zorluk artsın)
+        // İstersen buraya %10 ihtimalle Tier 2 koyup "nefes aldırma" yapabilirsin.
+        selectedPool = TIER_3_ENEMIES;
+    }
+
+    // Havuzdan rastgele birini seç
+    return selectedPool[Math.floor(Math.random() * selectedPool.length)];
 }
 
 // -- EKRAN FONKSİYONLARI --
