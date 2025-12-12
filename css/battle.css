@@ -16,13 +16,29 @@
 }
 
 #action-bar {
-    display: flex; align-items: center; gap: 20px; 
-    padding: 10px 25px;
-    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    
+    /* Boyutlandırma önemli */
+    width: auto;
+    min-width: 500px; /* Minimum genişlik verelim */
+    
+    /* Arka Plan */
+    background-color: rgba(20, 20, 20, 0.9);
     border: 2px solid #6b5c3b;
-    border-radius: 10px;
+    border-radius: 12px;
+    
+    padding: 15px 30px;
+    
+    /* Efektler */
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.9);
     backdrop-filter: blur(5px);
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    
+    /* Üstte olduğundan emin ol */
+    position: relative;
+    z-index: 10;
 }
 
 /* Saldır/Savun Buton Grubu */
@@ -32,23 +48,45 @@
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
 }
 
-/* Dikey Ayırıcı Çizgi */
-.separator { width: 2px; height: 50px; background-color: #444; border-right: 1px solid #222; }
+/* Ortadaki Ayırıcı Çizgi */
+.separator {
+    width: 2px;
+    height: 60px; /* Slotlar kadar yüksek olsun */
+    background: linear-gradient(to bottom, transparent, #6b5c3b, transparent); /* Üstten alta sönen çizgi */
+    border: none;
+    opacity: 0.8;
+}
 
 /* --- SKILL BAR (SLOTLAR) --- */
 #skill-bar-container { display: flex; gap: 10px; }
 
 .skill-slot {
-    position: relative; /* Tooltip için gerekli */
-    width: 60px; height: 60px;
-    background-color: #222; border: 2px solid #555; border-radius: 6px;
-    cursor: pointer; transition: all 0.2s; box-shadow: inset 0 0 10px #000;
-    display: flex; justify-content: center; align-items: center;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background-color: #111;
+    border: 2px solid #444;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: inset 0 0 10px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Resim taşmasın */
 }
 
-.skill-slot img { width: 100%; height: 100%; border-radius: 4px; object-fit: cover; }
+.skill-slot:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    border-color: #f0e68c;
+}
 
-.skill-slot:hover { border-color: #f0e68c; box-shadow: 0 0 10px #f0e68c; transform: translateY(-2px); }
+.skill-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 
 /* Yetersiz Rage (Disabled) */
 .skill-slot.disabled { filter: grayscale(100%); cursor: not-allowed; opacity: 0.6; border-color: #444; }
@@ -152,4 +190,58 @@
         width: 55px; /* Mobilde parmak için ideal boyut */
         height: 55px;
     }
+}
+/* Sol Taraf: Temel Yetenekler Grubu */
+.basic-skills-container {
+    display: flex;
+    gap: 15px; /* İki ikon arası boşluk */
+}
+
+/* Temel Slotlar (Bronz/Altın Çerçeve) */
+.basic-slot {
+    border-color: #a08060; /* Bronz rengi */
+}
+
+.basic-slot:hover {
+    border-color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px #ffd700;
+}
+
+/* Disable durumu (Grayscale) */
+.skill-slot.disabled {
+    filter: grayscale(100%) opacity(0.6);
+    cursor: not-allowed;
+    border-color: #444;
+}
+#turn-counter-box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #6b5c3b;
+    border-radius: 8px;
+    padding: 5px 20px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+}
+
+.turn-label {
+    font-size: 0.8em;
+    color: #aaa;
+    letter-spacing: 2px;
+    margin-bottom: -5px;
+}
+
+#turn-count-display {
+    font-size: 2em;
+    font-weight: bold;
+    color: #f0e68c;
+    text-shadow: 0 0 10px orange;
 }

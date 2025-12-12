@@ -620,3 +620,192 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
         gap: 5px;
     }
 }
+#inventory-screen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Arka planı hafif karart */
+    z-index: 400; /* En üstte olsun */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#inventory-screen.hidden { display: none; }
+
+.inventory-window {
+    width: 400px; /* Kompakt yapı */
+    background: #1a1a1a;
+    border: 2px solid #6b5c3b;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    color: #c0c0c0;
+    font-family: 'Georgia', serif;
+}
+
+.inventory-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px solid #444; padding-bottom: 5px; margin-bottom: 10px;
+}
+.inventory-header h3 { margin: 0; color: #f0e68c; font-size: 1.1em; }
+
+/* İçerik Düzeni (Yan Yana) */
+.inventory-content {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+/* Sol Panel (Karakter) */
+.paper-doll-left {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.char-preview-box {
+    width: 240px; height: 360px;
+    background: transparent; border: 1px dashed #444;
+    display: flex; justify-content: center; align-items: flex-end;
+    overflow: hidden;
+	margin-bottom: 10px;
+	padding: 5px;
+	box-sizing: border-box;
+}
+.char-preview-box img { width: 100%; height: 100%; 
+object-fit: cover; 
+object-position: center bottom;
+pointer-events: none; }
+
+.inventory-gold-display {
+    background: #222; border: 1px solid #444;
+    padding: 5px 10px; border-radius: 4px; width: 100%; box-sizing: border-box;
+    text-align: center; color: gold; font-weight: bold;
+}
+
+/* Sağ Panel (Slotlar) */
+.paper-doll-right {
+    display: flex; flex-direction: column; gap: 12px; justify-content: center;
+}
+.equip-row {
+    display: flex; justify-content: center; gap: 15px;
+}
+
+/* Slot Tasarımı */
+.item-slot {
+    width: 50px; height: 50px;
+    background-color: #2b2b2b;
+    border: 1px solid #555;
+    box-shadow: inset 0 0 5px #000;
+    cursor: pointer;
+    display: flex; justify-content: center; align-items: center;
+    transition: border-color 0.2s;
+}
+.item-slot:hover { border-color: #f0e68c; }
+.item-slot img { width: 42px; height: 42px; pointer-events: none; }
+
+/* Slot Arka Plan Placeholderları (İsteğe bağlı CSS ile ikon ekleme) */
+.equip-slot[data-slot^="earring"] { background-image: url('data:image/svg+xml;utf8,<svg ...>...</svg>'); /* İleride ikon konabilir */ }
+
+/* Çanta Alanı */
+.bag-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 sütun */
+    grid-template-rows: repeat(2, 1fr);    /* 2 satır */
+    gap: 8px;
+    justify-content: center;
+    padding: 10px;
+    background: #111;
+    border: 1px inset #444;
+}
+/* --- SLOT ARKA PLAN İKONLARI (PLACEHOLDERS) --- */
+
+/* Tüm slotlar için ortak ayar: Silik gri ikon, ortalanmış */
+.equip-slot {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%; /* İkon slotun %60'ı kadar olsun */
+    background-color: #222; /* Slotun kendi rengi */
+}
+
+/* 1. KÜPE (Earring) - Damla Şekli */
+.equip-slot[data-slot^="earring"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M12 22c4.97 0 9-4.03 9-9c0-4.97-9-13-9-13S3 8.03 3 13c0 4.97 4.03 9 9 9z'/%3E%3Ccircle cx='12' cy='10' r='2' fill='%23333'/%3E%3C/svg%3E");
+}
+
+/* 2. KOLYE (Necklace) - Zincir Şekli */
+.equip-slot[data-slot="necklace"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpath d='M8 4v2a2 2 0 002 2h4a2 2 0 002-2V4' /%3E%3Cpath d='M12 14l-3 4h6l-3-4z' fill='%23555' stroke='none'/%3E%3Ccircle cx='12' cy='13' r='5' stroke='%23555'/%3E%3C/svg%3E");
+}
+
+/* 3. KEMER (Belt) - Dikdörtgen Şekli */
+.equip-slot[data-slot="belt"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23555'%3E%3Cpath d='M4 10h16v4H4z'/%3E%3Cpath d='M10 9h4v6h-4z' fill='%23333'/%3E%3C/svg%3E");
+}
+
+/* 4. YÜZÜK (Ring) - Halka Şekli */
+.equip-slot[data-slot^="ring"] {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='3'%3E%3Ccircle cx='12' cy='12' r='7' /%3E%3Cpath d='M12 5v-2' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Eşya takıldığında (içinde img varsa) arka plan ikonunu biraz daha silik yap veya gizle */
+.equip-slot:not(:empty) {
+    background-image: none !important; /* İtem resmi gelince arkadaki ikonu kaldır */
+}
+/* Broş Konteyneri (Izgara) */
+.brooch-overlay {
+    position: absolute;
+    /* Karakterin göğüs hizası (Ayarlaman gerekebilir) */
+    top: 32%; 
+    
+    /* Yatayda tam ortala */
+    left: 45.8%;
+    transform: translateX(-42%);
+    
+    /* Grid Yapısı (3 sütun, 2 satır) */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2px; /* Slotlar arası minik boşluk */
+    
+    z-index: 10; /* Resmin üstünde dursun */
+    
+    /* Genişlik sınırı (Kollara taşmaması için) */
+    width: 82px; 
+}
+
+/* Broş Slotları (Küçük Kareler) */
+.brooch-slot {
+    width: 25px;  /* Normal slotlardan küçük (18px) */
+    height: 25px;
+    
+    background-color: rgba(0, 0, 0, 0.4); /* Yarı saydam siyah */
+    border: 1px solid #6b5c3b; /* Altınımsı çerçeve */
+    border-radius: 4px; /* Hafif yuvarlak */
+    
+    box-shadow: inset 0 0 5px #000;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.brooch-slot:hover {
+    border-color: #ffd700;
+    background-color: rgba(255, 215, 0, 0.3);
+	transform: scale(1.1);
+	z-index:20;
+}
+
+/* Broş Slotu içindeki resim */
+.brooch-slot img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+/* Boş Broş Slotu (İsteğe bağlı minik bir nokta koyabiliriz) */
+.brooch-slot:empty::after {
+    content: '+';
+    color: #888;
+    font-size: 14px; /* Font büyütüldü */
+    line-height: 1;
+    opacity: 0.5;
+}
