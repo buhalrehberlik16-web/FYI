@@ -63,8 +63,8 @@ function writeLog(message) { console.log("[Oyun]: " + message.replace(/<[^>]*>?/
 
 // --- UI GÜNCELLEMELERİ ---
 function updateGoldUI() {
-    const goldSpan = document.getElementById('gold-display');
-    if(goldSpan) goldSpan.textContent = hero.gold;
+    const invGoldText = document.getElementById('inv-gold-text');
+    if(invGoldText) invGoldText.textContent = hero.gold;
     const topName = document.getElementById('top-hero-name');
     const topLevel = document.getElementById('top-hero-level');
     if(topName) topName.textContent = hero.playerName;
@@ -207,14 +207,17 @@ function toggleSkillBook() {
 function setSkillTab(tab) {
     currentTab = tab;
     const btnCommon = document.getElementById('tab-common');
-    const btnAttack = document.getElementById('tab-attack'); 
-    const btnPassion = document.getElementById('tab-passion');
+    const btnBrutal = document.getElementById('tab-brutal');
+    const btnChaos = document.getElementById('tab-chaos');
+    const btnFervor = document.getElementById('tab-fervor');
     if(btnCommon) btnCommon.classList.remove('active');
-    if(btnAttack) btnAttack.classList.remove('active');
-    if(btnPassion) btnPassion.classList.remove('active');
+    if(btnBrutal) btnBrutal.classList.remove('active');
+    if(btnChaos) btnChaos.classList.remove('active');
+    if(btnFervor) btnFervor.classList.remove('active');
     if (tab === 'common' && btnCommon) btnCommon.classList.add('active');
-    if (tab === 'attack' && btnAttack) btnAttack.classList.add('active');
-    if (tab === 'passion' && btnPassion) btnPassion.classList.add('active');
+    if (tab === 'brutal' && btnBrutal) btnBrutal.classList.add('active');
+    if (tab === 'chaos' && btnChaos) btnChaos.classList.add('active');
+    if (tab === 'fervor' && btnFervor) btnFervor.classList.add('active');
     renderSkillBookList();
 }
 function renderSkillBookList() {
@@ -328,17 +331,130 @@ function updateStatScreen() {
         plusButtons.forEach(btn => btn.classList.add('hidden'));
     }
 }
+// Envanteri Aç/Kapa
+function toggleInventory() {
+    if (inventoryScreen.classList.contains('hidden')) {
+        inventoryScreen.classList.remove('hidden');
+        renderInventory(); // Açılırken içeriği güncelle
+    } else {
+        inventoryScreen.classList.add('hidden');
+    }
+}
+
+// Envanter İçeriğini Çiz
+function renderInventory() {
+    // 1. Altın ve Karakter
+    document.getElementById('inv-gold-text').textContent = hero.gold;
+    // Karakter resmi zaten statik veya hero durumuna göre değişebilir
+
+    // 2. Ekipmanlar (Sağ Taraf)
+    for (const [slotName, item] of Object.entries(hero.equipment)) {
+        const slotEl = document.querySelector(`.equip-slot[data-slot="${slotName}"]`);
+        if (slotEl) {
+            slotEl.innerHTML = ''; // Temizle
+            if (item) {
+                // Item varsa resmini koy
+                const img = document.createElement('img');
+                img.src = `images/${item.icon}`; // item.icon olmalı
+                slotEl.appendChild(img);
+                // Tooltip eklenebilir
+                slotEl.title = item.name; 
+            } else {
+                slotEl.title = "Boş";
+            }
+        }
+    }
+
+    // 3. Çanta (Alt Taraf)
+    const bagSlots = document.querySelectorAll('.bag-slot');
+    bagSlots.forEach((slot, index) => {
+        slot.innerHTML = ''; // Temizle
+        const item = hero.inventory[index];
+        
+        if (item) {
+            const img = document.createElement('img');
+            img.src = `images/${item.icon}`;
+            slot.appendChild(img);
+            slot.title = item.name;
+            
+            // Tıklama ile giyme (Equip) mantığı eklenebilir
+            slot.onclick = () => {
+                equipItem(index);
+            };
+        } else {
+            slot.onclick = null;
+            slot.title = "";
+        }
+    });
+	const broochSlots = document.querySelectorAll('.brooch-slot');
+    broochSlots.forEach((slot, index) => {
+        slot.innerHTML = ''; // Temizle
+        const item = hero.brooches[index];
+        
+        if (item) {
+            const img = document.createElement('img');
+            img.src = `images/${item.icon}`;
+            slot.appendChild(img);
+            slot.title = item.name;
+            
+            // Broş çıkarma veya değiştirme mantığı buraya eklenebilir
+            // slot.onclick = () => unequipBrooch(index);
+        } else {
+            slot.title = "Boş Broş Yuvası";
+            slot.onclick = null;
+        }
+    });
+}
+
+// Basit Giyme Fonksiyonu (Logic dosyasına taşınabilir ama şimdilik burada dursun)
+function equipItem(inventoryIndex) {
+    const item = hero.inventory[inventoryIndex];
+    if (!item) return;
+
+    // Hangi slota gidecek? (Örn: item.type = 'ring')
+    let targetSlot = null;
+
+    if (item.type === 'earring') {
+        if (!hero.equipment.earring1) targetSlot = 'earring1';
+        else if (!hero.equipment.earring2) targetSlot = 'earring2';
+        else targetSlot = 'earring1'; // İkisi de doluysa ilkiyle değiştir
+    } else if (item.type === 'ring') {
+        if (!hero.equipment.ring1) targetSlot = 'ring1';
+        else if (!hero.equipment.ring2) targetSlot = 'ring2';
+        else targetSlot = 'ring1';
+    } else {
+        // Necklace, Belt gibi tekil slotlar
+        targetSlot = item.type; 
+    }
+
+    if (targetSlot) {
+        // Değiş tokuş
+        const oldItem = hero.equipment[targetSlot];
+        hero.equipment[targetSlot] = item;
+        hero.inventory[inventoryIndex] = oldItem; // Eskiyi çantaya koy (veya null)
+        
+        // Statları güncelle (Basitçe)
+        // Burada stat hesaplama fonksiyonunu çağırmak gerekir
+        renderInventory();
+        updateStats(); // UI güncelle
+        writeLog(`🎒 ${item.name} kuşandın.`);
+    }
+}
 
 // EVENTS
 document.addEventListener('DOMContentLoaded', () => {
     if(btnCloseSkillBook) btnCloseSkillBook.addEventListener('click', toggleSkillBook);
     const btnCommon = document.getElementById('tab-common');
-    const btnAttack = document.getElementById('tab-attack');
-    const btnPassion = document.getElementById('tab-passion');
+    const btnBrutal = document.getElementById('tab-brutal');
+    const btnChaos = document.getElementById('tab-chaos');
+    const btnFervor = document.getElementById('tab-fervor');
+	const btnOpenInv = document.getElementById('btn-open-inventory');
     if(btnCommon) btnCommon.addEventListener('click', () => setSkillTab('common'));
-    if(btnAttack) btnAttack.addEventListener('click', () => setSkillTab('attack'));
-    if(btnPassion) btnPassion.addEventListener('click', () => setSkillTab('passion'));
+    if(btnBrutal) btnBrutal.addEventListener('click', () => setSkillTab('brutal'));
+    if(btnChaos) btnChaos.addEventListener('click', () => setSkillTab('chaos'));
+    if(btnFervor) btnFervor.addEventListener('click', () => setSkillTab('fervor'));
     if(btnCloseStat) btnCloseStat.addEventListener('click', toggleStatScreen);
     if(btnOpenSkills) btnOpenSkills.addEventListener('click', toggleSkillBook);
     if(btnOpenStats) btnOpenStats.addEventListener('click', toggleStatScreen);
+    if(btnOpenInv) btnOpenInv.addEventListener('click', toggleInventory);
 });

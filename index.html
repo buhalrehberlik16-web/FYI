@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPG Oyun Denemesi</title>
 
     <!-- CSS MODÜLLERİ -->
@@ -30,11 +30,10 @@
         <button id="btn-open-stats" class="nav-btn" title="Karakter Statları (U)">
             <i class="fas fa-user"></i> <span class="nav-text">Stat (U)</span>
         </button>
+		<button id="btn-open-inventory" class="nav-btn" title="Envanter (I)">
+    <i class="fas fa-briefcase"></i> <span class="nav-text">Çanta (I)</span>
+</button>
     </div>
-            <div class="top-info-item gold-container">
-                <i class="fas fa-coins" style="color: gold;"></i> 
-                <span id="gold-display">0</span>
-            </div>
         </div>
 
         <div id="main-screen-area">
@@ -77,6 +76,11 @@
 
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
+					<div id="turn-counter-box">
+					<span class="turn-label">TUR</span>
+					<span id="turn-count-display">1</span>
+				</div>
+
                 <div id="arena">
                     <div id="hero-display" class="character-display">
                         <div id="hero-hp-overlay" class="hp-overlay-container">
@@ -102,14 +106,30 @@
                 </div>
                 
                 <div id="battle-controls">
-                    <div id="action-bar">
-                        <div class="basic-actions">
-                            <button id="attack-button"><i class="fas fa-sword"></i> Saldır</button>
-                            <button id="defend-button">Savun</button>
-                        </div>
-                        <div class="separator"></div>
-                        <div id="skill-bar-container"></div>
-                    </div>
+				<div id="action-bar">
+                     <!-- SOL TARAFTAKİ TEMEL YETENEKLER (2 SLOT) -->
+    <div class="basic-skills-container">
+        <!-- Temel Saldırı -->
+        <div id="btn-basic-attack" class="skill-slot basic-slot" title="Saldır">
+            <img src="images/icon_attack.png" alt="Saldır">
+            <!-- Sol üstte küçük ipucu (Opsiyonel) -->
+            <span class="key-hint">A</span> 
+        </div>
+        
+        <!-- Temel Savunma -->
+        <div id="btn-basic-defend" class="skill-slot basic-slot" title="Savun">
+            <img src="images/icon_defend.png" alt="Savun">
+            <span class="key-hint">D</span>
+        </div>
+    </div>
+
+    <!-- Dikey Çizgi Ayırıcı -->
+    <div class="separator"></div>
+
+    <!-- SAĞ TARAFTAKİ ÖZEL YETENEKLER (4 SLOT) -->
+    <!-- Bu kısım JS ile (initializeSkillButtons) dolduruluyor -->
+    <div id="skill-bar-container"></div>
+</div>
                 </div>
             </div>
 
@@ -172,8 +192,9 @@
 
                     <div class="skill-tabs">
                         <button id="tab-common" class="tab-btn active">GENEL (Common)</button>
-                        <button id="tab-attack" class="tab-btn">SALDIRI (Attack)</button>
-                        <button id="tab-passion" class="tab-btn">TUTKU (Passion)</button>
+                        <button id="tab-brutal" class="tab-btn">VAHŞET (Brutal)</button>
+						<button id="tab-chaos" class="tab-btn">KAOS (Chaos)</button>
+						<button id="tab-fervor" class="tab-btn">COŞKU (Fervor)</button>
                     </div>
 
                     <div class="skill-list-container">
@@ -287,6 +308,79 @@
                 <button id="btn-leave-town" class="town-exit-btn">Maceraya Dön</button>
             </div>
             <!-- KÖY EKRANI BİTİŞİ -->
+			<!-- 12. ENVANTER (INVENTORY) EKRANI -->
+<div id="inventory-screen" class="hidden">
+    <div class="inventory-window">
+        <div class="inventory-header">
+            <h3>ENVANTER</h3>
+            <button id="btn-close-inventory" class="close-btn">X</button>
+        </div>
+
+        <div class="inventory-content">
+            <!-- SOL TARA: Karakter ve Para -->
+            <div class="paper-doll-left">
+                <div class="char-preview-box">
+                    <img src="images/barbarianinventory.png" alt="Karakter" id="inv-char-img">
+					<!-- YENİ: Broş Slotları (Görselin Üzerine Binecek) -->
+        <div class="brooch-overlay">
+            <!-- Üst Sıra (3 Slot) -->
+            <div class="item-slot brooch-slot" data-brooch-index="0"></div>
+            <div class="item-slot brooch-slot" data-brooch-index="1"></div>
+            <div class="item-slot brooch-slot" data-brooch-index="2"></div>
+            
+            <!-- Alt Sıra (3 Slot) -->
+            <div class="item-slot brooch-slot" data-brooch-index="3"></div>
+            <div class="item-slot brooch-slot" data-brooch-index="4"></div>
+            <div class="item-slot brooch-slot" data-brooch-index="5"></div>
+                </div>
+			</div>
+                <div class="inventory-gold-display">
+                    <i class="fas fa-coins" style="color:gold;"></i> 
+                    <span id="inv-gold-text">0</span>
+                </div>
+            </div>
+
+            <!-- SAĞ TARAF: Ekipman Slotları -->
+            <div class="paper-doll-right">
+                <!-- 1. Satır: Küpeler -->
+                <div class="equip-row">
+                    <div class="item-slot equip-slot" data-slot="earring1" title="Küpe"></div>
+                    <div class="item-slot equip-slot" data-slot="earring2" title="Küpe"></div>
+                </div>
+                <!-- 2. Satır: Kolye -->
+                <div class="equip-row">
+                    <div class="item-slot equip-slot" data-slot="necklace" title="Kolye"></div>
+                </div>
+                <!-- 3. Satır: Yüzükler -->
+                <div class="equip-row">
+                    <div class="item-slot equip-slot" data-slot="ring1" title="Yüzük"></div>
+                    <div class="item-slot equip-slot" data-slot="ring2" title="Yüzük"></div>
+                </div>
+                <!-- 4. Satır: Kemer -->
+                <div class="equip-row">
+                    <div class="item-slot equip-slot" data-slot="belt" title="Kemer"></div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border-color: #444; width: 90%; margin: 10px auto;">
+
+        <!-- ALT KISIM: Çanta (8 Slot) -->
+        <div class="inventory-bag-area">
+            <div class="bag-grid">
+                <!-- JS ile doldurulacak veya statik 8 slot -->
+                <div class="item-slot bag-slot" data-index="0"></div>
+                <div class="item-slot bag-slot" data-index="1"></div>
+                <div class="item-slot bag-slot" data-index="2"></div>
+                <div class="item-slot bag-slot" data-index="3"></div>
+                <div class="item-slot bag-slot" data-index="4"></div>
+                <div class="item-slot bag-slot" data-index="5"></div>
+                <div class="item-slot bag-slot" data-index="6"></div>
+                <div class="item-slot bag-slot" data-index="7"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
         </div>
         <div id="fade-overlay"></div>

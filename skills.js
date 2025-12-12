@@ -1,36 +1,12 @@
-// skills.js - BALANCED VERSION
+// skills.js - 4 SEKME YAPISI (COMMON, BRUTAL, CHAOS, FERVOR)
 
 const SKILL_DATABASE = {
     
-    // --- COMMON (GENEL) ---
+    // ======================================================
+    // TAB: COMMON (GENEL)
+    // ======================================================
     
-    // SLASH: Temel Rage harcayıcı. Normal vuruştan güçlü.
-    slash: {
-        data: {
-            name: "Kesik",
-            description: "Hızlı bir kılıç darbesi.",
-            menuDescription: "Temel saldırı. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b> + 10.",
-            rageCost: 15,
-            levelReq: 1,
-            icon: 'icon_slash.png',
-            type: 'attack',
-            category: 'common', 
-            tier: 1
-        },
-        onCast: function(attacker, defender) {
-            const stats = getHeroEffectiveStats();
-            // 15 STR ile: (18) + 10 = 28 Hasar.
-            const strBonus = Math.floor(stats.str * 1.2);
-            const damage = Math.floor(Math.random() * 4) + 10 + strBonus;
-            
-            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
-            const fullPathFrames = animFrames.map(f => `images/${f}`);
-            
-            animateCustomAttack(damage, fullPathFrames, this.data.name);
-        }
-    },
-
-    // MINOR HEALING: Güvenilir küçük iyileştirme.
+    // MINOR HEALING: Küçük İyileşme
     minor_healing: {
         data: {
             name: "Küçük İyileşme",
@@ -40,13 +16,11 @@ const SKILL_DATABASE = {
             levelReq: 1,
             icon: 'icon_minor_healing.png',
             type: 'defense',
-            category: 'common', 
-            tier: 1
+            category: 'common', // Common'da kaldı
+            tier: 2
         },
         onCast: function(attacker, defender) {
-            // Formül: 15 + 0.5 * INT
             const healAmount = 15 + Math.floor((hero.int || 0) * 0.5);
-            
             const oldHp = hero.hp;
             hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
             const actualHeal = hero.hp - oldHp;
@@ -64,7 +38,7 @@ const SKILL_DATABASE = {
         }
     },
 
-    // BATTLE CRY: Patlayıcı güç için hazırlık.
+    // BATTLE CRY: Savaş Çığlığı (Buff)
     battle_cry: {
         data: {
             name: "Savaş Çığlığı",
@@ -74,11 +48,10 @@ const SKILL_DATABASE = {
             levelReq: 2,
             icon: 'icon_battle_cry.png',
             type: 'buff',
-            category: 'common', 
+            category: 'common', // Common'da kaldı
             tier: 2
         },
         onCast: function(attacker, defender) {
-            // Yüzde hesabı: Mevcut STR'nin %40'ı kadar bonus ekle
             const bonusStr = Math.floor(hero.str * 0.40);
 
             hero.statusEffects.push({ 
@@ -107,21 +80,20 @@ const SKILL_DATABASE = {
         }
     },
 
-    // ARMOR BREAK: Tank katili.
+    // ARMOR BREAK: Zırh Kıran (Debuff/Attack)
     armor_break: {
         data: {
             name: "Zırh Kıran",
             description: "Savunmayı yok sayar.",
-            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>0.8 x STR</b>.<br><span style='color:cyan'>Defans Yok Sayar</span>.",
+            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>0.8 x STR</b>.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
             rageCost: 30,
             levelReq: 2,
             icon: 'icon_armor_break.png',
             type: 'attack',
-            category: 'common', 
+            category: 'common', // Common'da kaldı
             tier: 2
         },
         onCast: function(attacker, defender) {
-            // Cooldown
             hero.statusEffects.push({ 
                 id: 'block_skill', 
                 name: 'Soğuma', 
@@ -131,7 +103,6 @@ const SKILL_DATABASE = {
                 resetOnCombatEnd: true 
             });
 
-            // Defans Kırma Etkisi (Hero'ya ekleniyor, combat_manager kontrol edecek)
             hero.statusEffects.push({
                 id: 'ignore_def',
                 name: 'Zırh Kırıldı',
@@ -141,9 +112,8 @@ const SKILL_DATABASE = {
             });
 
             const stats = getHeroEffectiveStats();
-            // 15 STR ile: 12 Hasar (Ama defans 0 olduğu için net girer)
             const strBonus = Math.floor(stats.str * 0.8);
-            const damage = 5 + strBonus; // Base hasarı çok düşük
+            const damage = 5 + strBonus;
 
             const animFrames = ['barbarian_attack3.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
@@ -153,36 +123,64 @@ const SKILL_DATABASE = {
         }
     },
 
-    // --- CLASS SKILLS (ATTACK) ---
-    
-    // HELL BLADE: Yüksek risk, yüksek ödül.
+    // ======================================================
+    // TAB: BRUTAL (VAHŞET)
+    // ======================================================
+   // SLASH
+    slash: {
+        data: {
+            name: "Kesik",
+            description: "Hızlı bir kılıç darbesi.",
+            menuDescription: "Temel saldırı. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b> + 10.",
+            rageCost: 15,
+            levelReq: 1,
+            icon: 'icon_slash.png',
+            type: 'attack',
+            category: 'brutal', 
+            tier: 1
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            const strBonus = Math.floor(stats.str * 1.2);
+            const damage = Math.floor(Math.random() * 4) + 10 + strBonus;
+            
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
+        }
+    },
+
+
+    // ======================================================
+    // TAB: CHAOS (KAOS)
+    // ======================================================
+
+    // HELL BLADE: Cehennem Kılıcı
     hell_blade: {
         data: {
             name: "Cehennem Kılıcı",
             description: "Canını feda edip vur.",
-            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>1.8 x STR</b> + 15.",
+            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>1.8 x STR</b> + 15.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_hell_blade.png',
             type: 'attack',
-            category: 'attack', 
+            category: 'chaos', // YENİ KATEGORİ
             tier: 1
         },
         onCast: function(attacker, defender) {
-            // Bedel ödeme (%10 HP)
             const hpCost = Math.floor(hero.hp * 0.10);
-            hero.hp = Math.max(1, hero.hp - hpCost); // Ölmez, 1 can kalır en az
+            hero.hp = Math.max(1, hero.hp - hpCost);
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
 
             const stats = getHeroEffectiveStats();
-            // 15 STR ile: (27) + 15 = 42 Hasar. (Slash'ten %50 daha güçlü)
             const strBonus = Math.floor(stats.str * 1.8);
             const damage = 15 + strBonus;
 
             const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             
-            // Kritik Şansı (%20)
             let finalDmg = damage;
             if (Math.random() < 0.20) {
                 finalDmg = Math.floor(damage * 1.5);
@@ -193,9 +191,11 @@ const SKILL_DATABASE = {
         }
     },
 
-    // --- CLASS SKILLS (PASSION) ---
+    // ======================================================
+    // TAB: FERVOR (COŞKU)
+    // ======================================================
 
-    // RESTORE HEALING: Boss savaşları için HOT (Heal Over Time).
+    // RESTORE HEALING: Yenilenme
     restore_healing: {
         data: {
             name: "Yenilenme",
@@ -205,21 +205,17 @@ const SKILL_DATABASE = {
             levelReq: 3,
             icon: 'restore_healing.png',
             type: 'defense',
-            category: 'passion', 
+            category: 'fervor', // YENİ KATEGORİ
             tier: 3
         },
         onCast: function(attacker, defender) {
-            // Anlık Heal
             const initialHeal = 30;
             const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
             const actualHeal = hero.hp - oldHp;
             
             if (actualHeal > 0) showFloatingText(document.getElementById('hero-display'), actualHeal, 'heal');
 
-            // Regen Etkisi
             hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
-            
-            // Cooldown
             hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', turns: 5, maxTurns: 5, blockedSkill: 'restore_healing', resetOnCombatEnd: true });
 
             animateHealingParticles(); updateStats();

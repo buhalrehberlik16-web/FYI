@@ -5,7 +5,7 @@ function levelUp() {
     
     hero.level++;
     hero.maxHp += 5; 
-    hero.hp = hero.maxHp; 
+    hero.hp = Math.min(hero.maxHp, hero.hp + 20); 
     hero.attack += 1; 
     hero.maxRage += 10;
     
@@ -51,6 +51,21 @@ function learnSkill(skillKey) {
         hero.unlockedSkills.push(skillKey);
         
         writeLog(`📖 Yeni Yetenek Öğrenildi: **${skill.data.name}**`);
+		 // --- YENİ EKLENEN: OTOMATİK KUŞANMA MANTIĞI ---
+        // Dizide 'null' (boş) olan ilk slotun indexini bul
+        const emptySlotIndex = hero.equippedSkills.indexOf(null);
+        
+        // Eğer boş yer varsa (-1 değilse)
+        if (emptySlotIndex !== -1) {
+            hero.equippedSkills[emptySlotIndex] = skillKey;
+            writeLog(`⚙️ **${skill.data.name}** otomatik olarak ${emptySlotIndex + 1}. slota yerleşti.`);
+            
+            // Skill Bar'ı (Savaş Ekranı) Güncelle
+            if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+            
+            // Skill Kitabı altındaki barı güncelle
+            if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+        }
         
         // Arayüzü yenile
         if (typeof renderSkillBookList === 'function') renderSkillBookList();
@@ -118,54 +133,131 @@ function startCutscene() {
     }, 1500);
 }
 
+// main.js - TAM SIFIRLAMA YAPAN initGame FONKSİYONU
+
 function initGame() {
-    hero.maxHp = 100; hero.attack = 20; hero.defense = 5;
-    hero.level = 1; hero.xp = 0; 
-    if (typeof FULL_XP_REQUIREMENTS !== 'undefined') hero.xpToNextLevel = FULL_XP_REQUIREMENTS[1]; else hero.xpToNextLevel = 100;
-    hero.hp = hero.maxHp; hero.maxRage = 100; hero.rage = 0; 
+    // 1. Temel Hero Statlarını Sıfırla
+    hero.maxHp = 100; 
+    hero.hp = hero.maxHp;
+    hero.attack = 20; 
+    hero.defense = 5;
+    hero.level = 1; 
+    hero.xp = 0; 
     
-    // Statlar
-    hero.str = 15; hero.dex = 10; hero.int = 5; hero.mp_pow = 0; hero.vit = 10;
+    // XP Tablosu kontrolü
+    if (typeof FULL_XP_REQUIREMENTS !== 'undefined') {
+        hero.xpToNextLevel = FULL_XP_REQUIREMENTS[1]; 
+    } else {
+        hero.xpToNextLevel = 100;
+    }
+
+    hero.maxRage = 100; 
+    hero.rage = 0; 
+    hero.gold = 0; 
+
+    // 2. Stat Puanlarını Sıfırla
     hero.statPoints = 0;
-    hero.gold = 0;
+    hero.str = 15; 
+    hero.dex = 10; 
+    hero.int = 5; 
+    hero.mp_pow = 0; 
+    hero.vit = 10;
+
+    // 3. Skill Sistemini Sıfırla
+    hero.skillPoints = 0;
+    hero.unlockedSkills = []; 
+    hero.equippedSkills = [null, null, null, null];
+    
+    // 4. Durum Efektlerini Temizle
     hero.statusEffects = []; 
     hero.mapEffects = []; 
+
+    // 5. Envanteri Sıfırla
+    hero.inventory = new Array(8).fill(null);
+    hero.equipment = {
+        earring1: null, earring2: null,
+        necklace: null, belt: null,
+        ring1: null, ring2: null
+    };
+
+    // 6. Geçmiş Verileri Temizle
+    // Son kamp yapılan stage bilgisini sil
+    delete hero.lastCampfireStage; 
+
+    // 7. Harita Verisini Derinlemesine Sıfırla
+    GAME_MAP.nodes = [];
+    GAME_MAP.connections = [];
+    GAME_MAP.currentNodeId = null; // KRİTİK: Oyuncunun konumunu boşa çıkar
+    GAME_MAP.completedNodes = [];
+
+    // 8. Görsel Harita Elementlerini Sıfırla (SORUNU ÇÖZEN KISIM)
+    const marker = document.getElementById('player-marker-container');
+    if (marker) {
+        marker.style.transition = 'none';
+		marker.style.display = 'none'; // Gizle
+        marker.style.left = '10px';    // Sol kenardan biraz içeride başlasın
+        marker.style.top = '50%';      // Dikeyde tam ortada dursun (Sol Üst yerine)
+    }
     
-    // GÜNCEL BAŞLANGIÇ
-    hero.skillPoints = 0;
-    hero.unlockedSkills = ['slash', 'minor_healing']; // Sadece bunlar açık
-    hero.equippedSkills = ['slash', 'minor_healing', null, null];
+    const mapDisplay = document.getElementById('map-display');
+    if (mapDisplay) {
+        mapDisplay.scrollLeft = 0; // Scroll'u en başa al
+    }
 
-// YENİ:
-GAME_MAP.currentNodeId = null; // Başlangıçta null
-generateMap(); // Haritayı üret ve çiz
-
+    // 9. Savaş Durumunu Sıfırla
     isHeroDefending = false;
     monster = null;
+    isHeroTurn = true; 
 
-    writeLog("--- Oyun Başlatıldı ---");
-    heroDisplayImg.src = HERO_IDLE_SRC;
+    // 10. Yeni Harita Üret
+    if (typeof generateMap === 'function') generateMap(); 
+
+    // 11. Arayüzü Güncelle
+    writeLog("--- Yeni Oyun Başlatıldı ---");
+    const heroImg = document.querySelector('#hero-display img');
+    if(heroImg) heroImg.src = HERO_IDLE_SRC;
     
     updateStats();
     if(typeof updateGoldUI === 'function') updateGoldUI();
+    
+    // Envanter ekranı açıksa orayı da güncelle
+    if(typeof renderInventory === 'function') renderInventory();
 }
 
 // EVENT LISTENERS
-attackButton.addEventListener('click', () => { if (isHeroTurn) handleAttackSequence(hero, monster); });
+// 1. TEMEL SALDIRI (BASIC ATTACK)
+if (btnBasicAttack) {
+    btnBasicAttack.addEventListener('click', () => {
+        // Class kontrolü: Eğer 'disabled' sınıfı varsa tıklama çalışma
+        if (isHeroTurn && !btnBasicAttack.classList.contains('disabled')) {
+            handleAttackSequence(hero, monster);
+        }
+    });
+}
 
-defendButton.addEventListener('click', () => {
-    if (isHeroTurn) {
-        const minBonus = 5; const maxBonus = 25;
-        heroDefenseBonus = Math.floor(Math.random() * (maxBonus - minBonus + 1)) + minBonus;
-        isHeroDefending = true; 
-		hero.rage = Math.min(hero.maxRage, hero.rage + 15); //Def basınca 15 Rage
-        updateStats();
-        writeLog(`🛡️ **${hero.name}** savunma pozisyonu aldı (+${heroDefenseBonus} Def).`);
-        nextTurn();
-    }
-});
+// 2. TEMEL SAVUNMA (BASIC DEFEND)
+if (btnBasicDefend) {
+    btnBasicDefend.addEventListener('click', () => {
+        // Class kontrolü: Eğer 'disabled' sınıfı varsa tıklama çalışma
+        if (isHeroTurn && !btnBasicDefend.classList.contains('disabled')) {
+            const minBonus = 5; const maxBonus = 25;
+            heroDefenseBonus = Math.floor(Math.random() * (maxBonus - minBonus + 1)) + minBonus;
+            isHeroDefending = true; 
+            
+            // Rage Kazancı
+            hero.rage = Math.min(hero.maxRage, hero.rage + 5);
+            updateStats();
+
+            writeLog(`🛡️ **${hero.name}** savunma pozisyonu aldı (+${heroDefenseBonus} Def, +15 Rage).`);
+            nextTurn();
+        }
+    });
+}
 
 document.addEventListener('keydown', (e) => {
+	if (startScreen.classList.contains('active') || cutsceneScreen.classList.contains('active')) {
+    return;
+	}
     const key = e.key.toLowerCase();
     if (battleScreen.classList.contains('active') && isHeroTurn) {
         const slots = document.querySelectorAll('.skill-slot');
@@ -174,6 +266,7 @@ document.addEventListener('keydown', (e) => {
         if (key === '3' && slots[2]) slots[2].click();
         if (key === '4' && slots[3]) slots[3].click();
     }
+	if (key === 'ı') {toggleInventory(); }
     if (key === 'k') { if (typeof toggleSkillBook === 'function') toggleSkillBook(); }
     if (key === 'u') { if (typeof toggleStatScreen === 'function') toggleStatScreen(); }
 });
@@ -188,4 +281,5 @@ returnToMenuButton.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     initGame(); 
     switchScreen(startScreen); 
+	if(btnCloseInventory) btnCloseInventory.addEventListener('click', toggleInventory);
 });

@@ -1,8 +1,8 @@
 // game_data.js
 
 // DOM REFERANSLARI
-const attackButton = document.getElementById('attack-button');
-const defendButton = document.getElementById('defend-button');
+const btnBasicAttack = document.getElementById('btn-basic-attack');
+const btnBasicDefend = document.getElementById('btn-basic-defend');
 const heroHpBar = document.getElementById('hero-hp-bar');
 const monsterHpBar = document.getElementById('monster-hp-bar');
 const heroHpText = document.getElementById('hero-hp-text');
@@ -13,6 +13,11 @@ const heroRageBar = document.getElementById('hero-rage-bar');
 const heroRageText = document.getElementById('hero-rage-text');
 const townScreen = document.getElementById('town-screen');
 const btnLeaveTown = document.getElementById('btn-leave-town');
+// Envanter
+const inventoryScreen = document.getElementById('inventory-screen');
+const btnCloseInventory = document.getElementById('btn-close-inventory');
+// Nav butonu için (Eğer eklemediysen)
+const btnOpenInventoryNav = document.getElementById('btn-open-inventory'); 
 
 // Skill Bar
 const skillButtonsContainer = document.getElementById('skill-bar-container');
@@ -119,12 +124,24 @@ let hero = {
     
     // SKILL SİSTEMİ (YENİ)
     skillPoints: 0, // Harcanabilir yetenek puanı
-    unlockedSkills: ['slash', 'minor_healing'], // Başlangıçta açık olanlar
+    unlockedSkills: [],
     
     statusEffects: [],
     mapEffects: [],
 
-    equippedSkills: ['slash', 'minor_healing', null, null] 
+    equippedSkills: [null, null, null, null], 
+	// Envanter:
+    inventory: new Array(8).fill(null), // 8 boş slot
+	// 6 adet Broş slotu
+    brooches: new Array(6).fill(null), 
+    equipment: {
+        earring1: null,
+        earring2: null,
+        necklace: null,
+        ring1: null,
+        ring2: null,
+        belt: null
+    },
 };
 
 function generateXPTable(maxLevel, multiplier) {
@@ -192,6 +209,32 @@ const EVENT_POOL = [
         id: "gambler", type: "permanent", title: "Kumarbazın Ruhu", desc: "Önünde iki kadeh var.",
         option1: { text: "Kırmızı Kadehi İç", buff: "%50: <span class='buff'>Canı Fulle</span>", debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", action: (hero) => { if (Math.random() > 0.5) { hero.hp = hero.maxHp; writeLog("Şanslısın! Canın fullendi."); } else { hero.hp = 1; writeLog("Zehir! Canın 1'e düştü."); } } },
         option2: { text: "Masadan Kalk", buff: "", debuff: "", action: (hero) => {} }
+    },
+	 {
+        id: "random_campfire", 
+        type: "neutral", 
+        title: "Sönmüş Ateş", 
+        desc: "Yol kenarında korları hala sıcak olan bir kamp alanı buldun. Ne yapacaksın?",
+        option1: { 
+            text: "Dinlen (+HP)", 
+            buff: "<span class='buff'>+25 HP</span>", 
+            debuff: "", 
+            action: (hero) => { 
+                const heal = 25;
+                hero.hp = Math.min(hero.maxHp, hero.hp + heal); 
+                writeLog(`🔥 Ateş başında dinlendin (+${heal} HP).`);
+            } 
+        },
+        option2: { 
+            text: "Antrenman Yap (+XP)", 
+            buff: "<span class='buff'>+60 XP</span>", 
+            debuff: "", 
+            action: (hero) => { 
+                const xp = 60;
+                gainXP(xp); 
+                writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+${xp} XP).`);
+            } 
+        }
     }
 ];
 const RANDOM_ENEMY_POOL = ["Goblin Devriyesi", "Yaban Domuzu", "Goblin Savaşçısı", "Zehirli Mantar", "Orman Örümceği", "Kaçak Haydut", "Kurt Sürüsü", "Kaya Golemi"];
