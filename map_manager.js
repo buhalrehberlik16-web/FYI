@@ -341,30 +341,45 @@ function getEnemyForStage(stage) {
     let selectedPool = [];
 
     // MAP_CONFIG.townStages genelde [4, 8, 12]
-    const town1 = MAP_CONFIG.townStages[0]; // 4
-    const town2 = MAP_CONFIG.townStages[1]; // 8
+    const town1 = MAP_CONFIG.townStages[0]; 
+    const town2 = MAP_CONFIG.townStages[1]; 
 
+    // 1. Havuzu Belirle
     if (stage <= town1) {
-        // BÖLGE 1 (Başlangıç -> 1. Köy)
-        // %80 Tier 1, %20 Tier 2
+        // BÖLGE 1: %80 Tier 1, %20 Tier 2
         if (rand < 0.80) selectedPool = TIER_1_ENEMIES;
         else selectedPool = TIER_2_ENEMIES;
 
     } else if (stage <= town2) {
-        // BÖLGE 2 (1. Köy -> 2. Köy)
-        // %80 Tier 2, %20 Tier 3
+        // BÖLGE 2: %80 Tier 2, %20 Tier 3
         if (rand < 0.80) selectedPool = TIER_2_ENEMIES;
         else selectedPool = TIER_3_ENEMIES;
 
     } else {
-        // BÖLGE 3 (2. Köy -> Son)
-        // %100 Tier 3 (Zorluk artsın)
-        // İstersen buraya %10 ihtimalle Tier 2 koyup "nefes aldırma" yapabilirsin.
+        // BÖLGE 3: %100 Tier 3
         selectedPool = TIER_3_ENEMIES;
     }
 
-    // Havuzdan rastgele birini seç
-    return selectedPool[Math.floor(Math.random() * selectedPool.length)];
+    // 2. TEKRARI ÖNLEME (STREAK BREAKER)
+    // Eğer havuzda 1'den fazla düşman varsa ve daha önce bir düşmanla savaştıysak
+    let candidates = selectedPool;
+    
+    if (hero.lastEnemy && selectedPool.length > 1) {
+        // Son savaşılan düşmanı aday listesinden çıkar
+        candidates = selectedPool.filter(enemy => enemy !== hero.lastEnemy);
+        
+        // Güvenlik önlemi: Eğer filtreleme sonucu liste boşalırsa (örn: havuzda tek çeşit varsa)
+        // Orijinal havuzu geri yükle
+        if (candidates.length === 0) candidates = selectedPool;
+    }
+
+    // 3. Rastgele Seçim
+    const enemy = candidates[Math.floor(Math.random() * candidates.length)];
+    
+    // 4. Seçileni Kaydet (Bir sonraki tur hatırlamak için)
+    hero.lastEnemy = enemy;
+
+    return enemy;
 }
 
 // -- EKRAN FONKSİYONLARI --

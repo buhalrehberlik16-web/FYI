@@ -312,27 +312,73 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
 }
 
 function startBattle(enemyType) {
-    switchScreen(battleScreen);
+    // 1. Düşman verisini veritabanından çek
     const stats = ENEMY_STATS[enemyType];
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, xp: stats.xp, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
-    monsterDisplayImg.src = `images/${monster.idle}`; monsterDisplayImg.style.filter = 'none'; heroDisplayImg.src = HERO_IDLE_SRC;
-    isMonsterDefending = false; monsterDefenseBonus = 0; isHeroDefending = false; heroDefenseBonus = 0;
+
+    // Güvenlik: Eğer düşman adı yanlışsa veya veritabanında yoksa oyunu çökertme
+    if (!stats) {
+        console.error(`HATA: "${enemyType}" adlı düşman enemy_data.js içinde bulunamadı!`);
+        // Acil durum düşmanı (Çökmemesi için)
+        startBattle("Goblin Devriyesi"); 
+        return;
+    }
+
+    switchScreen(battleScreen);
     
+    // 2. KRİTİK NOKTA: YENİ BİR CANAVAR OBJESİ OLUŞTUR (KOPYALA)
+    // stats objesini direkt kullanmıyoruz. Değerleri tek tek alıp yeni bir kutuya koyuyoruz.
+    // Böylece savaşta can azaldığında ana veritabanı (ENEMY_STATS) bozulmuyor.
+    monster = { 
+        name: enemyType, 
+        maxHp: stats.maxHp, 
+        hp: stats.maxHp, // Canı her zaman maxHp'den başlat (Fulleyerek)
+        attack: stats.attack, 
+        defense: stats.defense, 
+        xp: stats.xp, 
+        idle: stats.idle, 
+        dead: stats.dead, 
+        attackFrames: stats.attackFrames 
+    };
+    
+    // Görsel Ayarları (Sıfırlama)
+    monsterDisplayImg.onerror = function() {
+        this.src = 'images/goblin_devriyesi.png'; // Resim yoksa yedek resim
+    };
+    monsterDisplayImg.src = `images/${monster.idle}`;
+    monsterDisplayImg.style.filter = 'none'; // Ölü filtresini kaldır
+    
+    heroDisplayImg.src = HERO_IDLE_SRC;
+    
+    // Savaş Değişkenlerini Sıfırla
+    isMonsterDefending = false; 
+    monsterDefenseBonus = 0; 
+    isHeroDefending = false; 
+    heroDefenseBonus = 0;
+    
+    // Bekleyen Etkileri (Map Effects hariç) Aktif Et
     let activatedCount = 0;
     hero.statusEffects.forEach(e => {
-        if (e.waitForCombat) { e.waitForCombat = false; activatedCount++; }
+        if (e.waitForCombat) { 
+            e.waitForCombat = false; 
+            activatedCount++;
+        }
     });
-    if (activatedCount > 0) writeLog(`⚔️ Savaşla birlikte ${activatedCount} etki aktifleşti!`);
-
+    
+    // Tur Sayacını Sıfırla
     combatTurnCount = 1;
-    document.getElementById('turn-count-display').textContent = combatTurnCount;
+    const turnDisplay = document.getElementById('turn-count-display');
+    if(turnDisplay) turnDisplay.textContent = combatTurnCount;
 
-    updateStats(); initializeSkillButtons(); determineMonsterAction(); showMonsterIntention(monsterNextAction);
+    updateStats(); 
+    initializeSkillButtons(); 
+    determineMonsterAction(); 
+    showMonsterIntention(monsterNextAction);
     
+    // Başlangıç Ayarları
     isHeroTurn = true; 
-    writeLog("Savaş Başladı! Tur 1");
+    writeLog(`Savaş Başladı! (${enemyType})`);
     
-    // Başlangıçta butonların durumunu kontrol et
+    // Butonları ayarla
     toggleBasicActions(false);
     toggleSkillButtons(false);
 }

@@ -183,6 +183,7 @@ function initGame() {
     // 6. Geçmiş Verileri Temizle
     // Son kamp yapılan stage bilgisini sil
     delete hero.lastCampfireStage; 
+	delete hero.lastEnemy; // <-- YENİ EKLENEN SATIR (Düşman hafızasını sil)
 
     // 7. Harita Verisini Derinlemesine Sıfırla
     GAME_MAP.nodes = [];
@@ -255,18 +256,41 @@ if (btnBasicDefend) {
 }
 
 document.addEventListener('keydown', (e) => {
-	if (startScreen.classList.contains('active') || cutsceneScreen.classList.contains('active')) {
-    return;
-	}
-    const key = e.key.toLowerCase();
-    if (battleScreen.classList.contains('active') && isHeroTurn) {
-        const slots = document.querySelectorAll('.skill-slot');
-        if (key === '1' && slots[0]) slots[0].click();
-        if (key === '2' && slots[1]) slots[1].click();
-        if (key === '3' && slots[2]) slots[2].click();
-        if (key === '4' && slots[3]) slots[3].click();
+    // Oyun başlamadıysa tuşları engelle
+    if (startScreen.classList.contains('active') || cutsceneScreen.classList.contains('active')) {
+        return; 
     }
-	if (key === 'ı') {toggleInventory(); }
+
+    const key = e.key.toLowerCase();
+
+    // SADECE SAVAŞ EKRANINDAYKEN VE SIRA BİZDEYKEN
+    if (battleScreen.classList.contains('active') && isHeroTurn) {
+        
+        // 1. TEMEL AKSİYONLAR (A: Saldır, D: Savun)
+        if (key === 'a') {
+            if (btnBasicAttack && !btnBasicAttack.classList.contains('disabled')) {
+                btnBasicAttack.click();
+            }
+        }
+        if (key === 'd') {
+            if (btnBasicDefend && !btnBasicDefend.classList.contains('disabled')) {
+                btnBasicDefend.click();
+            }
+        }
+
+        // 2. ÖZEL YETENEKLER (1-2-3-4)
+        // DÜZELTME: Sadece 'skill-bar-container' içindeki slotları seçiyoruz.
+        // Böylece basic slotlar (basic-attack/defend) bu listeye girmiyor.
+        const skillSlots = document.querySelectorAll('#skill-bar-container .skill-slot');
+        
+        if (key === '1' && skillSlots[0]) skillSlots[0].click();
+        if (key === '2' && skillSlots[1]) skillSlots[1].click();
+        if (key === '3' && skillSlots[2]) skillSlots[2].click();
+        if (key === '4' && skillSlots[3]) skillSlots[3].click();
+    }
+
+    // MENÜ KISAYOLLARI
+    if (key === 'i' || key === 'ı') { toggleInventory(); }
     if (key === 'k') { if (typeof toggleSkillBook === 'function') toggleSkillBook(); }
     if (key === 'u') { if (typeof toggleStatScreen === 'function') toggleStatScreen(); }
 });

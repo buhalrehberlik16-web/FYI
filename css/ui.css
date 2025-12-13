@@ -663,13 +663,28 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     display: flex; flex-direction: column; align-items: center; gap: 10px;
 }
 .char-preview-box {
-    width: 240px; height: 360px;
-    background: transparent; border: 1px dashed #444;
-    display: flex; justify-content: center; align-items: flex-end;
+    /* Sabit Boyutlar */
+    width: 240px;
+    height: 360px;
+    
+    /* YENİ: Sıkışmayı Önle (Kilit Nokta) */
+    min-width: 240px; 
+    min-height: 360px;
+    flex-shrink: 0; /* Flex yapısında asla küçülmesin */
+    
+    background: transparent;
+    border: 1px dashed #444; 
+    
+    display: flex; 
+    justify-content: center; 
+    align-items: flex-end; 
     overflow: hidden;
-	margin-bottom: 10px;
-	padding: 5px;
-	box-sizing: border-box;
+    margin-bottom: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+    
+    /* YENİ: İçindeki mutlak pozisyonlu öğeler burayı referans alsın */
+    position: relative; 
 }
 .char-preview-box img { width: 100%; height: 100%; 
 object-fit: cover; 
@@ -754,22 +769,30 @@ pointer-events: none; }
 /* Broş Konteyneri (Izgara) */
 .brooch-overlay {
     position: absolute;
-    /* Karakterin göğüs hizası (Ayarlaman gerekebilir) */
-    top: 32%; 
     
-    /* Yatayda tam ortala */
-    left: 45.8%;
-    transform: translateX(-42%);
+    /* DİKEY KONUM (Piksel olarak sabit) */
+    /* 360px yüksekliğin %32'si yaklaşık 115px eder. */
+    top: 90px; 
     
-    /* Grid Yapısı (3 sütun, 2 satır) */
+    /* YATAY KONUM (Tam Orta) */
+    left: 50%;
+    transform: translateX(-50%); /* Geometrik olarak tam merkeze oturtur */
+    
+    /* İNCE AYAR (OPTICAL ALIGNMENT) */
+    /* Eğer karakterin göğsü görselde biraz soldaysa/sağdaysa burayı değiştir */
+    /* Örn: Sağa kaydırmak için 5px, Sola kaydırmak için -5px */
+    margin-left: -5px; 
+    margin-top: 0px; 
+
+    /* Grid Yapısı */
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 2px; /* Slotlar arası minik boşluk */
     
-    z-index: 10; /* Resmin üstünde dursun */
+    gap: 3px; 
+    z-index: 10;
     
-    /* Genişlik sınırı (Kollara taşmaması için) */
+    /* Genişlik */
     width: 82px; 
 }
 
