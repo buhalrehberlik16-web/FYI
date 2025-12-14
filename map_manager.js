@@ -1,4 +1,4 @@
-// map_manager.js - NO CAMPFIRE NODE VERSION
+// map_manager.js - PRE-DETERMINED ENEMIES (ÖNCEDEN BELİRLENMİŞ DÜŞMANLAR)
 
 // --- HARİTA ÜRETİM (GENERATOR) ---
 
@@ -34,7 +34,6 @@ function generateMap() {
             nodeCountInStage = Math.random() > 0.2 ? 3 : 2;
         }
 
-        // Lane Seçimi
         let availableLanes = [0, 1, 2];
         if (isChokepoint) {
             availableLanes = [1];
@@ -62,8 +61,19 @@ function generateMap() {
                 type: nodeType,
                 jitterX: jitterX,
                 jitterY: jitterY,
-                next: []
+                next: [],
+                // Ekstra Özellikler (Boş Başlar)
+                enemyName: null,
+                isHard: false 
             };
+
+            // EĞER SAVAŞSA: Düşmanı ŞİMDİ belirle (Odaya girince değil)
+            if (nodeType === 'encounter' || nodeType === 'start') {
+                const enemyData = getPreDeterminedEnemy(stage);
+                node.enemyName = enemyData.name;
+                node.isHard = enemyData.isHard; // Zor mu?
+            }
+
             nodesInThisStage.push(node);
         });
 
@@ -72,7 +82,13 @@ function generateMap() {
             const hasCombat = nodesInThisStage.some(n => n.type === 'encounter');
             if (!hasCombat) {
                 const randIndex = Math.floor(Math.random() * nodesInThisStage.length);
-                nodesInThisStage[randIndex].type = 'encounter';
+                const targetNode = nodesInThisStage[randIndex];
+                
+                targetNode.type = 'encounter';
+                // Savaş'a çevirdiğimiz için düşman atamalıyız
+                const enemyData = getPreDeterminedEnemy(stage);
+                targetNode.enemyName = enemyData.name;
+                targetNode.isHard = enemyData.isHard;
             }
         }
 
@@ -87,9 +103,7 @@ function generateMap() {
         currentNodes.forEach(current => {
             nextNodes.forEach(next => {
                 const isNextChokepoint = (nextNodes.length === 1);
-                const isCurrentChokepoint = (currentNodes.length === 1);
-                
-                if (isNextChokepoint || isCurrentChokepoint || Math.abs(current.lane - next.lane) <= 1) {
+                if (isNextChokepoint || Math.abs(current.lane - next.lane) <= 1) {
                     current.next.push(next.id);
                     GAME_MAP.connections.push({ from: current.id, to: next.id });
                 }
@@ -102,26 +116,62 @@ function generateMap() {
     if(marker) marker.style.display = 'none';
 }
 
+// --- DÜŞMAN SEÇİM MANTIĞI (GÜNCELLENDİ) ---
+function getPreDeterminedEnemy(stage) {
+    const rand = Math.random();
+    let selectedPool = [];
+    let isHard = false;
+
+    const town1 = MAP_CONFIG.townStages[0]; 
+    const town2 = MAP_CONFIG.townStages[1]; 
+
+    if (stage <= town1) {
+        // BÖLGE 1
+        if (rand < 0.80) {
+            selectedPool = TIER_1_ENEMIES; // Normal
+        } else {
+            selectedPool = TIER_2_ENEMIES; // Zor (%20)
+            isHard = true; 
+        }
+
+    } else if (stage <= town2) {
+        // BÖLGE 2
+        if (rand < 0.80) {
+            selectedPool = TIER_2_ENEMIES; // Normal
+        } else {
+            selectedPool = TIER_3_ENEMIES; // Zor (%20)
+            isHard = true;
+        }
+
+    } else {
+        // BÖLGE 3 (Hepsi Zor)
+        selectedPool = TIER_3_ENEMIES;
+        // Burada hepsi standart olduğu için isHard yapmıyoruz, 
+        // ya da istersen T4 eklersen onu hard yaparsın.
+    }
+
+    const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)];
+    
+    return { name: enemyName, isHard: isHard };
+}
+
 function determineNodeType(stage, lane) {
-    // Sabit Tipler
     if (stage === MAP_CONFIG.totalStages - 1) return 'city';
     if (stage === MAP_CONFIG.totalStages - 2) return 'boss';
     if (MAP_CONFIG.townStages.includes(stage)) return 'town';
     if (stage === 0) return 'start';
 
-    // CAMPFIRE İHTİMALİ KALDIRILDI
-    // Sadece Encounter (%60) ve Choice (%40)
-    
-    // Geçmiş Kontrolü (Streak Breaker) - Sadece Choice üst üste gelmesin
-    const prevNode = GAME_MAP.nodes.find(n => n.stage === stage - 1 && n.lane === lane);
-    
-    if (prevNode && prevNode.type === 'choice') {
-        // Bir önceki choice ise %80 ihtimalle savaş olsun
-        return Math.random() < 0.80 ? 'encounter' : 'choice';
-    }
+    const isNextTown = MAP_CONFIG.townStages.includes(stage + 1);
+    const isPrevTown = MAP_CONFIG.townStages.includes(stage - 1);
+    const rand = Math.random();
 
-    // Normal Dağılım
-    return Math.random() < 0.60 ? 'encounter' : 'choice';
+    if (isNextTown || isPrevTown) {
+        return rand < 0.65 ? 'encounter' : 'choice';
+    } else {
+        if (rand < 0.55) return 'encounter'; 
+        if (rand < 0.85) return 'choice';    
+        return 'campfire';                   
+    }
 }
 
 function renderMap() {
@@ -135,8 +185,14 @@ function renderMap() {
         btn.id = `node-${node.id}`;
         btn.className = `map-node ${node.type}-node`;
         
+        // --- YENİ: Zorlu Düşman Sınıfı Ekle ---
+        if (node.isHard) {
+            btn.classList.add('hard-encounter');
+            btn.title = "Tehlikeli Düşman (Yüksek Ödül)"; // Tooltip
+        }
+        // -------------------------------------
+
         const baseLeft = (node.stage / (MAP_CONFIG.totalStages - 1)) * 92 + 4;
-        
         let baseTop = 50;
         if (node.lane === 0) baseTop = 15; 
         if (node.lane === 1) baseTop = 50;
@@ -148,11 +204,11 @@ function renderMap() {
         const img = document.createElement('img');
         if (node.type === 'encounter') img.src = 'images/skull_icon.png';
         else if (node.type === 'town') img.src = 'images/village_icon.png';
+        else if (node.type === 'campfire') img.src = 'images/campfire_icon.png';
         else if (node.type === 'choice') img.src = 'images/choice_icon.png';
         else if (node.type === 'boss') img.src = 'images/skull_icon.png';
         else if (node.type === 'city') img.src = 'images/village_icon.png';
         else if (node.type === 'start') img.src = 'images/skull_icon.png';
-        // Campfire iconu kaldırıldı
         
         btn.appendChild(img);
         btn.onclick = () => handleNodeClick(node);
@@ -169,10 +225,8 @@ function renderMap() {
 }
 
 // --- ÇİZGİ SİSTEMİ ---
-
 function drawAllConnections() {
     clearTrails();
-
     if (GAME_MAP.completedNodes && GAME_MAP.completedNodes.length > 1) {
         for (let i = 0; i < GAME_MAP.completedNodes.length - 1; i++) {
             const fromId = GAME_MAP.completedNodes[i];
@@ -180,7 +234,6 @@ function drawAllConnections() {
             drawTrail(fromId, toId, 'permanent');
         }
     }
-
     if (GAME_MAP.currentNodeId !== null) {
         const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
         if (currentNode && currentNode.next) {
@@ -223,7 +276,6 @@ function clearTrails() {
 }
 
 // --- OYUNCU İLERLEME ---
-
 function handleNodeClick(node) {
     GAME_MAP.currentNodeId = node.id;
     GAME_MAP.completedNodes.push(node.id);
@@ -233,10 +285,16 @@ function handleNodeClick(node) {
 
     const typeNames = {
         'start': 'Başlangıç', 'encounter': 'Düşman', 'town': 'Köy',
-        'choice': 'Olay', 'boss': 'BOSS', 'city': 'Şehir'
+        'campfire': 'Kamp', 'choice': 'Olay', 'boss': 'BOSS', 'city': 'Şehir'
     };
+    
+    // Açıklamayı güncelle
+    let desc = "İlerleniyor...";
+    if (node.isHard) desc = "⚠️ Güçlü bir düşman hissediyorsun!";
+    else if (node.type === 'encounter') desc = "Düşman göründü.";
+    
     document.getElementById('current-node-name').textContent = `Aşama ${node.stage + 1}: ${typeNames[node.type]}`;
-    document.getElementById('map-description').textContent = "İlerleniyor...";
+    document.getElementById('map-description').textContent = desc;
 
     movePlayerMarkerToNode(node.id);
     updateAvailableNodes();
@@ -309,20 +367,28 @@ function updateAvailableNodes() {
     }
 }
 
-// --- AKSİYONLAR ---
+// --- AKSİYON TETİKLEME ---
 
 function triggerNodeAction(node) {
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
-             // YENİ: Düşmanı stage'e göre seç
-             const enemy = getEnemyForStage(node.stage);
+             // YENİ: Node üzerinde kayıtlı düşmanı kullan
+             // getEnemyForStage artık burada çağrılmıyor.
              
+             let enemy = node.enemyName;
+             
+             // Güvenlik: Eğer bir şekilde enemyName yoksa (eski kayıt vs.) rastgele seç
+             if (!enemy) enemy = "Goblin Devriyesi";
+
              document.getElementById('map-description').textContent = `Vahşi bir ${enemy} belirdi!`;
              startBattle(enemy);
 
         } else if (node.type === 'town') {
             document.getElementById('map-description').textContent = "Güvenli bölge.";
             enterTown();
+        } else if (node.type === 'campfire') {
+            document.getElementById('map-description').textContent = "Dinlen ve güçlen.";
+            startCampfireEvent(node);
         } else if (node.type === 'choice') {
             document.getElementById('map-description').textContent = "Karşına bir şey çıktı.";
             triggerRandomEvent();
@@ -334,55 +400,6 @@ function triggerNodeAction(node) {
         }
     }, 600);
 }
-
-// --- YENİ YARDIMCI FONKSİYON: Aşamalı Düşman Seçimi ---
-function getEnemyForStage(stage) {
-    const rand = Math.random();
-    let selectedPool = [];
-
-    // MAP_CONFIG.townStages genelde [4, 8, 12]
-    const town1 = MAP_CONFIG.townStages[0]; 
-    const town2 = MAP_CONFIG.townStages[1]; 
-
-    // 1. Havuzu Belirle
-    if (stage <= town1) {
-        // BÖLGE 1: %80 Tier 1, %20 Tier 2
-        if (rand < 0.80) selectedPool = TIER_1_ENEMIES;
-        else selectedPool = TIER_2_ENEMIES;
-
-    } else if (stage <= town2) {
-        // BÖLGE 2: %80 Tier 2, %20 Tier 3
-        if (rand < 0.80) selectedPool = TIER_2_ENEMIES;
-        else selectedPool = TIER_3_ENEMIES;
-
-    } else {
-        // BÖLGE 3: %100 Tier 3
-        selectedPool = TIER_3_ENEMIES;
-    }
-
-    // 2. TEKRARI ÖNLEME (STREAK BREAKER)
-    // Eğer havuzda 1'den fazla düşman varsa ve daha önce bir düşmanla savaştıysak
-    let candidates = selectedPool;
-    
-    if (hero.lastEnemy && selectedPool.length > 1) {
-        // Son savaşılan düşmanı aday listesinden çıkar
-        candidates = selectedPool.filter(enemy => enemy !== hero.lastEnemy);
-        
-        // Güvenlik önlemi: Eğer filtreleme sonucu liste boşalırsa (örn: havuzda tek çeşit varsa)
-        // Orijinal havuzu geri yükle
-        if (candidates.length === 0) candidates = selectedPool;
-    }
-
-    // 3. Rastgele Seçim
-    const enemy = candidates[Math.floor(Math.random() * candidates.length)];
-    
-    // 4. Seçileni Kaydet (Bir sonraki tur hatırlamak için)
-    hero.lastEnemy = enemy;
-
-    return enemy;
-}
-
-// -- EKRAN FONKSİYONLARI --
 
 function enterTown() {
     switchScreen(townScreen);
@@ -405,10 +422,54 @@ function enterTown() {
 function handleBuildingClick(buildingId, buildingName) {
     writeLog(`🏛️ ${buildingName} binasına tıkladın.`);
     if (buildingId === 'building-inn') {
-        if (hero.gold >= 10) {
-            // Logic eklenecek
-        }
+        if (hero.gold >= 10) { }
     }
+}
+
+function startCampfireEvent(node) {
+    const screen = document.getElementById('campfire-screen');
+    const optionsDiv = document.getElementById('campfire-options');
+    const resultDiv = document.getElementById('campfire-result');
+    switchScreen(screen);
+    if(optionsDiv) { optionsDiv.classList.remove('hidden'); optionsDiv.style.display = 'flex'; }
+    if(resultDiv) resultDiv.classList.add('hidden');
+    
+    const btnRest = document.getElementById('btn-camp-rest');
+    const btnTrain = document.getElementById('btn-camp-train');
+    const btnCont = document.getElementById('btn-camp-continue');
+
+    let efficiency = 1.0;
+    let penaltyText = "";
+    if (typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
+        efficiency = 0.3; 
+        penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin! (%30 Etki)</span>";
+    }
+    hero.lastCampfireStage = node.stage;
+
+    btnRest.onclick = () => {
+        let baseHeal = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
+        let finalHeal = Math.floor(baseHeal * efficiency); if(finalHeal < 1) finalHeal = 1;
+        hero.hp = Math.min(hero.maxHp, hero.hp + finalHeal);
+        updateStats(); 
+        showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${finalHeal} HP** kazandın.${penaltyText}`);
+    };
+
+    btnTrain.onclick = () => {
+        let baseXp = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
+        let finalXp = Math.floor(baseXp * efficiency); if(finalXp < 1) finalXp = 1;
+        gainXP(finalXp); 
+        updateStats(); 
+        showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${finalXp} XP** kazandın!${penaltyText}`);
+    };
+    btnCont.onclick = () => switchScreen(mapScreen);
+}
+
+function showCampfireResult(title, text) {
+    document.getElementById('campfire-options').style.display = 'none';
+    const res = document.getElementById('campfire-result');
+    res.classList.remove('hidden');
+    document.getElementById('campfire-result-title').textContent = title;
+    document.getElementById('campfire-result-text').innerHTML = text;
 }
 
 function triggerRandomEvent() {
@@ -424,25 +485,16 @@ function triggerRandomEvent() {
     const createBtn = (opt) => {
         const btn = document.createElement('button');
         btn.className = 'event-btn';
-        btn.innerHTML = `<span class="choice-title">${opt.text}</span>
-                         <span class="choice-detail">${opt.buff}</span>
-                         <span class="choice-detail">${opt.debuff}</span>`;
+        btn.innerHTML = `<span class="choice-title">${opt.text}</span><span class="choice-detail">${opt.buff}</span><span class="choice-detail">${opt.debuff}</span>`;
         btn.onclick = () => { opt.action(hero); updateStats(); writeLog(`Seçim: ${opt.text}`); switchScreen(mapScreen); };
         eContainer.appendChild(btn);
     };
-    
     createBtn(evt.option1);
-    
     if (evt.type === 'permanent' && Math.random() < 0.30) {
         const fleeBtn = document.createElement('button');
         fleeBtn.className = 'event-btn';
         fleeBtn.innerHTML = `<span class="choice-title">Korkup Kaç</span><span class="choice-detail debuff">-10 HP</span>`;
-        fleeBtn.onclick = () => {
-            hero.hp = Math.max(1, hero.hp - 10); updateStats();
-            writeLog("Kaçtın (-10 HP)."); switchScreen(mapScreen);
-        };
+        fleeBtn.onclick = () => { hero.hp = Math.max(1, hero.hp - 10); updateStats(); writeLog("Kaçtın (-10 HP)."); switchScreen(mapScreen); };
         eContainer.appendChild(fleeBtn);
-    } else {
-        createBtn(evt.option2);
-    }
+    } else { createBtn(evt.option2); }
 }
