@@ -60,11 +60,7 @@ const BASIC_SKILL_DATABASE = {
                 // INT'i combat_manager'dan çekmek lazım ama orada dönmüyor.
                 // Basitçe hero.int kullanalım:
                 const blockVal = Math.floor(hero.int * 1.0) + 5; // Base 5 + INT
-                
-                // Rage üretimi yok (veya az olsun)
-                hero.rage = Math.min(hero.maxRage, hero.rage);
-                
-                return { action: 'block', value: blockVal, rage: 5 };
+                return { action: 'block', value: blockVal};
             }
         }
     }
@@ -294,3 +290,4 @@ const SKILL_DATABASE = {
     }
 
 };
+
