@@ -245,3 +245,36 @@
     color: #f0e68c;
     text-shadow: 0 0 10px orange;
 }
+.block-display {
+    position: absolute;
+    left: -50px; /* HP Barının soluna kaydır */
+    bottom: 35px; /* HP Barı hizası */
+    
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    
+    background-color: rgba(0, 0, 50, 0.8); /* Koyu mavi arka plan */
+    border: 2px solid #3498db; /* Açık mavi çerçeve */
+    border-radius: 20px;
+    padding: 5px 10px;
+    
+    color: #3498db;
+    font-weight: bold;
+    font-size: 1.1em;
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 100;
+}
+
+.block-display i {
+    font-size: 1.2em; /* Kalkan ikonu biraz büyük olsun */
+}
+
+/* Gizli Durum (Blok 0 iken) */
+.block-display.hidden {
+    opacity: 0;
+    transform: scale(0.5); /* Küçülerek kaybolsun */
+    pointer-events: none;
+}
