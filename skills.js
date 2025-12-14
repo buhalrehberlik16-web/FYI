@@ -62,7 +62,7 @@ const BASIC_SKILL_DATABASE = {
                 const blockVal = Math.floor(hero.int * 1.0) + 5; // Base 5 + INT
                 
                 // Rage üretimi yok (veya az olsun)
-                hero.rage = Math.min(hero.maxRage, hero.rage - 5);
+                hero.rage = Math.min(hero.maxRage, hero.rage);
                 
                 return { action: 'block', value: blockVal, rage: 5 };
             }
@@ -292,4 +292,5 @@ const SKILL_DATABASE = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
+
 };
