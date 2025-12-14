@@ -52,6 +52,34 @@
                 <button id="skip-cutscene" class="skip-button">Atla</button>
             </div>
 
+<!-- 2.5 BASIC SKILL SEÇİM EKRANI -->
+<div id="basic-skill-selection-screen" class="screen hidden">
+    <h1>Savaş Tarzını Seç</h1>
+    <p>Bir Saldırı ve bir Savunma yeteneği belirle.</p>
+    
+    <!-- İKİYE BÖLÜNMÜŞ SEÇİM ALANI -->
+    <div class="split-selection-container">
+        
+        <!-- SOL: SALDIRI -->
+        <div class="selection-column">
+            <h3 style="color:#ff4d4d;">BİRİNCİL (Saldırı)</h3>
+            <div id="selection-list-attack" class="skill-column-grid"></div>
+        </div>
+
+        <!-- SAĞ: SAVUNMA -->
+        <div class="selection-column">
+            <h3 style="color:#3498db;">İKİNCİL (Savunma)</h3>
+            <div id="selection-list-defense" class="skill-column-grid"></div>
+        </div>
+
+    </div>
+    
+    <div class="selection-footer">
+        <button id="btn-confirm-basic-skills" disabled>Maceraya Başla</button>
+    </div>
+</div>
+
+
             <!-- 3. HARİTA -->
 <div id="map-screen" class="screen hidden">
     <!-- DIŞ KUTU (Pencere) -->
@@ -84,12 +112,18 @@
                 <div id="arena">
                     <div id="hero-display" class="character-display">
                         <div id="hero-hp-overlay" class="hp-overlay-container">
-                            <h3 id="hero-name">Kahraman</h3>
-                            <div id="hero-status-container" class="status-icons"></div>
-                            <div class="hp-bar-container"><div id="hero-hp-bar" class="hp-bar"></div></div>
-                            <span id="hero-hp-text">100 / 100</span>
-                            <div class="hp-bar-container rage-bar-container"><div id="hero-rage-bar" class="rage-bar"></div></div>
-                            <span id="hero-rage-text" class="rage-text">0 / 100</span>
+						<!-- YENİ: Blok Göstergesi (Sol tarafa yerleşecek) -->
+						<div id="hero-block-indicator" class="block-display hidden">
+							<i class="fas fa-shield-alt"></i> <span id="hero-block-text">0</span>
+						</div>
+						<!-- ----------------------------------------------- -->
+						<h3 id="hero-name">Kahraman</h3>
+						<div id="hero-status-container" class="status-icons"></div>
+						<div class="hp-bar-container"><div id="hero-hp-bar" class="hp-bar"></div></div>
+						<span id="hero-hp-text">100 / 100</span>
+						<div class="hp-bar-container rage-bar-container"><div id="hero-rage-bar" class="rage-bar"></div></div>
+						<span id="hero-rage-text" class="rage-text">0 / 100</span>
+					
                         </div>
                         <img src="" alt="Kahraman Görseli">
                     </div>

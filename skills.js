@@ -1,7 +1,76 @@
 // skills.js - 4 SEKME YAPISI (COMMON, BRUTAL, CHAOS, FERVOR)
 
-const SKILL_DATABASE = {
-    
+	// --- SINIFLARA ÖZEL TEMEL YETENEK HAVUZU ---
+const BASIC_SKILL_DATABASE = {
+    "Barbar": {
+        // 1. CUT (Kes): Dengeli, Rage üretir
+        "cut": {
+            name: "Kes",
+            icon: "icon_attack.png",
+            desc: "Temel Hasar + 0.5x STR. +10 Rage üretir.",
+            type: "attack",
+            execute: (attacker, defender) => {
+                const stats = getHeroEffectiveStats();
+                // Hasar: Base(8) + 1.0 * STR
+                const dmg = 8 + Math.floor(stats.str * 0.5);
+                
+                hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+                
+                return { action: 'attack', damage: dmg, rage: 10 };
+            }
+        },
+        // 2. GUARD (Savun): Hasarı azaltır, Rage HARCAR
+        "guard": {
+            name: "Siper",
+            icon: "icon_defend.png",
+            desc: "Gelen hasarı %25 azaltır. -15 Rage.",
+            type: "defense",
+            rageCost: 15, // Rage maliyeti eklendi
+            execute: (attacker, defender) => {
+                // Rage harcaması combat_manager içinde yapılıyor
+                return { action: 'guard', rage: 0 };
+            }
+        },
+        // 3. STRIKE (Eski Maul): Güçlü vuruş, az Rage
+        "maul": { // Kod adı 'maul' kalsın, oyun içi adı 'Strike'
+            name: "Vuruş", // Strike
+            icon: "icon_strike.png",
+            desc: "Temel hasar + 0.7x STR. Rastgele +0-5 aralığında Rage üretir.",
+            type: "attack",
+            execute: (attacker, defender) => {
+                const stats = getHeroEffectiveStats();
+                // Hasar: Base(8) + 1.2 * STR
+                const dmg = 8 + Math.floor(stats.str * 0.7);
+                
+                const genRage = Math.floor(Math.random() * 6); // 0-5
+                hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
+                
+                return { action: 'attack', damage: dmg, rage: genRage };
+            }
+        },
+        // 4. BLOCK (Eski Focus): INT tabanlı blok
+        "focus": { // Kod adı 'focus' kalsın, oyun içi adı 'Block'
+            name: "Blok",
+            icon: "icon_block.png",
+            desc: "INT kadar hasar emer. Blok tur sonunda %50 azalır. -10 Rage.",
+            type: "utility",
+			rageCost: 10,
+            execute: (attacker, defender) => {
+                const stats = getHeroEffectiveStats();
+                // INT'i combat_manager'dan çekmek lazım ama orada dönmüyor.
+                // Basitçe hero.int kullanalım:
+                const blockVal = Math.floor(hero.int * 1.0) + 5; // Base 5 + INT
+                
+                // Rage üretimi yok (veya az olsun)
+                hero.rage = Math.min(hero.maxRage, hero.rage - 5);
+                
+                return { action: 'block', value: blockVal, rage: 5 };
+            }
+        }
+    }
+};
+
+const SKILL_DATABASE = {    
     // ======================================================
     // TAB: COMMON (GENEL)
     // ======================================================

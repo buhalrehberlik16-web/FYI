@@ -13,6 +13,9 @@ const heroRageBar = document.getElementById('hero-rage-bar');
 const heroRageText = document.getElementById('hero-rage-text');
 const townScreen = document.getElementById('town-screen');
 const btnLeaveTown = document.getElementById('btn-leave-town');
+const basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
+const basicSkillList = document.getElementById('basic-skill-list');
+const btnConfirmBasicSkills = document.getElementById('btn-confirm-basic-skills');
 // Envanter
 const inventoryScreen = document.getElementById('inventory-screen');
 const btnCloseInventory = document.getElementById('btn-close-inventory');
@@ -112,6 +115,7 @@ const MAX_LEVEL = 60;
 let hero = {
     name: "Barbar",
     playerName: "Oyuncu",
+	class: "Barbar",
     maxHp: 100, hp: 100,
     attack: 20, defense: 5,
     level: 1, xp: 0, xpToNextLevel: 100,
@@ -129,6 +133,7 @@ let hero = {
     statusEffects: [],
     mapEffects: [],
 
+	equippedBasic: [],
     equippedSkills: [null, null, null, null], 
 	// Envanter:
     inventory: new Array(8).fill(null), // 8 boş slot

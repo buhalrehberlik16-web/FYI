@@ -2,8 +2,8 @@
 
 // --- EKRAN YÖNETİMİ ---
 function switchScreen(targetScreen) {
-    const screens = [startScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen];
-    
+    const screens = [startScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, basicSkillSelectionScreen];
+
     const topBar = document.getElementById('top-info-bar');
     const mainArea = document.getElementById('main-screen-area');
 
@@ -118,6 +118,23 @@ function updateStats() {
         monsterHpBar.style.width = monsterHpPercent + '%'; monsterHpText.textContent = `${monster.hp} / ${monster.maxHp}`;
         monsterNameDisplay.textContent = `${monster.name}`;
     }
+	// --- YENİ EKLENEN: BLOK GÖSTERGESİ GÜNCELLEME ---
+    const blockDisplay = document.getElementById('hero-block-indicator');
+    const blockText = document.getElementById('hero-block-text');
+
+    // heroBlock değişkeni combat_manager.js'de tanımlı.
+    // Eğer undefined ise 0 kabul et.
+    const currentBlock = (typeof heroBlock !== 'undefined') ? heroBlock : 0;
+
+    if (blockDisplay && blockText) {
+        if (currentBlock > 0) {
+            blockDisplay.classList.remove('hidden'); // Göster
+            blockText.textContent = currentBlock;    // Değeri yaz
+        } else {
+            blockDisplay.classList.add('hidden');    // Gizle
+        }
+    }
+    // ------------------------------------------------
     updateStatusIcons(); updateGoldUI();
     if (!statScreen.classList.contains('hidden')) updateStatScreen();
 }
@@ -441,8 +458,135 @@ function equipItem(inventoryIndex) {
     }
 }
 
+// YENİ SEÇİM MANTIĞI
+
+// Geçici seçim değişkenleri
+let selectedAttackKey = null;
+let selectedDefenseKey = null;
+
+function openBasicSkillSelection() {
+    switchScreen(basicSkillSelectionScreen);
+    
+    // Varsayılan seçimleri sıfırla (veya hero'dakileri al)
+    selectedAttackKey = null;
+    selectedDefenseKey = null;
+    
+    renderBasicSkillSelection();
+    updateSelectionUI(); // Buton durumunu kontrol et
+}
+
+function renderBasicSkillSelection() {
+    const attackContainer = document.getElementById('selection-list-attack');
+    const defenseContainer = document.getElementById('selection-list-defense');
+    
+    attackContainer.innerHTML = '';
+    defenseContainer.innerHTML = '';
+
+    const classSkills = BASIC_SKILL_DATABASE[hero.class];
+    
+    for (const [key, skill] of Object.entries(classSkills)) {
+        const card = document.createElement('div');
+        card.className = 'selection-card';
+        // Hangi gruba ait olduğunu data attribute ile tutalım
+        card.dataset.key = key; 
+        
+        card.innerHTML = `
+            <img src="images/${skill.icon}">
+            <div>
+                <h4 style="margin:0; color:#f0e68c;">${skill.name}</h4>
+                <small style="color:#aaa;">${skill.desc}</small>
+            </div>
+        `;
+        
+        // Tıklama olayını bağla
+        card.onclick = () => handleSkillClick(key, skill.type, card);
+
+        // Doğru kutuya yerleştir
+        if (skill.type === 'attack') {
+            attackContainer.appendChild(card);
+        } else {
+            defenseContainer.appendChild(card);
+        }
+    }
+}
+
+function handleSkillClick(key, type, cardElement) {
+    // 1. Tıklanan grubun (Attack veya Defense) seçimini güncelle
+    if (type === 'attack') {
+        selectedAttackKey = key;
+        // O sütundaki diğerlerinin 'selected' sınıfını kaldır
+        const allAttacks = document.querySelectorAll('#selection-list-attack .selection-card');
+        allAttacks.forEach(c => c.classList.remove('selected'));
+    } else {
+        selectedDefenseKey = key;
+        // O sütundaki diğerlerinin 'selected' sınıfını kaldır
+        const allDefenses = document.querySelectorAll('#selection-list-defense .selection-card');
+        allDefenses.forEach(c => c.classList.remove('selected'));
+    }
+
+    // 2. Tıklanan karta 'selected' ekle
+    cardElement.classList.add('selected');
+
+    // 3. Butonu güncelle
+    updateSelectionUI();
+}
+
+function updateSelectionUI() {
+    const confirmBtn = document.getElementById('btn-confirm-basic-skills');
+    
+    // İkisi de seçildiyse butonu aç
+    if (selectedAttackKey && selectedDefenseKey) {
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = "1";
+        confirmBtn.style.cursor = "pointer";
+        confirmBtn.textContent = "MACERAYA BAŞLA";
+    } else {
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = "0.5";
+        confirmBtn.style.cursor = "not-allowed";
+        
+        // Kullanıcıya neyin eksik olduğunu söyle
+        if (!selectedAttackKey && !selectedDefenseKey) confirmBtn.textContent = "Yetenekleri Seç";
+        else if (!selectedAttackKey) confirmBtn.textContent = "Saldırı Seç";
+        else if (!selectedDefenseKey) confirmBtn.textContent = "Savunma Seç";
+    }
+}
+
+// Seçim onaylanınca çalışacak
+function confirmBasicSkills() {
+    // Seçilenleri diziye at (Sıra önemli: [0]=Attack, [1]=Defense)
+    hero.equippedBasic = [selectedAttackKey, selectedDefenseKey];
+    
+    // UI'daki slotları güncelle
+    updateBasicSkillSlots();
+    
+    // Haritaya geç
+    switchScreen(mapScreen);
+    document.getElementById('map-display').scrollLeft = 0;
+    writeLog(`Savaş tarzı belirlendi: ${BASIC_SKILL_DATABASE[hero.class][selectedAttackKey].name} ve ${BASIC_SKILL_DATABASE[hero.class][selectedDefenseKey].name}`);
+}
+
+// Savaş Ekranındaki Slotları Güncelleme (Aynı kalıyor)
+function updateBasicSkillSlots() {
+    const slot1 = document.getElementById('btn-basic-attack');
+    const slot2 = document.getElementById('btn-basic-defend');
+    const slots = [slot1, slot2];
+    
+    hero.equippedBasic.forEach((key, index) => {
+        const skill = BASIC_SKILL_DATABASE[hero.class][key];
+        const slot = slots[index];
+        
+        if(slot && skill) {
+            const img = slot.querySelector('img');
+            if(img) img.src = `images/${skill.icon}`;
+            slot.title = `${skill.name}: ${skill.desc}`;
+        }
+    });
+}
+
 // EVENTS
 document.addEventListener('DOMContentLoaded', () => {
+	if(btnConfirmBasicSkills) btnConfirmBasicSkills.addEventListener('click', confirmBasicSkills);
     if(btnCloseSkillBook) btnCloseSkillBook.addEventListener('click', toggleSkillBook);
     const btnCommon = document.getElementById('tab-common');
     const btnBrutal = document.getElementById('tab-brutal');
