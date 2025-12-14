@@ -59,8 +59,8 @@ const BASIC_SKILL_DATABASE = {
                 const stats = getHeroEffectiveStats();
                 // INT'i combat_manager'dan çekmek lazım ama orada dönmüyor.
                 // Basitçe hero.int kullanalım:
-                const blockVal = Math.floor(hero.int * 1.0) + 5; // Base 5 + INT
-                return { action: 'block', value: blockVal};
+                const blockVal = Math.floor(hero.int * 1.0) + 5; // Base 5 + INT 
+                return { action: 'block', value: blockVal,};
             }
         }
     }
@@ -288,6 +288,4 @@ const SKILL_DATABASE = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
-
 };
-

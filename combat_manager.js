@@ -304,35 +304,126 @@ function checkIfSkillBlocked(skillKey) {
 function initializeSkillButtons() {
     if (!skillButtonsContainer) return;
     skillButtonsContainer.innerHTML = ''; 
+    
     for (let i = 0; i < 4; i++) {
-        const slot = document.createElement('div'); slot.classList.add('skill-slot'); slot.dataset.slotIndex = i; 
+        const slot = document.createElement('div'); 
+        slot.classList.add('skill-slot'); 
+        slot.dataset.slotIndex = i; 
         
-        slot.addEventListener('dragover', (e) => { e.preventDefault(); slot.classList.add('drag-over'); });
-        slot.addEventListener('dragleave', () => { slot.classList.remove('drag-over'); });
-        slot.addEventListener('drop', (e) => {
-            e.preventDefault(); slot.classList.remove('drag-over');
-            const skillKey = e.dataTransfer.getData('text/plain');
-            if (skillKey && SKILL_DATABASE[skillKey]) { hero.equippedSkills[i] = skillKey; initializeSkillButtons(); }
+        // --- DRAG & DROP OLAYLARI ---
+
+        // 1. Üzerine gelindiğinde (İzin ver)
+        slot.addEventListener('dragover', (e) => { 
+            e.preventDefault(); 
+            slot.classList.add('drag-over'); 
         });
 
-        const keyHint = document.createElement('span'); keyHint.classList.add('key-hint'); keyHint.textContent = i + 1; slot.appendChild(keyHint);
+        // 2. Üzerinden çıkıldığında
+        slot.addEventListener('dragleave', () => { 
+            slot.classList.remove('drag-over'); 
+        });
+
+        // 3. Bırakıldığında (DROP)
+        slot.addEventListener('drop', (e) => {
+            e.preventDefault(); 
+            slot.classList.remove('drag-over');
+            
+            const rawData = e.dataTransfer.getData('text/plain');
+            
+            try {
+                // A) SLOTLAR ARASI TAŞIMA (SWAP)
+                // Veriyi JSON olarak okumaya çalış
+                const data = JSON.parse(rawData);
+                
+                if (data.type === 'move_skill') {
+                    const fromIndex = data.index;
+                    const toIndex = i;
+
+                    // Aynı yere bırakırsa işlem yapma
+                    if (fromIndex === toIndex) return;
+
+                    // Yer Değiştirme (Swap)
+                    const temp = hero.equippedSkills[toIndex];
+                    hero.equippedSkills[toIndex] = hero.equippedSkills[fromIndex];
+                    hero.equippedSkills[fromIndex] = temp;
+
+                    // Arayüzü Güncelle
+                    initializeSkillButtons();
+                    
+                    // Eğer Skill Kitabı açıksa oradaki "Kuşanılanlar" barını da güncelle
+                    if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+                    
+                    writeLog("Yeteneklerin yeri değiştirildi.");
+                }
+
+            } catch (err) {
+                // B) KİTAPTAN YENİ YETENEK EKLEME
+                // JSON parse hatası verirse, demek ki düz metin (Skill Key) geliyor.
+                const skillKey = rawData;
+                
+                if (skillKey && SKILL_DATABASE[skillKey]) { 
+                    hero.equippedSkills[i] = skillKey; 
+                    
+                    initializeSkillButtons(); 
+                    if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+                    writeLog("Yetenek kuşandın.");
+                }
+            }
+        });
+
+        const keyHint = document.createElement('span'); 
+        keyHint.classList.add('key-hint'); 
+        keyHint.textContent = i + 1; 
+        slot.appendChild(keyHint);
 
         const skillKey = hero.equippedSkills[i];
+        
+        // Eğer slot doluysa
         if (skillKey && SKILL_DATABASE[skillKey]) {
             const skill = SKILL_DATABASE[skillKey];
-            const iconImg = document.createElement('img'); iconImg.src = `images/${skill.data.icon}`; slot.appendChild(iconImg);
+            const iconImg = document.createElement('img'); 
+            iconImg.src = `images/${skill.data.icon}`; 
+            slot.appendChild(iconImg);
             
-            const overlay = document.createElement('div'); overlay.className = 'cooldown-overlay';
-            const cdText = document.createElement('span'); cdText.className = 'cooldown-text';
-            overlay.appendChild(cdText); slot.appendChild(overlay);
+            // --- SÜRÜKLEME BAŞLATMA (DRAG START) ---
+            // Sadece dolu slotlar sürüklenebilir
+            slot.setAttribute('draggable', true);
+            
+            slot.addEventListener('dragstart', (e) => {
+                // Taşıdığımız veriyi JSON formatında paketle
+                const dragData = {
+                    type: 'move_skill',
+                    index: i,
+                    skillKey: skillKey
+                };
+                e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+            });
+            // ---------------------------------------
+            
+            const overlay = document.createElement('div'); 
+            overlay.className = 'cooldown-overlay';
+            const cdText = document.createElement('span'); 
+            cdText.className = 'cooldown-text';
+            overlay.appendChild(cdText); 
+            slot.appendChild(overlay);
 
-            slot.dataset.skillKey = skillKey; slot.dataset.rageCost = skill.data.rageCost;
-            slot.addEventListener('click', () => { if (!slot.classList.contains('disabled')) handleSkillUse(skillKey); });
+            slot.dataset.skillKey = skillKey; 
+            slot.dataset.rageCost = skill.data.rageCost;
+            
+            slot.addEventListener('click', () => { 
+                if (!slot.classList.contains('disabled')) handleSkillUse(skillKey); 
+            });
 
-            const tooltip = document.createElement('div'); tooltip.classList.add('skill-tooltip');
+            const tooltip = document.createElement('div'); 
+            tooltip.classList.add('skill-tooltip');
             tooltip.innerHTML = `<span class="tooltip-title">${skill.data.name}</span><span class="tooltip-cost">Maliyet: ${skill.data.rageCost} Öfke</span><span class="tooltip-desc">${skill.data.description}</span>`;
             slot.appendChild(tooltip);
-        } else { slot.classList.add('empty-slot'); }
+        } else { 
+            slot.classList.add('empty-slot'); 
+            // Boş slotlar sürüklenemez
+            slot.setAttribute('draggable', false);
+        }
+        
         skillButtonsContainer.appendChild(slot);
     }
     toggleSkillButtons(false); 

@@ -252,7 +252,7 @@ const TIER_1_ENEMIES = [
 const TIER_2_ENEMIES = [
     "Goblin Devriyesi", 
     "Kaçak Haydut", 
-    "Vahşi Kurtlar"
+    "Gri Kurt"
 ];
 
 const TIER_3_ENEMIES = [
