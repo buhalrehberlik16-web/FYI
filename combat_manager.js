@@ -25,7 +25,7 @@ window.addHeroBlock = function(amount) {
 function getHeroEffectiveStats() {
     let currentStr = hero.str;
     let currentDef = hero.defense;
-    let currentAtk = hero.attack;
+    let currentAtk = hero.attack; // DÜZELTME: Burası hero.attack (20) olmalı
     
     // Sharpen (Bileme) için çarpan
     let atkMultiplier = 1.0;
@@ -33,7 +33,7 @@ function getHeroEffectiveStats() {
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
             if (e.id === 'str_up') currentStr += e.value;
-            if (e.id === 'atk_up') currentAtk += e.value;
+            if (e.id === 'atk_up') currentAtk += e.value; // Pot vb.
             if (e.id === 'atk_down') currentAtk -= e.value;
             if (e.id === 'def_up') currentDef += e.value;
             if (e.id === 'atk_half') currentAtk = Math.floor(currentAtk * 0.5);
@@ -47,6 +47,26 @@ function getHeroEffectiveStats() {
         if (e.id === 'map_atk_weak') currentAtk = Math.floor(currentAtk * e.value);
     });
 
+    // --- KRİTİK HESAPLAMA ---
+    // Eğer Class Config varsa, STR bonusunu mevcut 'hero.attack' üzerine ekle.
+    // Önceki kodda hero.baseDamage (5) kullanılıyor olabilir, bu yüzden düşüktü.
+    
+    if (typeof CLASS_CONFIG !== 'undefined' && CLASS_CONFIG[hero.class]) {
+        const rules = CLASS_CONFIG[hero.class];
+        let statVal = 0;
+        
+        if (rules.primaryStat === 'str') statVal = currentStr;
+        else if (rules.primaryStat === 'dex') statVal = hero.dex; // Dex eklenebilir
+        else if (rules.primaryStat === 'int') statVal = hero.int; // Int eklenebilir
+        
+        // Formül: Mevcut Base (20) + (STR * 0.5)
+        // NOT: Buradaki hesaplama ui_manager.js ile BİREBİR AYNI olmalı.
+        // Orada hero.attack + (stat * oran) yapıyoruz.
+        // Burada currentAtk zaten hero.attack ile başladı.
+        
+        currentAtk += Math.floor(statVal * rules.atkPerStat);
+    }
+
     // Stat bazlı atağı güncelle (Skill hasarları için referans)
     currentAtk = Math.floor(currentAtk * atkMultiplier);
 
@@ -54,7 +74,7 @@ function getHeroEffectiveStats() {
         atk: Math.max(0, currentAtk), 
         def: Math.max(0, currentDef), 
         str: currentStr,
-        atkMultiplier: atkMultiplier // Dışarı aktar (Basic Skilller için)
+        atkMultiplier: atkMultiplier 
     };
 }
 

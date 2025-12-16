@@ -418,23 +418,54 @@ function toggleStatScreen() {
 
 function updateStatScreen() {
     if (!statName) return;
+    
+    // 1. Şu anki güncel (Bufflı/Debufflı) değerleri al
     let effective = { atk: hero.attack, def: hero.defense };
     if (typeof getHeroEffectiveStats === 'function') effective = getHeroEffectiveStats();
 
-    statName.textContent = hero.playerName; statClass.textContent = `(${hero.name})`; statLevel.textContent = `Lv. ${hero.level}`;
-    statXp.textContent = `${hero.xp} / ${hero.xpToNextLevel}`; statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
+    statName.textContent = hero.playerName; 
+    statClass.textContent = `(${hero.name})`; 
+    statLevel.textContent = `Lv. ${hero.level}`;
+    statXp.textContent = `${hero.xp} / ${hero.xpToNextLevel}`; 
+    statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
     
-    const baseAtk = hero.attack;
-    if (effective.atk > baseAtk) statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`;
-    else if (effective.atk < baseAtk) statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`;
-    else statAtk.textContent = effective.atk;
+    // --- RENK MANTIĞI DÜZELTMESİ ---
+    
+    // "Doğal" Atak Gücünü Hesapla (Base + STR Bonusu)
+    // Bufflar (Sharpen vb.) hariç, karakterin kendi gücü.
+    // game_data.js'deki CLASS_CONFIG'i kullanıyoruz.
+    let naturalAtk = hero.attack; // Base (20)
+    
+    // Eğer class config varsa STR bonusunu doğal atağa ekle
+    if (typeof CLASS_CONFIG !== 'undefined' && CLASS_CONFIG[hero.class]) {
+        const rules = CLASS_CONFIG[hero.class];
+        let statVal = 0;
+        if(rules.primaryStat === 'str') statVal = hero.str;
+        else if(rules.primaryStat === 'dex') statVal = hero.dex;
+        else if(rules.primaryStat === 'int') statVal = hero.int;
+        
+        // Atak = Base + (Stat * Çarpan)
+        naturalAtk += Math.floor(statVal * rules.atkPerStat);
+    }
+    
+    // Karşılaştırma: Efektif vs Doğal
+    if (effective.atk > naturalAtk) statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`; // Buff (Yeşil)
+    else if (effective.atk < naturalAtk) statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`; // Debuff (Kırmızı)
+    else statAtk.textContent = effective.atk; // Normal (Beyaz)
 
+    // Defans için de benzer mantık (Basitçe base defans)
     if (effective.def > hero.defense) statDef.innerHTML = `<span style="color:#43FF64">${effective.def}</span>`;
     else statDef.textContent = effective.def;
     
-    statStr.textContent = hero.str; statDex.textContent = hero.dex; statInt.textContent = hero.int; statMp.textContent = hero.mp_pow;
-    const statVit = document.getElementById('stat-vit'); if(statVit) statVit.textContent = hero.vit;
+    // Diğer statları yazdır
+    statStr.textContent = hero.str; 
+    statDex.textContent = hero.dex; 
+    statInt.textContent = hero.int; 
+    statMp.textContent = hero.mp_pow;
+    const statVit = document.getElementById('stat-vit'); 
+    if(statVit) statVit.textContent = hero.vit;
 
+    // Puan kutusu kontrolü
     const pointsBox = document.getElementById('points-container');
     const pointsDisplay = document.getElementById('stat-points-display');
     const plusButtons = document.querySelectorAll('.btn-stat-plus');

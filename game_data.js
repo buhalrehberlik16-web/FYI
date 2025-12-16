@@ -1,5 +1,19 @@
 // game_data.js
 
+//////----CLASS YAPISI----/////
+
+const CLASS_CONFIG = {
+    "Barbar": {
+        primaryStat: "str",      // Hasar kaynağı
+        atkPerStat: 0.5,         // 1 STR = 1 ATK (veya senin istediğin gibi 2 STR = 1 ATK ise 0.5 yapabiliriz)
+        hpPerVit: 10             // 1 VIT = 10 HP
+    },
+    // İleride eklenecek sınıflar için örnek:
+    // "Trickster": { primaryStat: "dex", atkPerStat: 1.0, hpPerVit: 8 },
+    // "Magus":  { primaryStat: "int", atkPerStat: 1.5, hpPerVit: 5 }
+};
+
+
 // DOM REFERANSLARI
 const btnBasicAttack = document.getElementById('btn-basic-attack');
 const btnBasicDefend = document.getElementById('btn-basic-defend');
@@ -117,7 +131,7 @@ let hero = {
     playerName: "Oyuncu",
 	class: "Barbar",
     maxHp: 100, hp: 100,
-    attack: 20, defense: 5,
+    baseDamage: 20, defense: 5,
     level: 1, xp: 0, xpToNextLevel: 100,
     maxRage: 100, rage: 0,
     gold: 0,

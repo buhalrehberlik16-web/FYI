@@ -1,19 +1,17 @@
-// skills.js - FİNAL VE EKSİKSİZ SÜRÜM (Tek Veritabanı)
+// skills.js - TEK VERİTABANI VE GÜNCELLENMİŞ HASAR FORMÜLLERİ
 
 const SKILL_DATABASE = {
     
     // ======================================================
-    // TAB: COMMON (GENEL)
+    // TAB: COMMON (GENEL) - TIER 1 (Başlangıç Seçenekleri)
     // ======================================================
     
-    // --- TIER 1 (ESKİ BASIC SKILLER BURAYA TAŞINDI) ---
-
-    // CUT (Kes)
+    // CUT (Kes): Temel Saldırı
     cut: {
         data: {
             name: "Kes",
             description: "Dengeli saldırı.",
-            menuDescription: "Temel Hasar + 0.5x STR. +10 Rage üretir.",
+            menuDescription: "Atağın %50'si kadar hasar. +10 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
             icon: 'icon_attack.png',
@@ -23,16 +21,14 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const multiplier = stats.atkMultiplier || 1; 
             
-            // Hasar: (Base(8) + 0.5 * STR) * Sharpen
-            let dmg = 8 + Math.floor(stats.str * 0.5);
-            dmg = Math.floor(dmg * multiplier);
+            // YENİ FORMÜL: Global Atak Gücünün %50'i
+            // (stats.atk zaten STR, Sharpen vb. içerir)
+            const dmg = Math.floor(stats.atk * 0.5);
             
             hero.rage = Math.min(hero.maxRage, hero.rage + 10);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
 
-            // Görsel
             const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             
@@ -40,7 +36,7 @@ const SKILL_DATABASE = {
         }
     },
 
-    // GUARD (Siper)
+    // GUARD (Siper): Temel Savunma
     guard: {
         data: {
             name: "Siper",
@@ -70,12 +66,12 @@ const SKILL_DATABASE = {
         }
     },
 
-    // STRIKE (Vuruş - Eski Maul)
+    // STRIKE (Vuruş): Ağır Saldırı
     strike: { 
         data: {
             name: "Vuruş",
             description: "Güçlü hasar.",
-            menuDescription: "Temel hasar + 0.7x STR. Rastgele +0-9 Rage.",
+            menuDescription: "Atağın %70'i kadar hasar. +0-9 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
             icon: 'icon_strike.png',
@@ -85,25 +81,22 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const multiplier = stats.atkMultiplier || 1;
-
-            // Hasar: (Base(8) + 0.7 * STR) * Sharpen
-            let dmg = 8 + Math.floor(stats.str * 0.7);
-            dmg = Math.floor(dmg * multiplier);
             
-            // 0-9 Arası Rage
-            const genRage = Math.floor(Math.random() * 10); 
+            // YENİ FORMÜL: Global Atak Gücünün %70'i
+            const dmg = Math.floor(stats.atk * 0.7);
+            
+            const genRage = Math.floor(Math.random() * 10); // 0-9
             hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
-            
-            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
+
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             
             animateCustomAttack(dmg, fullPathFrames, this.data.name);
         }
     },
 
-    // BLOCK (Blok - Eski Focus)
+    // BLOCK (Blok): Hasar Emme
     block: { 
         data: {
             name: "Blok",
@@ -117,11 +110,10 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-            const stats = getHeroEffectiveStats();
-            // Blok Değeri: Base 5 + (1.5 x INT)
+            // Blok INT tabanlı kalabilir veya Defans'ın bir çarpanı olabilir
+            // Şimdilik INT olarak bırakıyorum (Base 5 + 1.5xINT)
             const blockVal = 5 + Math.floor(hero.int * 1.5);
             
-            // Global fonksiyon ile blok ekle
             if(typeof addHeroBlock === 'function') {
                 addHeroBlock(blockVal);
             }
@@ -131,7 +123,9 @@ const SKILL_DATABASE = {
         }
     },
 
-    // --- TIER 2 ---
+    // ======================================================
+    // TAB: COMMON (GENEL) - TIER 2 & 4
+    // ======================================================
     
     minor_healing: {
         data: {
@@ -178,7 +172,6 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'distract', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-
             hero.statusEffects.push({ id: 'debuff_enemy_atk', name: 'Düşman Güçsüz', value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
 
@@ -190,6 +183,36 @@ const SKILL_DATABASE = {
                 toggleBasicActions(false); 
                 toggleSkillButtons(false); 
             }, 300); 
+        }
+    },
+	
+	tactical_strike: {
+        data: {
+            name: "Taktiksel Vuruş",
+            description: "Düşmanın zayıf noktasına vurur.",
+            menuDescription: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
+            rageCost: 15,
+            levelReq: 2, 
+            icon: 'icon_tactical_strike.png',
+            type: 'attack',
+            category: 'common', 
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            // YENİ FORMÜL: ATK * 1.3
+            const damageToSend = Math.floor(stats.atk * 1.3);
+
+            // Defans Delme Mantığı (Combat Manager'da düşüldüğü için buraya ekliyoruz)
+            let currentMonsterDef = monster.defense;
+            if (typeof isMonsterDefending !== 'undefined' && isMonsterDefending) currentMonsterDef += monsterDefenseBonus;
+            const ignoredAmount = Math.min(currentMonsterDef, 10);
+            
+            const finalDmg = damageToSend + ignoredAmount;
+
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            animateCustomAttack(finalDmg, fullPathFrames, this.data.name);
         }
     },
 
@@ -259,11 +282,11 @@ const SKILL_DATABASE = {
             description: "Silahını keskinleştir.",
             menuDescription: "Saldırı gücünü artırır. 30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.<br><span style='color:yellow'>Bekleme: 6 Tur</span>.",
             rageCost: 30,
-            levelReq: 1, 
+            levelReq: 10, 
             icon: 'icon_sharpen.png',
             type: 'buff',
             category: 'common',
-            tier: 2
+            tier: 4
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'atk_up_percent', name: 'Keskinlik', turns: 4, value: 0.25, waitForCombat: false, resetOnCombatEnd: true });
@@ -282,11 +305,11 @@ const SKILL_DATABASE = {
             description: "Düşmanı lanetler.",
             menuDescription: "Karanlık fısıltılar. 20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span><br><span style='color:yellow'>Bekleme: 10 Tur</span>.",
             rageCost: 20,
-            levelReq: 1,
+            levelReq: 10,
             icon: 'icon_curseskill.png',
             type: 'debuff',
             category: 'common',
-            tier: 2
+            tier: 4
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'curse_damage', name: 'Lanetli', turns: 5, value: 0.20, waitForCombat: false, resetOnCombatEnd: true });
@@ -299,6 +322,53 @@ const SKILL_DATABASE = {
         }
     },
 
+	/////-----Tier 5-----//////
+	willful_strike: {
+        data: {
+            name: "İradeli Vuruş",
+            description: "Tüm öfkeni güce dönüştür.",
+            menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%).<br><span style='color:yellow'>Bekleme: 5 Tur</span>",
+            rageCost: 0, 
+            levelReq: 1, 
+            icon: 'icon_willful_strike.png',
+            type: 'attack',
+            category: 'common',
+            tier: 5
+        },
+        onCast: function(attacker, defender) {
+            const spentRage = hero.rage;
+            hero.rage = 0; 
+            
+            if(typeof updateStats === 'function') updateStats();
+
+            const stats = getHeroEffectiveStats();
+            
+            // Çarpan: 1 + (Rage / 100)
+            const multiplier = 1 + (spentRage / 100);
+            // YENİ FORMÜL: ATK * Multiplier
+            const totalDamage = Math.floor(stats.atk * multiplier);
+
+            hero.statusEffects.push({ 
+                id: 'block_skill', 
+                name: 'Soğuma', 
+                blockedSkill: 'willful_strike', 
+                turns: 5, 
+                maxTurns: 5, 
+                resetOnCombatEnd: true 
+            });
+
+            writeLog(`💥 **${this.data.name}**: ${spentRage} Öfke harcandı! (x${multiplier.toFixed(1)} Güç)`);
+
+            const animFrames = ['barbarian_attack2.png','barbarian_attack3.png']; 
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(totalDamage, fullPathFrames, this.data.name);
+        }
+    },	
+
+
+
+
     // ======================================================
     // TAB: BRUTAL (VAHŞET)
     // ======================================================
@@ -307,7 +377,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Kesik",
             description: "Hızlı bir kılıç darbesi.",
-            menuDescription: "Temel saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>1.2 x STR</b> + 10.",
+            menuDescription: "Saldırı gücünün %150'si kadar hasar. 25 Öfke harcar.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_slash.png',
@@ -317,49 +387,21 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 1.2);
-            const damage = Math.floor(Math.random() * 4) + 10 + strBonus;
+            // YENİ FORMÜL: ATK * 1.5
+            const damage = Math.floor(stats.atk * 1.5);
+            
             const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             animateCustomAttack(damage, fullPathFrames, this.data.name);
         }
     },
-
-    tactical_strike: {
-        data: {
-            name: "Taktiksel Vuruş",
-            description: "Düşmanın zayıf noktasına vurur.",
-            menuDescription: "Zırhı deler. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>Normal Vuruş + 1.0 x STR</b>.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
-            rageCost: 15,
-            levelReq: 2, 
-            icon: 'icon_tactical_strike.png',
-            type: 'attack',
-            category: 'brutal', 
-            tier: 2
-        },
-        onCast: function(attacker, defender) {
-            const stats = getHeroEffectiveStats();
-            // Basic Attack formülü (Base 8 + 0.5 STR)
-            const basicAttackDmg = 8 + Math.floor(stats.str * 0.5);
-            const skillBonusDmg = Math.floor(stats.str * 1.0);
-            const totalRawDamage = basicAttackDmg + skillBonusDmg;
-
-            let currentMonsterDef = monster.defense;
-            if (typeof isMonsterDefending !== 'undefined' && isMonsterDefending) currentMonsterDef += monsterDefenseBonus;
-            const ignoredAmount = Math.min(currentMonsterDef, 10);
-            const damageToSend = totalRawDamage + ignoredAmount;
-
-            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
-            const fullPathFrames = animFrames.map(f => `images/${f}`);
-            animateCustomAttack(damageToSend, fullPathFrames, this.data.name);
-        }
-    },
+    
 
     armor_break: {
         data: {
             name: "Zırh Kıran",
             description: "Savunmayı yok sayar.",
-            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Hasar: <b style='color:orange'>0.8 x STR</b>.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
+            menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Saldırı gücünün %100'ü kadar hasar.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
             rageCost: 30,
             levelReq: 2,
             icon: 'icon_armor_break.png',
@@ -372,8 +414,8 @@ const SKILL_DATABASE = {
             hero.statusEffects.push({ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
 
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 0.8);
-            const damage = 5 + strBonus;
+            // YENİ FORMÜL: ATK * 1.0
+            const damage = Math.floor(stats.atk * 1.0);
 
             const animFrames = ['barbarian_attack3.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
@@ -390,7 +432,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Cehennem Kılıcı",
             description: "Canını feda edip vur.",
-            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>1.8 x STR</b> + 15.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
+            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>%250 ATK</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_hell_blade.png',
@@ -404,8 +446,8 @@ const SKILL_DATABASE = {
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
 
             const stats = getHeroEffectiveStats();
-            const strBonus = Math.floor(stats.str * 1.8);
-            const damage = 15 + strBonus;
+            // YENİ FORMÜL: ATK * 2.5
+            const damage = Math.floor(stats.atk * 2.5);
 
             const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
