@@ -69,9 +69,12 @@ function updateStatusIcons() {
         else if (effect.id === 'regen') { icon.innerHTML = '💖'; icon.classList.add('status-buff'); }
         else if (effect.id === 'stun') { icon.innerHTML = '💫'; icon.classList.add('status-debuff'); icon.style.borderColor='yellow'; icon.style.color='yellow';}
         else if (effect.id === 'str_up') { icon.innerHTML = '💪'; icon.classList.add('status-buff'); }
+		else if (effect.id === 'atk_up_percent') { icon.innerHTML = '🗡️'; icon.classList.add('status-buff'); }
+        else if (effect.id === 'curse_damage') { icon.innerHTML = '💀'; icon.classList.add('status-debuff'); } // Debuff rengi
         else if (effect.id === 'ignore_def') { icon.innerHTML = '🔨'; icon.classList.add('status-buff'); }
         else if (effect.id === 'guard_active') { icon.innerHTML = '🛡️'; icon.classList.add('status-buff'); }
         else if (effect.id.startsWith('debuff_')) { icon.innerHTML = '🔻'; icon.classList.add('status-debuff'); }
+		
         
         if (effect.waitForCombat) { 
             icon.style.filter = "grayscale(100%) opacity(0.7)"; 

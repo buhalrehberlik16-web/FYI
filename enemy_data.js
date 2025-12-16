@@ -3,26 +3,26 @@
 const ENEMY_STATS = {
     // --- TIER 1 (Çerezler - Düşük HP, Hızlı Ölüm) ---
     "Zehirli Mantar": { 
-        maxHp: 40, attack: 10, defense: 0, xp: 40, 
+        maxHp: 40, attack: 10, defense: 0, xp: 400, 
         idle: 'zehirli_mantar.png',
         attackFrames: ['zehirli_mantar_attack1.png', 'zehirli_mantar_attack2.png', 'zehirli_mantar_attack3.png'],
         dead: 'zehirli_mantar_dead.png'
     },
     "Orman Örümceği": { 
-        maxHp: 65, attack: 22, defense: 2, xp: 65, 
+        maxHp: 65, attack: 22, defense: 2, xp: 650, 
         idle: 'orman_orumcegi.png',
         attackFrames: ['orman_orumcegi_attack1.png', 'orman_orumcegi_attack2.png', 'orman_orumcegi_attack3.png'],
         dead: 'orman_orumcegi_dead.png'
     },
 	 "Hırsız Kobold": { 
-        maxHp: 55, attack: 12, defense: 1, xp: 45, 
+        maxHp: 55, attack: 12, defense: 1, xp: 450, 
         idle: 'hirsiz_kobold.png',
         attackFrames: ['hirsiz_kobold_attack1.png', 'hirsiz_kobold_attack2.png'], // 2 Kare yeterli
         dead: 'hirsiz_kobold_dead.png'
     },
     
     "Kan Yarasası": { 
-        maxHp: 45, attack: 14, defense: 0, xp: 40, 
+        maxHp: 45, attack: 14, defense: 0, xp: 400, 
         idle: 'kan_yarasasi.png',
         attackFrames: ['kan_yarasasi_attack1.png', 'kan_yarasasi_attack2.png'], 
         dead: 'kan_yarasasi_dead.png'

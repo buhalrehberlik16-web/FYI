@@ -1,18 +1,20 @@
-// skills.js - BİRLEŞTİRİLMİŞ YETENEK HAVUZU
+// skills.js - FİNAL VE EKSİKSİZ SÜRÜM (Tek Veritabanı)
 
 const SKILL_DATABASE = {
     
     // ======================================================
-    // TAB: COMMON (GENEL) - Tier 1 (Seçilebilir Başlangıçlar)
+    // TAB: COMMON (GENEL)
     // ======================================================
     
-    // CUT (Kes): Temel Saldırı
+    // --- TIER 1 (ESKİ BASIC SKILLER BURAYA TAŞINDI) ---
+
+    // CUT (Kes)
     cut: {
         data: {
             name: "Kes",
             description: "Dengeli saldırı.",
             menuDescription: "Temel Hasar + 0.5x STR. +10 Rage üretir.",
-            rageCost: 0, // Temel yetenekler bedava olabilir veya rage üretebilir
+            rageCost: 0,
             levelReq: 1,
             icon: 'icon_attack.png',
             type: 'attack',
@@ -21,22 +23,24 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const dmg = 8 + Math.floor(stats.str * 0.5);
-            hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+            const multiplier = stats.atkMultiplier || 1; 
             
-            // Animasyon (Basic Attack animasyonu kullanır)
-            // Not: animateCustomAttack fonksiyonunu kullanabiliriz
+            // Hasar: (Base(8) + 0.5 * STR) * Sharpen
+            let dmg = 8 + Math.floor(stats.str * 0.5);
+            dmg = Math.floor(dmg * multiplier);
+            
+            hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
+
+            // Görsel
             const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
-            
-            // Rage kazanımını göstermek için
-            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
             
             animateCustomAttack(dmg, fullPathFrames, this.data.name);
         }
     },
 
-    // GUARD (Siper): Temel Savunma
+    // GUARD (Siper)
     guard: {
         data: {
             name: "Siper",
@@ -50,7 +54,6 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-            // Guard Effect
             hero.statusEffects.push({
                 id: 'guard_active',
                 name: 'Koruma',
@@ -67,8 +70,8 @@ const SKILL_DATABASE = {
         }
     },
 
-    // STRIKE (Vuruş)
-    strike: { // Kod adı 'strike' yaptım
+    // STRIKE (Vuruş - Eski Maul)
+    strike: { 
         data: {
             name: "Vuruş",
             description: "Güçlü hasar.",
@@ -82,25 +85,30 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const dmg = 8 + Math.floor(stats.str * 0.7);
-            const genRage = Math.floor(Math.random() * 10); 
+            const multiplier = stats.atkMultiplier || 1;
+
+            // Hasar: (Base(8) + 0.7 * STR) * Sharpen
+            let dmg = 8 + Math.floor(stats.str * 0.7);
+            dmg = Math.floor(dmg * multiplier);
             
+            // 0-9 Arası Rage
+            const genRage = Math.floor(Math.random() * 10); 
             hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
-
-            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png']; // Veya özel animasyon
+            
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             
             animateCustomAttack(dmg, fullPathFrames, this.data.name);
         }
     },
 
-    // BLOCK (Blok)
-    block: { // Kod adı 'block' yaptım
+    // BLOCK (Blok - Eski Focus)
+    block: { 
         data: {
             name: "Blok",
             description: "Hasar emer.",
-            menuDescription: "INT kadar hasar emer. Blok tur sonunda %50 azalır. -10 Rage.",
+            menuDescription: "INT kadar hasar emer. -10 Rage.",
             rageCost: 10,
             levelReq: 1,
             icon: 'icon_block.png',
@@ -110,21 +118,12 @@ const SKILL_DATABASE = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
+            // Blok Değeri: Base 5 + (1.5 x INT)
             const blockVal = 5 + Math.floor(hero.int * 1.5);
             
-            // Block global değişkenini combat_manager'da tanımlamıştık (heroBlock)
-            // Ancak bu dosyadan erişmek için window.heroBlock veya combat_manager fonksiyonu lazım.
-            // En temiz yol: combat_manager içinde addBlock diye bir fonksiyon olması.
-            // Şimdilik global değişkene erişiyoruz (Main.js'de tanımlı varsayıyoruz veya combat_manager scope'unda)
-            
-            // NOT: heroBlock combat_manager'da let ile tanımlı, dışarıdan erişilemeyebilir.
-            // Bu yüzden logic'i buraya koymak yerine combat_manager'da özel efekt tanımlamak daha iyi.
-            // GEÇİCİ ÇÖZÜM: Hero objesine block ekleyelim.
-            
+            // Global fonksiyon ile blok ekle
             if(typeof addHeroBlock === 'function') {
                 addHeroBlock(blockVal);
-            } else {
-                writeLog("Hata: Blok fonksiyonu bulunamadı.");
             }
 
             writeLog(`🧱 **${this.data.name}**: ${blockVal} Blok kazandın.`);
@@ -132,9 +131,7 @@ const SKILL_DATABASE = {
         }
     },
 
-	////////////////////////////
-    // ---COMMON SKILLER --- //
-	//////////////////////////
+    // --- TIER 2 ---
     
     minor_healing: {
         data: {
@@ -145,7 +142,7 @@ const SKILL_DATABASE = {
             levelReq: 1,
             icon: 'icon_minor_healing.png',
             type: 'defense',
-            category: 'common',
+            category: 'common', 
             tier: 2
         },
         onCast: function(attacker, defender) {
@@ -167,57 +164,7 @@ const SKILL_DATABASE = {
         }
     },
 
-	// TACTICAL STRIKE: Defans Delici Vuruş
-    tactical_strike: {
-        data: {
-            name: "Taktiksel Vuruş",
-            description: "Düşmanın zayıf noktasına vurur.",
-            // Menü açıklaması güncellendi
-            menuDescription: "Zırhı deler. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>Temel Hasar + 1.0 x STR</b>.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
-            rageCost: 15,
-            levelReq: 2, 
-            icon: 'icon_tactical_strike.png',
-            type: 'attack',
-            category: 'common', 
-            tier: 2
-        },
-        onCast: function(attacker, defender) {
-            const stats = getHeroEffectiveStats();
-            
-            // 1. Temel Saldırı (Cut) Hasarını Hesapla: 8 + (STR * 0.5)
-            const basicAttackDmg = 8 + Math.floor(stats.str * 0.5);
-
-            // 2. Skill Bonusu: + (STR * 1.0)
-            const skillBonusDmg = Math.floor(stats.str * 1.0);
-
-            // Toplam Ham Hasar
-            const totalRawDamage = basicAttackDmg + skillBonusDmg;
-
-            // 3. Defans Delme Mantığı (Ignore 10 Defence)
-            // Canavarın o anki toplam defansını buluyoruz
-            let currentMonsterDef = monster.defense;
-            if (typeof isMonsterDefending !== 'undefined' && isMonsterDefending) {
-                currentMonsterDef += monsterDefenseBonus;
-            }
-
-            // Ne kadar defans yok sayılacak? (En fazla 10, ama defansı 10'dan azsa defansı kadar)
-            const ignoredAmount = Math.min(currentMonsterDef, 10);
-            
-            // Animasyon fonksiyonuna gönderilecek hasar.
-            // Sistem otomatik olarak defansı düşeceği için, biz yok saydığımız miktarı
-            // hasarın üzerine ekleyerek "fake" bir delme işlemi yapıyoruz.
-            const damageToSend = totalRawDamage + ignoredAmount;
-
-            // Animasyon
-            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
-            const fullPathFrames = animFrames.map(f => `images/${f}`);
-            
-            animateCustomAttack(damageToSend, fullPathFrames, this.data.name);
-        }
-    },
-	
-	// DISTRACT: Dikkat Dağıt (Quick Action)
-     distract: {
+    distract: {
         data: {
             name: "Dikkat Dağıt",
             description: "Düşmanı şaşırtır.",
@@ -230,95 +177,60 @@ const SKILL_DATABASE = {
             tier: 2
         },
         onCast: function(attacker, defender) {
-            // Cooldown (Kullanıldıktan sonra 2 tur beklesin)
-            hero.statusEffects.push({ 
-                id: 'block_skill', 
-                blockedSkill: 'distract', 
-                turns: 2, 
-                maxTurns: 2, 
-                resetOnCombatEnd: true 
-            });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'distract', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
 
-            // 1. DÜŞMAN ATAK KIRMA (SÜRE DÜZELTMESİ: 2 TUR)
-            // 2 Tur veriyoruz ki senin turunun bitişindeki azaltmadan sağ çıksın
-            // ve düşmanın vuruş anında hala üzerinde olsun.
-            hero.statusEffects.push({ 
-                id: 'debuff_enemy_atk', 
-                name: 'Düşman Güçsüz', 
-                value: 0.25, // %25 Azaltma
-                turns: 2,    // ÖNEMLİ: 1 yerine 2 yapıldı.
-                waitForCombat: false, 
-                resetOnCombatEnd: true 
-            });
-            
-            // 2. DÜŞMAN DEFANS KIRMA (GÜÇLENDİRİLDİ: %50)
-            // Düşük defanslı düşmanlarda hissedilmesi için oran artırıldı.
-            hero.statusEffects.push({ 
-                id: 'debuff_enemy_def', 
-                name: 'Düşman Savunmasız', 
-                value: 0.25, // ÖNEMLİ: %25 yerine %50 yapıldı.
-                turns: 3,    // 2 Tur sürmesi için buraya 3 yazıyoruz (Bu tur + Sonraki tur)
-                waitForCombat: false, 
-                resetOnCombatEnd: true 
-            });
+            hero.statusEffects.push({ id: 'debuff_enemy_atk', name: 'Düşman Güçsüz', value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
 
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "ZAYIFLADI!", 'damage');
             writeLog(`✨ **${this.data.name}**: Düşman zayıflatıldı!`);
 
-            // Quick Action: Butonları tekrar aç
             setTimeout(() => {
                 toggleBasicActions(false); 
                 toggleSkillButtons(false); 
             }, 300); 
         }
     },
-	
-	////////////////////////////
-	//---Passive Yetenekler---//
-	////////////////////////////
-	// HOARDER: +2 Broş Slotu
+
+    // --- TIER 3 (PASİFLER) ---
+
     hoarder: {
         data: {
             name: "İstifçi",
             description: "Daha fazla takı takabilirsin.",
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Broş Slotu</span> kazandırır.",
             rageCost: 0,
-            levelReq: 3,
-            icon: 'icon_hoarder.png', // İkon eklemeyi unutma
+            levelReq: 2,
+            icon: 'icon_hoarder.png',
             type: 'passive',
             category: 'common',
             tier: 3,
-            // YENİ: Öğrenilince çalışacak kod
             onAcquire: function() {
-                // Broş dizisine 2 tane boş slot ekle
                 hero.brooches.push(null, null);
                 writeLog("📿 Broş kapasitesi arttı! (+2 Slot)");
             }
         }
     },
 
-    // LOOT JUNKIE: +1 Envanter Slotu
     loot_junkie: {
         data: {
             name: "Ganimetçi",
             description: "Çantanda daha çok yer açar.",
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Çanta Slotu</span> kazandırır.",
             rageCost: 0,
-            levelReq: 3,
+            levelReq: 2,
             icon: 'icon_loot_junkie.png',
             type: 'passive',
             category: 'common',
             tier: 3,
             onAcquire: function() {
-                // Envantere 1 boş slot ekle
                 hero.inventory.push(null);
                 writeLog("🎒 Çanta kapasitesi arttı! (+1 Slot)");
             }
         }
     },
 
-    // FIRED UP: +1 Skill Bar Slotu
     fired_up: {
         data: {
             name: "Ateşli",
@@ -331,20 +243,66 @@ const SKILL_DATABASE = {
             category: 'common',
             tier: 3,
             onAcquire: function() {
-                // Skill barına 1 boş slot ekle
                 hero.equippedSkills.push(null);
                 writeLog("⚔️ Savaş kapasitesi arttı! (+1 Skill Slotu)");
-                
-                // UI'ları hemen güncelle
                 if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
                 if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
             }
         }
     },
-	
-	/////////////////////////
-    // --- BRUTAL TAB --- //
-    ////////////////////////
+
+    // --- TIER 4 ---
+
+    sharpen: {
+        data: {
+            name: "Bileme",
+            description: "Silahını keskinleştir.",
+            menuDescription: "Saldırı gücünü artırır. 30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.<br><span style='color:yellow'>Bekleme: 6 Tur</span>.",
+            rageCost: 30,
+            levelReq: 1, 
+            icon: 'icon_sharpen.png',
+            type: 'buff',
+            category: 'common',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            hero.statusEffects.push({ id: 'atk_up_percent', name: 'Keskinlik', turns: 4, value: 0.25, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', blockedSkill: 'sharpen', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+            
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "KESKİNLEŞTİ!", 'heal');
+            writeLog(`✨ **${this.data.name}**: Saldırı gücün %25 arttı!`);
+            setTimeout(() => { nextTurn(); }, 1000); 
+        }
+    },
+
+    curse: {
+        data: {
+            name: "Lanet",
+            description: "Düşmanı lanetler.",
+            menuDescription: "Karanlık fısıltılar. 20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span><br><span style='color:yellow'>Bekleme: 10 Tur</span>.",
+            rageCost: 20,
+            levelReq: 1,
+            icon: 'icon_curseskill.png',
+            type: 'debuff',
+            category: 'common',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            hero.statusEffects.push({ id: 'curse_damage', name: 'Lanetli', turns: 5, value: 0.20, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', blockedSkill: 'curse', turns: 10, maxTurns: 10, resetOnCombatEnd: true });
+
+            updateStats();
+            showFloatingText(document.getElementById('monster-display'), "LANETLENDİ!", 'damage'); 
+            writeLog(`💀 **${this.data.name}**: Düşman %20 fazla hasar alacak.`);
+            setTimeout(() => { nextTurn(); }, 1000); 
+        }
+    },
+
+    // ======================================================
+    // TAB: BRUTAL (VAHŞET)
+    // ======================================================
+
     slash: {
         data: {
             name: "Kesik",
@@ -366,8 +324,38 @@ const SKILL_DATABASE = {
             animateCustomAttack(damage, fullPathFrames, this.data.name);
         }
     },
-	
-	armor_break: {
+
+    tactical_strike: {
+        data: {
+            name: "Taktiksel Vuruş",
+            description: "Düşmanın zayıf noktasına vurur.",
+            menuDescription: "Zırhı deler. 15 Öfke harcar.<br>Hasar: <b style='color:orange'>Normal Vuruş + 1.0 x STR</b>.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
+            rageCost: 15,
+            levelReq: 2, 
+            icon: 'icon_tactical_strike.png',
+            type: 'attack',
+            category: 'brutal', 
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            // Basic Attack formülü (Base 8 + 0.5 STR)
+            const basicAttackDmg = 8 + Math.floor(stats.str * 0.5);
+            const skillBonusDmg = Math.floor(stats.str * 1.0);
+            const totalRawDamage = basicAttackDmg + skillBonusDmg;
+
+            let currentMonsterDef = monster.defense;
+            if (typeof isMonsterDefending !== 'undefined' && isMonsterDefending) currentMonsterDef += monsterDefenseBonus;
+            const ignoredAmount = Math.min(currentMonsterDef, 10);
+            const damageToSend = totalRawDamage + ignoredAmount;
+
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            animateCustomAttack(damageToSend, fullPathFrames, this.data.name);
+        }
+    },
+
+    armor_break: {
         data: {
             name: "Zırh Kıran",
             description: "Savunmayı yok sayar.",
@@ -376,7 +364,7 @@ const SKILL_DATABASE = {
             levelReq: 2,
             icon: 'icon_armor_break.png',
             type: 'attack',
-            category: 'brutal', // Brutal'da
+            category: 'brutal', 
             tier: 2
         },
         onCast: function(attacker, defender) {
@@ -389,12 +377,15 @@ const SKILL_DATABASE = {
 
             const animFrames = ['barbarian_attack3.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
-            
             animateCustomAttack(damage, fullPathFrames, this.data.name);
             writeLog(`🔨 **${this.data.name}**: Zırh parçalandı!`);
         }
     },
-	// --- CHAOS TAB ---
+
+    // ======================================================
+    // TAB: CHAOS (KAOS)
+    // ======================================================
+
     hell_blade: {
         data: {
             name: "Cehennem Kılıcı",
@@ -427,7 +418,11 @@ const SKILL_DATABASE = {
             animateCustomAttack(finalDmg, fullPathFrames, this.data.name);
         }
     },
-	// --- FERVOR TAB ---
+
+    // ======================================================
+    // TAB: FERVOR (COŞKU)
+    // ======================================================
+
     battle_cry: {
         data: {
             name: "Savaş Çığlığı",
@@ -437,7 +432,7 @@ const SKILL_DATABASE = {
             levelReq: 2,
             icon: 'icon_battle_cry.png',
             type: 'buff',
-            category: 'fervor', // Fervor'da
+            category: 'fervor', 
             tier: 2
         },
         onCast: function(attacker, defender) {
@@ -451,7 +446,7 @@ const SKILL_DATABASE = {
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
-	
+
     restore_healing: {
         data: {
             name: "Yenilenme",
