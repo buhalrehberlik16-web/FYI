@@ -133,8 +133,7 @@ let hero = {
     statusEffects: [],
     mapEffects: [],
 
-	equippedBasic: [],
-    equippedSkills: [null, null, null, null], 
+    equippedSkills: [null, null, null, null, null, null], 
 	// Envanter:
     inventory: new Array(8).fill(null), // 8 boş slot
 	// 6 adet Broş slotu

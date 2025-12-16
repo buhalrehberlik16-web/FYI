@@ -1,4 +1,4 @@
-// main.js - DÜZELTİLMİŞ FİNAL SÜRÜM
+// main.js - FİNAL VE EKSİKSİZ VERSİYON
 
 function levelUp() {
     if (hero.level >= MAX_LEVEL) return; 
@@ -35,12 +35,21 @@ function increaseStat(statName) {
     }
 }
 
+// YETENEK ÖĞRENME
 function learnSkill(skillKey) {
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
     if (isInBattle) { writeLog("❌ Savaş sırasında yetenek öğrenemezsin!"); return; }
 
     const skill = SKILL_DATABASE[skillKey];
     if (!skill) return;
+
+    // Skill Tree Kontrolü
+    if (typeof checkSkillTreeRequirement === 'function') {
+        if (!checkSkillTreeRequirement(skill.data.category, skill.data.tier)) {
+            writeLog(`❌ Önce bu sınıfta **Tier ${skill.data.tier - 1}** bir yetenek açmalısın!`);
+            return;
+        }
+    }
 
     const cost = skill.data.tier || 1;
 
@@ -50,23 +59,43 @@ function learnSkill(skillKey) {
         
         writeLog(`📖 Yeni Yetenek Öğrenildi: **${skill.data.name}**`);
         
-        // OTOMATİK KUŞANMA
-        const emptySlotIndex = hero.equippedSkills.indexOf(null);
-        if (emptySlotIndex !== -1) {
-            hero.equippedSkills[emptySlotIndex] = skillKey;
-            writeLog(`⚙️ **${skill.data.name}** otomatik olarak ${emptySlotIndex + 1}. slota yerleşti.`);
-            if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
-            if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+        // --- PASİF YETENEK KONTROLÜ (YENİ) ---
+        if (skill.data.type === 'passive') {
+            if (typeof skill.data.onAcquire === 'function') {
+                skill.data.onAcquire();
+            }
+        } 
+        else {
+            // --- AKTİF YETENEK OTOMATİK KUŞANMA ---
+            // İlk null (boş) olan slotu bul
+            const emptySlotIndex = hero.equippedSkills.indexOf(null);
+            
+            if (emptySlotIndex !== -1) {
+                hero.equippedSkills[emptySlotIndex] = skillKey;
+                writeLog(`⚙️ **${skill.data.name}** otomatik olarak ${emptySlotIndex + 1}. slota yerleşti.`);
+                if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+                if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+            }
         }
-        
+
         if (typeof renderSkillBookList === 'function') renderSkillBookList();
-        
         const spDisplay = document.getElementById('skill-points-display');
         if(spDisplay) spDisplay.textContent = hero.skillPoints;
         
     } else {
         writeLog("❌ Yetersiz Skill Puanı!");
     }
+}
+
+// --- YENİ YARDIMCI FONKSİYON: AĞAÇ KONTROLÜ ---
+function checkSkillTreeRequirement(category, tier) {
+    if (tier === 1) return true;
+    const requiredTier = tier - 1;
+    return hero.unlockedSkills.some(unlockedKey => {
+        const dbSkill = SKILL_DATABASE[unlockedKey];
+        if (!dbSkill) return false;
+        return dbSkill.data.category === category && dbSkill.data.tier === requiredTier;
+    });
 }
 
 function gainXP(amount) {
@@ -83,20 +112,15 @@ function gainXP(amount) {
 function triggerLevelUpEffect() {
     const container = document.getElementById('hero-display');
     if (!container) return;
-
     const halo = document.createElement('div');
     halo.className = 'levelup-halo';
     container.appendChild(halo);
-
     if (typeof showFloatingText === 'function') {
         setTimeout(() => {
             showFloatingText(container, "LEVEL UP!", "heal"); 
         }, 200);
     }
-
-    setTimeout(() => {
-        halo.remove();
-    }, 2000);
+    setTimeout(() => { halo.remove(); }, 2000);
 }
 
 function startCutscene() {
@@ -108,15 +132,15 @@ function startCutscene() {
         skipCutsceneButton.onclick = null;
         cutsceneText.textContent = "Hazır!";
         
-        // Önce Skill Seçimi, Sonra Harita
-        // Eğer selection fonksiyonu varsa aç, yoksa direkt haritaya git (Hata önleyici)
         if (typeof openBasicSkillSelection === 'function') {
             openBasicSkillSelection();
         } else {
             switchScreen(mapScreen);
         }
         
-        document.getElementById('map-display').scrollLeft = 0;
+        const mapDisplay = document.getElementById('map-display');
+        if(mapDisplay) mapDisplay.scrollLeft = 0;
+        
         writeLog("Savaş tarzını seç."); 
     }
     skipCutsceneButton.onclick = transitionToMap;
@@ -126,52 +150,33 @@ function startCutscene() {
     }, 1500);
 }
 
+// initGame (Tam Sıfırlama)
 function initGame() {
-    // 1. Hero Statları
-    hero.maxHp = 100; 
-    hero.hp = hero.maxHp;
-    hero.attack = 20; 
-    hero.defense = 5;
-    hero.level = 1; 
-    hero.xp = 0; 
-    
+    hero.maxHp = 100; hero.hp = hero.maxHp;
+    hero.attack = 20; hero.defense = 5;
+    hero.level = 1; hero.xp = 0; 
     hero.xpToNextLevel = (typeof FULL_XP_REQUIREMENTS !== 'undefined') ? FULL_XP_REQUIREMENTS[1] : 100;
-    hero.maxRage = 100; 
-    hero.rage = 0; 
-    hero.gold = 0; 
+    hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
     
-    // 2. Statlar ve Skiller
     hero.statPoints = 0;
     hero.str = 15; hero.dex = 10; hero.int = 5; hero.mp_pow = 0; hero.vit = 10;
-    hero.skillPoints = 0; 
-    hero.unlockedSkills = []; 
-    hero.equippedSkills = [null, null, null, null];
-    
-    // --- DÜZELTME: Varsayılan Basic Skiller Tanımlandı ---
-    // Böylece seçim ekranı gelmese bile slotlar boş kalmaz.
-    hero.equippedBasic = ['cut', 'guard']; 
 
-    // 3. Diğer Veriler
-    hero.statusEffects = []; 
-    hero.mapEffects = []; 
+    hero.skillPoints = 0;
+    hero.unlockedSkills = []; 
+    hero.equippedSkills = [null, null, null, null]; // Başlangıçta 4 slot boş
+    
+    hero.statusEffects = []; hero.mapEffects = []; 
     hero.inventory = new Array(8).fill(null);
     hero.brooches = new Array(6).fill(null);
     hero.equipment = {
-        earring1: null, earring2: null,
-        necklace: null, belt: null,
-        ring1: null, ring2: null
+        earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null
     };
 
-    // 4. Geçmişi Temizle
     delete hero.lastCampfireStage; 
     delete hero.lastEnemy;
 
-    GAME_MAP.nodes = [];
-    GAME_MAP.connections = [];
-    GAME_MAP.currentNodeId = null;
-    GAME_MAP.completedNodes = [];
+    GAME_MAP.nodes = []; GAME_MAP.connections = []; GAME_MAP.currentNodeId = null; GAME_MAP.completedNodes = [];
 
-    // 5. Görsel Temizlik
     const marker = document.getElementById('player-marker-container');
     if (marker) {
         marker.style.transition = 'none';
@@ -181,21 +186,13 @@ function initGame() {
     }
     
     const mapDisplay = document.getElementById('map-display');
-    if (mapDisplay) {
-        mapDisplay.scrollLeft = 0; 
-    }
+    if (mapDisplay) { mapDisplay.scrollLeft = 0; }
 
-    isHeroDefending = false;
-    monster = null;
-    isHeroTurn = true; 
+    isHeroDefending = false; monster = null; isHeroTurn = true; 
 
     if (typeof generateMap === 'function') generateMap(); 
     
-    // --- DÜZELTME: Basic Skill Görsellerini Yükle ---
-    // (Burası silinmişti, geri eklendi. Bu fonksiyon ui_manager.js içindedir)
-    if (typeof initializeBasicSkills === 'function') {
-        initializeBasicSkills();
-    }
+    if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
 
     writeLog("--- Yeni Oyun Başlatıldı ---");
     const heroImg = document.querySelector('#hero-display img');
@@ -212,7 +209,7 @@ function initGame() {
 if (btnBasicAttack) {
     btnBasicAttack.addEventListener('click', () => {
         if (isHeroTurn && !btnBasicAttack.classList.contains('disabled')) {
-            if (typeof handleBasicSkillUse === 'function') handleBasicSkillUse(0); 
+            if (typeof handleSkillUse === 'function') handleSkillUse(hero.equippedSkills[0]); 
         }
     });
 }
@@ -221,7 +218,7 @@ if (btnBasicAttack) {
 if (btnBasicDefend) {
     btnBasicDefend.addEventListener('click', () => {
         if (isHeroTurn && !btnBasicDefend.classList.contains('disabled')) {
-            if (typeof handleBasicSkillUse === 'function') handleBasicSkillUse(1); 
+            if (typeof handleSkillUse === 'function') handleSkillUse(hero.equippedSkills[1]); 
         }
     });
 }
@@ -244,15 +241,19 @@ document.addEventListener('keydown', (e) => {
             if (btnBasicDefend && !btnBasicDefend.classList.contains('disabled')) btnBasicDefend.click();
         }
 
-        // 1-2-3-4
+        // 1-2-3-4... (Dinamik Slotlar)
+        // 0 ve 1 Basic Slot, o yüzden 2. indexten başlıyoruz
         const skillSlots = document.querySelectorAll('#skill-bar-container .skill-slot');
+        
+        // 1 Tuşu -> 2. Index (İlk Özel Skill)
         if (key === '1' && skillSlots[0]) skillSlots[0].click();
         if (key === '2' && skillSlots[1]) skillSlots[1].click();
         if (key === '3' && skillSlots[2]) skillSlots[2].click();
         if (key === '4' && skillSlots[3]) skillSlots[3].click();
+        // Fired Up ile 5. slot gelirse '5' tuşuna da atayabiliriz
+        if (key === '5' && skillSlots[4]) skillSlots[4].click();
     }
 
-    // Menü Kısayolları
     if (key === 'i' || key === 'ı') { toggleInventory(); }
     if (key === 'k') { if (typeof toggleSkillBook === 'function') toggleSkillBook(); }
     if (key === 'u') { if (typeof toggleStatScreen === 'function') toggleStatScreen(); }

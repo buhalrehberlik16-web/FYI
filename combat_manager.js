@@ -1,4 +1,4 @@
-// combat_manager.js - TAM VE EKSİKSİZ VERSİYON (Block & Guard Mekanikleri Dahil)
+// combat_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM (Distract & Fixes)
 
 const HERO_IDLE_SRC = 'images/barbarian.png'; 
 const HERO_ATTACK_FRAMES = ['images/barbarian_attack1.png', 'images/barbarian_attack2.png', 'images/barbarian_attack3.png'];
@@ -11,11 +11,18 @@ let monsterDefenseBonus = 0;
 let isMonsterDefending = false; 
 let monsterNextAction = 'attack'; 
 let combatTurnCount = 1;
-let heroBlock = 0; // YENİ: Blok Değeri (Geçici Can/Kalkan)
+let heroBlock = 0; // Blok Değeri
+
+// --- YARDIMCI: Blok Ekleme ---
+window.addHeroBlock = function(amount) {
+    heroBlock += amount;
+    const display = document.getElementById('hero-display');
+    if(display) showFloatingText(display, `+${amount} Blok`, 'heal');
+    updateStats(); 
+};
 
 // --- BASIC SLOT KİLİT FONKSİYONU ---
 function toggleBasicActions(disable) {
-    // Basic Attack Butonu Kontrolü
     if (btnBasicAttack) {
         if (disable) {
             btnBasicAttack.classList.add('disabled');
@@ -27,7 +34,6 @@ function toggleBasicActions(disable) {
             btnBasicAttack.style.filter = 'none';
         }
     }
-    // Basic Defend Butonu Kontrolü
     if (btnBasicDefend) {
         if (disable) {
             btnBasicDefend.classList.add('disabled');
@@ -48,60 +54,51 @@ function handleBasicSkillUse(slotIndex) {
     const skillKey = hero.equippedBasic[slotIndex];
     if (!skillKey) return;
     
-    // Güvenlik kontrolü: Class verisi var mı?
+    // Güvenlik: Class verisi var mı?
     if (!BASIC_SKILL_DATABASE[hero.class]) return;
 
     const skillData = BASIC_SKILL_DATABASE[hero.class][skillKey];
     if (!skillData) return;
 
-    // YENİ: Rage Maliyeti Kontrolü (Guard vb. için)
+    // Rage Maliyeti Kontrolü
     if (skillData.rageCost && hero.rage < skillData.rageCost) {
         writeLog(`❌ Yetersiz Öfke! (${skillData.rageCost} gerekli)`);
         return; 
     }
 
-    // Rage Harcaması
-    if (skillData.rageCost) {
-        hero.rage -= skillData.rageCost;
-    }
+    if (skillData.rageCost) hero.rage -= skillData.rageCost;
 
-    // 1. Fonksiyonu Çalıştır (Stat etkileri burada işlenir)
+    // 1. Fonksiyonu Çalıştır
     const result = skillData.execute(hero, monster);
     updateStats(); 
 
     // 2. Sonuca Göre İşlem
     if (result.action === 'attack') {
-        // Saldırı Animasyonu
         performBasicAttackAnimation(result.damage, skillData.name);
 
     } else if (result.action === 'guard') {
-        // YENİ: Guard (%25 Hasar Azaltma)
-        // 1 Turluk status effect ekliyoruz
         hero.statusEffects.push({
             id: 'guard_active',
             name: 'Koruma',
-            value: 0.25, // %25
+            value: 0.25, 
             turns: 1,
             waitForCombat: false,
             resetOnCombatEnd: true
         });
         
-        isHeroDefending = true; // Görsel duruş için
+        isHeroDefending = true;
         writeLog(`🛡️ **${skillData.name}**: Savunma pozisyonu (%25 Hasar Azaltma).`);
         nextTurn();
 
     } else if (result.action === 'block') {
-        // YENİ: Blok (Geçici Kalkan)
         heroBlock += result.value;
-        showFloatingText(document.getElementById('hero-display'), `+${result.value} Blok`, 'heal'); // Mavi yazı olsa iyi olurdu
+        showFloatingText(document.getElementById('hero-display'), `+${result.value} Blok`, 'heal');
         writeLog(`🧱 **${skillData.name}**: ${result.value} Blok kazandın. (Toplam: ${heroBlock})`);
         nextTurn();
 
-    } else if (result.action === 'defend') {
-        // Eski usul savunma (Eğer hala kullanılıyorsa)
-        isHeroDefending = true;
-        heroDefenseBonus = result.value;
-        writeLog(`🛡️ **${skillData.name}**: Savunma alındı (+${heroDefenseBonus} Def, +${result.rage} Rage).`);
+    } else if (result.action === 'focus') {
+        showFloatingText(document.getElementById('hero-display'), `+${result.rage} Rage`, 'heal');
+        writeLog(`🧘 **${skillData.name}**: Odaklandın (+${result.rage} Rage).`);
         nextTurn();
     }
 }
@@ -121,15 +118,16 @@ function performBasicAttackAnimation(rawDamage, skillName) {
             attackerImgElement.src = attackFrames[frameIndex];
             if (frameIndex === 1) {
                 let effectiveDef = monster.defense;
-                
-                // Canavar Savunuyorsa Bonus Ekle
                 if(isMonsterDefending) effectiveDef += monsterDefenseBonus;
-                
-                // Zırh Kırma Kontrolü
                 const ignoreDef = hero.statusEffects.find(e => e.id === 'ignore_def' && !e.waitForCombat);
                 if (ignoreDef) effectiveDef = 0;
+                
+                // Distract Skill: Enemy Defans Debuff Kontrolü
+                const weakDefEffect = hero.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
+                if (weakDefEffect) {
+                    effectiveDefense = Math.floor(effectiveDefense * (1 - weakDefEffect.value));
+                }
 
-                // Nihai Hasar
                 const finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
                 monster.hp = Math.max(0, monster.hp - finalDamage);
                 
@@ -138,7 +136,6 @@ function performBasicAttackAnimation(rawDamage, skillName) {
                 writeLog(`${skillName}: ${finalDamage} hasar.`);
                 updateStats();
                 
-                // Canavarın savunmasını kır
                 if (isMonsterDefending) { 
                     isMonsterDefending = false; 
                     monsterDefenseBonus = 0; 
@@ -171,37 +168,31 @@ function handleMonsterAttack(attacker, defender) {
         if (frameIndex < attackFrames.length) {
             attackerImgElement.src = attackFrames[frameIndex]; 
             if (frameIndex === 1) { 
-                // 1. Ham Hasarı Hesapla (Guard azaltması buraya dahildir)
+                // 1. Ham Hasarı Hesapla (Guard ve Debufflar burada işlenir)
                 let damage = calculateDamage(attacker, defender);
                 
-                // 2. YENİ: Blok (Shield) Kontrolü
-                // Eğer oyuncunun bloğu varsa, hasarı önce oradan düş
+                // 2. Blok (Shield) Kontrolü
                 if (heroBlock > 0) {
                     if (heroBlock >= damage) {
-                        // Blok tüm hasarı emer
                         heroBlock -= damage;
                         damage = 0;
                         showFloatingText(targetContainer, "BLOK!", 'heal');
                         writeLog(`${attacker.name} saldırdı ama BLOKLANDI! (Kalan Blok: ${heroBlock})`);
                     } else {
-                        // Blok yetmez, kalanı cana gider
                         damage -= heroBlock;
                         writeLog(`${attacker.name} saldırdı! Blok ${heroBlock} hasarı emdi.`);
                         heroBlock = 0;
                     }
                 }
 
-                // 3. Kalan hasarı cana uygula
+                // 3. Hasar Uygulama
                 if (damage > 0) {
                     defender.hp = Math.max(0, defender.hp - damage);
                     animateDamage(true); 
                     showFloatingText(targetContainer, damage, 'damage');
-                    writeLog(`${attacker.name} -> ${defender.name}: ${damage} hasar.`);
+                    writeLog(`${attacker.name} -> ${defender.name}: ${damage}`);
                     
-                    // Rage Kazancı (Hasar yiyince)
-                    if (defender === hero) {
-                        hero.rage = Math.min(hero.maxRage, hero.rage + 5);
-                    }
+                    if (defender === hero) hero.rage = Math.min(hero.maxRage, hero.rage + 0); // Hasar alınca rage kazanımı
                 }
                 
                 updateStats();
@@ -217,46 +208,63 @@ function handleMonsterAttack(attacker, defender) {
     showNextFrame();
 }
 
-// --- HASAR HESAPLAMA ---
+// --- HASAR HESAPLAMA (GÜNCELLENDİ: Distract Desteği) ---
 function calculateDamage(attacker, defender) {
     let rawDamage = attacker.attack;
     
-    // Canavarın atağı (Hero atağı zaten Basic Skill execute içinde hesaplanıyor)
-    if (attacker !== hero) {
+    // --- SALDIRI GÜCÜ HESABI ---
+    if (attacker === hero) {
+        const stats = getHeroEffectiveStats();
+        rawDamage = stats.atk; // Skill hasarı genelde onCast'ten gelir ama burası fallback
+        
+        const instaKill = hero.statusEffects.find(e => e.id === 'insta_kill' && !e.waitForCombat);
+        if (instaKill) return 9999;
+    } else {
+        // Canavar Saldırısı
         rawDamage = attacker.attack;
+
+        // Distract: Düşman Atak Kırma Debuff'ı
+        const weakAtkEffect = hero.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
+        if (weakAtkEffect) {
+            rawDamage = Math.floor(rawDamage * (1 - weakAtkEffect.value));
+        }
     }
 
-    // --- DEFANS HESAPLARI ---
+    // --- DEFANS HESABI ---
     let effectiveDefense = defender.defense;
-    let damageMultiplier = 1.0; // Varsayılan çarpan
+    let damageMultiplier = 1.0; 
 
     if (defender === hero) {
         const stats = getHeroEffectiveStats();
         effectiveDefense = stats.def;
-        
         if (isHeroDefending) effectiveDefense += heroDefenseBonus;
 
-        // YENİ: Guard (%25 Azaltma) Kontrolü
+        // Guard (% Azaltma)
         const guardEffect = hero.statusEffects.find(e => e.id === 'guard_active');
         if (guardEffect) {
-            damageMultiplier = 1.0 - guardEffect.value; // 1 - 0.25 = 0.75
+            damageMultiplier = 1.0 - guardEffect.value; 
         }
-    } 
-    else if (defender === monster) {
+    } else if (defender === monster) {
         if (isMonsterDefending) effectiveDefense += monsterDefenseBonus;
+        
         const ignoreDef = hero.statusEffects.find(e => e.id === 'ignore_def' && !e.waitForCombat);
         if (ignoreDef) effectiveDefense = 0;
+
+        // Distract: Düşman Defans Kırma Debuff'ı
+        const weakDefEffect = hero.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
+        if (weakDefEffect) {
+            effectiveDefense = Math.floor(effectiveDefense * (1 - weakDefEffect.value));
+        }
     }
 
-    // Formül: (Atak - Defans) * Çarpan
+    // Sonuç
     let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDefense));
-    
-    // Çarpanı uygula
     finalDamage = Math.floor(finalDamage * damageMultiplier);
 
     return Math.max(1, finalDamage); 
 }
 
+// --- OYUN DÖNGÜSÜ FONKSİYONLARI ---
 function determineMonsterAction() {
     if (Math.random() < 0.70) monsterNextAction = 'attack';
     else {
@@ -265,7 +273,7 @@ function determineMonsterAction() {
     }
 }
 
-// --- STAT HESAPLAMA ---
+// --- EFEKTİF STAT HESAPLAMA ---
 function getHeroEffectiveStats() {
     let currentStr = hero.str;
     let currentDef = hero.defense;
@@ -288,7 +296,7 @@ function getHeroEffectiveStats() {
     return { atk: Math.max(0, currentAtk), def: Math.max(0, currentDef), str: currentStr };
 }
 
-// --- KİLİT KONTROLÜ (Skiller İçin) ---
+// --- SKILL BAR VE BUTONLAR ---
 function checkIfSkillBlocked(skillKey) {
     const skill = SKILL_DATABASE[skillKey];
     if (!skill) return false;
@@ -300,166 +308,143 @@ function checkIfSkillBlocked(skillKey) {
     });
 }
 
-// --- SKILL BAR OLUŞTURMA ---
 function initializeSkillButtons() {
     if (!skillButtonsContainer) return;
     skillButtonsContainer.innerHTML = ''; 
     
-    for (let i = 0; i < 4; i++) {
-        const slot = document.createElement('div'); 
-        slot.classList.add('skill-slot'); 
-        slot.dataset.slotIndex = i; 
+    const slotA = document.getElementById('btn-basic-attack');
+    const slotD = document.getElementById('btn-basic-defend');
+	
+	const totalSlots = 2 + hero.equippedSkills.length; //Dinamik Skill slotları
+    
+     for (let i = 0; i < totalSlots; i++) {
+        let slot;
+        if (i === 0) slot = slotA;
+        else if (i === 1) slot = slotD;
+        else {
+            slot = document.createElement('div');
+            skillButtonsContainer.appendChild(slot);
+        }
+
+        if (!slot) continue;
+
+        slot.innerHTML = '';
+        slot.className = 'skill-slot'; 
+        if (i < 2) slot.classList.add('basic-slot'); 
+        slot.dataset.slotIndex = i;
         
-        // --- DRAG & DROP OLAYLARI ---
-
-        // 1. Üzerine gelindiğinde (İzin ver)
-        slot.addEventListener('dragover', (e) => { 
-            e.preventDefault(); 
-            slot.classList.add('drag-over'); 
-        });
-
-        // 2. Üzerinden çıkıldığında
-        slot.addEventListener('dragleave', () => { 
-            slot.classList.remove('drag-over'); 
-        });
-
-        // 3. Bırakıldığında (DROP)
+        slot.setAttribute('draggable', true);
+        slot.addEventListener('dragover', (e) => { e.preventDefault(); slot.classList.add('drag-over'); });
+        slot.addEventListener('dragleave', () => { slot.classList.remove('drag-over'); });
+        
         slot.addEventListener('drop', (e) => {
             e.preventDefault(); 
             slot.classList.remove('drag-over');
-            
             const rawData = e.dataTransfer.getData('text/plain');
             
             try {
-                // A) SLOTLAR ARASI TAŞIMA (SWAP)
-                // Veriyi JSON olarak okumaya çalış
                 const data = JSON.parse(rawData);
-                
                 if (data.type === 'move_skill') {
                     const fromIndex = data.index;
-                    const toIndex = i;
-
-                    // Aynı yere bırakırsa işlem yapma
-                    if (fromIndex === toIndex) return;
-
-                    // Yer Değiştirme (Swap)
-                    const temp = hero.equippedSkills[toIndex];
-                    hero.equippedSkills[toIndex] = hero.equippedSkills[fromIndex];
+                    if (fromIndex === i) return; 
+                    const temp = hero.equippedSkills[i];
+                    hero.equippedSkills[i] = hero.equippedSkills[fromIndex];
                     hero.equippedSkills[fromIndex] = temp;
-
-                    // Arayüzü Güncelle
                     initializeSkillButtons();
-                    
-                    // Eğer Skill Kitabı açıksa oradaki "Kuşanılanlar" barını da güncelle
                     if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
-                    
-                    writeLog("Yeteneklerin yeri değiştirildi.");
                 }
-
             } catch (err) {
-                // B) KİTAPTAN YENİ YETENEK EKLEME
-                // JSON parse hatası verirse, demek ki düz metin (Skill Key) geliyor.
                 const skillKey = rawData;
+                const isNormal = !!SKILL_DATABASE[skillKey];
+                const isBasic = !!(BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][skillKey]);
                 
-                if (skillKey && SKILL_DATABASE[skillKey]) { 
+                if (isNormal || isBasic) { 
                     hero.equippedSkills[i] = skillKey; 
-                    
                     initializeSkillButtons(); 
                     if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
-                    writeLog("Yetenek kuşandın.");
                 }
             }
         });
 
-        const keyHint = document.createElement('span'); 
-        keyHint.classList.add('key-hint'); 
-        keyHint.textContent = i + 1; 
-        slot.appendChild(keyHint);
-
         const skillKey = hero.equippedSkills[i];
         
-        // Eğer slot doluysa
-        if (skillKey && SKILL_DATABASE[skillKey]) {
-            const skill = SKILL_DATABASE[skillKey];
+        const keyHint = document.createElement('span'); 
+        keyHint.classList.add('key-hint'); 
+        if (i === 0) keyHint.textContent = 'A';
+        else if (i === 1) keyHint.textContent = 'D';
+        else keyHint.textContent = (i - 1); 
+        slot.appendChild(keyHint);
+
+        let skillData = null;
+        if (skillKey) {
+            if (SKILL_DATABASE[skillKey]) {
+                skillData = SKILL_DATABASE[skillKey].data;
+            } else if (BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][skillKey]) {
+                skillData = BASIC_SKILL_DATABASE[hero.class][skillKey];
+            }
+        }
+
+        if (skillData) {
             const iconImg = document.createElement('img'); 
-            iconImg.src = `images/${skill.data.icon}`; 
+            iconImg.src = `images/${skillData.icon}`; 
             slot.appendChild(iconImg);
             
-            // --- SÜRÜKLEME BAŞLATMA (DRAG START) ---
-            // Sadece dolu slotlar sürüklenebilir
-            slot.setAttribute('draggable', true);
-            
             slot.addEventListener('dragstart', (e) => {
-                // Taşıdığımız veriyi JSON formatında paketle
-                const dragData = {
-                    type: 'move_skill',
-                    index: i,
-                    skillKey: skillKey
-                };
+                const dragData = { type: 'move_skill', index: i, skillKey: skillKey };
                 e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
             });
-            // ---------------------------------------
-            
-            const overlay = document.createElement('div'); 
-            overlay.className = 'cooldown-overlay';
-            const cdText = document.createElement('span'); 
-            cdText.className = 'cooldown-text';
-            overlay.appendChild(cdText); 
-            slot.appendChild(overlay);
+
+            const overlay = document.createElement('div'); overlay.className = 'cooldown-overlay';
+            const cdText = document.createElement('span'); cdText.className = 'cooldown-text';
+            overlay.appendChild(cdText); slot.appendChild(overlay);
 
             slot.dataset.skillKey = skillKey; 
-            slot.dataset.rageCost = skill.data.rageCost;
+            slot.dataset.rageCost = skillData.rageCost || 0;
             
-            slot.addEventListener('click', () => { 
-                if (!slot.classList.contains('disabled')) handleSkillUse(skillKey); 
-            });
-
-            const tooltip = document.createElement('div'); 
-            tooltip.classList.add('skill-tooltip');
-            tooltip.innerHTML = `<span class="tooltip-title">${skill.data.name}</span><span class="tooltip-cost">Maliyet: ${skill.data.rageCost} Öfke</span><span class="tooltip-desc">${skill.data.description}</span>`;
-            slot.appendChild(tooltip);
-        } else { 
-            slot.classList.add('empty-slot'); 
-            // Boş slotlar sürüklenemez
+            slot.onclick = () => {
+                if (!slot.classList.contains('disabled')) handleSkillUse(skillKey);
+            };
+            slot.title = `${skillData.name}: ${skillData.desc || skillData.menuDescription.replace(/<[^>]*>?/gm, '')}`;
+        } else {
+            slot.classList.add('empty-slot');
             slot.setAttribute('draggable', false);
         }
-        
-        skillButtonsContainer.appendChild(slot);
     }
-    toggleSkillButtons(false); 
+    toggleSkillButtons(false);
 }
 
-// --- BUTON DURUMLARI (Sadece Skiller İçin) ---
 function toggleSkillButtons(forceDisable) {
-    if (!skillButtonsContainer) return;
-    const slots = skillButtonsContainer.querySelectorAll('.skill-slot');
-    
+    const slots = document.querySelectorAll('.skill-slot');
     slots.forEach(slot => {
         if (!slot.dataset.skillKey) return; 
         const skillKey = slot.dataset.skillKey;
-        const rageCost = parseInt(slot.dataset.rageCost);
-        
+        const rageCost = parseInt(slot.dataset.rageCost) || 0;
         const overlay = slot.querySelector('.cooldown-overlay');
         const cdText = overlay ? overlay.querySelector('.cooldown-text') : null;
 
         const isBlocked = checkIfSkillBlocked(skillKey);
         const cooldownEffect = hero.statusEffects.find(e => e.id === 'block_skill' && e.blockedSkill === skillKey && !e.waitForCombat);
+        const isStunned = hero.statusEffects.some(e => e.id === 'stun' && !e.waitForCombat);
 
-        if (isBlocked) {
-            slot.classList.add('disabled'); slot.style.borderColor = "#ff4d4d"; 
+        if (isBlocked || isStunned) {
+            slot.classList.add('disabled'); 
+            slot.style.borderColor = "#ff4d4d"; 
             if (overlay && cdText && cooldownEffect) {
                 const max = cooldownEffect.maxTurns || 3;
                 const percent = (cooldownEffect.turns / max) * 100;
-                overlay.style.height = `${percent}%`; cdText.textContent = cooldownEffect.turns;
-            } else if (overlay) { overlay.style.height = '100%'; if(cdText) cdText.textContent = "⛔"; }
+                overlay.style.height = `${percent}%`; 
+                cdText.textContent = cooldownEffect.turns;
+            } else if (overlay) { 
+                overlay.style.height = '100%'; 
+                if(cdText && isStunned) cdText.textContent = "💫";
+                else if(cdText) cdText.textContent = "⛔";
+            }
         } else {
             if (overlay) { overlay.style.height = '0%'; if(cdText) cdText.textContent = ''; }
             
             if (forceDisable || hero.rage < rageCost) { 
                 slot.classList.add('disabled'); 
                 slot.style.borderColor = ""; 
-            } else if (forceDisable) {
-                slot.classList.add('disabled');
             } else { 
                 slot.classList.remove('disabled'); 
                 slot.style.borderColor = ""; 
@@ -470,18 +455,59 @@ function toggleSkillButtons(forceDisable) {
 
 function handleSkillUse(skillKey) {
     if (!isHeroTurn) return;
+    
     if (checkIfSkillBlocked(skillKey)) { writeLog(`❌ Bu yetenek şu an kullanılamaz!`); return; }
 
-    const skillObj = SKILL_DATABASE[skillKey];
-    if (!skillObj) return;
-    if (hero.rage < skillObj.data.rageCost) { writeLog(`❌ Yetersiz Öfke!`); return; }
+    // 1. Normal Skill mi?
+    if (SKILL_DATABASE[skillKey]) {
+        const skillObj = SKILL_DATABASE[skillKey];
+        if (skillObj.data.rageCost && hero.rage < skillObj.data.rageCost) { 
+            writeLog(`❌ Yetersiz Öfke!`); return; 
+        }
+        if(skillObj.data.rageCost > 0) hero.rage -= skillObj.data.rageCost;
+        
+        updateStats(); 
+        toggleBasicActions(true); toggleSkillButtons(true);
+        skillObj.onCast(hero, monster);
     
-    hero.rage -= skillObj.data.rageCost; updateStats(); 
-    
-    toggleBasicActions(true); 
-    toggleSkillButtons(true);
-    
-    skillObj.onCast(hero, monster);
+    // 2. Basic Skill mi?
+    } else if (BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][skillKey]) {
+        const skillData = BASIC_SKILL_DATABASE[hero.class][skillKey];
+        
+        if (skillData.rageCost && hero.rage < skillData.rageCost) {
+            writeLog(`❌ Yetersiz Öfke! (${skillData.rageCost} gerekli)`);
+            return;
+        }
+        if (skillData.rageCost) hero.rage -= skillData.rageCost;
+
+        const result = skillData.execute(hero, monster);
+        updateStats();
+
+        if (result.action === 'attack') {
+            performBasicAttackAnimation(result.damage, skillData.name);
+        } else if (result.action === 'guard') {
+            hero.statusEffects.push({
+                id: 'guard_active', name: 'Koruma', value: 0.25, turns: 1, waitForCombat: false, resetOnCombatEnd: true
+            });
+            isHeroDefending = true;
+            writeLog(`🛡️ **${skillData.name}**: Savunma pozisyonu (%25 Hasar Azaltma).`);
+            nextTurn();
+        } else if (result.action === 'block') {
+            heroBlock += result.value;
+            showFloatingText(document.getElementById('hero-display'), `+${result.value} Blok`, 'heal');
+            writeLog(`🧱 **${skillData.name}**: ${result.value} Blok kazandın. (Toplam: ${heroBlock})`);
+            nextTurn();
+        } else if (result.action === 'defend') { 
+             isHeroDefending = true;
+             heroDefenseBonus = result.value;
+             writeLog(`🛡️ **${skillData.name}**: Savunma (+${result.value} Def).`);
+             nextTurn();
+        } else if (result.action === 'focus') {
+             showFloatingText(document.getElementById('hero-display'), `+${result.rage} Rage`, 'heal');
+             writeLog(`🧘 **${skillData.name}**: Odaklandın (+${result.rage} Rage).`);
+             nextTurn();
+        }
+    }
 }
 
 function animateCustomAttack(rawDamage, skillFrames, skillName) {
@@ -493,7 +519,15 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
     if(ignoreDef) effectiveDef = 0;
     if(isMonsterDefending) effectiveDef += monsterDefenseBonus;
 
+    // Distract DEF Kırıcı Kontrolü
+    const weakDefEffect = hero.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
+    if (weakDefEffect) {
+        effectiveDef = Math.floor(effectiveDef * (1 - weakDefEffect.value));
+    }
+
     const finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
+
+    toggleBasicActions(true); toggleSkillButtons(true);
 
     let frameIndex = 0;
     function showNextFrame() {
@@ -517,7 +551,6 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
     showNextFrame();
 }
 
-// --- SAVAŞ DÖNGÜSÜ ---
 function startBattle(enemyType) {
     const stats = ENEMY_STATS[enemyType];
     if (!stats) {
@@ -531,7 +564,7 @@ function startBattle(enemyType) {
     monster = { 
         name: enemyType, 
         maxHp: stats.maxHp, 
-        hp: stats.maxHp, // Can fulle
+        hp: stats.maxHp, 
         attack: stats.attack, 
         defense: stats.defense, 
         xp: stats.xp, 
@@ -545,12 +578,14 @@ function startBattle(enemyType) {
     monsterDisplayImg.style.filter = 'none'; 
     heroDisplayImg.src = HERO_IDLE_SRC;
     
-    isMonsterDefending = false; monsterDefenseBonus = 0; isHeroDefending = false; heroDefenseBonus = 0;
-    heroBlock = 0; // Blok sıfırla
+    isMonsterDefending = false; monsterDefenseBonus = 0; 
+    isHeroDefending = false; heroDefenseBonus = 0;
+    heroBlock = 0; 
     
     hero.statusEffects.forEach(e => { if (e.waitForCombat) e.waitForCombat = false; });
     combatTurnCount = 1;
-    document.getElementById('turn-count-display').textContent = combatTurnCount;
+    const tDisplay = document.getElementById('turn-count-display');
+    if(tDisplay) tDisplay.textContent = combatTurnCount;
 
     updateStats(); initializeSkillButtons(); determineMonsterAction(); showMonsterIntention(monsterNextAction);
     
@@ -565,16 +600,16 @@ function nextTurn() {
     if (checkGameOver()) return;
     
     if (isHeroTurn) {
-        // --- OYUNCU SIRASI ---
         combatTurnCount++;
-        document.getElementById('turn-count-display').textContent = combatTurnCount;
+        const tDisplay = document.getElementById('turn-count-display');
+        if(tDisplay) tDisplay.textContent = combatTurnCount;
         writeLog(`--- TUR ${combatTurnCount} ---`);
 
-        // YENİ: Blok Erimesi (%50)
+        // Blok Erimesi
         if (heroBlock > 0) {
             heroBlock = Math.floor(heroBlock * 0.5);
-            if(heroBlock > 0) writeLog(`🧱 Kalan Blok: ${heroBlock}`);
-            else writeLog(`🧱 Blok süresi doldu.`);
+            if(heroBlock === 0) writeLog("Blok süresi doldu.");
+            else writeLog(`Kalan Blok: ${heroBlock}`);
         }
 
         if (isHeroDefending) { isHeroDefending = false; heroDefenseBonus = 0; }
@@ -607,9 +642,7 @@ function nextTurn() {
         writeLog("... Senin Sıran ...");
 
     } else {
-        // --- CANAVAR SIRASI ---
         toggleBasicActions(true); toggleSkillButtons(true); 
-        
         const action = monsterNextAction;
         if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
         
@@ -641,7 +674,7 @@ function checkGameOver() {
         if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
         
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
-        heroBlock = 0; // Savaş bitince blok silinir
+        heroBlock = 0; 
 
         updateStats(); toggleBasicActions(true); toggleSkillButtons(true);
 
