@@ -322,105 +322,196 @@
             </div>
                      <!-- 11. KÖY (TOWN) EKRANI -->
             <div id="town-screen" class="screen hidden">
-                <div class="town-container">
-                    <img src="images/town_bg.png" alt="Köy Meydanı" class="town-background">
-                    
-                    <div class="town-building" id="building-inn" data-name="Han (Inn)">
-                        <div class="building-label">HAN</div>
-                    </div>
-                    <div class="town-building" id="building-blacksmith" data-name="Demirci (Blacksmith)">
-                        <div class="building-label">DEMİRCİ</div>
-                    </div>
-                    <div class="town-building" id="building-merchant" data-name="Tüccar (Merchant)">
-                        <div class="building-label">TÜCCAR</div>
-                    </div>
-                    <div class="town-building" id="building-alchemist" data-name="Simyacı (Alchemist)">
-                        <div class="building-label">SİMYACI</div>
-                    </div>
-                    <div class="town-building" id="building-stable" data-name="Ahır (Stable)">
-                        <div class="building-label">AHIR</div>
-                    </div>
-                </div>
-                <button id="btn-leave-town" class="town-exit-btn">Maceraya Dön</button>
-            </div>
-            <!-- KÖY EKRANI BİTİŞİ -->
-			<!-- 12. ENVANTER (INVENTORY) EKRANI -->
-<div id="inventory-screen" class="hidden">
-    <div class="inventory-window">
-        <div class="inventory-header">
-            <h3>ENVANTER</h3>
-            <button id="btn-close-inventory" class="close-btn">X</button>
-        </div>
-
-        <div class="inventory-content">
-            <!-- SOL TARA: Karakter ve Para -->
-            <div class="paper-doll-left">
-                <div class="char-preview-box">
-                    <img src="images/barbarianinventory.png" alt="Karakter" id="inv-char-img">
-					<!-- YENİ: Broş Slotları (Görselin Üzerine Binecek) -->
-        <div class="brooch-overlay">
-            <!-- Üst Sıra (3 Slot) -->
-            <div class="item-slot brooch-slot" data-brooch-index="0"></div>
-            <div class="item-slot brooch-slot" data-brooch-index="1"></div>
-            <div class="item-slot brooch-slot" data-brooch-index="2"></div>
-            
-            <!-- Alt Sıra (3 Slot) -->
-            <div class="item-slot brooch-slot" data-brooch-index="3"></div>
-            <div class="item-slot brooch-slot" data-brooch-index="4"></div>
-            <div class="item-slot brooch-slot" data-brooch-index="5"></div>
-                </div>
-			</div>
-                <div class="inventory-gold-display">
-                    <i class="fas fa-coins" style="color:gold;"></i> 
-                    <span id="inv-gold-text">0</span>
-                </div>
-            </div>
-
-            <!-- SAĞ TARAF: Ekipman Slotları -->
-            <div class="paper-doll-right">
-                <!-- 1. Satır: Küpeler -->
-                <div class="equip-row">
-                    <div class="item-slot equip-slot" data-slot="earring1" title="Küpe"></div>
-                    <div class="item-slot equip-slot" data-slot="earring2" title="Küpe"></div>
-                </div>
-                <!-- 2. Satır: Kolye -->
-                <div class="equip-row">
-                    <div class="item-slot equip-slot" data-slot="necklace" title="Kolye"></div>
-                </div>
-                <!-- 3. Satır: Yüzükler -->
-                <div class="equip-row">
-                    <div class="item-slot equip-slot" data-slot="ring1" title="Yüzük"></div>
-                    <div class="item-slot equip-slot" data-slot="ring2" title="Yüzük"></div>
-                </div>
-                <!-- 4. Satır: Kemer -->
-                <div class="equip-row">
-                    <div class="item-slot equip-slot" data-slot="belt" title="Kemer"></div>
-                </div>
+    <div class="town-container">
+        <img src="images/town_bg.png" alt="Köy Meydanı" class="town-background">
+        
+        <!-- HAN -->
+        <div class="town-building" id="building-inn" onclick="openBuilding('inn')">
+            <div class="signboard-container">
+                <img src="images/signboard.png" alt="Tabela">
+                <span class="signboard-text">HAN</span>
             </div>
         </div>
-
-        <hr style="border-color: #444; width: 90%; margin: 10px auto;">
-
-        <!-- ALT KISIM: Çanta (8 Slot) -->
-        <div class="inventory-bag-area">
-            <div class="bag-grid">
-                <!-- JS ile doldurulacak veya statik 8 slot -->
-                <div class="item-slot bag-slot" data-index="0"></div>
-                <div class="item-slot bag-slot" data-index="1"></div>
-                <div class="item-slot bag-slot" data-index="2"></div>
-                <div class="item-slot bag-slot" data-index="3"></div>
-                <div class="item-slot bag-slot" data-index="4"></div>
-                <div class="item-slot bag-slot" data-index="5"></div>
-                <div class="item-slot bag-slot" data-index="6"></div>
-                <div class="item-slot bag-slot" data-index="7"></div>
+        
+        <!-- DEMİRCİ -->
+        <div class="town-building" id="building-blacksmith" onclick="openBuilding('blacksmith')">
+            <div class="signboard-container">
+                <img src="images/signboard.png" alt="Tabela">
+                <span class="signboard-text">DEMİRCİ</span>
+            </div>
+        </div>
+        
+        <!-- TÜCCAR -->
+        <div class="town-building" id="building-merchant" onclick="openBuilding('merchant')">
+            <div class="signboard-container">
+                <img src="images/signboard.png" alt="Tabela">
+                <span class="signboard-text">TÜCCAR</span>
+            </div>
+        </div>
+        
+        <!-- SİMYACI -->
+        <div class="town-building" id="building-alchemist" onclick="openBuilding('alchemist')">
+            <div class="signboard-container">
+                <img src="images/signboard.png" alt="Tabela">
+                <span class="signboard-text">SİMYACI</span>
+            </div>
+        </div>
+        
+        <!-- AHIR -->
+        <div class="town-building" id="building-stable" onclick="openBuilding('stable')">
+            <div class="signboard-container">
+                <img src="images/signboard.png" alt="Tabela">
+                <span class="signboard-text">AHIR</span>
             </div>
         </div>
     </div>
+    
+    <button id="btn-leave-town" class="town-exit-btn">Maceraya Dön</button>
 </div>
 
-        </div>
+            <!-- KÖY EKRANI BİTİŞİ -->
+			<!-- 12. ENVANTER (INVENTORY) EKRANI -->
+            <div id="inventory-screen" class="hidden">
+                <div class="inventory-window">
+                    <div class="inventory-header">
+                        <h3>ENVANTER</h3>
+                        <button id="btn-close-inventory" class="close-btn">X</button>
+                    </div>
+
+                    <div class="inventory-content">
+                        <!-- SOL TARA: Karakter ve Para -->
+                        <div class="paper-doll-left">
+                            <div class="char-preview-box">
+                                <img src="images/barbarianinventory.png" alt="Karakter" id="inv-char-img">
+                                <!-- Broş Slotları -->
+                                <div class="brooch-overlay">
+                                    <div class="item-slot brooch-slot" data-brooch-index="0"></div>
+                                    <div class="item-slot brooch-slot" data-brooch-index="1"></div>
+                                    <div class="item-slot brooch-slot" data-brooch-index="2"></div>
+                                    <div class="item-slot brooch-slot" data-brooch-index="3"></div>
+                                    <div class="item-slot brooch-slot" data-brooch-index="4"></div>
+                                    <div class="item-slot brooch-slot" data-brooch-index="5"></div>
+                                </div>
+                            </div>
+                            <div class="inventory-gold-display">
+                                <i class="fas fa-coins" style="color:gold;"></i> 
+                                <span id="inv-gold-text">0</span>
+                            </div>
+                        </div>
+
+                        <!-- SAĞ TARAF: Ekipman Slotları -->
+                        <div class="paper-doll-right">
+                            <div class="equip-row">
+                                <div class="item-slot equip-slot" data-slot="earring1" title="Küpe"></div>
+                                <div class="item-slot equip-slot" data-slot="earring2" title="Küpe"></div>
+                            </div>
+                            <div class="equip-row">
+                                <div class="item-slot equip-slot" data-slot="necklace" title="Kolye"></div>
+                            </div>
+                            <div class="equip-row">
+                                <div class="item-slot equip-slot" data-slot="ring1" title="Yüzük"></div>
+                                <div class="item-slot equip-slot" data-slot="ring2" title="Yüzük"></div>
+                            </div>
+                            <div class="equip-row">
+                                <div class="item-slot equip-slot" data-slot="belt" title="Kemer"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: #444; width: 90%; margin: 10px auto;">
+
+                    <!-- ALT KISIM: Çanta -->
+                    <div class="inventory-bag-area">
+                        <div class="bag-grid">
+                            <div class="item-slot bag-slot" data-index="0"></div>
+                            <div class="item-slot bag-slot" data-index="1"></div>
+                            <div class="item-slot bag-slot" data-index="2"></div>
+                            <div class="item-slot bag-slot" data-index="3"></div>
+                            <div class="item-slot bag-slot" data-index="4"></div>
+                            <div class="item-slot bag-slot" data-index="5"></div>
+                            <div class="item-slot bag-slot" data-index="6"></div>
+                            <div class="item-slot bag-slot" data-index="7"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NPC MODALLARI (Envanterin DIŞINDA olmalı) -->
+            
+            <!-- 1. HAN (INN) -->
+            <div id="modal-inn" class="npc-modal hidden">
+                <div class="npc-window" style="background-image: url('images/inn.png');">
+                    <div class="npc-title">HANCI</div>
+                    <div class="npc-actions-left">
+                        <button class="npc-btn" onclick="restAtInn()">Dinlen (10g)</button>
+                        <button class="npc-btn" onclick="buyDrink()">İçecek Al (5g)</button>
+                    </div>
+                    <div class="npc-actions-right">
+                         <button class="npc-btn close-npc">Çıkış</button>
+                    </div>
+                    <div class="npc-dialogue" id="inn-dialogue">Yorgun görünüyorsun gezgin.</div>
+                </div>
+            </div>
+
+            <!-- 2. SİMYACI (ALCHEMIST) -->
+            <div id="modal-alchemist" class="npc-modal hidden">
+                <div class="npc-window" style="background-image: url('images/alchemist.png');">
+                    <div class="npc-title">SİMYACI</div>
+                    <div class="npc-actions-left">
+                        <button class="npc-btn">İksir Al</button>
+                    </div>
+                    <div class="npc-actions-right">
+                         <button class="npc-btn close-npc">Çıkış</button>
+                    </div>
+                    <div class="npc-dialogue">İksirlerim en kalitelisidir...</div>
+                </div>
+            </div>
+
+            <!-- 3. DEMİRCİ (BLACKSMITH) -->
+            <div id="modal-blacksmith" class="npc-modal hidden">
+                <div class="npc-window" style="background-image: url('images/blacksmith.png');">
+                    <div class="npc-title">DEMİRCİ</div>
+                    <div class="npc-actions-left">
+                        <button class="npc-btn">Eşya Yükselt</button>
+                    </div>
+                    <div class="npc-actions-right">
+                         <button class="npc-btn close-npc">Çıkış</button>
+                    </div>
+                    <div class="npc-dialogue">Ateşim ejderhalar gibi...</div>
+                </div>
+            </div>
+
+            <!-- 4. TÜCCAR (MERCHANT) -->
+            <div id="modal-merchant" class="npc-modal hidden">
+                <div class="npc-window" style="background-image: url('images/merchant.png');">
+                    <div class="npc-title">TÜCCAR</div>
+                    <div class="npc-actions-left">
+                        <button class="npc-btn">Satın al</button>
+                    </div>
+                    <div class="npc-actions-right">
+                         <button class="npc-btn close-npc">Çıkış</button>
+                    </div>
+                    <div class="npc-dialogue">Bu diyarın en kalitelileri...</div>
+                </div>
+            </div>
+
+            <!-- 5. AHIR (STABLE) -->
+            <div id="modal-stable" class="npc-modal hidden">
+                <div class="npc-window" style="background-image: url('images/stable.png');">
+                    <div class="npc-title">AHIR</div>
+                    <div class="npc-actions-left">
+                        <button class="npc-btn">Hızlı Git</button>
+                    </div>
+                    <div class="npc-actions-right">
+                         <button class="npc-btn close-npc">Çıkış</button>
+                    </div>
+                    <div class="npc-dialogue">Bu diyarın en iyi atları...</div>
+                </div>
+            </div>
+
+        </div> <!-- main-screen-area KAPANIŞI -->
         <div id="fade-overlay"></div>
-    </div>
+    </div> <!-- game-container KAPANIŞI -->
 
     <!-- Scripts -->
     <script src="enemy_data.js"></script>

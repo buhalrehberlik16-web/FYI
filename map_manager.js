@@ -1,4 +1,4 @@
-// map_manager.js - NO CAMPFIRE ON MAP (ONLY EVENTS)
+// map_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM
 
 // --- HARİTA ÜRETİM (GENERATOR) ---
 
@@ -31,7 +31,6 @@ function generateMap() {
         } else if (MAP_CONFIG.townStages.includes(stage)) { 
             nodeCountInStage = 1; isChokepoint = true; // Town
         } else {
-            // Ara yollar
             nodeCountInStage = Math.random() > 0.2 ? 3 : 2;
         }
 
@@ -51,7 +50,6 @@ function generateMap() {
         availableLanes.forEach(lane => {
             const nodeType = determineNodeType(stage, lane);
             
-            // Jitter
             const jitterX = (Math.random() * 6 - 3); 
             const waveOffset = Math.sin(stage * 0.5) * 40; 
             const jitterY = (Math.random() * 16 - 8) + waveOffset; 
@@ -68,7 +66,6 @@ function generateMap() {
                 isHard: false
             };
 
-            // Düşman Belirleme (Eğer Savaşsa)
             if (nodeType === 'encounter' || nodeType === 'start') {
                 const enemyData = getPreDeterminedEnemy(stage);
                 node.enemyName = enemyData.name;
@@ -78,7 +75,7 @@ function generateMap() {
             nodesInThisStage.push(node);
         });
 
-        // Anti-Pacifist (Zorunlu Savaş)
+        // Anti-Pacifist
         if (!isChokepoint && stage !== 0) {
             const hasCombat = nodesInThisStage.some(n => n.type === 'encounter');
             if (!hasCombat) {
@@ -118,7 +115,6 @@ function generateMap() {
     if(marker) marker.style.display = 'none';
 }
 
-// --- DÜŞMAN SEÇİMİ ---
 function getPreDeterminedEnemy(stage) {
     const rand = Math.random();
     let selectedPool = [];
@@ -135,8 +131,6 @@ function getPreDeterminedEnemy(stage) {
         else { selectedPool = TIER_3_ENEMIES; isHard = true; }
     } else {
         selectedPool = TIER_3_ENEMIES;
-        // Tier 4 eklersen buraya isHard koyabilirsin
-        // Şimdilik T3'ler standart kabul ediliyor bu bölge için
         if (typeof TIER_4_ENEMIES !== 'undefined' && rand < 0.3) {
              selectedPool = TIER_4_ENEMIES;
              isHard = true;
@@ -147,40 +141,22 @@ function getPreDeterminedEnemy(stage) {
     return { name: enemyName, isHard: isHard };
 }
 
-// --- NODE TİPİ BELİRLEME (DÜZELTİLDİ) ---
 function determineNodeType(stage, lane) {
-    // Sabit Tipler
     if (stage === MAP_CONFIG.totalStages - 1) return 'city';
     if (stage === MAP_CONFIG.totalStages - 2) return 'boss';
     if (MAP_CONFIG.townStages.includes(stage)) return 'town';
     if (stage === 0) return 'start';
 
-    // Köy Yakını Kontrolü
     const isNextTown = MAP_CONFIG.townStages.includes(stage + 1);
     const isPrevTown = MAP_CONFIG.townStages.includes(stage - 1);
     const rand = Math.random();
 
     if (isNextTown || isPrevTown) {
-        // Köy dibinde %70 Savaş, %30 Choice
-        return rand < 0.70 ? 'encounter' : 'choice';
+        return rand < 0.65 ? 'encounter' : 'choice';
+    } else {
+        // Normal Havuz (Encounter veya Choice)
+        return rand < 0.55 ? 'encounter' : 'choice';
     }
-
-    // Geçmiş Kontrolü (Streak Breaker)
-    const prevNode = GAME_MAP.nodes.find(n => n.stage === stage - 1 && n.lane === lane);
-    const prevPrevNode = GAME_MAP.nodes.find(n => n.stage === stage - 2 && n.lane === lane);
-
-    let combatChance = 0.60; // Standart %60 Savaş
-
-    if (prevNode && prevNode.type === 'choice') {
-        combatChance = 0.85; // Önceki Choice ise savaş ihtimali artar
-        if (prevPrevNode && prevPrevNode.type === 'choice') {
-            return 'encounter'; // 2 Choice üst üste geldiyse 3. kesin savaş
-        }
-    }
-
-    // --- BURASI DEĞİŞTİ: Campfire Kaldırıldı ---
-    // Artık sadece 'encounter' veya 'choice' dönebilir.
-    return rand < combatChance ? 'encounter' : 'choice';
 }
 
 function renderMap() {
@@ -209,7 +185,6 @@ function renderMap() {
         btn.style.top = `calc(${baseTop}% + ${node.jitterY}px)`; 
 
         const img = document.createElement('img');
-        // İkon Seçimi (Campfire yok)
         if (node.type === 'encounter') img.src = 'images/skull_icon.png';
         else if (node.type === 'town') img.src = 'images/village_icon.png';
         else if (node.type === 'choice') img.src = 'images/choice_icon.png';
@@ -377,10 +352,8 @@ function updateAvailableNodes() {
 function triggerNodeAction(node) {
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
-             // Önceden belirlenmiş düşmanı al
              let enemy = node.enemyName;
-             if (!enemy) enemy = "Goblin Devriyesi"; // Fallback
-
+             if (!enemy) enemy = "Goblin Devriyesi"; 
              document.getElementById('map-description').textContent = `Vahşi bir ${enemy} belirdi!`;
              startBattle(enemy);
 
@@ -388,8 +361,6 @@ function triggerNodeAction(node) {
             document.getElementById('map-description').textContent = "Güvenli bölge.";
             enterTown();
         
-        // CAMPFIRE BURADA YOK (Çünkü node tipi olarak üretilmiyor)
-
         } else if (node.type === 'choice') {
             document.getElementById('map-description').textContent = "Karşına bir şey çıktı.";
             triggerRandomEvent();
@@ -402,8 +373,8 @@ function triggerNodeAction(node) {
     }, 600);
 }
 
-// -- EKRAN FONKSİYONLARI --
-
+// -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
+// Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
     switchScreen(townScreen);
     writeLog("🏰 Köye giriş yaptın.");
@@ -413,24 +384,10 @@ function enterTown() {
             switchScreen(mapScreen);
         };
     }
-    const buildings = document.querySelectorAll('.town-building');
-    buildings.forEach(building => {
-        building.onclick = () => {
-            const buildingName = building.getAttribute('data-name');
-            handleBuildingClick(building.id, buildingName);
-        };
-    });
+    // ARTIK BURADA BİNALARA CLICK EVENTİ ATAMIYORUZ. HTML'DEKİ ONCLICK ÇALIŞIYOR.
 }
 
-function handleBuildingClick(buildingId, buildingName) {
-    writeLog(`🏛️ ${buildingName} binasına tıkladın.`);
-    if (buildingId === 'building-inn') {
-        if (hero.gold >= 10) { }
-    }
-}
-
-// Bu fonksiyon 'triggerRandomEvent' içinden veya özel durumlarda çağrılır.
-// Harita üzerinde node olarak çağrılmaz.
+// ... Random Event ve Campfire (UI Manager'dan çağrılır) ...
 function startCampfireEvent(node) {
     const screen = document.getElementById('campfire-screen');
     const optionsDiv = document.getElementById('campfire-options');
@@ -443,11 +400,9 @@ function startCampfireEvent(node) {
     const btnTrain = document.getElementById('btn-camp-train');
     const btnCont = document.getElementById('btn-camp-continue');
 
-    // Node bilgisi varsa ceza kontrolü yap, yoksa normal kamp
     let efficiency = 1.0;
     let penaltyText = "";
     
-    // node parametresi opsiyoneldir (Random eventten gelirse node olmayabilir)
     if (node && typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
         efficiency = 0.3; 
         penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin! (%30 Etki)</span>";

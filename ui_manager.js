@@ -695,3 +695,79 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnOpenStats) btnOpenStats.addEventListener('click', toggleStatScreen);
     if(btnOpenInv) btnOpenInv.addEventListener('click', toggleInventory);
 });
+// 1. Binayı Açma Fonksiyonu (Global Erişim İçin window. yapıyoruz)
+window.openBuilding = function(type) {
+    const modalId = `modal-${type}`;
+    const modal = document.getElementById(modalId);
+    
+    if (modal) {
+        modal.classList.remove('hidden');
+        writeLog(`${type.toUpperCase()} binasına girdin.`);
+    } else {
+        console.error(`HATA: "${modalId}" ID'li pencere HTML'de bulunamadı!`);
+        writeLog("Bu bina şu an kapalı (Kod hatası: HTML eksik).");
+    }
+};
+
+// 2. Han Fonksiyonları (Örnek)
+window.restAtInn = function() {
+    const cost = 10;
+    const dialogue = document.getElementById('inn-dialogue');
+    
+    if (hero.gold >= cost) {
+        hero.gold -= cost;
+        hero.hp = hero.maxHp; // Canı fulle
+        hero.rage = hero.maxRage; // Rage fulle
+        
+        updateGoldUI();
+        updateStats(); // Can barını güncelle
+        
+        if(dialogue) {
+            dialogue.textContent = "Mışıl mışıl uyudun. Turp gibisin!";
+            dialogue.style.color = "#43FF64"; // Yeşil
+        }
+    } else {
+        if(dialogue) {
+            dialogue.textContent = "Yeterli altının yok evlat...";
+            dialogue.style.color = "#ff4d4d"; // Kırmızı
+        }
+    }
+};
+
+window.buyDrink = function() {
+     const cost = 5;
+     const dialogue = document.getElementById('inn-dialogue');
+     
+     if (hero.gold >= cost) {
+         hero.gold -= cost;
+         hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+         
+         updateGoldUI();
+         updateStats();
+         
+         if(dialogue) {
+             dialogue.textContent = "Soğuk bir bira içtin. (+10 Rage)";
+             dialogue.style.color = "#3498db"; // Mavi
+         }
+     } else {
+         if(dialogue) {
+             dialogue.textContent = "Paran yoksa içki de yok!";
+             dialogue.style.color = "#ff4d4d";
+         }
+     }
+}
+
+// 3. Pencereleri Kapatma Mantığı (Event Listener)
+// Sayfa yüklendiğinde bu dinleyiciyi ekle
+document.addEventListener('click', (e) => {
+    // Eğer tıklanan eleman 'close-npc' sınıfına sahipse (Çıkış butonu)
+    if (e.target.classList.contains('close-npc')) {
+        const modal = e.target.closest('.npc-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+    
+    // Eğer siyah arka plana tıklandıysa da kapat
+    if (e.target.classList.contains('npc-modal')) {
+        e.target.classList.add('hidden');
+    }
+});
