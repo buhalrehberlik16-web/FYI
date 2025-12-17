@@ -943,3 +943,155 @@ pointer-events: none; }
     border: 1px solid #777;
     z-index: 5;
 }
+/* --- TOWN TABELALARI (SIGNBOARDS) --- */
+.signboard-container {
+    position: relative;
+    width: 100px; /* Tabela genişliği */
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.signboard-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 1;
+}
+
+.signboard-text {
+    position: relative;
+    z-index: 2; /* Resmin üstünde */
+    color: #d4c398; /* Soluk parşömen rengi */
+    font-size: 0.8em;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+    margin-top: 5px; /* Yazıyı biraz aşağı it, görselin ortasına gelsin */
+    pointer-events: none;
+}
+
+/* Hover Efekti */
+.town-building:hover .signboard-container {
+    transform: scale(1.1) rotate(-2deg); /* Hafif salla */
+}
+
+.town-building:hover .signboard-text {
+    color: #ffd700; /* Altın sarısı */
+    text-shadow: 0 0 10px #ffd700, 0 0 5px #ff8c00; /* Glow Effect */
+}
+
+/* --- NPC MODALLARI (PENCERELER) --- */
+/* Modalın Arka Planı (Tüm ekranı karartan siyahlık) */
+.npc-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Arkadaki oyunu iyice karart */
+    z-index: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.npc-modal.hidden { display: none; }
+
+/* Pencerenin Kendisi (Resimli Kutu) */
+.npc-window {
+    /* Görselin boyutlarına göre burayı değiştirmen gerekebilir */
+    /* Kareye yakın bir görsel olduğunu varsayıyorum */
+    width: 1280px;
+    height: 1024px;
+    background-size: contain; /* Resmi sığdır */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent !important; /* GRİ ARKA PLANI KALDIRAN KOD */
+    position: relative;
+    /* Resmi ortalamak ve kaymaları önlemek için */
+    display: flex;
+    justify-content: center;
+}
+
+/* --- KONUMLANDIRMA AYARLARI --- */
+/* Bu değerleri görseline tam oturana kadar değiştirebilirsin */
+
+/* 1. BAŞLIK (Üst Parşömen) */
+.npc-title {
+    position: absolute;
+    top: 210px; /* Üstten ne kadar aşağıda? (Piksel ile daha hassas) */
+    width: 100%;
+    text-align: center;
+    
+    color: #3e2723; /* Koyu Kahve */
+    font-weight: 900;
+    font-size: 1.8em;
+    font-family: 'Times New Roman', serif;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+    pointer-events: none;
+}
+
+/* 2. SOL SÜTUN BUTONLARI */
+.npc-actions-left {
+    position: absolute;
+    top: 350px; /* Butonların dikey başlangıcı */
+    left: 260px; /* Soldan ne kadar içeride? */
+    width: 140px; /* Sütun genişliği */
+    
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Butonlar arası boşluk */
+}
+
+/* 3. SAĞ SÜTUN BUTONLARI (Çıkış vb.) */
+.npc-actions-right {
+    position: absolute;
+    top: 350px;
+    right: 260px; /* Sağdan ne kadar içeride? */
+    width: 140px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* 4. ALT DİYALOG (Alt Parşömen) */
+.npc-dialogue {
+    position: absolute;
+    bottom: 190px; /* Alttan ne kadar yukarıda? */
+    width: 65%;   /* Parşömenin genişliği kadar */
+    text-align: center;
+    color: #5d4039;
+    font-weight: bold;
+    font-size: 1em;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* --- BUTON STİLİ --- */
+.npc-btn {
+    background: linear-gradient(to bottom, #5d4a30, #3e2b18);
+    border: 2px solid #a67c52; /* Açık ahşap çerçeve */
+    color: #fff8dc; /* Krem rengi yazı */
+    width: 100%;
+    padding: 10px 0;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.6);
+    border-radius: 6px;
+    transition: transform 0.1s;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.npc-btn:hover {
+    background: #7a5e3d;
+    border-color: #ffd700; /* Hoverda altın çerçeve */
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.npc-btn:active {
+    transform: scale(0.95);
+}
