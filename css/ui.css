@@ -418,93 +418,111 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     z-index: 0;
 }
 
-/* Tıklanabilir Bina Kutuları */
-/* Tıklanabilir Bina Alanı */
+/* Tıklama Alanı (Görünmez Kutu) */
 .town-building {
     position: absolute;
     cursor: pointer;
     
-    /* --- DEĞİŞİKLİK BURADA --- */
-    /* Eskiden yüzde veriyorduk veya miras alıyordu, şimdi içeriğe göre küçültüyoruz */
-    width: auto !important;  
+    width: auto !important;
     height: auto !important;
+    padding: 15px; /* Tıklama alanını yazıdan biraz geniş tut */
     
-    /* Tabelanın etrafında ne kadar boşluk tıklanabilir olsun? */
-    padding: 10px; 
-    /* ------------------------- */
-
-    border: none; 
-    background-color: transparent; 
-    box-shadow: none;
-    
-    transition: all 0.3s ease;
     display: flex;
     justify-content: center;
-    align-items: center; /* Hem yatay hem dikey ortala */
+    align-items: center;
     
-    z-index: 5; 
-}
-
-/* Hover Efekti (Sadece Tabela Hareket Etsin, Kutu Çıkmasın) */
-.town-building:hover {
-    /* --- DEĞİŞİKLİK: Sarı kutuyu iptal et --- */
-    background-color: transparent;
-    border-color: transparent;
+    border: none;
+    background: transparent;
     box-shadow: none;
-    /* ---------------------------------------- */
+    z-index: 5;
+    transition: transform 0.2s ease;
 }
 
-/* Bina İsim Etiketi */
-.building-label {
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #f0e68c;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9em;
-    font-weight: bold;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
-    pointer-events: none;
-    border: 1px solid #6b5c3b;
+/* Binanın üzerine gelince hafifçe büyümesi (Opsiyonel, istemezsen silebilirsin) */
+.town-building:hover {
+    transform: scale(1.05);
 }
 
-.town-building:hover .building-label {
-    opacity: 1;
-    transform: translateY(0);
+/* Bina İsim Yazısı */
+.town-label-text {
+    color: #e0d0b0; /* Parşömen/Kemik rengi (Okunaklı) */
+    font-family: 'Georgia', serif; /* Veya 'Times New Roman' */
+    font-size: 1.1em; /* Biraz büyük olsun */
+    font-weight: 900; /* Kalın */
+    letter-spacing: 2px; /* Harf aralığı */
+    
+    /* Güçlü Siyah Dış Hat (Yazının her zeminde okunmasını sağlar) */
+    text-shadow: 
+        2px 2px 0 #000, 
+       -1px -1px 0 #000,  
+        1px -1px 0 #000,
+       -1px 1px 0 #000,
+        1px 1px 0 #000;
+        
+    pointer-events: none; /* Tıklamayı engelleme, alttaki div alsın */
+    transition: all 0.3s ease;
 }
 
+/* Hover (Üzerine Gelince) Efekti */
+.town-building:hover .town-label-text {
+    color: #ffd700; /* Altın Sarısı */
+    
+    /* Glow (Parlama) Efekti */
+    text-shadow: 
+        0 0 10px #ffd700, 
+        0 0 20px #ff8c00, 
+        2px 2px 0 #000; /* Siyah konturu koru */
+}
 /* --- BİNA KONUMLARI (GÖRSELİNE GÖRE AYARLA!) --- */
 
 /* 1. Han (Sol Alt) */
 #building-inn {
-    bottom: 59%; left: 11%;
-    width: 15%; height: 30%;
+    bottom: 42.2%;
+    left: 44%;
+    width: 15%;
+    height: 30%;
+    font-size: 18.3px;
 }
 
 /* 2. Demirci (Sol Orta) */
 #building-blacksmith {
-    bottom: 40%; left: 20%;
-    width: 18%; height: 35%;
+    bottom: 37.4%;
+    left: 16%;
+    width: 30%;
+    height: 35%;
+    font-size: 15.3px;
 }
 
 /* 3. Tüccar (Merkez) */
 #building-merchant {
-    bottom: 54%; left: 42%;
-    width: 15%; height: 25%;
+    bottom: 40.1%;
+    left: 61.0%;
+    width: 15%;
+    height: 25%;
+    font-size: 12.3px;
 }
 
 /* 4. Simyacı (Sağ Orta) */
 #building-alchemist {
-    bottom: 43%; right: 28%;
-    width: 15%; height: 35%;
+    bottom: 57.4%;
+    right: 16.4%;
+    width: 15%;
+    height: 35%;
+    font-size: 13.2px;
 }
 
 /* 5. Ahır (Sağ Alt/Köşe) */
 #building-stable {
-    bottom: 57%; right: 10%;
-    width: 15%; height: 25%;
+    bottom: 37.5%;
+    right: 6.2%;
+    width: 15%;
+    height: 25%;
+    font-size: 17.3px;
 }
+#building-inn .town-label-text { transform: rotate(351deg); }
+#building-blacksmith .town-label-text { transform: rotate(349deg); }
+#building-merchant .town-label-text { transform: rotate(10deg); }
+#building-stable .town-label-text { transform: rotate(10deg); }
 
 /* Çıkış Butonu */
 .town-exit-btn {
@@ -983,58 +1001,6 @@ pointer-events: none; }
     border-radius: 4px;
     border: 1px solid #777;
     z-index: 5;
-}
-/* --- TOWN TABELALARI (SIGNBOARDS) --- */
-.signboard-container {
-    position: relative;
-    width: 120px; /* Tabela boyutunu biraz büyüttüm */
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Yaylanma efekti */
-}
-
-.signboard-container img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    position: absolute;
-    top: 0; left: 0;
-    z-index: 1;
-    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); /* Tabelaya gölge ver */
-}
-
-/* Tabela Üzerindeki Yazı */
-.signboard-text {
-    position: relative;
-    z-index: 2;
-    color: #3e2723; /* Ahşap üzerine koyu kahve yazı daha iyi okunur */
-    font-size: 0.9em;
-    font-weight: 900;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.4); /* Oyma efekti */
-    margin-top: 5px; 
-    pointer-events: none;
-    font-family: 'Times New Roman', serif;
-    letter-spacing: 1px;
-}
-
-/* Hover Efekti: Sadece Tabela Büyüsün ve Parlasın */
-.town-building:hover .signboard-container {
-    transform: scale(1.15) rotate(-3deg); /* Hafif salla ve büyüt */
-}
-
-.town-building:hover .signboard-container img {
-    filter: drop-shadow(0 0 10px rgba(200, 80, 20, 0.8)); /* Tabela parlasın */
-}
-
-.town-building:hover .signboard-text {
-    color: #ffecd1;
-	/* Glow Efekti: Koyu turuncu ve kahve tonları (Ateş/Meşale ışığı gibi) */
-    text-shadow: 
-        0 0 5px #d35400,   /* İç parlama (Turuncu) */
-        0 0 10px #873600,  /* Dış parlama (Koyu Kahve/Kızıl) */
-        0 0 20px #000000;  /* En dışta siyah gölge (Okunabilirlik için) */
 }
 
 /* --- NPC MODALLARI (PENCERELER) --- */
