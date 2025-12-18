@@ -481,7 +481,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     left: 44%;
     width: 15%;
     height: 30%;
-    font-size: 18.3px;
+    font-size: 0.86vw;
 }
 
 /* 2. Demirci (Sol Orta) */
@@ -490,7 +490,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     left: 16%;
     width: 30%;
     height: 35%;
-    font-size: 15.3px;
+    font-size: 0.76vw;
 }
 
 /* 3. Tüccar (Merkez) */
@@ -499,7 +499,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     left: 61.0%;
     width: 15%;
     height: 25%;
-    font-size: 12.3px;
+    font-size: 0.6vw;
 }
 
 /* 4. Simyacı (Sağ Orta) */
@@ -508,7 +508,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     right: 16.4%;
     width: 15%;
     height: 35%;
-    font-size: 13.2px;
+    font-size: 0.67vw;
 }
 
 /* 5. Ahır (Sağ Alt/Köşe) */
@@ -517,7 +517,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     right: 6.2%;
     width: 15%;
     height: 25%;
-    font-size: 17.3px;
+    font-size: 0.9vw;
 }
 #building-inn .town-label-text { transform: rotate(351deg); }
 #building-blacksmith .town-label-text { transform: rotate(349deg); }
