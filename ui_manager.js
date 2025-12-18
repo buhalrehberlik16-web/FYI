@@ -318,15 +318,17 @@ function renderEquippedSlotsInBook() {
     if (!skillBookEquippedBar) return;
     skillBookEquippedBar.innerHTML = '';
     
-    // YENİ: Toplam slot sayısı dinamik (2 Basic + X Normal)
-    const totalSlots = 2 + hero.equippedSkills.length;
+    // Toplam 6 Slot (Pasiflerle artarsa hero.equippedSkills.length kullanılır)
+    const totalSlots = hero.equippedSkills.length;
     
     for (let i = 0; i < totalSlots; i++) {
         const slot = document.createElement('div'); 
         slot.classList.add('menu-slot');
         
+        // İlk 2 slotu görsel olarak ayır (Basic)
         if (i < 2) slot.classList.add('basic-menu-slot');
 
+        // Klavye İpucu
         const keyHint = document.createElement('span'); 
         keyHint.classList.add('key-hint'); 
         if (i === 0) keyHint.textContent = 'A';
@@ -334,7 +336,7 @@ function renderEquippedSlotsInBook() {
         else keyHint.textContent = (i - 1); 
         slot.appendChild(keyHint);
 
-        // Drag & Drop
+        // --- DRAG & DROP ---
         slot.addEventListener('dragover', (e) => { e.preventDefault(); slot.classList.add('drag-over'); });
         slot.addEventListener('dragleave', () => { slot.classList.remove('drag-over'); });
         
@@ -345,12 +347,13 @@ function renderEquippedSlotsInBook() {
             const rawData = e.dataTransfer.getData('text/plain');
             
             try {
-                // A) SWAP
+                // A) SWAP (Kendi içinde yer değiştirme)
                 const data = JSON.parse(rawData);
                 if (data.type === 'move_skill') {
                     const fromIndex = data.index;
                     if (fromIndex === i) return;
 
+                    // Basit Array Swap
                     const temp = hero.equippedSkills[i];
                     hero.equippedSkills[i] = hero.equippedSkills[fromIndex];
                     hero.equippedSkills[fromIndex] = temp;
@@ -361,48 +364,45 @@ function renderEquippedSlotsInBook() {
                 }
             } catch(e) {} 
 
-            // B) KİTAPTAN EKLE
+            // B) KİTAPTAN EKLEME
             const skillKey = rawData;
-            const isValidSkill = SKILL_DATABASE[skillKey] || (BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][skillKey]);
-            const isUnlocked = hero.unlockedSkills.includes(skillKey) || (BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][skillKey]);
-
-            if (skillKey && isValidSkill && isUnlocked) { 
+            
+            // Tier 1 (Common) yetenekler her yere, diğerleri sadece 2-5 arasına mı? 
+            // Şimdilik esnek bırakalım, her skill her yere konabilsin.
+            if (skillKey && SKILL_DATABASE[skillKey] && hero.unlockedSkills.includes(skillKey)) { 
                 hero.equippedSkills[i] = skillKey; 
                 renderEquippedSlotsInBook(); 
                 if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); 
             }
         });
 
-        // Slot İçeriği
+        // --- SLOT İÇERİĞİ ---
+        // ARTIK TEK BİR ARRAY VAR, KARMAŞA YOK
         const currentSkillKey = hero.equippedSkills[i];
-        let skill = null;
         
-        if (currentSkillKey) {
-             if (SKILL_DATABASE[currentSkillKey]) {
-                skill = SKILL_DATABASE[currentSkillKey];
-            } else if (BASIC_SKILL_DATABASE[hero.class] && BASIC_SKILL_DATABASE[hero.class][currentSkillKey]) {
-                skill = BASIC_SKILL_DATABASE[hero.class][currentSkillKey];
-            }
-        }
-
-        if (skill) { 
+        if (currentSkillKey && SKILL_DATABASE[currentSkillKey]) { 
+            const skill = SKILL_DATABASE[currentSkillKey];
             const img = document.createElement('img'); 
-            img.src = `images/${skill.data ? skill.data.icon : skill.icon}`; 
+            img.src = `images/${skill.data.icon}`; 
             slot.appendChild(img);
             
+            // Sürükleme Başlat
             slot.setAttribute('draggable', true);
             slot.addEventListener('dragstart', (e) => {
                 const dragData = { type: 'move_skill', index: i, skillKey: currentSkillKey };
                 e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
             });
 
+            // Sağ Tık (Çıkar)
             slot.oncontextmenu = (e) => { 
                 e.preventDefault(); 
+                // Basic skilllerin (0 ve 1) tamamen boş kalmasını istemiyorsan buraya kontrol koyabilirsin.
+                // Ama şimdilik serbest bırakalım.
                 hero.equippedSkills[i] = null; 
                 renderEquippedSlotsInBook(); 
                 if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); 
             };
-            slot.title = skill.data ? skill.data.name : skill.name;
+            slot.title = skill.data.name;
         } else {
              slot.setAttribute('draggable', false);
         }
@@ -419,8 +419,8 @@ function toggleStatScreen() {
 function updateStatScreen() {
     if (!statName) return;
     
-    // 1. Şu anki güncel (Bufflı/Debufflı) değerleri al
-    let effective = { atk: hero.attack, def: hero.defense };
+    // Anlık Efektif Değerler
+    let effective = { atk: 0, def: 0 };
     if (typeof getHeroEffectiveStats === 'function') effective = getHeroEffectiveStats();
 
     statName.textContent = hero.playerName; 
@@ -428,36 +428,31 @@ function updateStatScreen() {
     statLevel.textContent = `Lv. ${hero.level}`;
     statXp.textContent = `${hero.xp} / ${hero.xpToNextLevel}`; 
     statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
-    
-    // --- RENK MANTIĞI DÜZELTMESİ ---
-    
-    // "Doğal" Atak Gücünü Hesapla (Base + STR Bonusu)
-    // Bufflar (Sharpen vb.) hariç, karakterin kendi gücü.
-    // game_data.js'deki CLASS_CONFIG'i kullanıyoruz.
-    let naturalAtk = hero.attack; // Base (20)
-    
-    // Eğer class config varsa STR bonusunu doğal atağa ekle
-    if (typeof CLASS_CONFIG !== 'undefined' && CLASS_CONFIG[hero.class]) {
-        const rules = CLASS_CONFIG[hero.class];
-        let statVal = 0;
-        if(rules.primaryStat === 'str') statVal = hero.str;
-        else if(rules.primaryStat === 'dex') statVal = hero.dex;
-        else if(rules.primaryStat === 'int') statVal = hero.int;
-        
-        // Atak = Base + (Stat * Çarpan)
-        naturalAtk += Math.floor(statVal * rules.atkPerStat);
+	if (statRage) {
+    statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
     }
     
-    // Karşılaştırma: Efektif vs Doğal
-    if (effective.atk > naturalAtk) statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`; // Buff (Yeşil)
-    else if (effective.atk < naturalAtk) statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`; // Debuff (Kırmızı)
-    else statAtk.textContent = effective.atk; // Normal (Beyaz)
+    // --- DOĞAL GÜÇ HESABI (Buffsız) ---
+    const rules = CLASS_CONFIG[hero.class];
+    
+    // Doğal Atak = Base + (STR / 2)
+    const naturalAtk = hero.baseAttack + Math.floor(hero.str / rules.strDivisor);
+    
+    // Doğal Defans = Base + (DEX / 3)
+    const naturalDef = hero.baseDefense + Math.floor(hero.dex / rules.dexDivisor);
+    
+    // RENKLENDİRME
+    // Atak
+    if (effective.atk > naturalAtk) statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`;
+    else if (effective.atk < naturalAtk) statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`;
+    else statAtk.textContent = effective.atk;
 
-    // Defans için de benzer mantık (Basitçe base defans)
-    if (effective.def > hero.defense) statDef.innerHTML = `<span style="color:#43FF64">${effective.def}</span>`;
+    // Defans
+    if (effective.def > naturalDef) statDef.innerHTML = `<span style="color:#43FF64">${effective.def}</span>`;
+    else if (effective.def < naturalDef) statDef.innerHTML = `<span style="color:#ff4d4d">${effective.def}</span>`;
     else statDef.textContent = effective.def;
     
-    // Diğer statları yazdır
+    // Diğerleri...
     statStr.textContent = hero.str; 
     statDex.textContent = hero.dex; 
     statInt.textContent = hero.int; 
@@ -465,7 +460,7 @@ function updateStatScreen() {
     const statVit = document.getElementById('stat-vit'); 
     if(statVit) statVit.textContent = hero.vit;
 
-    // Puan kutusu kontrolü
+    // ... (Puan kutusu kodları aynı) ...
     const pointsBox = document.getElementById('points-container');
     const pointsDisplay = document.getElementById('stat-points-display');
     const plusButtons = document.querySelectorAll('.btn-stat-plus');

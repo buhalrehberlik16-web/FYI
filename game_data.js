@@ -4,13 +4,16 @@
 
 const CLASS_CONFIG = {
     "Barbar": {
-        primaryStat: "str",      // Hasar kaynağı
-        atkPerStat: 0.5,         // 1 STR = 1 ATK (veya senin istediğin gibi 2 STR = 1 ATK ise 0.5 yapabiliriz)
-        hpPerVit: 10             // 1 VIT = 10 HP
-    },
-    // İleride eklenecek sınıflar için örnek:
-    // "Trickster": { primaryStat: "dex", atkPerStat: 1.0, hpPerVit: 8 },
-    // "Magus":  { primaryStat: "int", atkPerStat: 1.5, hpPerVit: 5 }
+        // Saldırı: STR'yi kaça böleceğiz? (2 STR = 1 ATK)
+        strDivisor: 2.0, 
+        
+        // Defans: DEX'i kaça böleceğiz? (3 DEX = 1 DEF)
+        dexDivisor: 3.0,
+        
+        // Sağlık: VIT ile kaçı çarpacağız? (1 VIT = 10 HP)
+        vitMultiplier: 10
+    }
+    // İleride "Trickster": { strDivisor: 0, dexDivisor: 1.0 (1dex=1atk), ... }
 };
 
 
@@ -30,10 +33,10 @@ const btnLeaveTown = document.getElementById('btn-leave-town');
 const basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
 const basicSkillList = document.getElementById('basic-skill-list');
 const btnConfirmBasicSkills = document.getElementById('btn-confirm-basic-skills');
+
 // Envanter
 const inventoryScreen = document.getElementById('inventory-screen');
 const btnCloseInventory = document.getElementById('btn-close-inventory');
-// Nav butonu için (Eğer eklemediysen)
 const btnOpenInventoryNav = document.getElementById('btn-open-inventory'); 
 
 // Skill Bar
@@ -56,7 +59,6 @@ const rewardScreen = document.getElementById('reward-screen');
 // Üst Bar
 const topHeroName = document.getElementById('top-hero-name');
 const topHeroLevel = document.getElementById('top-hero-level');
-const goldDisplay = document.getElementById('gold-display');
 
 // Ödül
 const rewardList = document.getElementById('reward-list');
@@ -70,6 +72,7 @@ const statXp = document.getElementById('stat-xp');
 const statPointsDisplay = document.getElementById('stat-points-display'); 
 
 const statHp = document.getElementById('stat-hp');
+const statRage = document.getElementById('stat-rage'); 
 const statAtk = document.getElementById('stat-atk');
 const statDef = document.getElementById('stat-def');
 const statStr = document.getElementById('stat-str');
@@ -120,18 +123,22 @@ const tabCommon = document.getElementById('tab-common');
 const tabAttack = document.getElementById('tab-attack'); 
 const tabPassion = document.getElementById('tab-passion'); 
 const skillBookEquippedBar = document.getElementById('skill-book-equipped-bar');
-const skillPointsDisplay = document.getElementById('skill-points-display'); // YENİ
+const skillPointsDisplay = document.getElementById('skill-points-display'); 
 
-// OYUN VERİLERİ
+// --- OYUN VERİLERİ ---
 let isHeroTurn = true; 
 const MAX_LEVEL = 60;
 
 let hero = {
     name: "Barbar",
     playerName: "Oyuncu",
-	class: "Barbar",
+    
+    // YENİ: Sınıf ve Base Statlar (NaN Hatasını Çözen Yer)
+    class: "Barbar",
+    baseAttack: 20,   // Sabit saldırı (Eskiden 'attack: 20' idi)
+    baseDefense: 5,   // Sabit defans
+    
     maxHp: 100, hp: 100,
-    baseDamage: 20, defense: 5,
     level: 1, xp: 0, xpToNextLevel: 100,
     maxRage: 100, rage: 0,
     gold: 0,
@@ -140,25 +147,23 @@ let hero = {
     statPoints: 0, 
     str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
     
-    // SKILL SİSTEMİ (YENİ)
-    skillPoints: 0, // Harcanabilir yetenek puanı
-    unlockedSkills: [],
+    // SKILL SİSTEMİ
+    skillPoints: 0, 
+    unlockedSkills: [], 
     
     statusEffects: [],
     mapEffects: [],
 
+    equippedBasic: [], // Seçimden gelecek
     equippedSkills: [null, null, null, null, null, null], 
-	// Envanter:
-    inventory: new Array(8).fill(null), // 8 boş slot
-	// 6 adet Broş slotu
+    
+    // ENVANTER
+    inventory: new Array(8).fill(null), 
     brooches: new Array(6).fill(null), 
     equipment: {
-        earring1: null,
-        earring2: null,
-        necklace: null,
-        ring1: null,
-        ring2: null,
-        belt: null
+        earring1: null, earring2: null,
+        necklace: null, belt: null,
+        ring1: null, ring2: null
     },
 };
 
@@ -225,10 +230,18 @@ const EVENT_POOL = [
     },
     {
         id: "gambler", type: "permanent", title: "Kumarbazın Ruhu", desc: "Önünde iki kadeh var.",
-        option1: { text: "Kırmızı Kadehi İç", buff: "%50: <span class='buff'>Canı Fulle</span>", debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", action: (hero) => { if (Math.random() > 0.5) { hero.hp = hero.maxHp; writeLog("Şanslısın! Canın fullendi."); } else { hero.hp = 1; writeLog("Zehir! Canın 1'e düştü."); } } },
+        option1: { 
+            text: "Kırmızı Kadehi İç", 
+            buff: "%50: <span class='buff'>Canı Fulle</span>", 
+            debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", 
+            action: (hero) => { 
+                if (Math.random() > 0.5) { hero.hp = hero.maxHp; writeLog("Şanslısın! Canın fullendi."); } 
+                else { hero.hp = 1; writeLog("Zehir! Canın 1'e düştü."); } 
+            } 
+        },
         option2: { text: "Masadan Kalk", buff: "", debuff: "", action: (hero) => {} }
     },
-	 {
+    {
         id: "random_campfire", 
         type: "neutral", 
         title: "Sönmüş Ateş", 
@@ -255,28 +268,12 @@ const EVENT_POOL = [
         }
     }
 ];
-const TIER_1_ENEMIES = [
-    "Zehirli Mantar", 
-    "Orman Örümceği", 
-    "Hırsız Kobold",
-    "Kan Yarasası"
-];
 
-const TIER_2_ENEMIES = [
-    "Goblin Devriyesi", 
-    "Kaçak Haydut", 
-    "Gri Kurt"
-];
-
-const TIER_3_ENEMIES = [
-    "Yaban Domuzu", 
-    "Goblin Savaşçısı", 
-    "Kaya Golemi",
-];
-const TIER_4_ENEMIES = [
-	"Orc Fedaisi"
-	
-];	
+// DÜŞMAN HAVUZLARI
+const TIER_1_ENEMIES = ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"];
+const TIER_2_ENEMIES = ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"];
+const TIER_3_ENEMIES = ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"];
+const TIER_4_ENEMIES = ["Orc Fedaisi"];
 const MAP_CONFIG = {
     totalStages: 15, // Toplam sütun sayısı (Soldan sağa uzunluk)
     lanes: 3,        // Satır sayısı (Yukarıdan aşağı genişlik)
