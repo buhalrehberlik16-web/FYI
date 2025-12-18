@@ -375,42 +375,74 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 
 .town-container {
     position: relative;
+    
+    /* Genişlik ve Yükseklik %100 olsun, ebeveynini (Game Container) doldursun */
     width: 100%;
     height: 100%;
-    max-width: 1200px; /* Görselin çok büyümesini engellemek için */
-    aspect-ratio: 16/9; /* Görsel oranını korumak için */
-    margin: 0 auto;
+    
+    /* --- DEĞİŞİKLİKLER --- */
+    max-width: none;   /* Sınırı kaldırdık (1200px sildik) */
+    aspect-ratio: auto; /* Oran zorlamasını kaldırdık (16/9 sildik) */
+    /* --------------------- */
+
+    margin: 0;
     overflow: hidden;
-    border: 2px solid #3e3221;
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    
+    /* Kenarlık varsa onu da kaldırabilirsin, resim tam otursun */
+    border: none; 
+    box-shadow: none; 
 }
 
 .town-background {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* veya contain, görsele göre değişir */
-    display: block;
+    
+    /* 16:9 olduğu için 'cover' veya 'contain' fark etmez ama
+       tarayıcı boyutu değişirse boşluk kalmaması için 'cover' en iyisidir. */
+    object-fit: cover; 
+    
+    /* Resmi tam ortala */
+    object-position: center center;
+    
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 0;
 }
 
 /* Tıklanabilir Bina Kutuları */
+/* Tıklanabilir Bina Alanı */
 .town-building {
     position: absolute;
     cursor: pointer;
-    /* Ayarlama yaparken görebilmek için geçici kenarlık, iş bitince kaldırılabilir: */
-    border: 2px solid rgba(255, 255, 255, 0.3); 
-    background-color: rgba(0, 0, 0, 0.1); 
+    
+    /* --- DEĞİŞİKLİK BURADA --- */
+    /* Eskiden yüzde veriyorduk veya miras alıyordu, şimdi içeriğe göre küçültüyoruz */
+    width: auto !important;  
+    height: auto !important;
+    
+    /* Tabelanın etrafında ne kadar boşluk tıklanabilir olsun? */
+    padding: 10px; 
+    /* ------------------------- */
+
+    border: none; 
+    background-color: transparent; 
+    box-shadow: none;
+    
     transition: all 0.3s ease;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 10px;
+    align-items: center; /* Hem yatay hem dikey ortala */
+    
+    z-index: 5; 
 }
 
-/* Hover Efekti */
+/* Hover Efekti (Sadece Tabela Hareket Etsin, Kutu Çıkmasın) */
 .town-building:hover {
-    background-color: rgba(255, 215, 0, 0.15); /* Hafif sarı parlama */
-    border-color: rgba(240, 230, 140, 0.8);
-    box-shadow: 0 0 15px rgba(240, 230, 140, 0.4);
+    /* --- DEĞİŞİKLİK: Sarı kutuyu iptal et --- */
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    /* ---------------------------------------- */
 }
 
 /* Bina İsim Etiketi */
@@ -437,31 +469,31 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 
 /* 1. Han (Sol Alt) */
 #building-inn {
-    bottom: 10%; left: 5%;
+    bottom: 59%; left: 11%;
     width: 15%; height: 30%;
 }
 
 /* 2. Demirci (Sol Orta) */
 #building-blacksmith {
-    bottom: 20%; left: 25%;
+    bottom: 40%; left: 20%;
     width: 18%; height: 35%;
 }
 
 /* 3. Tüccar (Merkez) */
 #building-merchant {
-    bottom: 15%; left: 45%;
+    bottom: 54%; left: 42%;
     width: 15%; height: 25%;
 }
 
 /* 4. Simyacı (Sağ Orta) */
 #building-alchemist {
-    bottom: 20%; right: 20%;
+    bottom: 43%; right: 28%;
     width: 15%; height: 35%;
 }
 
 /* 5. Ahır (Sağ Alt/Köşe) */
 #building-stable {
-    bottom: 10%; right: 2%;
+    bottom: 57%; right: 10%;
     width: 15%; height: 25%;
 }
 
@@ -946,12 +978,12 @@ pointer-events: none; }
 /* --- TOWN TABELALARI (SIGNBOARDS) --- */
 .signboard-container {
     position: relative;
-    width: 100px; /* Tabela genişliği */
-    height: 50px;
+    width: 120px; /* Tabela boyutunu biraz büyüttüm */
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Yaylanma efekti */
 }
 
 .signboard-container img {
@@ -961,27 +993,39 @@ pointer-events: none; }
     position: absolute;
     top: 0; left: 0;
     z-index: 1;
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); /* Tabelaya gölge ver */
 }
 
+/* Tabela Üzerindeki Yazı */
 .signboard-text {
     position: relative;
-    z-index: 2; /* Resmin üstünde */
-    color: #d4c398; /* Soluk parşömen rengi */
-    font-size: 0.8em;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px #000;
-    margin-top: 5px; /* Yazıyı biraz aşağı it, görselin ortasına gelsin */
+    z-index: 2;
+    color: #3e2723; /* Ahşap üzerine koyu kahve yazı daha iyi okunur */
+    font-size: 0.9em;
+    font-weight: 900;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.4); /* Oyma efekti */
+    margin-top: 5px; 
     pointer-events: none;
+    font-family: 'Times New Roman', serif;
+    letter-spacing: 1px;
 }
 
-/* Hover Efekti */
+/* Hover Efekti: Sadece Tabela Büyüsün ve Parlasın */
 .town-building:hover .signboard-container {
-    transform: scale(1.1) rotate(-2deg); /* Hafif salla */
+    transform: scale(1.15) rotate(-3deg); /* Hafif salla ve büyüt */
+}
+
+.town-building:hover .signboard-container img {
+    filter: drop-shadow(0 0 10px rgba(200, 80, 20, 0.8)); /* Tabela parlasın */
 }
 
 .town-building:hover .signboard-text {
-    color: #ffd700; /* Altın sarısı */
-    text-shadow: 0 0 10px #ffd700, 0 0 5px #ff8c00; /* Glow Effect */
+    color: #ffecd1;
+	/* Glow Efekti: Koyu turuncu ve kahve tonları (Ateş/Meşale ışığı gibi) */
+    text-shadow: 
+        0 0 5px #d35400,   /* İç parlama (Turuncu) */
+        0 0 10px #873600,  /* Dış parlama (Koyu Kahve/Kızıl) */
+        0 0 20px #000000;  /* En dışta siyah gölge (Okunabilirlik için) */
 }
 
 /* --- NPC MODALLARI (PENCERELER) --- */
@@ -989,7 +1033,7 @@ pointer-events: none; }
 .npc-modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.85); /* Arkadaki oyunu iyice karart */
+    background-color: rgba(0, 0, 0, 0.85);
     z-index: 500;
     display: flex;
     justify-content: center;
@@ -997,33 +1041,24 @@ pointer-events: none; }
 }
 .npc-modal.hidden { display: none; }
 
-/* Pencerenin Kendisi (Resimli Kutu) */
 .npc-window {
-    /* Görselin boyutlarına göre burayı değiştirmen gerekebilir */
-    /* Kareye yakın bir görsel olduğunu varsayıyorum */
     width: 1280px;
-    height: 1024px;
-    background-size: contain; /* Resmi sığdır */
+    height: 900px;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    background-color: transparent !important; /* GRİ ARKA PLANI KALDIRAN KOD */
+    background-color: transparent !important;
     position: relative;
-    /* Resmi ortalamak ve kaymaları önlemek için */
-    display: flex;
-    justify-content: center;
 }
 
-/* --- KONUMLANDIRMA AYARLARI --- */
-/* Bu değerleri görseline tam oturana kadar değiştirebilirsin */
+/* --- ORTAK STİLLER (Renkli, Fontlu kısımlar) --- */
+/* Bu kısımlar tüm NPC'ler için aynı kalır, sadece yerleri değişir */
 
-/* 1. BAŞLIK (Üst Parşömen) */
 .npc-title {
     position: absolute;
-    top: 210px; /* Üstten ne kadar aşağıda? (Piksel ile daha hassas) */
     width: 100%;
     text-align: center;
-    
-    color: #3e2723; /* Koyu Kahve */
+    color: #3e2723;
     font-weight: 900;
     font-size: 1.8em;
     font-family: 'Times New Roman', serif;
@@ -1032,48 +1067,106 @@ pointer-events: none; }
     pointer-events: none;
 }
 
-/* 2. SOL SÜTUN BUTONLARI */
-.npc-actions-left {
+.npc-actions-left, .npc-actions-right {
     position: absolute;
-    top: 350px; /* Butonların dikey başlangıcı */
-    left: 260px; /* Soldan ne kadar içeride? */
-    width: 140px; /* Sütun genişliği */
-    
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Butonlar arası boşluk */
-}
-
-/* 3. SAĞ SÜTUN BUTONLARI (Çıkış vb.) */
-.npc-actions-right {
-    position: absolute;
-    top: 350px;
-    right: 260px; /* Sağdan ne kadar içeride? */
     width: 140px;
-    
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* 4. ALT DİYALOG (Alt Parşömen) */
 .npc-dialogue {
     position: absolute;
-    bottom: 190px; /* Alttan ne kadar yukarıda? */
-    width: 65%;   /* Parşömenin genişliği kadar */
+    width: 30%;
     text-align: center;
-    color: #5d4039;
+    color: #5d4037;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 0.8em;
     font-style: italic;
-    line-height: 1.4;
+    line-height: 1.2;
+    left: 50%;
+    transform: translateX(-50%); /* Yatayda hep ortalı */
 }
 
-/* --- BUTON STİLİ --- */
+/* ============================================================
+   HER BİNA İÇİN ÖZEL KONUMLANDIRMA (BURAYI DÜZENLEYECEKSİN)
+   ============================================================ */
+
+/* --- 1. HAN (INN) --- */
+#modal-inn .npc-title {
+    top: 185px; /* Han için Başlık Yüksekliği */
+}
+#modal-inn .npc-actions-left {
+    top: 300px; left: 300px; /* Sol Butonlar */
+}
+#modal-inn .npc-actions-right {
+    top: 300px; right: 310px; /* Sağ Butonlar */
+}
+#modal-inn .npc-dialogue {
+    bottom: 170px; /* Alt Yazı */
+}
+
+/* --- 2. DEMİRCİ (BLACKSMITH) --- */
+#modal-blacksmith .npc-title {
+    top: 170px; /* Örn: Demirci başlığı biraz daha aşağıda */
+}
+#modal-blacksmith .npc-actions-left {
+    top: 300px; left: 295px; /* Örn: Sütunlar daha aşağıda */
+}
+#modal-blacksmith .npc-actions-right {
+    top: 300px; right: 300px;
+}
+#modal-blacksmith .npc-dialogue {
+    bottom: 175px;
+}
+
+/* --- 3. TÜCCAR (MERCHANT) --- */
+#modal-merchant .npc-title {
+    top: 185px;
+}
+#modal-merchant .npc-actions-left {
+    top: 300px; left: 303px;
+}
+#modal-merchant .npc-actions-right {
+    top: 300px; right: 310px;
+}
+#modal-merchant .npc-dialogue {
+    bottom: 180px;
+}
+
+/* --- 4. SİMYACI (ALCHEMIST) --- */
+#modal-alchemist .npc-title {
+    top: 170px;
+}
+#modal-alchemist .npc-actions-left {
+    top: 300px; left: 295px;
+}
+#modal-alchemist .npc-actions-right {
+    top: 300px; right: 300px;
+}
+#modal-alchemist .npc-dialogue {
+    bottom: 175px;
+}
+
+/* --- 5. AHIR (STABLE) --- */
+#modal-stable .npc-title {
+    top: 182px;
+}
+#modal-stable .npc-actions-left {
+    top: 300px; left: 305px;
+}
+#modal-stable .npc-actions-right {
+    top: 300px; right: 310px;
+}
+#modal-stable .npc-dialogue {
+    bottom: 180px;
+}
+
+/* --- BUTON STİLİ (GENEL) --- */
 .npc-btn {
     background: linear-gradient(to bottom, #5d4a30, #3e2b18);
-    border: 2px solid #a67c52; /* Açık ahşap çerçeve */
-    color: #fff8dc; /* Krem rengi yazı */
+    border: 2px solid #a67c52;
+    color: #fff8dc;
     width: 100%;
     padding: 10px 0;
     font-size: 0.9em;
@@ -1087,11 +1180,6 @@ pointer-events: none; }
 
 .npc-btn:hover {
     background: #7a5e3d;
-    border-color: #ffd700; /* Hoverda altın çerçeve */
-    color: #fff;
+    border-color: #ffd700;
     transform: scale(1.05);
-}
-
-.npc-btn:active {
-    transform: scale(0.95);
 }
