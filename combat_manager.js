@@ -24,46 +24,96 @@ window.addHeroBlock = function(amount) {
 // --- EFEKTİF STAT HESAPLAMA ---
 function getHeroEffectiveStats() {
     let currentStr = hero.str;
-    let currentDef = hero.defense;
-    let currentAtk = hero.attack;
+    let currentDex = hero.dex;
+    let currentInt = hero.int;
+    let currentVit = hero.vit;
+    let currentMp = hero.mp_pow;
     
-    // Config yoksa varsayılan
-    const baseAtk = (hero.baseAttack !== undefined) ? hero.baseAttack : 10;
-    const baseDef = (hero.baseDefense !== undefined) ? hero.baseDefense : 1;
+    // 1. Stat Buffları
+    hero.statusEffects.forEach(e => {
+        if (!e.waitForCombat) {
+            if (e.id === 'str_up') currentStr += e.value;
+            if (e.id === 'dex_up') currentDex += e.value;
+            if (e.id === 'int_up') currentInt += e.value;
+            // MP buff varsa buraya
+        }
+    });
 
-    // Class Config ile Stat Etkisi
+    // Varsayılanlar
+    let calculatedAtk = hero.baseAttack || 10;
+    let calculatedDef = hero.baseDefense || 1;
+    let calculatedBlock = 0; // Blok Gücü
+
+    // 2. SINIF KURALLARINA GÖRE HESAPLA
     if (typeof CLASS_CONFIG !== 'undefined' && CLASS_CONFIG[hero.class]) {
         const rules = CLASS_CONFIG[hero.class];
-        currentAtk = baseAtk + Math.floor(currentStr / rules.strDivisor);
-        currentDef = baseDef + Math.floor(hero.dex / rules.dexDivisor);
-    } else {
-        currentAtk = baseAtk;
-        currentDef = baseDef;
+        
+        // --- ATAK HESABI ---
+        if (rules.atkStats) {
+            for (const [stat, multiplier] of Object.entries(rules.atkStats)) {
+                let val = 0;
+                if (stat === 'str') val = currentStr;
+                else if (stat === 'dex') val = currentDex;
+                else if (stat === 'int') val = currentInt;
+                else if (stat === 'mp_pow') val = currentMp;
+                else if (stat === 'vit') val = currentVit;
+                
+                calculatedAtk += Math.floor(val * multiplier);
+            }
+        }
+
+        // --- DEFANS HESABI ---
+        if (rules.defStats) {
+            for (const [stat, multiplier] of Object.entries(rules.defStats)) {
+                let val = 0;
+                if (stat === 'str') val = currentStr;
+                else if (stat === 'dex') val = currentDex;
+                else if (stat === 'int') val = currentInt;
+                
+                calculatedDef += Math.floor(val * multiplier);
+            }
+        }
+
+        // --- YENİ: BLOK GÜCÜ HESABI ---
+        if (rules.blockStats) {
+            for (const [stat, multiplier] of Object.entries(rules.blockStats)) {
+                let val = 0;
+                if (stat === 'str') val = currentStr;
+                else if (stat === 'dex') val = currentDex;
+                else if (stat === 'int') val = currentInt;
+                else if (stat === 'vit') val = currentVit;
+                
+                calculatedBlock += Math.floor(val * multiplier);
+            }
+        }
     }
 
+    // 3. Bufflar ve Çarpanlar
     let atkMultiplier = 1.0;
 
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
-            if (e.id === 'str_up') currentStr += e.value;
-            if (e.id === 'atk_up') currentAtk += e.value;
-            if (e.id === 'atk_down') currentAtk -= e.value;
-            if (e.id === 'def_up') currentDef += e.value;
-            if (e.id === 'atk_half') currentAtk = Math.floor(currentAtk * 0.5);
+            if (e.id === 'atk_up') calculatedAtk += e.value;
+            if (e.id === 'def_up') calculatedDef += e.value;
             if (e.id === 'atk_up_percent') atkMultiplier += e.value;
         }
     });
-
+    
     hero.mapEffects.forEach(e => {
-        if (e.id === 'map_atk_weak') currentAtk = Math.floor(currentAtk * e.value);
+        if (e.id === 'map_atk_weak') calculatedAtk = Math.floor(calculatedAtk * e.value);
     });
 
-    currentAtk = Math.floor(currentAtk * atkMultiplier);
+    calculatedAtk = Math.floor(calculatedAtk * atkMultiplier);
 
     return { 
-        atk: Math.max(0, currentAtk), 
-        def: Math.max(0, currentDef), 
+        atk: Math.max(0, calculatedAtk), 
+        def: Math.max(0, calculatedDef), 
+        blockPower: Math.max(0, calculatedBlock), // YENİ
         str: currentStr,
+        dex: currentDex,
+        int: currentInt,
+        vit: currentVit,
+        mp: currentMp,
         atkMultiplier: atkMultiplier 
     };
 }

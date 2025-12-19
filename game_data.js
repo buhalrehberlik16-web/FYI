@@ -4,16 +4,18 @@
 
 const CLASS_CONFIG = {
     "Barbar": {
-        // Saldırı: STR'yi kaça böleceğiz? (2 STR = 1 ATK)
-        strDivisor: 2.0, 
+        // Hangi statlar ATAK verir? (1.0 = Değer kadar, 0.5 = Yarısı kadar)
+        // Örn: strDivisor: 2.0 demek, STR'nin yarısı atağa eklenir demektir (Çarpan: 0.5)
+        // Matematiksel kolaylık için "Çarpan (Multiplier)" kullanalım:
+        atkStats: { "str": 0.5 }, // STR'nin %50'si Atağa eklenir (Eski: str/2)
         
-        // Defans: DEX'i kaça böleceğiz? (3 DEX = 1 DEF)
-        dexDivisor: 3.0,
+        // Defans
+        defStats: { "dex": 0.33 }, // DEX'in %33'ü (Eski: dex/3)
+		blockStats: { "dex": 0.8 },
         
-        // Sağlık: VIT ile kaçı çarpacağız? (1 VIT = 10 HP)
         vitMultiplier: 10
     }
-    // İleride "Trickster": { strDivisor: 0, dexDivisor: 1.0 (1dex=1atk), ... }
+    // İleride "Mage": { atkStats: { "int": 0.5 }, ... }
 };
 
 
@@ -135,8 +137,8 @@ let hero = {
     
     // YENİ: Sınıf ve Base Statlar (NaN Hatasını Çözen Yer)
     class: "Barbar",
-    baseAttack: 20,   // Sabit saldırı (Eskiden 'attack: 20' idi)
-    baseDefense: 5,   // Sabit defans
+    baseAttack: 10,   // Sabit saldırı (Eskiden 'attack: 20' idi)
+    baseDefense: 1,   // Sabit defans
     
     maxHp: 100, hp: 100,
     level: 1, xp: 0, xpToNextLevel: 100,

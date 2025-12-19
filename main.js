@@ -160,7 +160,7 @@ function startCutscene() {
 function initGame() {
     // 1. Hero Statları
     hero.maxHp = 100; hero.hp = hero.maxHp;
-    hero.baseAttack = 20; hero.baseDefense = 5;
+    hero.baseAttack = 10; hero.baseDefense = 1;
     // hero.attack = 20; // Silindi, baseAttack kullanılıyor
     hero.level = 1; hero.xp = 0; 
     hero.xpToNextLevel = (typeof FULL_XP_REQUIREMENTS !== 'undefined') ? FULL_XP_REQUIREMENTS[1] : 100;

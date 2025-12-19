@@ -11,7 +11,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Kes",
             description: "Dengeli saldırı.",
-            menuDescription: "Atağın %50'si kadar hasar. +10 Rage üretir.",
+            menuDescription: "Atağın kadar hasar. +10 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
             icon: 'icon_attack.png',
@@ -24,7 +24,7 @@ const SKILL_DATABASE = {
             
             // YENİ FORMÜL: Global Atak Gücünün %50'i
             // (stats.atk zaten STR, Sharpen vb. içerir)
-            const dmg = Math.floor(stats.atk * 0.5);
+            const dmg = Math.floor(stats.atk * 1.0);
             
             hero.rage = Math.min(hero.maxRage, hero.rage + 10);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
@@ -71,7 +71,7 @@ const SKILL_DATABASE = {
         data: {
             name: "Vuruş",
             description: "Güçlü hasar.",
-            menuDescription: "Atağın %70'i kadar hasar. +0-9 Rage üretir.",
+            menuDescription: "Atağın %115'i kadar hasar. +0-9 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
             icon: 'icon_strike.png',
@@ -83,7 +83,7 @@ const SKILL_DATABASE = {
             const stats = getHeroEffectiveStats();
             
             // YENİ FORMÜL: Global Atak Gücünün %70'i
-            const dmg = Math.floor(stats.atk * 0.7);
+            const dmg = Math.floor(stats.atk * 1.15);
             
             const genRage = Math.floor(Math.random() * 10); // 0-9
             hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
@@ -97,11 +97,11 @@ const SKILL_DATABASE = {
     },
 
     // BLOCK (Blok): Hasar Emme
-    block: { 
+     block: { 
         data: {
             name: "Blok",
             description: "Hasar emer.",
-            menuDescription: "INT kadar hasar emer. -10 Rage.",
+            menuDescription: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage.",
             rageCost: 10,
             levelReq: 1,
             icon: 'icon_block.png',
@@ -110,9 +110,11 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-            // Blok INT tabanlı kalabilir veya Defans'ın bir çarpanı olabilir
-            // Şimdilik INT olarak bırakıyorum (Base 5 + 1.5xINT)
-            const blockVal = 5 + Math.floor(hero.int * 1.5);
+            const stats = getHeroEffectiveStats();
+            
+            
+            // stats.blockPower -> combat_manager'da config'e göre hesaplandı
+            const blockVal = stats.blockPower;
             
             if(typeof addHeroBlock === 'function') {
                 addHeroBlock(blockVal);
@@ -417,7 +419,7 @@ const SKILL_DATABASE = {
             // YENİ FORMÜL: ATK * 1.0
             const damage = Math.floor(stats.atk * 1.0);
 
-            const animFrames = ['barbarian_attack3.png']; 
+            const animFrames = ['barbarian_attack2.png', 'barbarian_attack3.png']; 
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             animateCustomAttack(damage, fullPathFrames, this.data.name);
             writeLog(`🔨 **${this.data.name}**: Zırh parçalandı!`);
@@ -432,7 +434,8 @@ const SKILL_DATABASE = {
         data: {
             name: "Cehennem Kılıcı",
             description: "Canını feda edip vur.",
-            menuDescription: "Kanlı saldırı. 25 Öfke harcar.<br>Hasar: <b style='color:orange'>%250 ATK</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Mevcut Can</span>.",
+            // Açıklama: "Atak Gücü + %50 MP"
+            menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.5 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_hell_blade.png',
@@ -441,23 +444,29 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
+            // HP Bedeli
             const hpCost = Math.floor(hero.hp * 0.10);
             hero.hp = Math.max(1, hero.hp - hpCost);
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
 
+            // --- MODÜLER HASAR HESABI ---
             const stats = getHeroEffectiveStats();
-            // YENİ FORMÜL: ATK * 2.5
-            const damage = Math.floor(stats.atk * 2.5);
+            
+            // 1. Ana Stat (Barbar için STR'li ATK, Mage için INT'li ATK)
+            const baseDmg = stats.atk; 
+            
+            // 2. Skill Özel Bonusu (Int)
+            const statBonus = Math.floor(stats.int * 0.5);
+            
+            // Toplam Hasar
+            let damage = baseDmg + statBonus;
 
+            // Animasyon
             const animFrames = ['barbarian_hellblade_strike1.png', 'barbarian_hellblade_strike2.png', 'barbarian_hellblade_strike3.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             
-            let finalDmg = damage;
-            if (Math.random() < 0.20) {
-                finalDmg = Math.floor(damage * 1.5);
-                writeLog(`🔥 **KRİTİK!** Cehennem ateşi parladı!`);
-            }
-            animateCustomAttack(finalDmg, fullPathFrames, this.data.name);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
         }
     },
 
