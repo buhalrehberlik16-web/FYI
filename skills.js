@@ -447,8 +447,7 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-			hero.rage = Math.min(hero.maxRage, hero.rage + 10);
-            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
+			
             const stats = getHeroEffectiveStats();
             const bonusDmg = Math.floor(stats.str * 1.0);
 
@@ -461,6 +460,9 @@ const SKILL_DATABASE = {
                 waitForCombat: false, 
                 resetOnCombatEnd: true 
             });
+			
+			hero.rage = Math.min(hero.maxRage, hero.rage + 15);
+            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
 
             // Cooldown: 3 Tur (Yani 4 yazıyoruz)
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
@@ -752,3 +754,4 @@ fury: {
     }
 
 };
+
