@@ -439,7 +439,7 @@ const SKILL_DATABASE = {
             name: "Kurulma",
             description: "Bir sonraki saldırıya hazırlan.",
             menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur.<br><span style='color:yellow'>Bekleme: 3 Tur</span>.",
-            rageCost: 15,
+            rageCost: 0,
             levelReq: 1,
             icon: 'brutal_wind_up.png',
             type: 'buff',
@@ -447,6 +447,8 @@ const SKILL_DATABASE = {
             tier: 1
         },
         onCast: function(attacker, defender) {
+			hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
             const stats = getHeroEffectiveStats();
             const bonusDmg = Math.floor(stats.str * 1.0);
 
@@ -748,4 +750,5 @@ fury: {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
+
 };
