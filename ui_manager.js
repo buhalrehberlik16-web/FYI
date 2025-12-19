@@ -73,6 +73,7 @@ function updateStatusIcons() {
         else if (effect.id === 'curse_damage') { icon.innerHTML = '💀'; icon.classList.add('status-debuff'); } // Debuff rengi
         else if (effect.id === 'ignore_def') { icon.innerHTML = '🔨'; icon.classList.add('status-buff'); }
         else if (effect.id === 'guard_active') { icon.innerHTML = '🛡️'; icon.classList.add('status-buff'); }
+		else if (effect.id === 'fury_active') { icon.innerHTML = '🔥'; icon.classList.add('status-buff'); }
         else if (effect.id.startsWith('debuff_')) { icon.innerHTML = '🔻'; icon.classList.add('status-debuff'); }
 		
         

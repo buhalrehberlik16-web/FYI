@@ -29,13 +29,14 @@ function getHeroEffectiveStats() {
     let currentVit = hero.vit;
     let currentMp = hero.mp_pow;
     
-    // 1. Stat Buffları
+    let atkMultiplier = 1.0;
+
+    // 1. STAT BUFFLARI
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
             if (e.id === 'str_up') currentStr += e.value;
             if (e.id === 'dex_up') currentDex += e.value;
             if (e.id === 'int_up') currentInt += e.value;
-            // MP buff varsa buraya
         }
     });
 
@@ -74,7 +75,8 @@ function getHeroEffectiveStats() {
             }
         }
 
-        // --- YENİ: BLOK GÜCÜ HESABI ---
+        // --- BLOK GÜCÜ HESABI ---
+        // Block, defense_zero olsa bile çalışmalı, o yüzden burada hesaplıyoruz.
         if (rules.blockStats) {
             for (const [stat, multiplier] of Object.entries(rules.blockStats)) {
                 let val = 0;
@@ -88,27 +90,35 @@ function getHeroEffectiveStats() {
         }
     }
 
-    // 3. Bufflar ve Çarpanlar
-    let atkMultiplier = 1.0;
-
+    // 3. DOĞRUDAN BUFFLAR VE ÇARPANLAR
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
             if (e.id === 'atk_up') calculatedAtk += e.value;
             if (e.id === 'def_up') calculatedDef += e.value;
+            
             if (e.id === 'atk_up_percent') atkMultiplier += e.value;
+            if (e.id === 'atk_half') atkMultiplier *= 0.5;
         }
     });
-    
+
     hero.mapEffects.forEach(e => {
         if (e.id === 'map_atk_weak') calculatedAtk = Math.floor(calculatedAtk * e.value);
     });
 
+    // Çarpanı Uygula
     calculatedAtk = Math.floor(calculatedAtk * atkMultiplier);
+
+    // --- RECKLESS STRIKE KONTROLÜ (EN SONDA) ---
+    // Erken return yapmak yerine, sadece hesaplanmış defans değerini eziyoruz.
+    const zeroDefEffect = hero.statusEffects.find(e => e.id === 'defense_zero' && !e.waitForCombat);
+    if (zeroDefEffect) {
+        calculatedDef = 0;
+    }
 
     return { 
         atk: Math.max(0, calculatedAtk), 
         def: Math.max(0, calculatedDef), 
-        blockPower: Math.max(0, calculatedBlock), // YENİ
+        blockPower: Math.max(0, calculatedBlock), // Blok gücü artık her durumda dönüyor
         str: currentStr,
         dex: currentDex,
         int: currentInt,
@@ -264,13 +274,14 @@ function toggleSkillButtons(forceDisable) {
     slots.forEach(slot => {
         if (!slot.dataset.skillKey) return; 
         const skillKey = slot.dataset.skillKey;
-        // Rage Cost Güvenliği: NaN ise 0 yap
         const rageCost = parseInt(slot.dataset.rageCost) || 0;
         
         const overlay = slot.querySelector('.cooldown-overlay');
         const cdText = overlay ? overlay.querySelector('.cooldown-text') : null;
 
         const isBlocked = checkIfSkillBlocked(skillKey);
+        
+        // Cooldown Efektini Bul
         const cooldownEffect = hero.statusEffects.find(e => e.id === 'block_skill' && e.blockedSkill === skillKey && !e.waitForCombat);
         const isStunned = hero.statusEffects.some(e => e.id === 'stun' && !e.waitForCombat);
 
@@ -279,10 +290,24 @@ function toggleSkillButtons(forceDisable) {
             slot.style.borderColor = "#ff4d4d"; 
             
             if (overlay && cdText && cooldownEffect) {
-                const max = cooldownEffect.maxTurns || 3;
-                const percent = (cooldownEffect.turns / max) * 100;
+                // --- GÖRSEL DÜZELTME BURADA ---
+                const max = cooldownEffect.maxTurns;
+                const current = cooldownEffect.turns;
+                
+                // Yüzdeyi normal hesapla
+                const percent = (current / max) * 100;
                 overlay.style.height = `${percent}%`; 
-                cdText.textContent = cooldownEffect.turns;
+                
+                // YAZIYI KANDIR: 
+                // Eğer "2" ise ekrana "1" yaz. 
+                // Eğer "1" ise (son tur) ekrana "⌛" veya "0" yaz.
+                if (current > 1) {
+                    cdText.textContent = current - 1;
+                } else {
+                    cdText.textContent = "⌛"; // Son tur (Bekleniyor)
+                }
+                // ------------------------------
+                
             } else if (overlay) { 
                 overlay.style.height = '100%'; 
                 if(cdText && isStunned) cdText.textContent = "💫";
@@ -291,12 +316,9 @@ function toggleSkillButtons(forceDisable) {
         } else {
             if (overlay) { overlay.style.height = '0%'; if(cdText) cdText.textContent = ''; }
             
-            // Rage Kontrolü (forceDisable yoksa)
-            if (!forceDisable && hero.rage < rageCost) { 
+            if (forceDisable || hero.rage < rageCost) { 
                 slot.classList.add('disabled'); 
                 slot.style.borderColor = ""; 
-            } else if (forceDisable) {
-                slot.classList.add('disabled');
             } else { 
                 slot.classList.remove('disabled'); 
                 slot.style.borderColor = ""; 
@@ -402,6 +424,20 @@ function performBasicAttackAnimation(rawDamage, skillName) {
                 }
 
                 monster.hp = Math.max(0, monster.hp - finalDamage);
+				
+				// --- YENİ: FURY (HİDDET) KONTROLÜ ---
+                const furyEffect = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
+                if (furyEffect) {
+                    // Hasarın %25'i (veya value kadar)
+                    const rageGain = Math.floor(finalDamage * furyEffect.value);
+                    if (rageGain > 0) {
+                        hero.rage = Math.min(hero.maxRage, hero.rage + rageGain);
+                        // Görsel efekt (Mavi yazı ile +Rage)
+                        showFloatingText(document.getElementById('hero-display'), `+${rageGain} Rage`, 'heal');
+                        writeLog(`🔥 Hiddet: +${rageGain} Öfke kazandın.`);
+                    }
+                }
+                // ------------------------------------
                 
                 animateDamage(false); 
                 showFloatingText(targetContainer, finalDamage, 'damage');
@@ -429,6 +465,7 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
     const attackerImgElement = heroDisplayImg;
     const targetContainer = document.getElementById('monster-display');
     
+    // Defans ve Debuff Hesaplamaları
     let effectiveDef = monster.defense;
     if(isMonsterDefending) effectiveDef += monsterDefenseBonus;
     const ignoreDef = hero.statusEffects.find(e => e.id === 'ignore_def' && !e.waitForCombat);
@@ -439,6 +476,7 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
 
     let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
     
+    // Curse Kontrolü
     const curseEffect = hero.statusEffects.find(e => e.id === 'curse_damage' && !e.waitForCombat);
     if (curseEffect) finalDamage = Math.floor(finalDamage * (1 + curseEffect.value));
 
@@ -448,11 +486,29 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
     function showNextFrame() {
         if (frameIndex < skillFrames.length) {
             attackerImgElement.src = skillFrames[frameIndex]; 
+            
+            // --- VURUŞ ANI (Index 1 veya Son Kare) ---
+            // Genelde animasyonlarımız 2 kare olduğu için 1. index vuruş anıdır.
             if (frameIndex === 1) { 
                 monster.hp = Math.max(0, monster.hp - finalDamage);
+                
+                // --- EKSİK OLAN KISIM: FURY KONTROLÜ ---
+                const furyEffect = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
+                if (furyEffect) {
+                    // Hasarın %25'i kadar Rage kazan
+                    const rageGain = Math.floor(finalDamage * furyEffect.value);
+                    if (rageGain > 0) {
+                        hero.rage = Math.min(hero.maxRage, hero.rage + rageGain);
+                        showFloatingText(document.getElementById('hero-display'), `+${rageGain} Rage`, 'heal');
+                        writeLog(`🔥 Hiddet: +${rageGain} Öfke.`);
+                    }
+                }
+                // ---------------------------------------
+
                 animateDamage(false); 
                 showFloatingText(targetContainer, finalDamage, 'damage');
-                writeLog(`${skillName}: ${finalDamage}`);
+                writeLog(`${skillName}: ${finalDamage} hasar.`);
+                
                 updateStats();
                 if (isMonsterDefending) { isMonsterDefending = false; monsterDefenseBonus = 0; }
             }
@@ -529,6 +585,17 @@ function calculateDamage(attacker, defender) {
     if (attacker === hero) {
         const stats = getHeroEffectiveStats();
         rawDamage = stats.atk;
+		// --- YENİ: WIND UP (Bir sonraki saldırı bonusu) ---
+        // Bu etkiyi bul
+        const windUpIndex = hero.statusEffects.findIndex(e => e.id === 'wind_up' && !e.waitForCombat);
+        if (windUpIndex !== -1) {
+            // Değeri hasara ekle
+            rawDamage += hero.statusEffects[windUpIndex].value;
+            // Etkiyi tüket (Listeden sil)
+            hero.statusEffects.splice(windUpIndex, 1);
+            writeLog("Wind Up etkisi kullanıldı!");
+            updateStats(); // İkonu silmek için
+        }
         const instaKill = hero.statusEffects.find(e => e.id === 'insta_kill' && !e.waitForCombat);
         if (instaKill) return 9999;
     } else {
@@ -659,7 +726,26 @@ function nextTurn() {
         writeLog("... Senin Sıran ...");
 
     } else {
+        // --- CANAVAR SIRASI ---
         toggleSkillButtons(true); 
+        
+        // --- YENİ: STUN KONTROLÜ ---
+        // Hero üzerindeki 'monster_stunned' etkisine bak (Düşmanı etkileyen debuff)
+        const monsterStunned = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
+        
+        if (monsterStunned) {
+            showFloatingText(document.getElementById('monster-display'), "SERSEMLEDİ!", 'damage');
+            writeLog(`${monster.name} sersemlediği için saldıramadı!`);
+            
+            // Stun etkisini süresini düşür veya sil (Genelde 1 tur sürer)
+            // nextTurn zaten süreleri düşürecek ama oyuncu sırasına geçince düşer.
+            // O yüzden burada manuel müdahale gerekmez, akış devam eder.
+            
+            setTimeout(() => {
+                nextTurn(); // Direkt oyuncuya pasla
+            }, 1000);
+            return; // Fonksiyonu kes
+        } 
         const action = monsterNextAction;
         if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
         

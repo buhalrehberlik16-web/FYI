@@ -379,10 +379,10 @@ const SKILL_DATABASE = {
         data: {
             name: "Kesik",
             description: "Hızlı bir kılıç darbesi.",
-            menuDescription: "Saldırı gücünün %150'si kadar hasar. 25 Öfke harcar.",
+            menuDescription: "Saldırı gücünün %150'si kadar hasar. 25 Öfke harcar.<br><span style='color:yellow'>Bekleme: 1 Tur</span>.",
             rageCost: 25,
             levelReq: 1,
-            icon: 'icon_slash.png',
+            icon: 'brutal_slash.png',
             type: 'attack',
             category: 'brutal', 
             tier: 1
@@ -391,6 +391,8 @@ const SKILL_DATABASE = {
             const stats = getHeroEffectiveStats();
             // YENİ FORMÜL: ATK * 1.5
             const damage = Math.floor(stats.atk * 1.5);
+			
+			 hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', blockedSkill: 'slash', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             
             const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
             const fullPathFrames = animFrames.map(f => `images/${f}`);
@@ -398,18 +400,196 @@ const SKILL_DATABASE = {
         }
     },
     
+	// RECKLESS STRIKE: Riskli Vuruş
+    reckless_strike: {
+        data: {
+            name: "Pervasız Vuruş",
+            description: "Savunmayı boşverip saldır.",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 2 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span><br><span style='color:yellow'>Bekleme: 2 Tur</span>.",
+            rageCost: 20,
+            levelReq: 1,
+            icon: 'brutal_reckless_strike.png',
+            type: 'attack',
+            category: 'brutal',
+            tier: 1
+        },
+        onCast: function(attacker, defender) {
+            // Debuff: Defansı 0 yap
+            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            
+            // Cooldown: 2 Tur (Yani 3 yazıyoruz)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
 
+            const stats = getHeroEffectiveStats();
+            // Formül: ATK + 2*STR
+            const damage = stats.atk + Math.floor(stats.str * 2.0);
+            
+            // 2 Kare Animasyon
+            const animFrames = ['barbarian_attack2.png', 'barbarian_attack3.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
+            writeLog(`💢 **${this.data.name}**: Tüm gücünle saldırdın ama savunmasız kaldın!`);
+        }
+    },
+
+    // WIND UP: Kurulma
+    wind_up: {
+        data: {
+            name: "Kurulma",
+            description: "Bir sonraki saldırıya hazırlan.",
+            menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur.<br><span style='color:yellow'>Bekleme: 3 Tur</span>.",
+            rageCost: 15,
+            levelReq: 1,
+            icon: 'brutal_wind_up.png',
+            type: 'buff',
+            category: 'brutal',
+            tier: 1
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            const bonusDmg = Math.floor(stats.str * 1.0);
+
+            // Buff Ekle (Kullanılana kadar kalsın, max 5 tur diyelim güvenlik için)
+            hero.statusEffects.push({ 
+                id: 'wind_up', 
+                name: 'Güç Toplandı', 
+                value: bonusDmg, 
+                turns: 5, 
+                waitForCombat: false, 
+                resetOnCombatEnd: true 
+            });
+
+            // Cooldown: 3 Tur (Yani 4 yazıyoruz)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
+
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
+            writeLog(`💨 **${this.data.name}**: Sonraki saldırın +${bonusDmg} hasar verecek.`);
+            
+            setTimeout(() => { nextTurn(); }, 1000);
+        }
+    },
+
+    // ---------------- TIER 2 ----------------
+
+    // BASH: Sersemletici Vuruş
+    bash: {
+        data: {
+            name: "Balyoz",
+            description: "Düşmanı sersemletebilir.",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.3 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span><br><span style='color:yellow'>Bekleme: 3 Tur</span>.",
+            rageCost: 30,
+            levelReq: 3,
+            icon: 'brutal_bash.png',
+            type: 'attack',
+            category: 'brutal',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            // Formül: ATK + 1.3*STR
+            const damage = stats.atk + Math.floor(stats.str * 1.3);
+
+            // Stun Şansı
+            if (Math.random() < 0.30) {
+                // Stun Etkisi Ekle (Canavar sırasına gelince kontrol edilecek)
+                // Süre: 2 (Bu turun kalanı + Canavarın turu)
+                hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+                writeLog("💫 **BALYOZ**: Düşman sersemledi!");
+            }
+
+            // Cooldown: 3 Tur (Yani 4)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
+
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack3.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
+        }
+    },
+
+    // PIERCE THROUGH: Delici Vuruş
+    pierce_through: {
+        data: {
+            name: "Delip Geç",
+            description: "Zırhı deler.",
+            menuDescription: "Hasar: <b style='color:orange'>1.5 x ATK + 1 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span><br><span style='color:yellow'>Bekleme: 2 Tur</span>.",
+            rageCost: 30,
+            levelReq: 3,
+            icon: 'brutal_pierce_through.png',
+            type: 'attack',
+            category: 'brutal',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            // Formül: 1.5*ATK + 1*STR
+            const damageVal = Math.floor(stats.atk * 1.5) + stats.str;
+
+            // Cooldown: 2 Tur (Yani 3)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+
+            // ÖZEL HASAR UYGULAMA (Defans %50)
+            // animateCustomAttack fonksiyonu defansı otomatik düşüyor. 
+            // Biz burada "yok sayılan defansı" hasara ekleyerek hile yapacağız.
+            
+            let monsterDef = monster.defense;
+            if(typeof isMonsterDefending !== 'undefined' && isMonsterDefending) monsterDef += monsterDefenseBonus;
+            
+            const ignoredDef = Math.floor(monsterDef * 0.50); // %50 Ignore
+            const totalDamageToSend = damageVal + ignoredDef;
+
+            const animFrames = ['barbarian_attack2.png', 'barbarian_attack3.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(totalDamageToSend, fullPathFrames, this.data.name);
+        }
+    },
+
+    // DAZE: Sersemlet (Atak Kırma)
+    daze: {
+        data: {
+            name: "Afallat",
+            description: "Düşmanın saldırısını düşürür.",
+            menuDescription: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span><br><span style='color:yellow'>Bekleme: 2 Tur</span>.",
+            rageCost: 25,
+            levelReq: 3,
+            icon: 'brutal_daze.png',
+            type: 'attack',
+            category: 'brutal',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            const stats = getHeroEffectiveStats();
+            const damage = Math.floor(stats.atk * 2.0);
+
+            // Debuff: Enemy ATK %25 Down (2 Tur) -> Süreye 3 yazıyoruz
+            hero.statusEffects.push({ id: 'debuff_enemy_atk', name: 'Düşman Güçsüz', value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
+
+            // Cooldown: 2 Tur (Yani 3)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+
+            const animFrames = ['barbarian_attack1.png', 'barbarian_attack2.png'];
+            const fullPathFrames = animFrames.map(f => `images/${f}`);
+            
+            animateCustomAttack(damage, fullPathFrames, this.data.name);
+            writeLog(`🌀 **${this.data.name}**: Düşmanın başı döndü! (Atak Düştü)`);
+        }
+    },
+
+	// ---------------- TIER 3 ----------------
     armor_break: {
         data: {
             name: "Zırh Kıran",
             description: "Savunmayı yok sayar.",
             menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br>Saldırı gücünün %100'ü kadar hasar.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:yellow'>Bekleme: 3 Tur</span>",
             rageCost: 30,
-            levelReq: 2,
-            icon: 'icon_armor_break.png',
+            levelReq: 3,
+            icon: 'brutal_armor_break.png',
             type: 'attack',
             category: 'brutal', 
-            tier: 2
+            tier: 3
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'block_skill', name: 'Soğuma', blockedSkill: 'armor_break', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
@@ -423,6 +603,49 @@ const SKILL_DATABASE = {
             const fullPathFrames = animFrames.map(f => `images/${f}`);
             animateCustomAttack(damage, fullPathFrames, this.data.name);
             writeLog(`🔨 **${this.data.name}**: Zırh parçalandı!`);
+        }
+    },
+
+	// ---------------- TIER 4 ----------------
+
+fury: {
+        data: {
+            name: "Hiddet",
+            description: "Vurdukça öfkelen.",
+            menuDescription: "Kanın kaynıyor. 50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span><br><span style='color:yellow'>Bekleme: 6 Tur</span>.",
+            rageCost: 50,
+            levelReq: 1,
+            icon: 'brutal_fury.png',
+            type: 'buff',
+            category: 'brutal',
+            tier: 2
+        },
+        onCast: function(attacker, defender) {
+            // Buff Ekle
+            hero.statusEffects.push({ 
+                id: 'fury_active', // Combat Manager bunu kontrol edecek
+                name: 'Hiddetli', 
+                turns: 4, 
+                value: 0.25, // %25 Dönüşüm
+                waitForCombat: false, 
+                resetOnCombatEnd: true 
+            });
+
+            // Cooldown (6 Tur bekler -> 7 yazıyoruz ki 6 tur kapalı kalsın)
+            hero.statusEffects.push({ 
+                id: 'block_skill', 
+                name: 'Soğuma', 
+                blockedSkill: 'fury', 
+                turns: 7, 
+                maxTurns: 7, 
+                resetOnCombatEnd: true 
+            });
+            
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "HİDDET!", 'heal');
+            writeLog(`🔥 **${this.data.name}**: Vuruşların sana Öfke kazandıracak!`);
+            
+            setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
 
