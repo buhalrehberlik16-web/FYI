@@ -462,7 +462,7 @@ const SKILL_DATABASE = {
             });
 			
 			hero.rage = Math.min(hero.maxRage, hero.rage + 15);
-            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
+            showFloatingText(document.getElementById('hero-display'), "+15 Rage", 'heal');
 
             // Cooldown: 3 Tur (Yani 4 yazıyoruz)
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
@@ -754,4 +754,5 @@ fury: {
     }
 
 };
+
 
