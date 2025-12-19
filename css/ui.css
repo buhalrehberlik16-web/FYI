@@ -366,57 +366,58 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 .stat-footer { margin-top: 20px; text-align: center; font-size: 0.8em; color: #666; }
 .tier-badge { position: absolute; bottom: 0; right: 0; background-color: #333; color: #ffd700; font-size: 0.7em; padding: 1px 3px; border-radius: 2px; border: 1px solid #ffd700; font-weight: bold; z-index: 5; }
 /* --- KÖY (TOWN) ARAYÜZÜ --- */
-/* 1. Town Screen (Dış Çerçeve) */
-/* İçeriği (Resmi) tam ortada tutmak için Flexbox kullanıyoruz */
+/* 1. DIŞ ÇERÇEVE */
 #town-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* Flex yerine absolute positioning context kullanıyoruz */
+    position: relative; 
     width: 100%;
     height: 100%;
-    padding: 0;
-    background-color: #000; /* Kenarlarda kalan boşluk siyah olsun */
+    background-color: #000;
     overflow: hidden;
+    z-index: 10; /* Diğer ekranların üstünde/altında kalmasın */
 }
 
-/* 2. Town Container (Resim ve Butonların Kutusu) */
-/* BURASI KRİTİK: Kutu her zaman 16:9 oranında kalacak */
+/* 2. İÇ KUTU (RESİM KUTUSU) */
 .town-container {
-    position: relative;
+    /* Ekranın tam ortasına çivile */
+    position: absolute;
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0;
+    margin: auto; /* Bu, absolute ve top/bottom 0 ile birleşince tam ortalar */
     
-    /* Genişlik ve Yükseklik sınırları */
-    width: 100%;
-    height: 100%;
+    /* En boy oranını 16:9 olarak kilitle */
+    aspect-ratio: 16 / 9;
     
-    /* En-Boy Oranını Kilitle (1920 / 1080 = 16 / 9) */
-    /* Tarayıcı ne olursa olsun bu kutu hep 16:9 kalır */
-    aspect-ratio: 16 / 9; 
-    
-    /* Ekrana sığdırma mantığı: */
-    /* Genişliğe sığdır ama yüksekliği taşma */
+    /* Ekrana sığdır (Taşmayı engeller) */
+    /* Genişlik %100 olsun ama Yükseklik ekranı geçerse daralsın */
+    /* Yükseklik %100 olsun ama Genişlik ekranı geçerse kısalsın */
     max-width: 100%;
     max-height: 100%;
     
-    /* Eğer ekran çok genişse (Ultra-wide) yanlara yayılma, ortada kal */
-    /* Eğer ekran çok dikse (Mobil) aşağı taşma, küçül */
-    margin: auto;
-	container-type: inline-size;
+    /* Eğer ekran oranı tutmazsa genişliği/yüksekliği auto yaparak aspect-ratio'ya uydur */
+    width: auto;
+    height: auto;
+
+    /* Font ölçekleme için */
+    container-type: inline-size;
     
-    border: none;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Şık bir gölge */
+    /* Görünürlüğü garantiye al */
+    display: block;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
 
-/* 3. Arka Plan Resmi */
+/* 3. ARKA PLAN RESMİ */
 .town-background {
     width: 100%;
     height: 100%;
     
-    /* Artık kutu zaten 16:9 olduğu için 'contain' diyerek tam oturtuyoruz */
-    object-fit: contain; 
+    /* Kutu zaten 16:9 olduğu için cover tam oturur */
+    object-fit: cover; 
     
-    position: absolute;
-    top: 0; left: 0;
-    z-index: 0;
+    display: block;
+    z-index: 1; /* En altta */
 }
 
 /* Tıklama Alanı (Görünmez Kutu) */
@@ -424,110 +425,104 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     position: absolute;
     cursor: pointer;
     
-    /* --- MERKEZLEME SİHRİ --- */
-    /* Kutunun merkezini, verdiğin koordinat noktasına oturtur */
-    /* Böylece yazı uzasa da kısalsa da hep ortalı kalır */
-    transform: translate(-50%, 50%); 
-    /* ------------------------ */
-
-    /* Boyutları içeriğe (yazıya) göre otomatik yap */
-    width: auto !important;
-    height: auto !important;
+    /* Boyutları sıfırla, sadece bir nokta (koordinat) olsun */
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
     
-    /* Tıklama alanı boşluğu (Orantılı) */
-    padding: 0.8cqw; 
+    /* İçerik taşabilsin */
+    overflow: visible; 
     
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-    border: none;
-    background: transparent;
-    box-shadow: none;
     z-index: 5;
-    
-    /* Hover efektleri için transition */
-    /* Transformu ezmemek için buraya dikkat! */
-    transition: opacity 0.3s; 
-}
-
-/* Hover durumunda transformu koruyarak efekt ver */
-/* Daha önce scale kullanıyorduk, şimdi sadece yazı parlasın, kutu oynamasın */
-/* Çünkü translate ile scale'i aynı anda yönetmek karışabilir */
-.town-building:hover {
-   /* Kutu sabit kalsın, sadece içindeki yazı parlasın */
 }
 
 /* Bina İsim Yazısı */
 .town-label-text {
-    color: #e0d0b0; /* Parşömen/Kemik rengi (Okunaklı) */
-    font-family: 'Georgia', serif; /* Veya 'Times New Roman' */
-    font-size: 1.1em; /* Biraz büyük olsun */
-    font-weight: 900; /* Kalın */
-    letter-spacing: 2px; /* Harf aralığı */
+    /* Yazıyı çivinin tam ortasına oturt */
+    position: absolute;
+    top: 50%;
+    left: 50%;
     
-    /* Güçlü Siyah Dış Hat (Yazının her zeminde okunmasını sağlar) */
-    text-shadow: 
-        2px 2px 0 #000, 
-       -1px -1px 0 #000,  
-        1px -1px 0 #000,
-       -1px 1px 0 #000,
-        1px 1px 0 #000;
-        
-    pointer-events: none; /* Tıklamayı engelleme, alttaki div alsın */
+    /* Kendi boyutunun yarısı kadar geri çekerek tam ortala */
+    /* Döndürme (rotate) işlemini bina özel ayarlarında yapacağız */
+    transform: translate(-50%, -50%); 
+    
+    /* Yazı ayarları */
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1;
+    
+    color: #e0d0b0; 
+    font-family: 'Georgia', serif; 
+    font-weight: 900; 
+    letter-spacing: 2px; 
+    
+    /* Tıklanabilir olsun */
+    pointer-events: auto;
+    cursor: pointer;
+    
+    /* Gölge ve Geçiş */
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
     transition: all 0.3s ease;
 }
 
-/* Hover (Üzerine Gelince) Efekti */
+/* Hover Efekti */
 .town-building:hover .town-label-text {
-    color: #ffd700; /* Altın Sarısı */
-    
-    /* Glow (Parlama) Efekti */
-    text-shadow: 
-        0 0 10px #ffd700, 
-        0 0 20px #ff8c00, 
-        2px 2px 0 #000; /* Siyah konturu koru */
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ff8c00, 2px 2px 0 #000;
 }
+
 /* --- BİNA KONUMLARI (GÖRSELİNE GÖRE AYARLA!) --- */
 
 /* 1. Han */
 #building-inn {
-    bottom: 42.3%;
-    left: 47.2%;
-    font-size: 1.21cqw;
+    top: 58%;
+    left: 47.3%; /* Tahmini Merkez */
+    font-size: 1.3cqw;
 }
-#building-inn .town-label-text { transform: rotate(351deg); }
+#building-inn .town-label-text { 
+    transform: translate(-50%, -50%) rotate(351deg); 
+}
 
 /* 2. Demirci */
 #building-blacksmith {
-    bottom: 35.6%;
-    left: 20.6%;
-    font-size: 1cqw;
+    top: 64.7%;
+    left: 20.7%;
+    font-size: 1.15cqw;
 }
-#building-blacksmith .town-label-text { transform: rotate(349deg); }
+#building-blacksmith .town-label-text { 
+    transform: translate(-50%, -50%) rotate(349deg); 
+}
 
 /* 3. Tüccar */
 #building-merchant {
-    bottom: 38.7%;
+    top: 61.4%;
     left: 64.7%;
-    font-size: 0.85cqw;
+    font-size: 1cqw;
 }
-#building-merchant .town-label-text { transform: rotate(10deg); }
+#building-merchant .town-label-text { 
+    transform: translate(-50%, -50%) rotate(10deg); 
+}
 
 /* 4. Simyacı */
 #building-alchemist {
-    bottom: 63.5%;
-    right: 13.4%;
-    font-size: 0.85cqw;
+    top: 36.6%;
+    right: 20.5%;
+    font-size: 0.9cqw;
+}
+#building-alchemist .town-label-text { 
+    transform: translate(-50%, -50%); /* Rotasyon yok */
 }
 
 /* 5. Ahır */
 #building-stable {
-    bottom: 35.8%;
-    right: 2.9%;
-    font-size: 1.4cqw;
+    top: 64.4%;
+    right: 9.8%;
+    font-size: 1.6cqw;
 }
-#building-stable .town-label-text { transform: rotate(10deg); }
+#building-stable .town-label-text { 
+    transform: translate(-50%, -50%) rotate(10deg); 
+}
 
 /* Çıkış Butonu */
 .town-exit-btn {
