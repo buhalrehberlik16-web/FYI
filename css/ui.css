@@ -400,6 +400,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     /* Eğer ekran çok genişse (Ultra-wide) yanlara yayılma, ortada kal */
     /* Eğer ekran çok dikse (Mobil) aşağı taşma, küçül */
     margin: auto;
+	container-type: inline-size;
     
     border: none;
     box-shadow: 0 0 50px rgba(0,0,0,0.8); /* Şık bir gölge */
@@ -423,9 +424,18 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     position: absolute;
     cursor: pointer;
     
+    /* --- MERKEZLEME SİHRİ --- */
+    /* Kutunun merkezini, verdiğin koordinat noktasına oturtur */
+    /* Böylece yazı uzasa da kısalsa da hep ortalı kalır */
+    transform: translate(-50%, 50%); 
+    /* ------------------------ */
+
+    /* Boyutları içeriğe (yazıya) göre otomatik yap */
     width: auto !important;
     height: auto !important;
-    padding: 15px; /* Tıklama alanını yazıdan biraz geniş tut */
+    
+    /* Tıklama alanı boşluğu (Orantılı) */
+    padding: 0.8cqw; 
     
     display: flex;
     justify-content: center;
@@ -435,12 +445,17 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     background: transparent;
     box-shadow: none;
     z-index: 5;
-    transition: transform 0.2s ease;
+    
+    /* Hover efektleri için transition */
+    /* Transformu ezmemek için buraya dikkat! */
+    transition: opacity 0.3s; 
 }
 
-/* Binanın üzerine gelince hafifçe büyümesi (Opsiyonel, istemezsen silebilirsin) */
+/* Hover durumunda transformu koruyarak efekt ver */
+/* Daha önce scale kullanıyorduk, şimdi sadece yazı parlasın, kutu oynamasın */
+/* Çünkü translate ile scale'i aynı anda yönetmek karışabilir */
 .town-building:hover {
-    transform: scale(1.05);
+   /* Kutu sabit kalsın, sadece içindeki yazı parlasın */
 }
 
 /* Bina İsim Yazısı */
@@ -475,53 +490,43 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 }
 /* --- BİNA KONUMLARI (GÖRSELİNE GÖRE AYARLA!) --- */
 
-/* 1. Han (Sol Alt) */
+/* 1. Han */
 #building-inn {
-    bottom: 42.2%;
-    left: 44%;
-    width: 15%;
-    height: 30%;
-    font-size: 0.86vw;
-}
-
-/* 2. Demirci (Sol Orta) */
-#building-blacksmith {
-    bottom: 37.4%;
-    left: 16%;
-    width: 30%;
-    height: 35%;
-    font-size: 0.76vw;
-}
-
-/* 3. Tüccar (Merkez) */
-#building-merchant {
-    bottom: 40.1%;
-    left: 61.0%;
-    width: 15%;
-    height: 25%;
-    font-size: 0.6vw;
-}
-
-/* 4. Simyacı (Sağ Orta) */
-#building-alchemist {
-    bottom: 57.4%;
-    right: 16.4%;
-    width: 15%;
-    height: 35%;
-    font-size: 0.67vw;
-}
-
-/* 5. Ahır (Sağ Alt/Köşe) */
-#building-stable {
-    bottom: 37.5%;
-    right: 6.2%;
-    width: 15%;
-    height: 25%;
-    font-size: 0.9vw;
+    bottom: 42.3%;
+    left: 47.2%;
+    font-size: 1.21cqw;
 }
 #building-inn .town-label-text { transform: rotate(351deg); }
+
+/* 2. Demirci */
+#building-blacksmith {
+    bottom: 35.6%;
+    left: 20.6%;
+    font-size: 1cqw;
+}
 #building-blacksmith .town-label-text { transform: rotate(349deg); }
+
+/* 3. Tüccar */
+#building-merchant {
+    bottom: 38.7%;
+    left: 64.7%;
+    font-size: 0.85cqw;
+}
 #building-merchant .town-label-text { transform: rotate(10deg); }
+
+/* 4. Simyacı */
+#building-alchemist {
+    bottom: 63.5%;
+    right: 13.4%;
+    font-size: 0.85cqw;
+}
+
+/* 5. Ahır */
+#building-stable {
+    bottom: 35.8%;
+    right: 2.9%;
+    font-size: 1.4cqw;
+}
 #building-stable .town-label-text { transform: rotate(10deg); }
 
 /* Çıkış Butonu */
