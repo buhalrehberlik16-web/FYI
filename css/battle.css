@@ -116,13 +116,36 @@
 .character-display img { max-height: 250px; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); transition: none; }
 .hp-overlay-container { position: absolute; bottom: 260px; left: 50%; transform: translateX(-50%); width: 120px; z-index: 30; text-align: center; }
 .intention-overlay {
-    position: absolute; bottom: 360px; left: 50%; transform: translateX(-50%); z-index: 40;
-    padding: 5px 10px; border-radius: 5px; font-size: 1.8em; font-weight: bold; color: #1a1a1a; 
-    border: 2px solid #f0e68c; box-shadow: 0 0 10px rgba(240, 230, 140, 0.5); min-width: 50px; text-align: center; opacity: 0; transition: opacity 0.3s;
+    position: absolute; 
+    bottom: 360px; 
+    left: 50%; 
+    z-index: 40;
+    padding: 8px 12px; 
+    border-radius: 8px; 
+    font-size: 1.8em; 
+    color: #1a1a1a; 
+    border: 2px solid #f0e68c; 
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); 
+    min-width: 50px; 
+    text-align: center;
+    pointer-events: none;
+
+    /* --- ÇIKIŞ ANİMASYONU (KAYBOLURKEN) --- */
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.5); /* Küçülerek aşağı düşer */
+    transition: opacity 0.4s ease-in, transform 0.4s ease-in; 
 }
-.intention-overlay.attack { background-color: #ff4d4d; }
-.intention-overlay.defend { background-color: #3cb371; }
-.intention-overlay.active { opacity: 1; }
+
+.intention-overlay.active {
+    /* --- GİRİŞ ANİMASYONU (GELİRKEN) --- */
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.2); /* Hafif büyük gelip yerine oturur */
+    transition: opacity 0.3s ease-out, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Renkler için hafif saydamlık */
+.intention-overlay.attack { background-color: rgba(255, 77, 77, 0.9); box-shadow: 0 0 20px rgba(255, 77, 77, 0.4); }
+.intention-overlay.defend { background-color: rgba(60, 179, 113, 0.9); box-shadow: 0 0 20px rgba(60, 179, 113, 0.4); }
 /* --- MOBİL UYUMLULUK (BATTLE) --- */
 @media (max-width: 768px) {
     /* Arena Düzeni: Karakterleri sıkıştır */

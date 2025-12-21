@@ -1469,3 +1469,82 @@ pointer-events: none; }
     background: #f0e68c;
     color: #1a1a1a;
 }
+/* --- ŞEHİR ARAYÜZÜ --- */
+#city-screen {
+    background-color: #050505;
+}
+
+.city-container {
+    position: absolute;
+    top: 0; bottom: 0; left: 0; right: 0;
+    margin: auto;
+    aspect-ratio: 16 / 9;
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto;
+    container-type: inline-size;
+}
+
+.city-background {
+    width: 100%; height: 100%; object-fit: cover;
+    filter: brightness(0.8) sepia(20%); /* Hafif asil bir ton */
+}
+
+/* Şehir Başlığı */
+.city-header {
+    position: absolute;
+    top: 5%; width: 100%;
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.city-title {
+    color: #ffd700;
+    font-size: 3.5cqw;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 2px 2px 5px #000;
+    margin: 0;
+}
+
+.city-subtitle {
+    color: #43FF64;
+    font-size: 1.2cqw;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+/* Şehir Binaları (Örnek Konumlar) */
+.city-building {
+    position: absolute; cursor: pointer; z-index: 5;
+}
+
+.city-label-text {
+    position: absolute; transform: translate(-50%, -50%);
+    white-space: nowrap; color: #fff; font-family: 'Georgia', serif;
+    font-weight: bold; font-size: 1.1cqw; padding: 5px 15px;
+    background: rgba(0, 0, 0, 0.6); border: 1px solid #ffd700;
+    border-radius: 20px; transition: all 0.3s ease;
+}
+
+.city-building:hover .city-label-text {
+    background: #ffd700; color: #000; transform: translate(-50%, -50%) scale(1.2);
+    box-shadow: 0 0 15px #ffd700;
+}
+
+/* Bina Koordinatları (Görseline göre ayarla) */
+#city-palace { top: 35%; left: 50%; }
+#city-vault  { top: 60%; left: 25%; }
+#city-arena  { top: 65%; right: 25%; }
+#city-market { top: 75%; left: 50%; }
+
+/* Bir Sonraki Perde Butonu */
+.next-act-container {
+    position: absolute; bottom: 8%; width: 100%;
+    display: flex; justify-content: center;
+}
+
+.next-act-btn {
+    background: linear-gradient(to bottom, #ffd700, #b8860b) !important;
+    color: #000 !important; border: 2px solid #fff !important;
+    padding: 15px 40px !important; font-size: 1.2cqw !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4) !important;
+}
