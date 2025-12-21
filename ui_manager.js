@@ -2,7 +2,7 @@
 
 // --- EKRAN YÖNETİMİ ---
 function switchScreen(targetScreen) {
-    const screens = [startScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, basicSkillSelectionScreen];
+    const screens = [startScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, cityScreen, basicSkillSelectionScreen];
     
     const topBar = document.getElementById('top-info-bar');
     const mainArea = document.getElementById('main-screen-area');
@@ -171,10 +171,40 @@ function animateDamage(isHero) {
 }
 
 function showMonsterIntention(action) {
-    if (!monsterIntentionOverlay) return;
-    monsterIntentionOverlay.classList.remove('attack', 'defend');
-    if (action === 'attack') { monsterIntentionOverlay.innerHTML = '<i class="fas fa-dagger"></i>'; monsterIntentionOverlay.classList.add('attack', 'active'); } 
-    else if (action === 'defend') { monsterIntentionOverlay.innerHTML = '<i class="fas fa-shield-alt"></i>'; monsterIntentionOverlay.classList.add('defend', 'active'); }
+    const el = document.getElementById('monster-intention-overlay');
+    if (!el) return;
+
+    // --- KAPATMA MANTIĞI ---
+    if (!action || !monster || monster.hp <= 0) {
+        el.classList.remove('active');
+        // Animasyon (0.4s) bittikten sonra içeriği temizle ki "takılı" kalmasın
+        setTimeout(() => {
+            if (!el.classList.contains('active')) {
+                el.innerHTML = '';
+                el.style.opacity = "0";
+            }
+        }, 400);
+        return;
+    }
+
+    // --- AÇMA MANTIĞI ---
+    // Önce eski aksiyonları temizle (active kalsın ama simge değişecekse)
+    el.classList.remove('attack', 'defend');
+    
+    if (action === 'attack') {
+        el.innerHTML = '<i class="fas fa-dagger"></i>';
+        el.classList.add('attack');
+    } else if (action === 'defend') {
+        el.innerHTML = '<i class="fas fa-shield-alt"></i>';
+        el.classList.add('defend');
+    }
+
+    // Reflow (Zorla yenileme)
+    void el.offsetWidth;
+
+    // Göster
+    el.classList.add('active');
+    el.style.opacity = "1";
 }
 
 function triggerDeathEffect() { if (fadeOverlay) fadeOverlay.classList.add('active-fade'); }

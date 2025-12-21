@@ -479,6 +479,42 @@
 </div>
 
             <!-- KÖY EKRANI BİTİŞİ -->
+			<!-- 13. ŞEHİR (CITY) EKRANI -->
+<div id="city-screen" class="screen hidden">
+    <div class="city-container">
+        <img src="images/city_bg.png" alt="Büyük Başkent" class="city-background">
+        
+        <!-- Şehir Başlığı -->
+        <div class="city-header">
+            <h1 class="city-title">ALTIN BAŞKENT: ELDORIA</h1>
+            <p class="city-subtitle">1. Perde Tamamlandı</p>
+        </div>
+
+        <!-- Şehirdeki Binalar (Farklı Konumlar) -->
+        <div class="city-building" id="city-palace" onclick="openBuilding('palace')">
+            <span class="city-label-text">SARAY</span>
+        </div>
+        
+        <div class="city-building" id="city-vault" onclick="toggleVault()">
+            <span class="city-label-text">BANKA / KASA</span>
+        </div>
+        
+        <div class="city-building" id="city-arena" onclick="alert('Arena yakında eklenecek!')">
+            <span class="city-label-text">ARENA</span>
+        </div>
+
+        <div class="city-building" id="city-market" onclick="openBuilding('merchant')">
+            <span class="city-label-text">BÜYÜK PAZAR</span>
+        </div>
+
+        <!-- Bir Sonraki Perdeye Geçiş Butonu -->
+        <div class="next-act-container">
+            <button id="btn-next-act" class="next-act-btn" onclick="startNextAct()">
+                2. PERDEYE YELKEN AÇ <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
 			<!-- 12. ENVANTER (INVENTORY) EKRANI -->
             <div id="inventory-screen" class="hidden">
                 <div class="inventory-window">

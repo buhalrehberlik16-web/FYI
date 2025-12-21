@@ -93,3 +93,8 @@ const ENEMY_STATS = {
         dead: 'goblin_sef_dead.png'
     }
 };
+Object.assign(ENEMY_STATS, {
+    "İskelet Şövalye": { maxHp: 180, attack: 25, defense: 15, tier: 3, idle: 'kaya_golemi.png', dead: 'kaya_golemi_dead.png', attackFrames: ['kaya_golemi_attack1.png'] },
+    "Gulyabani": { maxHp: 150, attack: 35, defense: 5, tier: 3, idle: 'kaya_golemi.png', dead: 'kaya_golemi_dead.png', attackFrames: ['kaya_golemi_attack1.png'] },
+    "Kemik Golemi": { maxHp: 300, attack: 28, defense: 20, tier: 4, idle: 'kaya_golemi.png', dead: 'kaya_golemi_dead.png', attackFrames: ['kaya_golemi_attack1.png'] }
+});

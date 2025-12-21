@@ -281,14 +281,20 @@ document.addEventListener('keydown', (e) => {
             if (btnBasicDefend && !btnBasicDefend.classList.contains('disabled')) btnBasicDefend.click();
         }
 
-        // 1-2-3-4 (Skill Bar Slotları - Index 2,3,4,5)
-        const skillSlots = document.querySelectorAll('#skill-bar-container .skill-slot');
-        // NodeList olduğu için varlığını kontrol et
-        if (key === '1' && skillSlots.length > 0) skillSlots[0].click();
-        if (key === '2' && skillSlots.length > 1) skillSlots[1].click();
-        if (key === '3' && skillSlots.length > 2) skillSlots[2].click();
-        if (key === '4' && skillSlots.length > 3) skillSlots[3].click();
+        // --- YENİ DİNAMİK TUŞ KONTROLÜ ---
+    // 1'den 9'a kadar olan tuşları kontrol et
+    const skillSlots = document.querySelectorAll('#skill-bar-container .skill-slot');
+    const numKey = parseInt(key);
+    
+    if (!isNaN(numKey) && numKey >= 1 && numKey <= 9) {
+        // Eğer basılan rakama karşılık gelen bir slot varsa (Örn: 5 tuşu -> skillSlots[4])
+        const targetIndex = numKey - 1;
+        if (skillSlots[targetIndex]) {
+            skillSlots[targetIndex].click();
+        }
     }
+    // --------------------------------
+}
 
     // Menü Kısayolları
     if (key === 'i' || key === 'ı') { toggleInventory(); }

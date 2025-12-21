@@ -31,6 +31,7 @@ const monsterNameDisplay = document.getElementById('monster-name');
 const heroRageBar = document.getElementById('hero-rage-bar');
 const heroRageText = document.getElementById('hero-rage-text');
 const townScreen = document.getElementById('town-screen');
+const cityScreen = document.getElementById('city-screen');
 const btnLeaveTown = document.getElementById('btn-leave-town');
 const basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
 const basicSkillList = document.getElementById('basic-skill-list');
@@ -138,6 +139,8 @@ let hero = {
     class: "Barbar",
     baseAttack: 10,
     baseDefense: 1,
+	currentAct: 1,
+	
     
     // Gelen Hasarı Azaltan Dirençler (Defansif)
     baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },

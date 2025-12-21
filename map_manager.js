@@ -4,6 +4,17 @@
 
 function generateMap() {
     const mapContent = document.getElementById('map-content');
+    const mapBg = document.getElementById('map-background');
+    
+    // --- ACT'E GÖRE GÖRSEL AYARI ---
+    if (mapBg) {
+        if (hero.currentAct === 2) {
+            mapBg.src = "images/map_background.png"; // Act 2 harita resmi
+        } else {
+            mapBg.src = "images/map_background.png"; // Act 1 harita resmi
+        }
+    }
+
     
     // Temizlik
     const existingNodes = document.querySelectorAll('.map-node');
@@ -118,27 +129,22 @@ function generateMap() {
 function getPreDeterminedEnemy(stage) {
     const rand = Math.random();
     let selectedPool = [];
-    let isHard = false;
-
-    const town1 = MAP_CONFIG.townStages[0]; 
-    const town2 = MAP_CONFIG.townStages[1]; 
-
-    if (stage <= town1) {
-        if (rand < 0.80) { selectedPool = TIER_1_ENEMIES; } 
-        else { selectedPool = TIER_2_ENEMIES; isHard = true; }
-    } else if (stage <= town2) {
-        if (rand < 0.80) { selectedPool = TIER_2_ENEMIES; } 
-        else { selectedPool = TIER_3_ENEMIES; isHard = true; }
-    } else {
-        selectedPool = TIER_3_ENEMIES;
-        if (typeof TIER_4_ENEMIES !== 'undefined' && rand < 0.3) {
-             selectedPool = TIER_4_ENEMIES;
-             isHard = true;
-        }
+    
+    // ACT 1 HAVUZU
+    if (hero.currentAct === 1) {
+        if (stage < 5) selectedPool = TIER_1_ENEMIES;
+        else if (stage < 10) selectedPool = TIER_2_ENEMIES;
+        else selectedPool = TIER_3_ENEMIES;
+    } 
+    // ACT 2 HAVUZU (Daha zor)
+    else if (hero.currentAct === 2) {
+        if (stage < 5) selectedPool = ["İskelet Şövalye", "Gulyabani"];
+        else if (stage < 10) selectedPool = ["Gulyabani", "Kemik Golemi"];
+        else selectedPool = ["Kemik Golemi", "Orc Fedaisi"];
     }
 
     const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)];
-    return { name: enemyName, isHard: isHard };
+    return { name: enemyName, isHard: rand > 0.8 };
 }
 
 function determineNodeType(stage, lane) {
@@ -204,6 +210,35 @@ function renderMap() {
     }, 200);
     
     updateAvailableNodes();
+}
+function startNextAct() {
+    // 1. Onay al (Yanlışlıkla basılmaları önlemek için)
+    if (!confirm(`${hero.currentAct + 1}. Perdeye geçmek istediğine emin misin? Tüm harita yenilenecek!`)) return;
+
+    // 2. Act değerini artır
+    hero.currentAct++;
+
+    // 3. Kahramanı tazele (Ödül olarak)
+    hero.hp = hero.maxHp;
+    hero.rage = hero.maxRage;
+
+    // 4. Harita Verilerini Tamamen Sıfırla
+    GAME_MAP.currentNodeId = null;
+    GAME_MAP.completedNodes = [];
+    
+    // 5. Haritayı Yeniden Üret (Act 2 parametrelerini kullanacak)
+    generateMap(); 
+
+    // 6. Ekranı Haritaya Çevir
+    switchScreen(mapScreen);
+
+    // 7. Görsel ve Log Güncelleme
+    writeLog(`🚢 Perde Değişti: **${hero.currentAct}. PERDE: LANETLİ TOPRAKLAR**`);
+    updateStats();
+
+    // Haritayı en başa (sola) kaydır
+    const mapDisp = document.getElementById('map-display');
+    if(mapDisp) mapDisp.scrollLeft = 0;
 }
 
 // --- ÇİZGİ SİSTEMİ ---
@@ -368,8 +403,9 @@ function triggerNodeAction(node) {
             document.getElementById('map-description').textContent = "BÖLÜM SONU CANAVARI!";
             startBattle("Goblin Şefi");
         } else if (node.type === 'city') {
-            alert("TEBRİKLER! Zindandan sağ salim çıktın.");
-        }
+			writeLog("🏆 Tebriler! Büyük Eldoria şehrine ulaştın.");
+			enterCity();
+}
     }, 600);
 }
 
@@ -385,6 +421,19 @@ function enterTown() {
         };
     }
     // ARTIK BURADA BİNALARA CLICK EVENTİ ATAMIYORUZ. HTML'DEKİ ONCLICK ÇALIŞIYOR.
+}
+function enterCity() {
+    switchScreen(cityScreen);
+    // Şehre özel müzik veya efekt başlatılabilir
+}
+
+function startNextAct() {
+    if(confirm("2. Perdeye geçmek istediğine emin misin? (İlerlemen kaydedilecek)")) {
+        writeLog("🚢 Yeni topraklara yelken açıyorsun...");
+        // Burada haritayı yeniden üreten veya Act 2'yi başlatan kodlar çalışır
+        // generateMap(); 
+        // switchScreen(mapScreen);
+    }
 }
 
 // ... Random Event ve Campfire (UI Manager'dan çağrılır) ...
@@ -462,3 +511,45 @@ function triggerRandomEvent() {
         eContainer.appendChild(fleeBtn);
     } else { createBtn(evt.option2); }
 }
+window.startNextAct = function() {
+    console.log("DEBUG: startNextAct tetiklendi!");
+
+    // 1. Act Değerini Artır
+    if (!hero.currentAct) hero.currentAct = 1; // Güvenlik kontrolü
+    hero.currentAct++;
+    console.log("DEBUG: Yeni Act:", hero.currentAct);
+
+    // 2. Kahramanı Tazele
+    hero.hp = hero.maxHp;
+    hero.rage = hero.maxRage;
+
+    // 3. Harita Verilerini Sıfırla
+    GAME_MAP.currentNodeId = null;
+    GAME_MAP.completedNodes = [];
+    console.log("DEBUG: Harita verileri sıfırlandı.");
+
+    // 4. Haritayı Yeniden Üret (Düşmanlar ve görseller Act 2'ye göre seçilecek)
+    if (typeof generateMap === 'function') {
+        generateMap();
+        console.log("DEBUG: Harita yeniden üretildi.");
+    } else {
+        console.error("HATA: generateMap fonksiyonu bulunamadı!");
+    }
+
+    // 5. Ekranı Haritaya Çevir
+    if (typeof switchScreen === 'function') {
+        // mapScreen değişkeninin game_data.js'de tanımlı olduğundan emin ol
+        switchScreen(mapScreen); 
+        console.log("DEBUG: mapScreen'e geçiş yapıldı.");
+    } else {
+        console.error("HATA: switchScreen fonksiyonu bulunamadı!");
+    }
+
+    // 6. UI Güncelleme
+    updateStats();
+    writeLog(`⚔️ **${hero.currentAct}. PERDE BAŞLADI** ⚔️`);
+    
+    // Haritayı başa sar
+    const mapDisp = document.getElementById('map-display');
+    if(mapDisp) mapDisp.scrollLeft = 0;
+};

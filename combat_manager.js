@@ -153,7 +153,7 @@ function initializeSkillButtons() {
     if (skillButtonsContainer) skillButtonsContainer.innerHTML = '';
     const slotA = document.getElementById('btn-basic-attack');
     const slotD = document.getElementById('btn-basic-defend');
-    const totalSlots = 6; 
+	const totalSlots = hero.equippedSkills.length;  
 
     for (let i = 0; i < totalSlots; i++) {
         let slot = (i === 0) ? slotA : (i === 1) ? slotD : document.createElement('div');
@@ -390,34 +390,57 @@ function handleMonsterAttack(attacker, defender) {
 
 // --- SAVAŞ DÖNGÜSÜ (TUR VE DURUM YÖNETİMİ) ---
 function determineMonsterAction() {
-    if (Math.random() < 0.70) monsterNextAction = 'attack';
-    else {
+    // Rastgele bir aksiyon seç (Hata payını silmek için varsayılan atağa çek)
+    if (Math.random() < 0.70) {
+        monsterNextAction = 'attack';
+    } else {
         monsterNextAction = 'defend';
-        monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2);
     }
+    console.log("Canavar Yeni Aksiyonu Belirlendi:", monsterNextAction);
 }
 
 function startBattle(enemyType) {
     const stats = ENEMY_STATS[enemyType];
     if (!stats) return;
-    switchScreen(battleScreen);
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
-    
-    monsterDisplayImg.src = `images/${monster.idle}`;
-    monsterDisplayImg.style.filter = 'none'; 
-    heroDisplayImg.src = HERO_IDLE_SRC;
-    
-    isMonsterDefending = false; monsterDefenseBonus = 0; 
-    isHeroDefending = false; heroDefenseBonus = 0;
-    heroBlock = 0; 
-    hero.statusEffects.forEach(e => { if (e.waitForCombat) e.waitForCombat = false; });
-    combatTurnCount = 1;
-    document.getElementById('turn-count-display').textContent = combatTurnCount;
 
-    updateStats(); initializeSkillButtons(); determineMonsterAction(); showMonsterIntention(monsterNextAction);
-    isHeroTurn = true; 
-    writeLog(`⚔️ Savaş Başladı! (${enemyType})`);
-    toggleSkillButtons(false);
+    // 1. Ekranı değiştir
+    switchScreen(battleScreen);
+
+    // 2. Canavar verilerini ATA (Monster artık bellekte var)
+    monster = { 
+        name: enemyType, 
+        maxHp: stats.maxHp, 
+        hp: stats.maxHp, 
+        attack: stats.attack, 
+        defense: stats.defense, 
+        xp: stats.xp, 
+        tier: stats.tier, 
+        idle: stats.idle, 
+        dead: stats.dead, 
+        attackFrames: stats.attackFrames 
+    };
+
+    // 3. Değişkenleri ve UI'yı sıfırla
+    isMonsterDefending = false;
+    monsterDefenseBonus = 0;
+    isHeroDefending = false;
+    heroDefenseBonus = 0;
+    heroBlock = 0;
+    combatTurnCount = 1;
+    isHeroTurn = true;
+
+    monsterDisplayImg.src = `images/${monster.idle}`;
+    heroDisplayImg.src = HERO_IDLE_SRC;
+    updateStats();
+    initializeSkillButtons();
+
+    // 4. GEÇİCİ GECİKME (50ms): Ekranlar arası geçiş tamamlanınca göster
+    setTimeout(() => {
+        determineMonsterAction(); // Bu monsterNextAction'ı doldurur
+        showMonsterIntention(monsterNextAction);
+        writeLog(`⚔️ Savaş Başladı: ${enemyType}`);
+        toggleSkillButtons(false);
+    }, 50);
 }
 
 function nextTurn() {
@@ -447,21 +470,32 @@ function nextTurn() {
             toggleSkillButtons(false); 
         }
     } else {
+        // --- CANAVAR SIRASI BAŞLADI ---
+        toggleSkillButtons(true); 
+
+        // 1. ADIM: Niyet simgesini ANINDA kapat (Saldırıya geçtiği için niyet bitti)
+        showMonsterIntention(null); 
+
+        // Stun kontrolü
         const monsterStunned = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
         if (monsterStunned) {
             showFloatingText(document.getElementById('monster-display'), "SERSEMLEDİ!", 'damage');
             setTimeout(nextTurn, 1000);
             return;
-        } 
-        if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
+        }
+
+        // 2. ADIM: Kısa bir beklemeden sonra saldırıyı başlat
         setTimeout(() => {
-            if (monsterNextAction === 'attack') handleMonsterAttack(monster, hero);
-            else {
-                isMonsterDefending = true;
-                showFloatingText(document.getElementById('monster-display'), "SAVUNMA!", 'heal'); 
-                nextTurn();
+            if (!checkGameOver()) {
+                if (monsterNextAction === 'attack') {
+                    handleMonsterAttack(monster, hero); 
+                } else {
+                    isMonsterDefending = true;
+                    showFloatingText(document.getElementById('monster-display'), "SAVUNMA!", 'heal');
+                    setTimeout(nextTurn, 1000);
+                }
             }
-        }, 1000);
+        }, 600); // İkonun kaybolma animasyonuna (400ms) pay bıraktık
     }
 }
 
@@ -472,16 +506,30 @@ function checkGameOver() {
         setTimeout(() => { switchScreen(gameOverScreen); resetDeathEffect(); }, 3000);
         return true;
     } else if (monster && monster.hp <= 0) {
-        monster.hp = 0; updateStats(); 
+        monster.hp = 0; 
+        updateStats(); 
         monsterDisplayImg.src = `images/${monster.dead}`; 
         monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)';
+        
+        // --- KESİN ÇÖZÜM: INTENTION LAYER'I KAPAT ---
+        if (monsterIntentionOverlay) {
+            monsterIntentionOverlay.classList.remove('active', 'attack', 'defend');
+            monsterIntentionOverlay.style.opacity = '0'; // CSS sınıfı yetmezse manuel gizle
+        }
+        // --------------------------------------------
+
         let heroTier = hero.level < 4 ? 1 : hero.level < 6 ? 2 : hero.level < 11 ? 3 : 4;
         let earnedXP = monster.tier > heroTier ? 4 : monster.tier === heroTier ? 3 : 1;
+        
         gainXP(earnedXP);
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
         heroBlock = 0; 
         updateStats();
-        setTimeout(() => { openRewardScreen([{ type: 'gold', value: Math.floor(Math.random() * 11) + 5 }]); }, 1000); 
+
+        setTimeout(() => { 
+            openRewardScreen([{ type: 'gold', value: Math.floor(Math.random() * 11) + 5 }]); 
+            monster = null; 
+        }, 1000); 
         return true;
     }
     return false;
