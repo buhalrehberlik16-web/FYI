@@ -354,7 +354,7 @@ const SKILL_DATABASE = {
             let monsterDef = monster.defense;
             if(typeof isMonsterDefending !== 'undefined' && isMonsterDefending) monsterDef += monsterDefenseBonus;
             const ignoredDef = Math.floor(monsterDef * 0.50);
-            animateCustomAttack(damageVal + ignoredDef, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(damage + ignoredDef, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
         }
     },
 
@@ -489,4 +489,5 @@ const SKILL_DATABASE = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
+
 };
