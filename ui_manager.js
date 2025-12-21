@@ -21,9 +21,11 @@ function switchScreen(targetScreen) {
             if (screen === targetScreen) { 
                 screen.classList.remove('hidden'); 
                 screen.classList.add('active'); 
+                screen.style.display = "flex"; // Görünür olduğundan emin ol
             } else { 
                 screen.classList.remove('active'); 
                 screen.classList.add('hidden'); 
+                screen.style.display = "none"; // Kesin olarak gizle
             }
         }
     });
