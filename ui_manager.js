@@ -427,7 +427,22 @@ function updateStatScreen() {
     statName.textContent = hero.playerName; 
     statClass.textContent = `(${hero.name})`; 
     statLevel.textContent = `Lv. ${hero.level}`;
-    statXp.textContent = `${hero.xp} / ${hero.xpToNextLevel}`; 
+	// --- YENİ: XP BARI GÜNCELLEME ---
+    // Yüzdeyi hesapla (Maksimum 100 olsun)
+    let xpPercent = 0;
+    if (hero.xpToNextLevel > 0) {
+        xpPercent = Math.min(100, (hero.xp / hero.xpToNextLevel) * 100);
+    }
+    
+    // Yazıyı Güncelle (Eski ID'yi koruduk: statXp)
+     statXp.textContent = `%${Math.floor(xpPercent)}`; 
+    
+    // Bar Genişliğini Güncelle (HTML'de yeni eklediğimiz div)
+    const xpBarFill = document.getElementById('stat-xp-bar');
+    if (xpBarFill) {
+        xpBarFill.style.width = `${xpPercent}%`;
+    }
+    // --------------------------------
     statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
 	if (statRage) {
     statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
@@ -460,6 +475,28 @@ function updateStatScreen() {
     statMp.textContent = hero.mp_pow;
     const statVit = document.getElementById('stat-vit'); 
     if(statVit) statVit.textContent = hero.vit;
+	
+	// --- DİRENÇLERİ GÜNCELLE ---
+    // Eğer fonksiyon varsa hesapla, yoksa 0 al
+    let resistances = (typeof getHeroResistances === 'function') 
+                      ? getHeroResistances() 
+                      : hero.baseResistances;
+
+    // Elementleri bul ve güncelle
+    const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
+    
+    resTypes.forEach(type => {
+        const el = document.getElementById(`res-${type}`);
+        if (el) {
+            const val = resistances[type] || 0;
+            el.textContent = val;
+            
+            // Renklendirme (Pozitif ise yeşil, Negatif ise kırmızı)
+            if (val > 0) el.style.color = "#43FF64";
+            else if (val < 0) el.style.color = "#ff4d4d";
+            else el.style.color = "#fff";
+        }
+    });
 
     // ... (Puan kutusu kodları aynı) ...
     const pointsBox = document.getElementById('points-container');

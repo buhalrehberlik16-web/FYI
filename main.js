@@ -9,13 +9,20 @@ function levelUp() {
     hero.attack += 1; 
     hero.maxRage += 10;
     
-    hero.statPoints += 3;
-    hero.skillPoints += 2;
+    hero.statPoints += 3; // Stat puanı sabit 3 kalsın (veya değiştirebilirsin)
+    
+    // --- YENİ SKILL PUANI MANTIĞI ---
+    // Tabloda bu level için özel bir ödül var mı?
+    // Varsa onu ver, yoksa 0 (veya 1) ver.
+    const spGain = LEVEL_SKILL_REWARDS[hero.level] || 0; // Tabloda yoksa 0 verir
+    
+    hero.skillPoints += spGain;
+    // --------------------------------
     
     hero.xp = hero.xp - FULL_XP_REQUIREMENTS[hero.level - 1]; 
     hero.xpToNextLevel = FULL_XP_REQUIREMENTS[hero.level] || Infinity; 
     
-    writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level})`);
+    writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level}) - Kazanılan SP: ${spGain}`);
     updateStats(); 
     triggerLevelUpEffect();
 }
@@ -163,7 +170,7 @@ function initGame() {
     hero.baseAttack = 10; hero.baseDefense = 1;
     // hero.attack = 20; // Silindi, baseAttack kullanılıyor
     hero.level = 1; hero.xp = 0; 
-    hero.xpToNextLevel = (typeof FULL_XP_REQUIREMENTS !== 'undefined') ? FULL_XP_REQUIREMENTS[1] : 100;
+    hero.xpToNextLevel = (typeof FULL_XP_REQUIREMENTS !== 'undefined') ? FULL_XP_REQUIREMENTS[1] : 5;
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
     
     // 2. Statlar ve Skiller
@@ -176,6 +183,7 @@ function initGame() {
     hero.equippedSkills = [null, null, null, null, null, null]; 
     
     // 3. Diğer Veriler
+	hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.statusEffects = []; hero.mapEffects = []; 
     hero.inventory = new Array(8).fill(null);
     hero.brooches = new Array(6).fill(null);

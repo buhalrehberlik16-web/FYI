@@ -658,7 +658,7 @@ function startBattle(enemyType) {
         return;
     }
     switchScreen(battleScreen);
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, xp: stats.xp, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
+    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
     
     monsterDisplayImg.onerror = function() { this.src = 'images/goblin_devriyesi.png'; };
     monsterDisplayImg.src = `images/${monster.idle}`;
@@ -773,11 +773,45 @@ function checkGameOver() {
         return true;
     } else if (monster && monster.hp <= 0) {
         monster.hp = 0; updateStats(); monsterDisplayImg.src = `images/${monster.dead}`; monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)';
-        gainXP(monster.xp); 
+        
+        let heroTier = 1;
+        
+        // Seviyeye göre Hero'nun "Sikletini" (Tier) belirle
+        if (hero.level < 4) {
+            heroTier = 1; // Lv 1-2
+        } else if (hero.level < 6) {
+            heroTier = 2; // Lv 3-5 (Artık Lv 3 olduğunda Tier 2 sayılırsın)
+        } else if (hero.level < 11) {
+            heroTier = 3; // Lv 6-9
+        } else {
+            heroTier = 4; // Lv 10+
+        }
+        
+        
+        let earnedXP = 0;
+        
+        // Kural:
+        // Eşit Tier -> 2 XP
+        // Düşman Üst Tier -> 3 XP
+        // Düşman Alt Tier -> 1 XP (Veya 0, oyun tercihine göre)
+        
+        if (monster.tier > heroTier) {
+            earnedXP = 4;
+            writeLog("⚔️ Zorlu düşman alt edildi! (Bonus XP)");
+        } else if (monster.tier === heroTier) {
+            earnedXP = 3;
+        } else {
+            earnedXP = 1; // Zayıf düşman
+        }
+        
+        gainXP(earnedXP);
+        // ---------------------------------
+
         if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
         
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
         heroBlock = 0; 
+
         updateStats(); toggleSkillButtons(true);
 
         setTimeout(() => { 
@@ -788,4 +822,28 @@ function checkGameOver() {
         return true;
     }
     return false;
+}
+function getHeroResistances() {
+    // 1. Temel Dirençleri Al (Kopyala)
+    let currentRes = { ...hero.baseResistances };
+    
+    // 2. Statlardan Gelen Bonuslar (İsteğe Bağlı - Örnek)
+    // Örn: Her 5 VIT = %1 Physical Resist
+    // currentRes.physical += Math.floor(hero.vit / 5);
+
+    // 3. Status Effect (Buff/Debuff) Kontrolü
+    hero.statusEffects.forEach(e => {
+        if (!e.waitForCombat) {
+            if (e.id === 'resist_all') { // Örn: Tüm dirençleri artıran büyü
+                for (let key in currentRes) currentRes[key] += e.value;
+            }
+            if (e.id === 'resist_fire') currentRes.fire += e.value;
+            // ... diğer elementler ...
+        }
+    });
+
+    // 4. Eşyalardan Gelen Bonuslar (İleride Eklenecek)
+    // for (let slot in hero.equipment) { ... }
+
+    return currentRes;
 }

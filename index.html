@@ -243,86 +243,140 @@
             </div>
 
             <!-- 10. STAT EKRANI -->
-            <div id="stat-screen" class="hidden">
-                <div class="stat-window">
-                    <div class="stat-header">
-                        <h2>Karakter İstatistikleri</h2>
-                        <button id="close-stat-screen" class="close-btn">X</button>
+<div id="stat-screen" class="hidden">
+    <div class="stat-window">
+        <div class="stat-header">
+            <h2>Karakter İstatistikleri</h2>
+            <button id="close-stat-screen" class="close-btn">X</button>
+        </div>
+        
+        <div class="stat-content">
+            <!-- İsim ve Level -->
+            <div class="stat-row main-info">
+                <span id="stat-name">Oyuncu</span> 
+                <span id="stat-class" style="color: #aaa; font-size: 0.8em; margin-left:10px;">(Barbar)</span>
+                <span id="stat-level" style="margin-left: auto;">Lv. 1</span>
+            </div>
+
+            <!-- XP BARI -->
+            <div class="xp-bar-container">
+                <div class="xp-bar-fill" id="stat-xp-bar"></div>
+                <span id="stat-xp" class="xp-bar-text">0 / 100</span>
+            </div>
+            
+            <div id="points-container" class="stat-points-box hidden">
+                DAĞITILABİLİR PUAN: <span id="stat-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
+            </div>
+
+            <hr style="border-color: #444; margin: 15px 0;">
+
+            <!-- HP ve RAGE -->
+            <div class="stat-row-detail">
+                <label>Sağlık (HP):</label> <span id="stat-hp" style="color:#43FF64;">100 / 100</span>
+            </div>
+            
+            <hr class="stat-separator">
+
+            <div class="stat-row-detail">
+                <label>Öfke (Rage):</label> <span id="stat-rage" style="color:#3498db;">0 / 100</span>
+            </div>
+
+            <hr style="border-color: #444; margin: 15px 0;">
+
+            <!-- Savaş Statları -->
+            <div class="combat-stats-row">
+                <div class="c-stat">Saldırı: <span id="stat-atk">20</span></div>
+                <div class="c-stat">Defans: <span id="stat-def">5</span></div>
+            </div>
+
+            <hr style="border-color: #444; margin: 10px 0;">
+            
+            <!-- TEMEL STATLAR (GRID) -->
+            <div class="stat-grid">
+                <div class="stat-item highlight">
+                    <label>STR (Güç)</label> 
+                    <div class="stat-val-group">
+                        <span id="stat-str">15</span>
+                        <button class="btn-stat-plus hidden" onclick="increaseStat('str')">+</button>
                     </div>
-                    <div class="stat-content">
-                        <div class="stat-row main-info">
-                            <span id="stat-name">Oyuncu</span> 
-                            <span id="stat-class" style="color: #aaa; font-size: 0.8em; margin-left:10px;">(Barbar)</span>
-                            <span id="stat-level" style="margin-left: auto;">Lv. 1</span>
-                        </div>
-                        <div class="stat-row xp-bar-row">
-                            <label>XP:</label>
-                            <span id="stat-xp">0 / 100</span>
-                        </div>
-                        
-                        <div id="points-container" class="stat-points-box hidden">
-                            DAĞITILABİLİR PUAN: <span id="stat-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
-                        </div>
-
-                        <hr style="border-color: #444; margin: 10px 0;">
-						<div class="stat-row-detail">
-                            <label>Sağlık (HP):</label> <span id="stat-hp" style="color:#fff;">100 / 100</span>
-                        </div>
-						<div class="stat-row-detail">
-							<label>Öfke (Rage):</label> <span id="stat-rage" style="color:#3498db;">0 / 100</span>
-						</div>
-                        <hr style="border-color: #444; margin: 10px 0;">
-
-                        <div class="combat-stats-row">
-                            <div class="c-stat">Saldırı: <span id="stat-atk">20</span></div>
-                            <div class="c-stat">Defans: <span id="stat-def">5</span></div>
-                        </div>
-
-                        <hr style="border-color: #444; margin: 10px 0;">
-                        
-                        <div class="stat-grid">
-                            <div class="stat-item highlight">
-                                <label>STR (Güç)</label> 
-                                <div class="stat-val-group">
-                                    <span id="stat-str">15</span>
-                                    <button class="btn-stat-plus hidden" onclick="increaseStat('str')">+</button>
-                                </div>
-                            </div>
-                            <div class="stat-item highlight">
-                                <label>DEX (Çeviklik)</label> 
-                                <div class="stat-val-group">
-                                    <span id="stat-dex">10</span>
-                                    <button class="btn-stat-plus hidden" onclick="increaseStat('dex')">+</button>
-                                </div>
-                            </div>
-                            <div class="stat-item highlight">
-                                <label>INT (Zeka)</label> 
-                                <div class="stat-val-group">
-                                    <span id="stat-int">5</span>
-                                    <button class="btn-stat-plus hidden" onclick="increaseStat('int')">+</button>
-                                </div>
-                            </div>
-                            <div class="stat-item highlight">
-                                <label>VIT (Canlılık)</label> 
-                                <div class="stat-val-group">
-                                    <span id="stat-vit">10</span>
-                                    <button class="btn-stat-plus hidden" onclick="increaseStat('vit')">+</button>
-                                </div>
-                            </div>
-                            <div class="stat-item highlight">
-                                <label>MP (Büyü Gücü)</label> 
-                                <div class="stat-val-group">
-                                    <span id="stat-mp">0</span>
-                                    <button class="btn-stat-plus hidden" onclick="increaseStat('mp_pow')">+</button>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+                <div class="stat-item highlight">
+                    <label>DEX (Çeviklik)</label> 
+                    <div class="stat-val-group">
+                        <span id="stat-dex">10</span>
+                        <button class="btn-stat-plus hidden" onclick="increaseStat('dex')">+</button>
                     </div>
-                    <div class="stat-footer">
-                        <p class="hint-text">Kapatmak için 'U' veya 'X' tuşuna basın.</p>
+                </div>
+                <div class="stat-item highlight">
+                    <label>INT (Zeka)</label> 
+                    <div class="stat-val-group">
+                        <span id="stat-int">5</span>
+                        <button class="btn-stat-plus hidden" onclick="increaseStat('int')">+</button>
+                    </div>
+                </div>
+                <div class="stat-item highlight">
+                    <label>VIT (Canlılık)</label> 
+                    <div class="stat-val-group">
+                        <span id="stat-vit">10</span>
+                        <button class="btn-stat-plus hidden" onclick="increaseStat('vit')">+</button>
+                    </div>
+                </div>
+                <div class="stat-item highlight">
+                    <label>MP (Büyü Gücü)</label> 
+                    <div class="stat-val-group">
+                        <span id="stat-mp">0</span>
+                        <button class="btn-stat-plus hidden" onclick="increaseStat('mp_pow')">+</button>
                     </div>
                 </div>
             </div>
+
+            <!-- --- YENİ EKLENEN KISIM (DOĞRU YERDE) --- -->
+            <hr style="border-color: #444; margin: 15px 0;">
+            
+            <h3 style="text-align:center; color:#aaa; font-size:1em; margin-bottom:10px; margin-top:0;">DİRENÇLER</h3>
+
+            <div class="res-grid">
+                <div class="res-item" title="Fiziksel Direnç">
+                    <span class="res-icon" style="color:#a0a0a0;">🛡️</span> 
+                    <label>Fiziksel</label>
+                    <span id="res-physical">0</span>
+                </div>
+				<div class="res-item" title="Zehir Direnci">
+                    <span class="res-icon" style="color:#43FF64;">🤢</span> 
+                    <label>Zehir</label>
+                    <span id="res-poison">0</span>
+                </div>
+                <div class="res-item" title="Lanet Direnci">
+                    <span class="res-icon" style="color:#b19cd9;">💀</span> 
+                    <label>Lanet</label>
+                    <span id="res-curse">0</span>
+                </div>
+                <div class="res-item" title="Ateş Direnci">
+                    <span class="res-icon" style="color:#ff4d4d;">🔥</span> 
+                    <label>Ateş</label>
+                    <span id="res-fire">0</span>
+                </div>
+                <div class="res-item" title="Soğuk Direnci">
+                    <span class="res-icon" style="color:#00ccff;">❄️</span> 
+                    <label>Buz</label>
+                    <span id="res-cold">0</span>
+                </div>
+                <div class="res-item" title="Yıldırım Direnci">
+                    <span class="res-icon" style="color:#ffd700;">⚡</span> 
+                    <label>Yıldırım</label>
+                    <span id="res-lightning">0</span>
+                </div>
+                
+            </div>
+            <!-- ----------------------------------------- -->
+
+        </div> <!-- stat-content BİTİŞİ -->
+
+        <div class="stat-footer">
+            <p class="hint-text">Kapatmak için 'U' veya 'X' tuşuna basın.</p>
+        </div>
+    </div>
+</div>
                      <!-- 11. KÖY (TOWN) EKRANI -->
             <div id="town-screen" class="screen hidden">
     <div class="town-container">

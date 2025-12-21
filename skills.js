@@ -284,7 +284,7 @@ const SKILL_DATABASE = {
             description: "Silahını keskinleştir.",
             menuDescription: "Saldırı gücünü artırır. 30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.<br><span style='color:yellow'>Bekleme: 6 Tur</span>.",
             rageCost: 30,
-            levelReq: 10, 
+            levelReq: 6, 
             icon: 'icon_sharpen.png',
             type: 'buff',
             category: 'common',
@@ -307,7 +307,7 @@ const SKILL_DATABASE = {
             description: "Düşmanı lanetler.",
             menuDescription: "Karanlık fısıltılar. 20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span><br><span style='color:yellow'>Bekleme: 10 Tur</span>.",
             rageCost: 20,
-            levelReq: 10,
+            levelReq: 6,
             icon: 'icon_curseskill.png',
             type: 'debuff',
             category: 'common',
@@ -331,7 +331,7 @@ const SKILL_DATABASE = {
             description: "Tüm öfkeni güce dönüştür.",
             menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%).<br><span style='color:yellow'>Bekleme: 5 Tur</span>",
             rageCost: 0, 
-            levelReq: 1, 
+            levelReq: 8, 
             icon: 'icon_willful_strike.png',
             type: 'attack',
             category: 'common',
@@ -618,11 +618,11 @@ fury: {
             description: "Vurdukça öfkelen.",
             menuDescription: "Kanın kaynıyor. 50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span><br><span style='color:yellow'>Bekleme: 6 Tur</span>.",
             rageCost: 50,
-            levelReq: 1,
+            levelReq: 6,
             icon: 'brutal_fury.png',
             type: 'buff',
             category: 'brutal',
-            tier: 2
+            tier: 4
         },
         onCast: function(attacker, defender) {
             // Buff Ekle

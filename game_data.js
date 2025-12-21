@@ -139,6 +139,15 @@ let hero = {
     class: "Barbar",
     baseAttack: 10,   // Sabit saldırı (Eskiden 'attack: 20' idi)
     baseDefense: 1,   // Sabit defans
+	 // YENİ: Dirençler (Yüzde olarak tutacağız, örn: 10 = %10)
+    baseResistances: {
+        physical: 0,
+        fire: 0,
+        cold: 0,
+        lightning: 0,
+        curse: 0,
+        poison: 0
+    },
     
     maxHp: 100, hp: 100,
     level: 1, xp: 0, xpToNextLevel: 100,
@@ -169,20 +178,17 @@ let hero = {
     },
 };
 
-function generateXPTable(maxLevel, multiplier) {
+function generateXPTable(maxLevel) {
     const table = {};
-    table[1] = 100; table[2] = 200; table[3] = 400;
-    let currentXP = 400; 
-    for (let level = 4; level < maxLevel; level++) {
-        currentXP = Math.floor(currentXP * multiplier);
-        if (currentXP > 10000000) currentXP = 10000000;
-        table[level] = currentXP;
+    // Her level için sabit 5 XP
+    for (let level = 1; level <= maxLevel; level++) {
+        table[level] = 5;
     }
-    table[maxLevel] = Infinity; 
     return table;
 }
 
-const FULL_XP_REQUIREMENTS = generateXPTable(MAX_LEVEL, 2);
+// Parametre olarak çarpanı sildik çünkü sabit 5 oldu
+const FULL_XP_REQUIREMENTS = generateXPTable(MAX_LEVEL);
 hero.xpToNextLevel = FULL_XP_REQUIREMENTS[hero.level];
 
 let monster = null; 
@@ -288,4 +294,14 @@ let GAME_MAP = {
     connections: [], // Hangi düğüm hangisine bağlı
     currentNodeId: null, // Oyuncunun şu anki konumu
     completedNodes: []   // Oyuncunun geçtiği düğümler
+};
+// SEVİYE ÖDÜL TABLOSU (Level: Verilecek Skill Puanı)
+// Listede olmayan seviyeler için varsayılan olarak 0 (veya istersen 1) verilir.
+const LEVEL_SKILL_REWARDS = {
+    2: 2,  // 2. Seviyeye ulaşınca 2 puan
+    4: 4,  // 4. Seviyede 4 puan
+    6: 4,  // 6. Seviyede 4 puan
+    8: 6,  // 8. Seviyede 6 puan
+    10: 8, // Örnek: Tier 4 açılınca
+    12: 10 // Örnek: Tier 5 açılınca
 };
