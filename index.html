@@ -38,12 +38,79 @@
 
         <div id="main-screen-area">
             
-            <!-- 1. BAŞLANGIÇ -->
-            <div id="start-screen" class="screen active">
-                <h1>🛡️ Basit Harita Tabanlı RPG ⚔️</h1>
-                <p>Kahramanını zindanlara gönder ve haritada ilerle!</p>
-                <button id="start-button">Maceraya Başla</button>
+            <!-- 1. BAŞLANGIÇ EKRANI -->
+<div id="start-screen" class="screen active">
+    <!-- Arka plan üzerindeki hafif karartma ve içerik kutusu -->
+    <div class="menu-overlay">
+        <div class="logo-area">
+            <h1 class="game-title">SMAUG?</h1>
+            <p class="game-subtitle">Karanlık zindanlarda bir efsane doğuyor?</p>
+        </div>
+
+        <div class="menu-actions">
+            <button id="start-button" class="menu-main-btn">
+                <i class="fas fa-sword"></i> MACERAYA BAŞLA
+            </button>
+            <div class="menu-sub-actions">
+                <button class="menu-secondary-btn" onclick="alert('Yakında!')">AYARLAR</button>
+                <button class="menu-secondary-btn" onclick="window.close()">ÇIKIŞ</button>
             </div>
+        </div>
+
+        <div class="version-info">v.0.0.5</div>
+    </div>
+</div>
+
+<!-- SINIF SEÇİM EKRANI -->
+<div id="class-selection-screen" class="screen hidden">
+    <div class="selection-overlay">
+        <h1 class="selection-title">Kaderini Belirle</h1>
+        <div class="class-cards-container">
+            
+            <!-- BARBAR (Aktif) -->
+            <div class="class-card available" id="select-barbar" onclick="selectClass('Barbar')">
+                <div class="class-image-box">
+                    <img src="images/barbarianinventory.png" alt="Barbar">
+                </div>
+                <div class="class-info">
+                    <h2>BARBAR</h2>
+                    <p>Saf fiziksel güç. Öfkesiyle zindanları sarsar.</p>
+                    <ul class="class-stats-preview">
+                        <li><i class="fas fa-swords"></i> Yüksek Hasar</li>
+                        <li><i class="fas fa-heart"></i> Yüksek Can</li>
+                    </ul>
+                </div>
+                <div class="selection-btn">SEÇ</div>
+            </div>
+
+            <!-- MAGUS (Kilitli) -->
+            <div class="class-card locked">
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span>YAKINDA</span></div>
+                <div class="class-image-box">
+                    <img src="images/magus_placeholder.png" alt="Magus" style="filter: grayscale(100%);">
+                </div>
+                <div class="class-info">
+                    <h2>MAGUS</h2>
+                    <p>Kadim büyülerin ustası. Elementleri kontrol eder.</p>
+                </div>
+            </div>
+
+            <!-- TRICKSTER (Kilitli) -->
+            <div class="class-card locked">
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span>YAKINDA</span></div>
+                <div class="class-image-box">
+                    <img src="images/trickster_placeholder.png" alt="Trickster" style="filter: grayscale(100%);">
+                </div>
+                <div class="class-info">
+                    <h2>TRICKSTER</h2>
+                    <p>Hız ve kurnazlık. Gölgelerin arasından saldırır.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
             <!-- 2. LOADING -->
             <div id="cutscene-screen" class="screen hidden">

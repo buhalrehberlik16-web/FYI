@@ -35,6 +35,7 @@ const btnLeaveTown = document.getElementById('btn-leave-town');
 const basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
 const basicSkillList = document.getElementById('basic-skill-list');
 const btnConfirmBasicSkills = document.getElementById('btn-confirm-basic-skills');
+const classSelectionScreen = document.getElementById('class-selection-screen');
 
 // Envanter
 const inventoryScreen = document.getElementById('inventory-screen');
@@ -134,41 +135,30 @@ const MAX_LEVEL = 60;
 let hero = {
     name: "Barbar",
     playerName: "Oyuncu",
-    
-    // YENİ: Sınıf ve Base Statlar (NaN Hatasını Çözen Yer)
     class: "Barbar",
-    baseAttack: 10,   // Sabit saldırı (Eskiden 'attack: 20' idi)
-    baseDefense: 1,   // Sabit defans
-	 // YENİ: Dirençler (Yüzde olarak tutacağız, örn: 10 = %10)
-    baseResistances: {
-        physical: 0,
-        fire: 0,
-        cold: 0,
-        lightning: 0,
-        curse: 0,
-        poison: 0
-    },
+    baseAttack: 10,
+    baseDefense: 1,
+    
+    // Gelen Hasarı Azaltan Dirençler (Defansif)
+    baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+    
+    // YENİ: Giden Hasara Eklenen Bonuslar (Ofansif - Hasar Motoru Buraya Bakar)
+    elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     
     maxHp: 100, hp: 100,
     level: 1, xp: 0, xpToNextLevel: 100,
     maxRage: 100, rage: 0,
     gold: 0,
     
-    // STAT SİSTEMİ
     statPoints: 0, 
     str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
     
-    // SKILL SİSTEMİ
     skillPoints: 0, 
     unlockedSkills: [], 
-    
     statusEffects: [],
     mapEffects: [],
-
-    equippedBasic: [], // Seçimden gelecek
     equippedSkills: [null, null, null, null, null, null], 
     
-    // ENVANTER
     inventory: new Array(8).fill(null), 
     brooches: new Array(6).fill(null), 
     equipment: {

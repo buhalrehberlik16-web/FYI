@@ -2,7 +2,7 @@
 
 // --- EKRAN YÖNETİMİ ---
 function switchScreen(targetScreen) {
-    const screens = [startScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, basicSkillSelectionScreen];
+    const screens = [startScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, basicSkillSelectionScreen];
     
     const topBar = document.getElementById('top-info-bar');
     const mainArea = document.getElementById('main-screen-area');

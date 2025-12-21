@@ -135,6 +135,23 @@ function triggerLevelUpEffect() {
     setTimeout(() => { halo.remove(); }, 2000);
 }
 
+// 2. Sınıf Seçme Fonksiyonu:
+function selectClass(className) {
+    if (className !== 'Barbar') return; // Magus ve Trickster şimdilik seçilemez
+
+    hero.class = className;
+    // Barbar seçildiği için varsayılan statları teyit et (opsiyonel)
+    hero.str = 15;
+    hero.dex = 10;
+    hero.int = 5;
+    hero.vit = 10;
+    
+    writeLog(`Sınıf Seçildi: ${className}`);
+    
+    // Seçimden sonra cutscene (yükleme) ekranına geç
+    startCutscene();
+}
+
 function startCutscene() {
     switchScreen(cutsceneScreen);
     cutsceneText.textContent = "Zindanlara iniliyor...";
@@ -165,22 +182,20 @@ function startCutscene() {
 
 // --- INIT GAME (TAM SIFIRLAMA) ---
 function initGame() {
-    // 1. Hero Statları
     hero.maxHp = 100; hero.hp = hero.maxHp;
     hero.baseAttack = 10; hero.baseDefense = 1;
-    // hero.attack = 20; // Silindi, baseAttack kullanılıyor
     hero.level = 1; hero.xp = 0; 
-    hero.xpToNextLevel = (typeof FULL_XP_REQUIREMENTS !== 'undefined') ? FULL_XP_REQUIREMENTS[1] : 5;
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
     
-    // 2. Statlar ve Skiller
     hero.statPoints = 0;
     hero.str = 15; hero.dex = 10; hero.int = 5; hero.mp_pow = 0; hero.vit = 10;
     hero.skillPoints = 0; 
     hero.unlockedSkills = []; 
-    
-    // İSTEĞİN ÜZERİNE: Hepsini boş başlatıyoruz (Seçim ekranı dolduracak)
     hero.equippedSkills = [null, null, null, null, null, null]; 
+
+    // Yeni sistem verilerini sıfırla
+    hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
+    hero.elementalDamage = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     
     // 3. Diğer Veriler
 	hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
@@ -281,7 +296,10 @@ document.addEventListener('keydown', (e) => {
     if (key === 'u') { if (typeof toggleStatScreen === 'function') toggleStatScreen(); }
 });
 
-startButton.addEventListener('click', startCutscene);
+
+startButton.addEventListener('click', () => {
+    switchScreen(classSelectionScreen); // Direkt cutscene yerine seçim ekranına git
+});
 
 returnToMenuButton.addEventListener('click', () => {
     initGame();
