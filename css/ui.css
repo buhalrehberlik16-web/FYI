@@ -1245,3 +1245,227 @@ pointer-events: none; }
         grid-template-columns: repeat(2, 1fr); /* Mobilde 2 sütun */
     }
 }
+/* Ana Ekran Arka Planı */
+#start-screen {
+    background: url('../images/main_screen.png') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none; /* Kenarlık varsa kaldır */
+}
+
+/* Ekranı biraz karartarak metinlerin okunmasını sağlayalım */
+.menu-overlay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Resmin güzelliğini bozmadan hafif gölge */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* Oyun Başlığı */
+.game-title {
+    font-size: 5em;
+    font-family: 'Georgia', serif;
+    color: #f0e68c;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.9), 4px 4px 0px #4a3b2a;
+    margin: 0;
+    letter-spacing: 8px;
+    animation: titleGlow 3s infinite alternate;
+}
+
+.game-subtitle {
+    color: #ccc;
+    font-style: italic;
+    font-size: 1.2em;
+    margin-top: 10px;
+    text-shadow: 1px 1px 3px #000;
+}
+
+/* Buton Grupları */
+.menu-actions {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Ana Başla Butonu */
+.menu-main-btn {
+    width: 20cqw;
+    height: 3cqw;
+    font-size: 1.8em !important;
+    background: linear-gradient(to bottom, #8b4513, #5d2e0a) !important;
+    border: 3px solid #f0e68c !important;
+    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(255,255,255,0.2) !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    text-shadow: 2px 2px 4px #000;
+}
+
+.menu-main-btn:hover {
+    transform: scale(1.05) translateY(-5px);
+    filter: brightness(1.2);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.6), 0 0 20px rgba(240, 230, 140, 0.4) !important;
+}
+
+/* Yan Butonlar */
+.menu-sub-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.menu-secondary-btn {
+    width: 7cqw;
+    height: 2cqw;
+    font-size: 1em !important;
+    background: rgba(43, 34, 24, 0.8) !important;
+    border: 0.1cqw solid #7c6843 !important;
+    opacity: 0.8;
+}
+
+.menu-secondary-btn:hover {
+    opacity: 1;
+    background: #4a3b2a !important;
+}
+
+/* Versiyon Yazısı */
+.version-info {
+    position: absolute;
+    bottom: 1cqw;
+    right: 1cqw;
+    color: #666;
+    font-size: 0.8em;
+}
+
+/* Parlama Efekti */
+@keyframes titleGlow {
+    from { text-shadow: 0 0 10px rgba(240, 230, 140, 0.5), 4px 4px 0px #4a3b2a; }
+    to { text-shadow: 0 0 30px rgba(240, 230, 140, 0.8), 4px 4px 0px #4a3b2a; }
+}
+/* Sınıf Seçim Ekranı Genel */
+#class-selection-screen {
+    background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('../images/main_screen.png') no-repeat center center;
+    background-size: cover;
+}
+
+.selection-title {
+    font-size: 3em;
+    color: #f0e68c;
+    margin-bottom: 40px;
+    text-shadow: 0 0 15px rgba(240, 230, 140, 0.5);
+}
+
+.class-cards-container {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: stretch;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Sınıf Kartı */
+.class-card {
+    flex: 1;
+    background: rgba(30, 30, 30, 0.9);
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.class-card.available {
+    cursor: pointer;
+    border-color: #7c6843;
+}
+
+.class-card.available:hover {
+    transform: translateY(-10px);
+    border-color: #f0e68c;
+    box-shadow: 0 10px 30px rgba(240, 230, 140, 0.2);
+}
+
+/* Kilitli Kartlar */
+.class-card.locked {
+    opacity: 0.6;
+    filter: grayscale(80%);
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-weight: bold;
+}
+
+.lock-overlay i { font-size: 2em; margin-bottom: 10px; }
+
+/* Kart İçeriği */
+.class-image-box {
+    height: 250px;
+    background: #111;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.class-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.class-info h2 {
+    color: #f0e68c;
+    margin: 10px 0;
+    letter-spacing: 2px;
+}
+
+.class-info p {
+    font-size: 0.9em;
+    color: #aaa;
+    line-height: 1.4;
+    height: 50px;
+}
+
+.class-stats-preview {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+    text-align: left;
+    color: #43FF64;
+    font-size: 0.85em;
+}
+
+.selection-btn {
+    margin-top: auto;
+    background: #5d4a30;
+    color: #f0e68c;
+    padding: 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.class-card.available:hover .selection-btn {
+    background: #f0e68c;
+    color: #1a1a1a;
+}
