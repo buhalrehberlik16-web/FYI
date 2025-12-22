@@ -128,6 +128,17 @@ function updateStats() {
         monsterHpText.textContent = `${monster.hp} / ${monster.maxHp}`;
         monsterNameDisplay.textContent = `${monster.name}`;
     }
+	// --- CANAVAR SAVUNMA GÖSTERGESİ ---
+    const monsterBlockDisplay = document.getElementById('monster-block-indicator');
+    if (monsterBlockDisplay) {
+        if (typeof isMonsterDefending !== 'undefined' && isMonsterDefending) {
+            monsterBlockDisplay.classList.remove('hidden');
+            monsterBlockDisplay.classList.add('active-shield');
+        } else {
+            monsterBlockDisplay.classList.add('hidden');
+            monsterBlockDisplay.classList.remove('active-shield');
+        }
+    }
     
     // Blok Göstergesi
     const blockDisplay = document.getElementById('hero-block-indicator');

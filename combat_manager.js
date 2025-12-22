@@ -1,4 +1,4 @@
-// combat_manager.js - GÜNCEL TAM SÜRÜM
+// combat_manager.js - GÜNCEL TAM SÜRÜM (DEFANS FIX)
 
 const HERO_IDLE_SRC = 'images/barbarian.png'; 
 const HERO_ATTACK_FRAMES = ['images/barbarian_attack1.png', 'images/barbarian_attack2.png', 'images/barbarian_attack3.png'];
@@ -304,6 +304,7 @@ function animateCustomAttack(rawDamage, skillFrames, skillName) {
                 showFloatingText(targetContainer, finalDamage, 'damage');
                 writeLog(`${skillName}: ${finalDamage} hasar.`);
                 updateStats();
+                // Oyuncu vurduktan sonra canavarın defans bonusunu SIFIRLA
                 if (isMonsterDefending) { isMonsterDefending = false; monsterDefenseBonus = 0; }
             }
             frameIndex++;
@@ -387,7 +388,7 @@ function startBattle(enemyType) {
         tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames 
     };
 
-    // --- KRİTİK: GRİ PERDEYİ TEMİZLE ---
+    // Gri Perde Fixi
     monsterDisplayImg.style.filter = 'none';
     monsterDisplayImg.style.opacity = '1';
     monsterDisplayImg.src = `images/${monster.idle}`;
@@ -450,8 +451,13 @@ function nextTurn() {
             if (!checkGameOver()) {
                 if (monsterNextAction === 'attack') handleMonsterAttack(monster, hero); 
                 else {
+                    // --- KRİTİK DEFANS FIX BURADA ---
                     isMonsterDefending = true;
+                    // Max canının %10'u ile Atağının yarısı arasında bir bonus defans belirle
+                    monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2);
+                    
                     showFloatingText(document.getElementById('monster-display'), "SAVUNMA!", 'heal');
+                    writeLog(`${monster.name} savunma pozisyonu aldı (+${monsterDefenseBonus} Def).`);
                     setTimeout(nextTurn, 1000);
                 }
             }

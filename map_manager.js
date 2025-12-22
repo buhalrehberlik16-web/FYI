@@ -129,22 +129,44 @@ function generateMap() {
 function getPreDeterminedEnemy(stage) {
     const rand = Math.random();
     let selectedPool = [];
-    
-    // ACT 1 HAVUZU
+    let isHard = false;
+
+    // --- ACT 1 MANTIĞI ---
     if (hero.currentAct === 1) {
-        if (stage < 5) selectedPool = TIER_1_ENEMIES;
-        else if (stage < 10) selectedPool = TIER_2_ENEMIES;
-        else selectedPool = TIER_3_ENEMIES;
+        // Bölgenin normal zorluk seviyesini (Tier) belirle
+        let baseTier = (stage < 5) ? 1 : (stage < 10 ? 2 : 3);
+
+        // %80 İhtimalle normal Tier, %20 İhtimalle bir üst Tier canavar gelsin
+        if (rand < 0.80) {
+            // NORMAL HAVUZ
+            if (baseTier === 1) selectedPool = TIER_1_ENEMIES;
+            else if (baseTier === 2) selectedPool = TIER_2_ENEMIES;
+            else selectedPool = TIER_3_ENEMIES;
+            isHard = false; // Normal canavar
+        } else {
+            // ZOR HAVUZ (Bir üst Tier canavarlar)
+            if (baseTier === 1) selectedPool = TIER_2_ENEMIES;
+            else if (baseTier === 2) selectedPool = TIER_3_ENEMIES;
+            else selectedPool = TIER_4_ENEMIES;
+            isHard = true; // Üst Tier olduğu için haritada TURUNCU PARLAYACAK
+        }
     } 
-    // ACT 2 HAVUZU (Daha zor)
+    // --- ACT 2 MANTIĞI ---
     else if (hero.currentAct === 2) {
-        if (stage < 5) selectedPool = ["İskelet Şövalye", "Gulyabani"];
-        else if (stage < 10) selectedPool = ["Gulyabani", "Kemik Golemi"];
-        else selectedPool = ["Kemik Golemi", "Orc Fedaisi"];
+        // Act 2'de normal zorluk zaten Tier 3'ten başlar
+        if (rand < 0.80) {
+            selectedPool = ["İskelet Şövalye", "Gulyabani"]; // Tier 3
+            isHard = false;
+        } else {
+            selectedPool = ["Kemik Golemi", "Orc Fedaisi"]; // Tier 4
+            isHard = true;
+        }
     }
 
-    const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)];
-    return { name: enemyName, isHard: rand > 0.8 };
+    // Seçilen havuzdan rastgele canavarı al
+    const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)] || "Goblin Devriyesi";
+    
+    return { name: enemyName, isHard: isHard };
 }
 
 function determineNodeType(stage, lane) {
