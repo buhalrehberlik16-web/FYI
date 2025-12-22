@@ -1,0 +1,14 @@
+/* Köy ve Şehir Konteynırları */
+.town-container, .city-container {
+    position: absolute; inset: 0; margin: auto; aspect-ratio: 16/9; max-width: 100%; max-height: 100%;
+}
+
+/* Bina Etiketleri */
+.town-label-text, .city-label-text {
+    position: absolute; transform: translate(-50%, -50%); white-space: nowrap;
+    color: #e0d0b0; font-weight: 900; transition: 0.3s; cursor: pointer;
+}
+.city-label-text { background: rgba(0,0,0,0.6); border: 1px solid #ffd700; border-radius: 20px; padding: 5px 15px; }
+
+/* Perde Geçiş Butonu */
+.next-act-btn { background: linear-gradient(to bottom, #ffd700, #b8860b) !important; color: #000 !important; }
