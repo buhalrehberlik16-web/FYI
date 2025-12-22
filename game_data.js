@@ -1,23 +1,54 @@
 // game_data.js
 
-//////----CLASS YAPISI----/////
+const MAX_LEVEL = 60;
 
 const CLASS_CONFIG = {
     "Barbar": {
-        // Hangi statlar ATAK verir? (1.0 = Değer kadar, 0.5 = Yarısı kadar)
-        // Örn: strDivisor: 2.0 demek, STR'nin yarısı atağa eklenir demektir (Çarpan: 0.5)
-        // Matematiksel kolaylık için "Çarpan (Multiplier)" kullanalım:
-        atkStats: { "str": 0.5 }, // STR'nin %50'si Atağa eklenir (Eski: str/2)
-        
-        // Defans
-        defStats: { "dex": 0.34 }, // DEX'in %34'ü (Eski: dex/3)
-		blockStats: { "dex": 0.8 },
-        
-        vitMultiplier: 10
+        atkStats: { "str": 0.5 },
+        defStats: { "dex": 0.33 },
+        blockStats: { "dex": 0.8 },
+        vitMultiplier: 10,
+        strDivisor: 2.0, // UI hesaplaması için
+        dexDivisor: 3.0
     }
-    // İleride "Mage": { atkStats: { "int": 0.5 }, ... }
 };
 
+let hero = {
+    name: "Barbar",
+    playerName: "Oyuncu",
+    class: "Barbar",
+    level: 1, 
+    xp: 0, 
+    xpToNextLevel: 5,
+    maxHp: 100, hp: 100,
+    maxRage: 100, rage: 0,
+    gold: 0,
+    statPoints: 0, 
+    skillPoints: 0,
+    currentAct: 1,
+    
+    // Temel Statlar
+    str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
+    
+    // Motorun NaN vermemesi için zorunlu başlangıç değerleri
+    baseAttack: 10,
+    baseDefense: 1,
+    baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+    elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+    
+    statusEffects: [],
+    mapEffects: [],
+    unlockedSkills: [],
+    equippedSkills: [null, null, null, null, null, null], // Dinamik büyüyecek
+    
+    inventory: new Array(8).fill(null), 
+    brooches: new Array(6).fill(null), 
+    equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null }
+};
+
+// Seviye Ödülleri
+const LEVEL_SKILL_REWARDS = { 2: 2, 4: 4, 6: 4, 8: 6, 10: 8, 12: 10 };
+const FULL_XP_REQUIREMENTS = Array.from({length: MAX_LEVEL + 1}, () => 5); // Sabit 5 XP
 
 // DOM REFERANSLARI
 const btnBasicAttack = document.getElementById('btn-basic-attack');
@@ -129,47 +160,7 @@ const tabPassion = document.getElementById('tab-passion');
 const skillBookEquippedBar = document.getElementById('skill-book-equipped-bar');
 const skillPointsDisplay = document.getElementById('skill-points-display'); 
 
-// --- OYUN VERİLERİ ---
-let isHeroTurn = true; 
-const MAX_LEVEL = 60;
 
-let hero = {
-    name: "Barbar",
-    playerName: "Oyuncu",
-    class: "Barbar",
-    baseAttack: 10,
-    baseDefense: 1,
-	currentAct: 1,
-	
-    
-    // Gelen Hasarı Azaltan Dirençler (Defansif)
-    baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-    
-    // YENİ: Giden Hasara Eklenen Bonuslar (Ofansif - Hasar Motoru Buraya Bakar)
-    elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-    
-    maxHp: 100, hp: 100,
-    level: 1, xp: 0, xpToNextLevel: 100,
-    maxRage: 100, rage: 0,
-    gold: 0,
-    
-    statPoints: 0, 
-    str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
-    
-    skillPoints: 0, 
-    unlockedSkills: [], 
-    statusEffects: [],
-    mapEffects: [],
-    equippedSkills: [null, null, null, null, null, null], 
-    
-    inventory: new Array(8).fill(null), 
-    brooches: new Array(6).fill(null), 
-    equipment: {
-        earring1: null, earring2: null,
-        necklace: null, belt: null,
-        ring1: null, ring2: null
-    },
-};
 
 function generateXPTable(maxLevel) {
     const table = {};
@@ -179,10 +170,6 @@ function generateXPTable(maxLevel) {
     }
     return table;
 }
-
-// Parametre olarak çarpanı sildik çünkü sabit 5 oldu
-const FULL_XP_REQUIREMENTS = generateXPTable(MAX_LEVEL);
-hero.xpToNextLevel = FULL_XP_REQUIREMENTS[hero.level];
 
 let monster = null; 
 
@@ -199,7 +186,7 @@ const EVENT_POOL = [
                 hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true });
             }
         },
-        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+2 XP</span>", debuff: "", action: (hero) => { gainXP(2); } }
+        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+10 XP</span>", debuff: "", action: (hero) => { gainXP(10); } }
     },
     {
         id: "stone_skin", type: "turn_based", title: "Taşlaşma Büyüsü", desc: "Eski bir parşömen.",
@@ -216,7 +203,7 @@ const EVENT_POOL = [
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
-        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+4 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(4); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
+        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+150 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(150); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
         option2: { text: "Uzaklaş", buff: "", debuff: "", action: (hero) => { } }
     },
     {
@@ -287,14 +274,4 @@ let GAME_MAP = {
     connections: [], // Hangi düğüm hangisine bağlı
     currentNodeId: null, // Oyuncunun şu anki konumu
     completedNodes: []   // Oyuncunun geçtiği düğümler
-};
-// SEVİYE ÖDÜL TABLOSU (Level: Verilecek Skill Puanı)
-// Listede olmayan seviyeler için varsayılan olarak 0 (veya istersen 1) verilir.
-const LEVEL_SKILL_REWARDS = {
-    2: 2,  // 2. Seviyeye ulaşınca 2 puan
-    4: 4,  // 4. Seviyede 4 puan
-    6: 4,  // 6. Seviyede 4 puan
-    8: 6,  // 8. Seviyede 6 puan
-    10: 8, // Örnek: Tier 4 açılınca
-    12: 10 // Örnek: Tier 5 açılınca
 };
