@@ -10,7 +10,7 @@ const CLASS_CONFIG = {
         atkStats: { "str": 0.5 }, // STR'nin %50'si Atağa eklenir (Eski: str/2)
         
         // Defans
-        defStats: { "dex": 0.33 }, // DEX'in %33'ü (Eski: dex/3)
+        defStats: { "dex": 0.34 }, // DEX'in %34'ü (Eski: dex/3)
 		blockStats: { "dex": 0.8 },
         
         vitMultiplier: 10
@@ -199,7 +199,7 @@ const EVENT_POOL = [
                 hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true });
             }
         },
-        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+10 XP</span>", debuff: "", action: (hero) => { gainXP(10); } }
+        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+2 XP</span>", debuff: "", action: (hero) => { gainXP(2); } }
     },
     {
         id: "stone_skin", type: "turn_based", title: "Taşlaşma Büyüsü", desc: "Eski bir parşömen.",
@@ -216,7 +216,7 @@ const EVENT_POOL = [
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
-        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+150 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(150); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
+        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+4 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(4); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
         option2: { text: "Uzaklaş", buff: "", debuff: "", action: (hero) => { } }
     },
     {
