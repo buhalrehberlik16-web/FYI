@@ -60,39 +60,56 @@ function updateGoldUI() {
 function updateStatusIcons() {
     if (!heroStatusContainer) return;
     heroStatusContainer.innerHTML = ''; 
+
     hero.statusEffects.forEach(effect => {
-        const icon = document.createElement('div'); icon.className = 'status-icon';
-        if (effect.id === 'atk_up') { icon.innerHTML = '⚔️'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'block_skill') { icon.innerHTML = '🚫'; icon.classList.add('status-debuff'); }
-        else if (effect.id === 'block_type') { icon.innerHTML = '⛔'; icon.classList.add('status-debuff'); }
-        else if (effect.id === 'insta_kill') { icon.innerHTML = '☠️'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'def_up') { icon.innerHTML = '🛡️'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'atk_half') { icon.innerHTML = '👎'; icon.classList.add('status-debuff'); }
-        else if (effect.id === 'regen') { icon.innerHTML = '💖'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'stun') { icon.innerHTML = '💫'; icon.classList.add('status-debuff'); icon.style.borderColor='yellow'; icon.style.color='yellow';}
-        else if (effect.id === 'str_up') { icon.innerHTML = '💪'; icon.classList.add('status-buff'); }
-		else if (effect.id === 'atk_up_percent') { icon.innerHTML = '🗡️'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'curse_damage') { icon.innerHTML = '💀'; icon.classList.add('status-debuff'); } // Debuff rengi
-        else if (effect.id === 'ignore_def') { icon.innerHTML = '🔨'; icon.classList.add('status-buff'); }
-        else if (effect.id === 'guard_active') { icon.innerHTML = '🛡️'; icon.classList.add('status-buff'); }
-		else if (effect.id === 'fury_active') { icon.innerHTML = '🔥'; icon.classList.add('status-buff'); }
-        else if (effect.id.startsWith('debuff_')) { icon.innerHTML = '🔻'; icon.classList.add('status-debuff'); }
-		
+        const icon = document.createElement('div'); 
+        icon.className = 'status-icon';
         
+        // --- 1. GRUP: BUFFLAR (Yeşil) ---
+        const buffIds = ['atk_up', 'def_up', 'regen', 'str_up', 'atk_up_percent', 'ignore_def', 'guard_active', 'fury_active', 'insta_kill', 'wind_up'];
+        
+        // --- 2. GRUP: DEBUFFLAR (Kırmızı) ---
+        const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero'];
+
+        // İkon İçeriği Belirleme
+        if (effect.id === 'atk_up' || effect.id === 'atk_up_percent') icon.innerHTML = '⚔️';
+        else if (effect.id === 'def_up' || effect.id === 'guard_active') icon.innerHTML = '🛡️';
+        else if (effect.id === 'str_up') icon.innerHTML = '💪';
+        else if (effect.id === 'regen') icon.innerHTML = '💖';
+        else if (effect.id === 'fury_active') icon.innerHTML = '🔥';
+        else if (effect.id === 'wind_up') icon.innerHTML = '💨';
+        else if (effect.id === 'block_skill' || effect.id === 'block_type') icon.innerHTML = '🚫';
+        else if (effect.id === 'stun' || effect.id === 'monster_stunned') icon.innerHTML = '💫';
+        else if (effect.id === 'curse_damage') icon.innerHTML = '💀';
+        else if (effect.id === 'atk_half') icon.innerHTML = '👎'; // Yarı hasar debuffı
+        else if (effect.id === 'defense_zero') icon.innerHTML = '💔';
+        else icon.innerHTML = '✨';
+
+        // RENK ATAMASI
+        if (buffIds.includes(effect.id)) {
+            icon.classList.add('status-buff');
+        } else if (debuffIds.includes(effect.id) || effect.id.startsWith('debuff_')) {
+            icon.classList.add('status-debuff');
+        }
+
+        // SAVAŞ BEKLEME DURUMU
         if (effect.waitForCombat) { 
-            icon.style.filter = "grayscale(100%) opacity(0.7)"; 
-            icon.title = `${effect.name} (Savaşta Başlayacak)`; 
+            icon.classList.add('status-waiting');
+            icon.title = `${effect.name} (Savaşta Aktifleşecek)`; 
         } else { 
             icon.title = `${effect.name} (${effect.turns} Tur)`; 
         }
+        
         heroStatusContainer.appendChild(icon);
     });
 
+    // Harita Etkileri (Mavi)
     hero.mapEffects.forEach(effect => {
-        const icon = document.createElement('div'); icon.className = 'status-icon';
-        icon.style.borderColor = '#00ccff'; icon.style.color = '#00ccff'; 
-        if (effect.id === 'map_atk_weak') { icon.innerHTML = '😓'; }
-        else if (effect.id === 'map_hp_boost') { icon.innerHTML = '💉'; }
+        const icon = document.createElement('div'); 
+        icon.className = 'status-icon';
+        icon.style.borderColor = '#00ccff'; 
+        icon.style.color = '#00ccff'; 
+        icon.innerHTML = (effect.id === 'map_hp_boost') ? '💉' : '😓';
         icon.title = `${effect.name} (${effect.nodesLeft + 1} Oda Kaldı)`;
         heroStatusContainer.appendChild(icon);
     });

@@ -2,10 +2,11 @@
 
 /* BUTONLAR */
 button {
-    background-color: #5d4a30;
+    margin-left: 8px;
+	background-color: #5d4a30;
     color: #f0e68c;
     border: 1px solid #7c6843;
-    padding: 10px 15px;
+    padding: 10px 10px;
     cursor: pointer;
     border-radius: 4px;
     transition: background-color 0.2s, transform 0.1s;
@@ -74,3 +75,46 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     display: flex; justify-content: center; align-items: center; transition: height 0.3s ease;
 }
 .cooldown-text { color: #fff; font-weight: bold; font-size: 1.4em; text-shadow: 0 0 5px #000; }
+.status-icons { 
+    position: absolute; 
+    top: -35px; 
+    left: 0; 
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    gap: 8px; 
+    z-index: 100;
+}
+
+.status-icon {
+    width: 26px; height: 26px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    font-size: 14px;
+    display: flex; justify-content: center; align-items: center;
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+
+/* POZİTİF (YEŞİL) */
+.status-buff { 
+    border-color: #43FF64 !important; 
+    color: #43FF64 !important; 
+    box-shadow: 0 0 12px rgba(67, 255, 100, 0.5) !important;
+}
+
+/* NEGATİF (KIRMIZI) */
+.status-debuff { 
+    border-color: #ff4d4d !important; 
+    color: #ff4d4d !important; 
+    box-shadow: 0 0 12px rgba(255, 77, 77, 0.5) !important;
+}
+
+/* Savaş Bekliyor Durumu (Gri ve Yarı Saydam) */
+.status-waiting {
+    filter: grayscale(100%) brightness(0.7) !important;
+    opacity: 0.6 !important;
+    border-color: #aaa !important;
+}
