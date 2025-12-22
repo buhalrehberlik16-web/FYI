@@ -7,9 +7,9 @@ function levelUp() {
     hero.maxHp += 5; 
     hero.hp = Math.min(hero.maxHp, hero.hp + 20); 
     hero.attack += 1; 
-    hero.maxRage += 10;
+    hero.maxRage += 0;
     
-    hero.statPoints += 3; // Stat puanı sabit 3 kalsın (veya değiştirebilirsin)
+    hero.statPoints += 4; // Stat puanı sabit 3 kalsın (veya değiştirebilirsin)
     
     // --- YENİ SKILL PUANI MANTIĞI ---
     // Tabloda bu level için özel bir ödül var mı?
@@ -316,4 +316,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initGame(); 
     switchScreen(startScreen); 
     if(btnCloseInventory) btnCloseInventory.addEventListener('click', toggleInventory);
+
 });
