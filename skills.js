@@ -488,7 +488,7 @@ const SKILL_DATABASE = {
     // TAB: FERVOR (COŞKU)
     // ======================================================
     
-	Pummel_Bash: { 
+	Pommel_Bash: { 
         data: {
             name: "Kabzayla Vur",
             menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
@@ -552,3 +552,4 @@ const SKILL_DATABASE = {
     }
 
 };
+
