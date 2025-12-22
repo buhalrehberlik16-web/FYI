@@ -5,7 +5,7 @@ const MAX_LEVEL = 60;
 const CLASS_CONFIG = {
     "Barbar": {
         atkStats: { "str": 0.5 },
-        defStats: { "dex": 0.33 },
+        defStats: { "dex": 0.34 },
         blockStats: { "dex": 0.8 },
         vitMultiplier: 10,
         strDivisor: 2.0, // UI hesaplaması için
@@ -203,7 +203,7 @@ const EVENT_POOL = [
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
-        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+150 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(150); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
+        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+4 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(150); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
         option2: { text: "Uzaklaş", buff: "", debuff: "", action: (hero) => { } }
     },
     {
@@ -249,7 +249,7 @@ const EVENT_POOL = [
             buff: "<span class='buff'>+60 XP</span>", 
             debuff: "", 
             action: (hero) => { 
-                const xp = 60;
+                const xp = 3;
                 gainXP(xp); 
                 writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+${xp} XP).`);
             } 
@@ -274,4 +274,5 @@ let GAME_MAP = {
     connections: [], // Hangi düğüm hangisine bağlı
     currentNodeId: null, // Oyuncunun şu anki konumu
     completedNodes: []   // Oyuncunun geçtiği düğümler
+
 };
