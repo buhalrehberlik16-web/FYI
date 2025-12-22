@@ -57,11 +57,11 @@ const SKILL_DATABASE = {
             type: 'attack',
             category: 'common',
             tier: 1,
-            scaling: { atkMult: 1.15, stats: { str: 0.0 }, elements: { physical: 1.0 } }
+            scaling: { atkMult: 1.18, stats: { str: 0.0 }, elements: { physical: 1.0 } }
         },
         onCast: function(attacker, defender) {
             const dmg = calculateSkillRawDamage(attacker, this.data);
-            const genRage = Math.floor(Math.random() * 10);
+            const genRage = Math.floor(Math.random() * 13);
             hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
             animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
@@ -284,14 +284,14 @@ const SKILL_DATABASE = {
     slash: {
         data: {
             name: "Kesik",
-            menuDescription: "Saldırı gücü + %40 Str bonusu. 25 Öfke harcar.",
-            rageCost: 25,
+            menuDescription: "Saldırı gücü + %60 Str bonusu. 20 Öfke harcar.",
+            rageCost: 20,
             levelReq: 1,
             icon: 'brutal_slash.png',
             type: 'attack',
             category: 'brutal', 
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 0.4 }, elements: { physical: 0.0 } }
+            scaling: { atkMult: 1.0, stats: { str: 0.6 }, elements: { physical: 0.0 } }
         },
         onCast: function(attacker, defender) {
             const damage = calculateSkillRawDamage(attacker, this.data);
@@ -303,18 +303,18 @@ const SKILL_DATABASE = {
     reckless_strike: {
         data: {
             name: "Pervasız Vuruş",
-            menuDescription: "Hasar: <b style='color:orange'>ATK + 2 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
             rageCost: 20,
             levelReq: 1,
             icon: 'brutal_reckless_strike.png',
             type: 'attack',
             category: 'brutal',
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 1.0 } }
+            scaling: { atkMult: 1.0, stats: { str: 1.5 } }
         },
         onCast: function(attacker, defender) {
-            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 3, waitForCombat: false, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             const damage = calculateSkillRawDamage(attacker, this.data);
             animateCustomAttack(damage, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
         }
@@ -348,7 +348,7 @@ const SKILL_DATABASE = {
         });
 
         hero.rage = Math.min(hero.maxRage, hero.rage + 15);
-        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
+        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
         
         updateStats();
         showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
@@ -360,19 +360,19 @@ const SKILL_DATABASE = {
     bash: {
         data: {
             name: "Balyoz",
-            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.3 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>",
             rageCost: 30,
             levelReq: 3,
             icon: 'brutal_bash.png',
             type: 'attack',
             category: 'brutal',
             tier: 2,
-            scaling: { atkMult: 1.0, stats: { str: 1.3 }, elements: { physical: 0.0 } }
+            scaling: { atkMult: 1.0, stats: { str: 0.8 }, elements: { physical: 0.0 } }
         },
         onCast: function(attacker, defender) {
             const damage = calculateSkillRawDamage(attacker, this.data);
-            if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
+            if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             animateCustomAttack(damage, ['images/barbarian_attack1.png', 'images/barbarian_attack3.png'], this.data.name);
         }
     },
@@ -380,18 +380,18 @@ const SKILL_DATABASE = {
     pierce_through: {
         data: {
             name: "Delip Geç",
-            menuDescription: "Hasar: <b style='color:orange'>1.5 x ATK + 1 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>",
             rageCost: 30,
             levelReq: 3,
             icon: 'brutal_pierce_through.png',
             type: 'attack',
             category: 'brutal',
             tier: 2,
-            scaling: { atkMult: 1.5, stats: { str: 1.0 }, elements: { physical: 0.0 } }
+            scaling: { atkMult: 1.5, stats: { str: 0.8 }, elements: { physical: 0.0 } }
         },
         onCast: function(attacker, defender) {
             const damage = calculateSkillRawDamage(attacker, this.data);
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             let monsterDef = monster.defense;
             if(typeof isMonsterDefending !== 'undefined' && isMonsterDefending) monsterDef += monsterDefenseBonus;
             const ignoredDef = Math.floor(monsterDef * 0.50);
@@ -451,8 +451,8 @@ const SKILL_DATABASE = {
             tier: 4
         },
         onCast: function(attacker, defender) {
-            hero.statusEffects.push({ id: 'fury_active', name: 'Hiddetli', turns: 4, value: 0.25, waitForCombat: false, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'fury', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'fury_active', name: 'Hiddetli', turns: 5, value: 0.25, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'fury', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "HİDDET!", 'heal');
             setTimeout(() => { nextTurn(); }, 1000); 
@@ -466,14 +466,14 @@ const SKILL_DATABASE = {
     hell_blade: {
         data: {
             name: "Cehennem Kılıcı",
-            menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.5 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
+            menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
             rageCost: 25,
             levelReq: 1,
             icon: 'icon_hell_blade.png',
             type: 'attack',
             category: 'chaos', 
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { int: 0.5 }, elements: { fire: 0.0 } }
+            scaling: { atkMult: 1.0, stats: { int: 0.8 }, elements: { fire: 0.0 } }
         },
         onCast: function(attacker, defender) {
             const hpCost = Math.floor(hero.hp * 0.10);
@@ -487,7 +487,27 @@ const SKILL_DATABASE = {
     // ======================================================
     // TAB: FERVOR (COŞKU)
     // ======================================================
-
+    
+	Pummel_Bash: { 
+        data: {
+            name: "Kabzayla Vur",
+            menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
+            rageCost: 0,
+            levelReq: 1,
+            icon: 'icon_strike.png',
+            type: 'attack',
+            category: 'fervor',
+            tier: 1,
+            scaling: { atkMult: 0, stats: { str: 1.2 }, elements: { physical: 1.0 } }
+        },
+        onCast: function(attacker, defender) {
+            const dmg = calculateSkillRawDamage(attacker, this.data);
+            hero.rage = Math.min(hero.maxRage, hero.rage + 18);
+            showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
+            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+        }
+    },
+	
     battle_cry: {
         data: {
             name: "Savaş Çığlığı",
@@ -530,4 +550,5 @@ const SKILL_DATABASE = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
+
 };
