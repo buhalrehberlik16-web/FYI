@@ -297,10 +297,16 @@ document.addEventListener('keydown', (e) => {
     // --------------------------------
 }
 
-    // Menü Kısayolları
-    if (key === 'i' || key === 'ı') { toggleInventory(); }
-    if (key === 'k') { if (typeof toggleSkillBook === 'function') toggleSkillBook(); }
-    if (key === 'u') { if (typeof toggleStatScreen === 'function') toggleStatScreen(); }
+    // MENÜ KISAYOLLARI (Sadece izin varsa çalışacaklar)
+    if (key === 'i' || key === 'ı') { 
+        toggleInventory(); 
+    }
+    if (key === 'k') { 
+        toggleSkillBook(); 
+    }
+    if (key === 'u') { 
+        toggleStatScreen(); 
+    }
 });
 
 

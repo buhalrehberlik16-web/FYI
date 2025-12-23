@@ -1,6 +1,18 @@
 // ui_manager.js - TAM VE HATASIZ SÜRÜM
 
 // --- EKRAN YÖNETİMİ ---
+// Merkezi UI Kontrolü: Hangi ekranlarda karakter menüleri (U,I,K) açılabilir?
+function isCharacterUIAllowed() {
+    // Yasaklı Ekranlar Listesi
+    const forbiddenScreens = [startScreen, classSelectionScreen, cutsceneScreen, basicSkillSelectionScreen, gameOverScreen];
+    
+    // Şu an aktif olan ekranı bul
+    const activeScreen = document.querySelector('.screen.active');
+    
+    // Eğer aktif ekran yasaklılar listesindeyse false döndür
+    return !forbiddenScreens.includes(activeScreen);
+}
+
 function switchScreen(targetScreen) {
     const screens = [startScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, cityScreen, basicSkillSelectionScreen];
     
@@ -291,6 +303,8 @@ function openRewardScreen(rewards) {
 let currentTab = 'common'; 
 
 function toggleSkillBook() {
+    if (!isCharacterUIAllowed()) return; // İzin yoksa çalışma!
+    
     if (skillBookScreen.classList.contains('hidden')) {
         skillBookScreen.classList.remove('hidden');
         renderSkillBookList(); 
@@ -301,6 +315,7 @@ function toggleSkillBook() {
         skillBookScreen.classList.add('hidden');
     }
 }
+
 
 function setSkillTab(tab) {
     currentTab = tab;
@@ -495,7 +510,14 @@ function renderEquippedSlotsInBook() {
 
 // --- STAT EKRANI ---
 function toggleStatScreen() {
-    if (statScreen.classList.contains('hidden')) { updateStatScreen(); statScreen.classList.remove('hidden'); } else { statScreen.classList.add('hidden'); }
+    if (!isCharacterUIAllowed()) return; // İzin yoksa çalışma!
+    
+    if (statScreen.classList.contains('hidden')) { 
+        updateStatScreen(); 
+        statScreen.classList.remove('hidden'); 
+    } else { 
+        statScreen.classList.add('hidden'); 
+    }
 }
 
 function updateStatScreen() {
@@ -574,6 +596,8 @@ function updateStatScreen() {
 
 // --- ENVANTER ---
 function toggleInventory() {
+    if (!isCharacterUIAllowed()) return; // İzin yoksa çalışma!
+    
     if (inventoryScreen.classList.contains('hidden')) {
         inventoryScreen.classList.remove('hidden');
         renderInventory(); 
