@@ -160,7 +160,7 @@
 .brooch-slot { width: 26px !important; height: 26px !important; background-color: rgba(0, 0, 0, 0.7); border: 1px solid #6b5c3b; border-radius: 4px; }
 
 .inventory-gold-display {
-    margin-top: 15px; align-self: center; background: #222; border: 1px solid #6b5c3b; padding: 8px 25px; border-radius: 4px; 
+    margin-top: 15px; align-self: center; background: #222; border: 1px solid #6b5c3b; padding: 2% 45%; border-radius: 4px; 
     color: #ffd700; font-weight: bold; display: flex; align-items: center; gap: 10px; box-shadow: inset 0 0 5px #000;
 }
 

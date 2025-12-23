@@ -118,3 +118,45 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     opacity: 0.6 !important;
     border-color: #aaa !important;
 }
+#points-notification-area {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.point-notif {
+    font-size: 0.75em;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    text-shadow: 1px 1px 2px #000;
+    border: 1px solid #fff;
+    cursor: pointer;
+    animation: pulse-notif 1.5s infinite ease-in-out;
+    white-space: nowrap;
+}
+
+/* Stat Puanı: Turuncu/Altın Parlama */
+.stat-notif {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+    box-shadow: 0 0 10px rgba(230, 126, 34, 0.6);
+}
+
+/* Skill Puanı: Mor/Mistik Parlama */
+.skill-notif {
+    background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+}
+
+@keyframes pulse-notif {
+    0% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.1); filter: brightness(1.3); box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.point-notif:hover {
+    animation: none;
+    transform: translateY(-2px);
+    filter: brightness(1.5);
+}
