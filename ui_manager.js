@@ -156,6 +156,29 @@ function updateStats() {
 
     updateStatusIcons(); updateGoldUI();
     if (!statScreen.classList.contains('hidden')) updateStatScreen();
+	const statNotif = document.getElementById('notif-stat');
+    const skillNotif = document.getElementById('notif-skill');
+
+    // Stat Puanı Kontrolü
+    if (statNotif) {
+        // Eğer 0'dan büyükse göster, değilse (0 veya NaN ise) gizle
+        if (hero.statPoints && hero.statPoints > 0) {
+            statNotif.classList.remove('hidden');
+            statNotif.onclick = (e) => { e.stopPropagation(); toggleStatScreen(); };
+        } else {
+            statNotif.classList.add('hidden');
+        }
+    }
+
+    if (skillNotif) {
+        // Eğer 0'dan büyükse göster, değilse gizle
+        if (hero.skillPoints && hero.skillPoints > 0) {
+            skillNotif.classList.remove('hidden');
+            skillNotif.onclick = (e) => { e.stopPropagation(); toggleSkillBook(); };
+        } else {
+            skillNotif.classList.add('hidden');
+			}
+    }
 }
 
 // --- EFEKTLER ---
@@ -302,6 +325,8 @@ function setSkillTab(tab) {
 function renderSkillBookList() {
     if (!skillBookList) return;
     skillBookList.innerHTML = '';
+    
+    // Savaşta olup olmadığımızı kontrol et
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
 
     const sortedSkills = Object.entries(SKILL_DATABASE)
@@ -309,16 +334,13 @@ function renderSkillBookList() {
         .sort((a, b) => a[1].data.tier - b[1].data.tier);
 
     for (const [key, skill] of sortedSkills) {
-        
         const isLearned = hero.unlockedSkills.includes(key);
         
-        if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) {
-            continue; 
-        }
+        // Başlangıç skillerini listede kalabalık etmesin diye gizle (öğrenilmediyse)
+        if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) continue; 
 
         const canAfford = hero.skillPoints >= (skill.data.tier || 1);
         const levelMet = hero.level >= (skill.data.levelReq || 1);
-        
         const treeMet = (typeof checkSkillTreeRequirement === 'function') 
                         ? checkSkillTreeRequirement(skill.data.category, skill.data.tier) 
                         : true; 
@@ -327,29 +349,31 @@ function renderSkillBookList() {
         const item = document.createElement('div');
         item.classList.add('skill-book-item');
         
-        // Pasif Yetenek Kontrolü
-        if (skill.data.type === 'passive') {
-            item.style.borderStyle = isLearned ? "solid" : "dashed";
-        }
-
         if (isLearned) {
-            // Pasifler sürüklenemez
             const isPassive = (skill.data.type === 'passive');
             item.setAttribute('draggable', !isPassive);
             if (!isPassive) {
                 item.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', key); });
             }
-            item.style.borderColor = "#43FF64"; 
+            // Öğrenilmiş stilini koru
         } else {
             item.classList.add('locked');
             item.setAttribute('draggable', false);
             
-            if (!treeMet) actionHtml = `<small style="color:#aaa;">Önce Tier ${skill.data.tier - 1} Aç</small>`;
-            else if (!levelMet) actionHtml = `<small style="color:#ff4d4d;">Gereken: Lv.${skill.data.levelReq}</small>`;
-            else if (!canAfford) actionHtml = `<small style="color:#aaa;">Puan Yetmiyor (${skill.data.tier})</small>`;
-            else {
-                if (!isInBattle) actionHtml = `<button class="btn-learn-skill" onclick="learnSkill('${key}')">+</button> <small style="color:#43FF64;">${skill.data.tier} Puan</small>`;
-                else actionHtml = `<small style="color:orange;">Savaşta Öğrenilemez</small>`;
+            // --- SAVAŞ DURUMU VE DİĞER KONTROLLER ---
+            if (!treeMet) {
+                actionHtml = `<small style="color:#aaa;">Önce Tier ${skill.data.tier - 1} Aç</small>`;
+            } else if (!levelMet) {
+                actionHtml = `<small style="color:#ff4d4d;">Gereken: Lv.${skill.data.levelReq}</small>`;
+            } else if (!canAfford) {
+                actionHtml = `<small style="color:#aaa;">Puan Yetmiyor (${skill.data.tier})</small>`;
+            } else {
+                // EĞER SAVAŞTAYSAK BUTON YERİNE UYARI ÇIKAR
+                if (isInBattle) {
+                    actionHtml = `<small style="color:orange; font-weight:bold; text-shadow:1px 1px 2px #000;">⚠️ SAVAŞTA ÖĞRENİLEMEZ</small>`;
+                } else {
+                    actionHtml = `<button class="btn-learn-skill" onclick="learnSkill('${key}')">+</button> <small style="color:#43FF64;">${skill.data.tier} Puan</small>`;
+                }
             }
         }
 
@@ -359,16 +383,13 @@ function renderSkillBookList() {
                 <span class="tier-badge">T${skill.data.tier || 1}</span>
             </div>
             <div class="skill-info" style="flex-grow:1;">
-                <div style="display:flex; justify-content:space-between;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h4>${skill.data.name}</h4>
-                    ${!isLearned && canAfford && levelMet && !isInBattle && treeMet ? actionHtml : (!isLearned ? actionHtml : '')}
+                    <div class="skill-action-container">${actionHtml}</div>
                 </div>
                 <p>${skill.data.menuDescription}</p>
-                ${isLearned ? '<small style="color:#43FF64;">Öğrenildi</small>' : ''}
+                ${isLearned ? '<small style="color:#43FF64; font-weight:bold;">✓ ÖĞRENİLDİ</small>' : ''}
             </div>`;
-        
-        const btn = item.querySelector('.btn-learn-skill');
-        if(btn) { btn.addEventListener('click', (e) => { e.stopPropagation(); }); }
         
         skillBookList.appendChild(item);
     }
@@ -480,96 +501,73 @@ function toggleStatScreen() {
 function updateStatScreen() {
     if (!statName) return;
     
-    // Anlık Efektif Değerler
     let effective = { atk: 0, def: 0 };
     if (typeof getHeroEffectiveStats === 'function') effective = getHeroEffectiveStats();
 
+    // Temel Bilgiler
     statName.textContent = hero.playerName; 
-    statClass.textContent = `(${hero.name})`; 
+    statClass.textContent = `(${hero.class})`; 
     statLevel.textContent = `Lv. ${hero.level}`;
-	// --- YENİ: XP BARI GÜNCELLEME ---
-    // Yüzdeyi hesapla (Maksimum 100 olsun)
-    let xpPercent = 0;
-    if (hero.xpToNextLevel > 0) {
-        xpPercent = Math.min(100, (hero.xp / hero.xpToNextLevel) * 100);
-    }
     
-    // Yazıyı Güncelle (Eski ID'yi koruduk: statXp)
-     statXp.textContent = `%${Math.floor(xpPercent)}`; 
-    
-    // Bar Genişliğini Güncelle (HTML'de yeni eklediğimiz div)
+    // XP Barı
+    let xpPercent = hero.xpToNextLevel > 0 ? Math.min(100, (hero.xp / hero.xpToNextLevel) * 100) : 0;
+    if (statXp) statXp.textContent = `%${Math.floor(xpPercent)}`; 
     const xpBarFill = document.getElementById('stat-xp-bar');
-    if (xpBarFill) {
-        xpBarFill.style.width = `${xpPercent}%`;
-    }
-    // --------------------------------
-    statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
-	if (statRage) {
-    statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
-    }
-    
-    // --- DOĞAL GÜÇ HESABI (Buffsız) ---
-    const rules = CLASS_CONFIG[hero.class];
-    
-    // Doğal Atak = Base + (STR / 2)
-    const naturalAtk = hero.baseAttack + Math.floor(hero.str / rules.strDivisor);
-    
-    // Doğal Defans = Base + (DEX / 3)
-    const naturalDef = hero.baseDefense + Math.floor(hero.dex / rules.dexDivisor);
-    
-    // RENKLENDİRME
-    // Atak
-    if (effective.atk > naturalAtk) statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`;
-    else if (effective.atk < naturalAtk) statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`;
-    else statAtk.textContent = effective.atk;
+    if (xpBarFill) xpBarFill.style.width = `${xpPercent}%`;
 
-    // Defans
-    if (effective.def > naturalDef) statDef.innerHTML = `<span style="color:#43FF64">${effective.def}</span>`;
-    else if (effective.def < naturalDef) statDef.innerHTML = `<span style="color:#ff4d4d">${effective.def}</span>`;
-    else statDef.textContent = effective.def;
+    // HP ve Rage
+    statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
+    if (statRage) statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
     
-    // Diğerleri...
+    // Savaş Statları (Altın Sarısı vs.)
+    statAtk.textContent = effective.atk;
+    statDef.textContent = effective.def;
     statStr.textContent = hero.str; 
     statDex.textContent = hero.dex; 
     statInt.textContent = hero.int; 
+    statVit.textContent = hero.vit;
     statMp.textContent = hero.mp_pow;
-    const statVit = document.getElementById('stat-vit'); 
-    if(statVit) statVit.textContent = hero.vit;
 	
-	// --- DİRENÇLERİ GÜNCELLE ---
-    // Eğer fonksiyon varsa hesapla, yoksa 0 al
-    let resistances = (typeof getHeroResistances === 'function') 
-                      ? getHeroResistances() 
-                      : hero.baseResistances;
-
-    // Elementleri bul ve güncelle
+    // Dirençler
     const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
-    
     resTypes.forEach(type => {
         const el = document.getElementById(`res-${type}`);
-        if (el) {
-            const val = resistances[type] || 0;
-            el.textContent = val;
-            
-            // Renklendirme (Pozitif ise yeşil, Negatif ise kırmızı)
-            if (val > 0) el.style.color = "#43FF64";
-            else if (val < 0) el.style.color = "#ff4d4d";
-            else el.style.color = "#fff";
-        }
+        if (el) el.textContent = hero.baseResistances[type] || 0;
     });
 
-    // ... (Puan kutusu kodları aynı) ...
+    // --- SAVAŞ ESNASINDA PUAN UYARISI ---
     const pointsBox = document.getElementById('points-container');
     const pointsDisplay = document.getElementById('stat-points-display');
     const plusButtons = document.querySelectorAll('.btn-stat-plus');
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
 
-    if (hero.statPoints > 0 && !isInBattle) {
-        if(pointsBox) pointsBox.classList.remove('hidden');
-        if(pointsDisplay) pointsDisplay.textContent = hero.statPoints;
+    // Eğer varsa eski uyarıyı temizle
+    let oldWarning = document.getElementById('stat-battle-warning');
+    if (oldWarning) oldWarning.remove();
+
+    if (isInBattle) {
+        // Savaşta butonları gizle ve uyarı yazısı ekle
+        if (pointsBox) pointsBox.classList.add('hidden');
+        plusButtons.forEach(btn => btn.classList.add('hidden'));
+
+        const warning = document.createElement('div');
+        warning.id = 'stat-battle-warning';
+        warning.style.cssText = "color:orange; text-align:center; margin-top:15px; font-weight:bold; font-size:0.95em; text-shadow:1px 1px 2px #000;";
+        warning.textContent = "⚠️ SAVAŞ ESNASINDA STAT VERİLEMEZ";
+        // Puan kutusunun olduğu yere ekle
+        const content = document.querySelector('.stat-content');
+        if (content) content.appendChild(warning);
+
+    } else if (hero.statPoints > 0) {
+        // Savaşta değilsek ve puan varsa butonları göster
+        if (pointsBox) {
+            pointsBox.classList.remove('hidden');
+            pointsDisplay.textContent = hero.statPoints;
+        }
         plusButtons.forEach(btn => btn.classList.remove('hidden'));
     } else {
-        if(pointsBox) pointsBox.classList.add('hidden');
+        // Puan yoksa her şeyi gizle
+        if (pointsBox) pointsBox.classList.add('hidden');
         plusButtons.forEach(btn => btn.classList.add('hidden'));
     }
 }

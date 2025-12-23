@@ -552,4 +552,3 @@ const SKILL_DATABASE = {
     }
 
 };
-

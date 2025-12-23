@@ -93,6 +93,7 @@ function learnSkill(skillKey) {
         if (typeof renderSkillBookList === 'function') renderSkillBookList();
         const spDisplay = document.getElementById('skill-points-display');
         if(spDisplay) spDisplay.textContent = hero.skillPoints;
+		updateStats();
         
     } else {
         writeLog("❌ Yetersiz Skill Puanı!");
