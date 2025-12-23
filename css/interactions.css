@@ -188,27 +188,53 @@
 
     .town-exit-btn {
     padding: 1cqw 1cqw !important;
-    font-size: 0.9em !important;
-    bottom: 35%;
+    font-size: 0.5em !important;
+    bottom: 35.6%;
     right: 1%;
     transform: translate(-1%, -40%);
     }
 
-
     /* NPC Pencereleri (Han, Demirci vb.) */
-    .npc-window {
-        width: 98vw;
-        height: 95vh;
-    }
+	.npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	.npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	 /* 1. HAN (INN) MOBİL */
+	#modal-inn .npc-actions-left { top: 42% !important; left: 10.5% !important; } 
+    #modal-inn .npc-actions-right { top: 42% !important; right: 13% !important; }
+	#modal-inn .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-inn .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.3em !important;}
+	modal-inn .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-inn .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 
-    .npc-actions-left, .npc-actions-right {
-        width: 110px;
-        top: 25%; /* Mobilde butonları biraz yukarı al */
-    }
-    
-    .npc-actions-left { left: 10%; }
-    .npc-actions-right { right: 10%; }
+    /* 2. DEMİRCİ (BLACKSMITH) MOBİL */
+     #modal-blacksmith .npc-actions-left {top: 41% !important; left: 9.7% !important; } 
+    #modal-blacksmith .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-blacksmith .npc-title { top: 36.2% !important; font-size: 1em !important;}
+	#modal-blacksmith .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.5em !important; }
+	modal-blacksmith .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-blacksmith .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 
-    .npc-title { top: 10%; font-size: 1.4em; }
-    .npc-dialogue { bottom: 10%; width: 80%; font-size: 0.8em; }
+    /* 3. TÜCCAR (MERCHANT) MOBİL */
+    #modal-merchant .npc-actions-left { top: 41% !important; left: 10.7% !important; }
+    #modal-merchant .npc-actions-right { top: 41% !important; right: 13% !important; }
+	#modal-merchant .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-merchant .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.46em !important; }
+	modal-merchant .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+
+    /* 4. SİMYACI (ALCHEMIST) MOBİL */
+    #modal-alchemist .npc-actions-left { top: 41% !important; left: 9.7% !important; }
+    #modal-alchemist .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-alchemist .npc-title { top: 36.2% !important; font-size: 1em !important;}
+	#modal-alchemist .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.46em !important; }
+	modal-alchemist .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-alchemist .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+
+    /* 5. AHIR (STABLE) MOBİL */
+    #modal-stable .npc-actions-left { top: 42% !important; left: 11% !important; }
+    #modal-stable .npc-actions-right { top: 42% !important; right: 13% !important; }
+	#modal-stable .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
+	modal-stable .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-stable .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 }

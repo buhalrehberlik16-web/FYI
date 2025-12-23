@@ -252,6 +252,12 @@
     /* Başlıklar küçültüldü */
     .game-title { font-size: 3.5em; letter-spacing: 4px; }
     .selection-title { font-size: 1.8em; margin-bottom: 20px; }
+	
+	#class-selection-screen, #basic-skill-selection-screen {
+        justify-content: flex-start !important; /* Yukarıdan başla */
+        padding: 60px 10px 40px 10px !important; /* Üstten ve alttan pay bırak */
+        overflow-y: scroll !important; /* Kaydırmayı zorla */
+    }
 
     /* Class Seçim Kartları Mobilde Alt Alta ve Daha Küçük */
     .class-cards-container { 
@@ -267,11 +273,12 @@
         min-height: unset; 
         height: auto; 
         padding: 15px;
+		flex-shrink:0;
     }
 
     /* MOBİLDE RESİM BOYUTUNU KISITLAYAN EN ÖNEMLİ YER */
     .class-image-box { 
-        height: 140px; /* Dev gibi olmasını engelleyen yükseklik */
+        height: 200px; /* Dev gibi olmasını engelleyen yükseklik */
     }
 
     .class-info h2 { font-size: 1.1em; margin: 5px 0; }
