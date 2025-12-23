@@ -156,7 +156,7 @@
 .inventory-content { display: flex; gap: 30px; justify-content: center; align-items: center; margin-bottom: 10px; }
 .char-preview-box { width: 260px; height: 380px; position: relative; border: 1px dashed #6b5c3b; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
 #inv-char-img { height: 100%; width: auto; object-fit: contain; transform: translateY(10px); filter: drop-shadow(0 0 10px #000); }
-.brooch-overlay { position: absolute; top: 105px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 90px; z-index: 10; }
+.brooch-overlay { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 90px; z-index: 10; }
 .brooch-slot { width: 26px !important; height: 26px !important; background-color: rgba(0, 0, 0, 0.7); border: 1px solid #6b5c3b; border-radius: 4px; }
 
 .inventory-gold-display {

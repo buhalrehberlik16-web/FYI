@@ -61,7 +61,7 @@
 
 /* MACERAYA DÖN BUTONU */
 .town-exit-btn {
-    position: absolute; bottom: 30px; right: 30px; z-index: 100;
+    position: absolute; bottom: 8.2vw; right: 0.2vw; z-index: 100;
     background: linear-gradient(to bottom, #8b0000, #500000) !important;
     border: 2px solid #ff4d4d !important; color: white !important;
     padding: 12px 30px !important; font-size: 1.1em !important;
