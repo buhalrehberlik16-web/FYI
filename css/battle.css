@@ -308,7 +308,9 @@
     100% { transform: scale(1); opacity: 0.8; }
 }
 
-/* --- MOBİL AYARLAR --- */
+/* ============================================================
+   --- MOBİL DÜZENLEMELER (YENİLENMİŞ) ---
+   ============================================================ */
 @media (max-width: 1024px) {
     #action-bar { min-width: 600px; padding: 15px 25px; }
     .skill-slot { width: 58px; height: 58px; flex: 0 0 58px !important; }
@@ -317,10 +319,20 @@
 @media (max-width: 768px) {
     #arena { height: 60%; }
     .character-display img { max-height: 200px; }
-    .hp-overlay-container { bottom: 220px; width: 120px; }
+    
+    /* Mobilde Barlar ve İsimler Aşağıda */
+    .hp-overlay-container { bottom: 210px; width: 120px; }
     #hero-name, #monster-name { font-size: 1.1em; margin-bottom: 10px; }
     
-    #battle-controls { height: 40%; }
+    /* KRİTİK: Mobilde İntention Layer Daha Aşağıda */
+    .intention-overlay { 
+        bottom: 310px !important; /* Gökyüzünden indirildi */
+        font-size: 1.6em;
+        min-width: 55px;
+        padding: 8px 12px;
+    }
+
+    #battle-controls { height: 40%; padding-bottom: 10px; }
     #action-bar { 
         flex-direction: column; 
         width: 95%; 
@@ -331,4 +343,9 @@
     .separator { display: none; }
     .basic-skills-container, 
     #skill-bar-container { width: 100%; justify-content: center; gap: 8px; }
+}
+
+@media (max-height: 600px) {
+    .intention-overlay { bottom: 260px !important; }
+    .hp-overlay-container { bottom: 170px; }
 }
