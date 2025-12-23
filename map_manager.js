@@ -1,8 +1,10 @@
 // map_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM
 
 // --- HARİTA ÜRETİM (GENERATOR) ---
+let enemiesByStage = {}; // Hangi stage'e hangi düşmanların atandığını tutar
 
 function generateMap() {
+	enemiesByStage = {};
     const mapContent = document.getElementById('map-content');
     const mapBg = document.getElementById('map-background');
     
@@ -131,41 +133,42 @@ function getPreDeterminedEnemy(stage) {
     let selectedPool = [];
     let isHard = false;
 
-    // --- ACT 1 MANTIĞI ---
+    // 1. HAVUZ BELİRLEME
     if (hero.currentAct === 1) {
-        // Bölgenin normal zorluk seviyesini (Tier) belirle
         let baseTier = (stage < 5) ? 1 : (stage < 10 ? 2 : 3);
-
-        // %80 İhtimalle normal Tier, %20 İhtimalle bir üst Tier canavar gelsin
         if (rand < 0.80) {
-            // NORMAL HAVUZ
-            if (baseTier === 1) selectedPool = TIER_1_ENEMIES;
-            else if (baseTier === 2) selectedPool = TIER_2_ENEMIES;
-            else selectedPool = TIER_3_ENEMIES;
-            isHard = false; // Normal canavar
-        } else {
-            // ZOR HAVUZ (Bir üst Tier canavarlar)
-            if (baseTier === 1) selectedPool = TIER_2_ENEMIES;
-            else if (baseTier === 2) selectedPool = TIER_3_ENEMIES;
-            else selectedPool = TIER_4_ENEMIES;
-            isHard = true; // Üst Tier olduğu için haritada TURUNCU PARLAYACAK
-        }
-    } 
-    // --- ACT 2 MANTIĞI ---
-    else if (hero.currentAct === 2) {
-        // Act 2'de normal zorluk zaten Tier 3'ten başlar
-        if (rand < 0.80) {
-            selectedPool = ["İskelet Şövalye", "Gulyabani"]; // Tier 3
+            if (baseTier === 1) selectedPool = [...TIER_1_ENEMIES];
+            else if (baseTier === 2) selectedPool = [...TIER_2_ENEMIES];
+            else selectedPool = [...TIER_3_ENEMIES];
             isHard = false;
         } else {
-            selectedPool = ["Kemik Golemi", "Orc Fedaisi"]; // Tier 4
+            if (baseTier === 1) selectedPool = [...TIER_2_ENEMIES];
+            else if (baseTier === 2) selectedPool = [...TIER_3_ENEMIES];
+            else selectedPool = [...TIER_4_ENEMIES];
             isHard = true;
         }
+    } else {
+        selectedPool = hero.currentAct === 2 ? ["İskelet Şövalye", "Gulyabani", "Kemik Golemi"] : TIER_3_ENEMIES;
+        isHard = rand > 0.8;
     }
 
-    // Seçilen havuzdan rastgele canavarı al
-    const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)] || "Goblin Devriyesi";
+    // 2. GELİŞMİŞ TEKRAR ENGELLEME (Stage Bazlı)
+    // Bir önceki stage'de kullanılan düşmanları bul
+    let forbiddenEnemies = enemiesByStage[stage - 1] || [];
     
+    // Havuzdan yasaklı olanları çıkar
+    let availableEnemies = selectedPool.filter(enemy => !forbiddenEnemies.includes(enemy));
+
+    // Eğer havuz boşaldıysa (seçenek kalmadıysa) mecburen orijinal havuzu kullan
+    if (availableEnemies.length === 0) availableEnemies = selectedPool;
+
+    // Rastgele seçim yap
+    const enemyName = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
+
+    // 3. HAFIZAYA KAYDET (Bu stage'e bu düşman atandı de)
+    if (!enemiesByStage[stage]) enemiesByStage[stage] = [];
+    enemiesByStage[stage].push(enemyName);
+
     return { name: enemyName, isHard: isHard };
 }
 
