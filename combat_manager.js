@@ -95,26 +95,7 @@ function getHeroEffectiveStats() {
     };
 }
 
-// --- HASAR MOTORU ---
-function calculateSkillRawDamage(attacker, skillData) {
-    const stats = getHeroEffectiveStats();
-    const scaling = skillData.scaling || {};
-    let atkPart = (stats.atk || 0) * (scaling.atkMult || 0);
-    let statPart = 0;
-    if (scaling.stats) {
-        for (const [statName, multiplier] of Object.entries(scaling.stats)) {
-            const statValue = stats[statName] || hero[statName] || 0;
-            statPart += statValue * multiplier;
-        }
-    }
-    let elementPart = 0;
-    if (scaling.elements && hero.elementalDamage) {
-        for (const [elementName, multiplier] of Object.entries(scaling.elements)) {
-            elementPart += (hero.elementalDamage[elementName] || 0) * multiplier;
-        }
-    }
-    return Math.floor(atkPart + statPart + elementPart);
-}
+
 
 // --- KİLİT KONTROLÜ ---
 function checkIfSkillBlocked(skillKey) {
