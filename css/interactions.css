@@ -61,7 +61,7 @@
 
 /* MACERAYA DÖN BUTONU */
 .town-exit-btn {
-    position: absolute; bottom: 8.2vw; right: 0.2vw; z-index: 100;
+    position: absolute; bottom: 0.4%; right: 0.2%; z-index: 100;
     background: linear-gradient(to bottom, #8b0000, #500000) !important;
     border: 2px solid #ff4d4d !important; color: white !important;
     padding: 12px 30px !important; font-size: 1.1em !important;
@@ -187,11 +187,19 @@
     /* Köy yazıları zaten cqw ile küçülüyor, dokunmaya gerek yok. */
 
     .town-exit-btn {
-    padding: 1cqw 1cqw !important;
+    position: absolute;
+    bottom: 35.7%;
+    right: 0.2%;
+    z-index: 100;
+    background: linear-gradient(to bottom, #8b0000, #500000) !important;
+    border: 2px solid #ff4d4d !important;
+    color: white !important;
+    padding: 0.1px 0.3px !important;
     font-size: 0.5em !important;
-    bottom: 35.6%;
-    right: 1%;
-    transform: translate(-1%, -40%);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8) !important;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
     }
 
     /* NPC Pencereleri (Han, Demirci vb.) */
