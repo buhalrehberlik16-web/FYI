@@ -70,12 +70,117 @@
 }
 .town-exit-btn:hover { background: #a00000 !important; transform: scale(1.05); }
 
-/* CITY KOORDİNATLARI */
-.city-label-text { background: rgba(0, 0, 0, 0.6); border: 1px solid #ffd700; border-radius: 20px; padding: 5px 15px; }
+/* ŞEHİR BAŞLIĞI - YUKARIYA SABİTLENDİ VE CİLANLANDI */
+.city-header {
+    position: absolute;
+    top: 5%; /* Ekranın en üstünden %5 aşağıda */
+    width: 100%;
+    text-align: center;
+    z-index: 100; /* Arka planın çok üzerinde */
+    pointer-events: none; /* Tıklamayı engellemesin */
+}
+
+.city-title {
+    color: #ffd700; /* Parlak Altın */
+    font-family: 'Georgia', serif;
+    font-size: 3.5em; /* Büyük ve heybetli */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 10px;
+    margin: 0;
+    /* Katmanlı gölge ile "Düz Yazı" olmaktan kurtardık */
+    text-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.5),
+        2px 2px 0 #000,
+        4px 4px 10px rgba(0, 0, 0, 0.8);
+    animation: cityTitleFloat 4s infinite ease-in-out;
+}
+
+.city-subtitle {
+    color: #43FF64; /* Başarı Rengi: Yeşil */
+    font-size: 1.2em;
+    letter-spacing: 4px;
+    margin-top: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+@keyframes cityTitleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* BİNALAR (Koordinatlı Tıklama Noktaları) */
+.city-building {
+    position: absolute;
+    cursor: pointer;
+    z-index: 50;
+    width: 0; height: 0; /* Noktasal merkez */
+    overflow: visible;
+}
+
+.city-label-text {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    color: #fff;
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 8px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #ffd700;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.city-building:hover .city-label-text {
+    background: #ffd700;
+    color: #000;
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 20px #ffd700;
+}
+
+/* Şehir Bina Yerleşimleri */
 #city-palace { top: 35%; left: 50%; }
-#city-vault { top: 60%; left: 25%; }
-#city-arena { top: 65%; right: 25%; }
+#city-vault  { top: 60%; left: 25%; }
+#city-arena  { top: 65%; right: 25%; }
 #city-market { top: 75%; left: 50%; }
+
+/* ============================================================
+   2. GEÇİŞ BUTONU (NEXT ACT)
+   ============================================================ */
+.next-act-container {
+    position: absolute;
+    bottom: 8%; /* En alttan biraz yukarıda */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
+
+.next-act-btn {
+    background: linear-gradient(to bottom, #ffd700, #b8860b) !important;
+    color: #000 !important;
+    border: 3px solid #fff !important;
+    padding: 15px 50px !important;
+    font-size: 1.4em !important;
+    font-weight: 900 !important;
+    cursor: pointer;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5) !important;
+    transition: transform 0.2s;
+}
+
+.next-act-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8) !important;
+}
+
+
+
 
 /* ============================================================
    REWARD (ÖDÜL) EKRANI - ZAFER VE ALTIN CİLASI
@@ -245,4 +350,85 @@
 	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
 	modal-stable .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-stable .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+.reward-content { 
+    width: 100%; 
+    min-height: 70%; 
+    padding: 40px; 
+    background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%); 
+    border: 2px solid #ffd700; 
+    border-radius: 12px; 
+    box-shadow: 0 0 40px rgba(0, 0, 0, 1), 0 0 20px rgba(255, 215, 0, 0.2); 
+    text-align: center;
+    display: flex;
+    flex-direction: column; 
+    position: relative;
+}
+
+/* ZAFER YAZISI - ALTIN PARLAMA (GLOW) EFEKTİ */
+.reward-content h2 {
+    color: #ffd700;
+    font-size: 3em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 5px;
+    /* Katmanlı Parlama Efekti */
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.6),
+        0 0 20px rgba(255, 165, 0, 0.4),
+        2px 2px 4px #000;
+    animation: victoryGlow 2s infinite alternate;
+}
+
+@keyframes victoryGlow {
+    from { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 2px 2px 4px #000; }
+    to { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 165, 0, 0.6), 2px 2px 4px #000; transform: scale(1.02); }
+}
+
+#reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
+
+.reward-item { 
+    background: rgba(40, 40, 40, 0.9); 
+    border: 1px solid #ffd700; 
+    padding: 12px 20px; 
+    cursor: pointer; 
+    border-radius: 6px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 12px; 
+    margin: 0 auto 15px auto; 
+    width: 35%; /* İstediğin %35 genişlik */
+    transition: all 0.2s ease;
+}
+
+/* ALTIN MİKTARI VE YAZISI - BEYAZ YAPILDI */
+.reward-item span { 
+    font-weight: bold; 
+    font-size: 1em; 
+    color: #ffffff !important; /* TERTEMİZ BEYAZ */
+    letter-spacing: 1px; 
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* ALTIN İKONU - PARLAK ALTIN */
+.reward-item i { 
+    color: #ffd700 !important; 
+    font-size: 1.4em; 
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); 
+    filter: none !important; 
+}
+
+.reward-continue-btn { 
+    margin: auto auto 10px auto; 
+    width: 220px !important; 
+    padding: 12px 20px !important;
+    background: linear-gradient(to bottom, #5d4a30, #3e3221) !important;
+    border: 1px solid #ffd700 !important; 
+    color: #f0e68c !important; 
+    align-self: center;
+}
+
 }

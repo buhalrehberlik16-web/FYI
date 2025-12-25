@@ -93,6 +93,12 @@ const ENEMY_STATS = {
         dead: 'goblin_sef_dead.png'
     }
 };
+// Düşman Havuzları
+const TIER_1_ENEMIES = ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"];
+const TIER_2_ENEMIES = ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"];
+const TIER_3_ENEMIES = ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"];
+const TIER_4_ENEMIES = ["Orc Fedaisi"];
+
 Object.assign(ENEMY_STATS, {
     "İskelet Şövalye": { maxHp: 180, attack: 25, defense: 15, tier: 3, idle: 'kaya_golemi.png', dead: 'kaya_golemi_dead.png', attackFrames: ['kaya_golemi_attack1.png'] },
     "Gulyabani": { maxHp: 150, attack: 35, defense: 5, tier: 3, idle: 'kaya_golemi.png', dead: 'kaya_golemi_dead.png', attackFrames: ['kaya_golemi_attack1.png'] },

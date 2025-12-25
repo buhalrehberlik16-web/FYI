@@ -88,7 +88,7 @@ body {
     opacity: 0; /* Başlangıçta şeffaf */
     z-index: 9999; /* Her şeyin (U, I, K dahil) en üstünde */
     pointer-events: none; /* Altındaki butonlara basılmasını engellemez (başlangıçta) */
-    transition: opacity 2.5s ease-in; /* Orijinal yavaş kararma süresi */
+    transition: opacity 1.5s ease-in-out; /* Orijinal yavaş kararma süresi */
     display: block !important; /* display: none olmamalı, yoksa transition çalışmaz */
 }
 

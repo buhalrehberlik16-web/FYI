@@ -1,23 +1,24 @@
 const SkillEngine = {
     // Hasar Hesaplama Motoru (Mutfak Robotu)
     calculate: function(attacker, skillData) {
-        const stats = getHeroEffectiveStats(); // U ekranındaki anlık veriler
+        // U ekranında görünen o anki EN GÜÇLÜ halini alıyoruz
+        const stats = getHeroEffectiveStats(); 
         const scaling = skillData.scaling || {};
         
-        // 1. ATAK BİLEŞENİ (Süt)
+        // 1. ATAK BİLEŞENİ (Artık içinde stat bonusları ve atk_up buffları var!)
         let atkPart = (stats.atk || 0) * (scaling.atkMult || 0);
 
-        // 2. STAT BİLEŞENİ (Meyveler: STR, INT, DEX...)
+        // 2. EXTRA STAT BİLEŞENİ (Skille özel çarpan: örn %60 STR bonusu)
         let statPart = 0;
         if (scaling.stats) {
             for (const [statName, multiplier] of Object.entries(scaling.stats)) {
-                // stats objesinde yoksa (örneğin vit) doğrudan hero'dan bak
-                const val = stats[statName] !== undefined ? stats[statName] : (hero[statName] || 0);
-                statPart += val * multiplier;
+                // Bufflı stat değerini kullan (Str_up varsa onu da kapsar)
+                const statVal = stats[statName] || 0;
+                statPart += statVal * multiplier;
             }
         }
 
-        // 3. ELEMENTEL BİLEŞEN (Baharatlar: Ateş, Fiziksel...)
+        // 3. ELEMENTEL BİLEŞEN (İleride itemlerden gelecek)
         let elementPart = 0;
         if (scaling.elements && hero.elementalDamage) {
             for (const [elementName, multiplier] of Object.entries(scaling.elements)) {
@@ -25,7 +26,6 @@ const SkillEngine = {
             }
         }
 
-        // Toplam Ham Hasar
         return Math.floor(atkPart + statPart + elementPart);
     },
 

@@ -122,7 +122,7 @@
 
 /* ANA STATLAR (Değişiklik geldiğinde fontun sabit kalması için inherit eklendi) */
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.stat-item { background: rgba(0,0,0,0.2); padding: 10px 15px; border: 1px solid #3e3221; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+.stat-item { background: rgba(0,0,0,0.2); padding: 10px 5px; border: 1px solid #3e3221; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
 
 #stat-str, #stat-dex, #stat-int, #stat-vit, #stat-mp, #stat-level-val {
     color: #ffd700; 

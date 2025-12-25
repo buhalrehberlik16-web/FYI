@@ -1,17 +1,36 @@
-// game_data.js
-
 const MAX_LEVEL = 60;
 
 const CLASS_CONFIG = {
     "Barbar": {
+        startingStats: { str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0 },
+        // BAŞLANGIÇ DİRENÇLERİ (% olarak)
+        startingResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        // BAŞLANGIÇ ELEMENT HASARLARI (Flat/Sabit puan olarak)
+        startingElementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        
         atkStats: { "str": 0.5 },
         defStats: { "dex": 0.34 },
         blockStats: { "dex": 0.8 },
         vitMultiplier: 10,
-        strDivisor: 2.0, // UI hesaplaması için
+        strDivisor: 2.0,
         dexDivisor: 3.0
+    },
+    "Magus": {
+        startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
+        startingResistances: { physical: 0, fire: 15, cold: 15, lightning: 15, curse: 5, poison: 0 },
+        startingElementalDamage: { physical: 0, fire: 10, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        
+        atkStats: { "int": 0.8 },
+        defStats: { "dex": 0.2 },
+        blockStats: { "int": 0.4 },
+        vitMultiplier: 7,
+        strDivisor: 5.0,
+        dexDivisor: 4.0
     }
 };
+
+const LEVEL_SKILL_REWARDS = { 2: 2, 4: 4, 6: 4, 8: 6, 10: 8, 12: 10 };
+const FULL_XP_REQUIREMENTS = Array.from({length: MAX_LEVEL + 1}, () => 5);
 
 let hero = {
     name: "Barbar",
@@ -26,152 +45,18 @@ let hero = {
     statPoints: 0, 
     skillPoints: 0,
     currentAct: 1,
-    
-    // Temel Statlar
     str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
-    
-    // Motorun NaN vermemesi için zorunlu başlangıç değerleri
-    baseAttack: 10,
-    baseDefense: 1,
+    baseAttack: 10, baseDefense: 1,
     baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-    
     statusEffects: [],
     mapEffects: [],
     unlockedSkills: [],
-    equippedSkills: [null, null, null, null, null, null], // Dinamik büyüyecek
-    
+    equippedSkills: [null, null, null, null, null, null],
     inventory: new Array(8).fill(null), 
     brooches: new Array(6).fill(null), 
     equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null }
 };
-
-// Seviye Ödülleri
-const LEVEL_SKILL_REWARDS = { 2: 2, 4: 4, 6: 4, 8: 6, 10: 8, 12: 10 };
-const FULL_XP_REQUIREMENTS = Array.from({length: MAX_LEVEL + 1}, () => 5); // Sabit 5 XP
-
-// DOM REFERANSLARI
-const btnBasicAttack = document.getElementById('btn-basic-attack');
-const btnBasicDefend = document.getElementById('btn-basic-defend');
-const heroHpBar = document.getElementById('hero-hp-bar');
-const monsterHpBar = document.getElementById('monster-hp-bar');
-const heroHpText = document.getElementById('hero-hp-text');
-const monsterHpText = document.getElementById('monster-hp-text');
-const heroNameDisplay = document.getElementById('hero-name');
-const monsterNameDisplay = document.getElementById('monster-name');
-const heroRageBar = document.getElementById('hero-rage-bar');
-const heroRageText = document.getElementById('hero-rage-text');
-const townScreen = document.getElementById('town-screen');
-const cityScreen = document.getElementById('city-screen');
-const btnLeaveTown = document.getElementById('btn-leave-town');
-const basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
-const basicSkillList = document.getElementById('basic-skill-list');
-const btnConfirmBasicSkills = document.getElementById('btn-confirm-basic-skills');
-const classSelectionScreen = document.getElementById('class-selection-screen');
-
-// Envanter
-const inventoryScreen = document.getElementById('inventory-screen');
-const btnCloseInventory = document.getElementById('btn-close-inventory');
-const btnOpenInventoryNav = document.getElementById('btn-open-inventory'); 
-
-// Skill Bar
-const skillButtonsContainer = document.getElementById('skill-bar-container');
-const btnOpenSkills = document.getElementById('btn-open-skills');
-const btnOpenStats = document.getElementById('btn-open-stats');
-
-// Ekranlar
-const startScreen = document.getElementById('start-screen');
-const cutsceneScreen = document.getElementById('cutscene-screen');
-const battleScreen = document.getElementById('battle-screen');
-const mapScreen = document.getElementById('map-screen'); 
-const gameOverScreen = document.getElementById('game-over-screen');
-const campfireScreen = document.getElementById('campfire-screen');
-const eventScreen = document.getElementById('event-screen');
-const skillBookScreen = document.getElementById('skill-book-screen');
-const statScreen = document.getElementById('stat-screen');
-const rewardScreen = document.getElementById('reward-screen');
-
-// Üst Bar
-const topHeroName = document.getElementById('top-hero-name');
-const topHeroLevel = document.getElementById('top-hero-level');
-
-// Ödül
-const rewardList = document.getElementById('reward-list');
-const btnRewardContinue = document.getElementById('btn-reward-continue');
-
-// Stat Elementleri
-const statName = document.getElementById('stat-name');
-const statClass = document.getElementById('stat-class');
-const statLevel = document.getElementById('stat-level');
-const statXp = document.getElementById('stat-xp');
-const statPointsDisplay = document.getElementById('stat-points-display'); 
-
-const statHp = document.getElementById('stat-hp');
-const statRage = document.getElementById('stat-rage'); 
-const statAtk = document.getElementById('stat-atk');
-const statDef = document.getElementById('stat-def');
-const statStr = document.getElementById('stat-str');
-const statDex = document.getElementById('stat-dex');
-const statInt = document.getElementById('stat-int');
-const statVit = document.getElementById('stat-vit');
-const statMp = document.getElementById('stat-mp');
-const btnCloseStat = document.getElementById('close-stat-screen');
-
-// Butonlar
-const startButton = document.getElementById('start-button');
-const skipCutsceneButton = document.getElementById('skip-cutscene');
-const cutsceneText = document.getElementById('cutscene-text');
-const returnToMenuButton = document.getElementById('return-to-menu-button');
-
-// Harita DOM
-const mapDisplay = document.getElementById('map-display');
-const mapInfoBox = document.getElementById('map-info-box');
-const mapActionButtons = document.getElementById('map-action-buttons');
-const mapTrailsLayer = document.getElementById('map-trails-layer');
-
-// Görsel Referansları
-const heroDisplayContainer = document.getElementById('hero-display');
-const heroDisplayImg = document.querySelector('#hero-display img');
-const monsterDisplayImg = document.querySelector('#monster-display img');
-const monsterIntentionOverlay = document.getElementById('monster-intention-overlay');
-const fadeOverlay = document.getElementById('fade-overlay');
-const heroStatusContainer = document.getElementById('hero-status-container');
-
-// Campfire
-const btnCampRest = document.getElementById('btn-camp-rest');
-const btnCampTrain = document.getElementById('btn-camp-train');
-const campfireOptionsDiv = document.getElementById('campfire-options');
-const campfireResultDiv = document.getElementById('campfire-result');
-const campfireResultTitle = document.getElementById('campfire-result-title');
-const campfireResultText = document.getElementById('campfire-result-text');
-const btnCampContinue = document.getElementById('btn-camp-continue');
-
-// Event
-const eventTitle = document.getElementById('event-title');
-const eventDesc = document.getElementById('event-desc');
-const eventChoicesContainer = document.getElementById('event-choices-container');
-
-// Skill Book
-const btnCloseSkillBook = document.getElementById('btn-close-skill-book');
-const skillBookList = document.getElementById('skill-book-list');
-const tabCommon = document.getElementById('tab-common'); 
-const tabAttack = document.getElementById('tab-attack'); 
-const tabPassion = document.getElementById('tab-passion'); 
-const skillBookEquippedBar = document.getElementById('skill-book-equipped-bar');
-const skillPointsDisplay = document.getElementById('skill-points-display'); 
-
-
-
-function generateXPTable(maxLevel) {
-    const table = {};
-    // Her level için sabit 5 XP
-    for (let level = 1; level <= maxLevel; level++) {
-        table[level] = 5;
-    }
-    return table;
-}
-
-let monster = null; 
 
 // EVENT HAVUZU
 const EVENT_POOL = [
@@ -256,23 +141,3 @@ const EVENT_POOL = [
         }
     }
 ];
-
-// DÜŞMAN HAVUZLARI
-const TIER_1_ENEMIES = ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"];
-const TIER_2_ENEMIES = ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"];
-const TIER_3_ENEMIES = ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"];
-const TIER_4_ENEMIES = ["Orc Fedaisi"];
-const MAP_CONFIG = {
-    totalStages: 15, // Toplam sütun sayısı (Soldan sağa uzunluk)
-    lanes: 3,        // Satır sayısı (Yukarıdan aşağı genişlik)
-    townStages: [4, 8, 12], // Hangi aşamalarda kesin Köy olacak? (0-indexli düşünürsek 3, 7, 11)
-};
-
-// Harita Verisi (JS Tarafından Doldurulacak)
-let GAME_MAP = {
-    nodes: [],      // Tüm düğümlerin listesi
-    connections: [], // Hangi düğüm hangisine bağlı
-    currentNodeId: null, // Oyuncunun şu anki konumu
-    completedNodes: []   // Oyuncunun geçtiği düğümler
-
-};
