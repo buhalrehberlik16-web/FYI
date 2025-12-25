@@ -138,18 +138,30 @@ function triggerLevelUpEffect() {
 
 // 2. Sınıf Seçme Fonksiyonu:
 function selectClass(className) {
-    if (className !== 'Barbar') return; // Magus ve Trickster şimdilik seçilemez
+    const config = CLASS_CONFIG[className];
+    if (!config) return;
 
     hero.class = className;
-    // Barbar seçildiği için varsayılan statları teyit et (opsiyonel)
-    hero.str = 15;
-    hero.dex = 10;
-    hero.int = 5;
-    hero.vit = 10;
+
+    // 1. Temel Statları Kopyala
+    for (const [stat, value] of Object.entries(config.startingStats)) {
+        hero[stat] = value;
+    }
+
+    // 2. Dirençleri Kopyala (ESKİDEN BURASI EKSİKTİ)
+    hero.baseResistances = { ...config.startingResistances };
+
+    // 3. Element Hasarlarını Kopyala (BURASI DA EKSİKTİ)
+    hero.elementalDamage = { ...config.startingElementalDamage };
+
+    // 4. Canı ve Kaynakları Sıfırla/Hesapla
+    hero.rage = 0; // Herkes 0 öfke ile başlar
+
+    writeLog(`⚔️ Sınıf Seçildi: ${className}. Statlar ve dirençler yüklendi.`);
     
-    writeLog(`Sınıf Seçildi: ${className}`);
+    // UI'ı hemen güncelle (Özellikle U ekranındaki direnç kutuları dolsun)
+    updateStats(); 
     
-    // Seçimden sonra cutscene (yükleme) ekranına geç
     startCutscene();
 }
 
@@ -184,31 +196,20 @@ function startCutscene() {
 // --- INIT GAME (TAM SIFIRLAMA) ---
 function initGame() {
     hero.maxHp = 100; hero.hp = hero.maxHp;
-    hero.baseAttack = 10; hero.baseDefense = 1;
     hero.level = 1; hero.xp = 0; 
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
-    
-    hero.statPoints = 0;
-    hero.str = 15; hero.dex = 10; hero.int = 5; hero.mp_pow = 0; hero.vit = 10;
-    hero.skillPoints = 0; 
+    hero.statPoints = 0; hero.skillPoints = 0;
     hero.unlockedSkills = []; 
     hero.equippedSkills = [null, null, null, null, null, null]; 
+    hero.currentAct = 1;
 
-    // Yeni sistem verilerini sıfırla
     hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.elementalDamage = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
-    
-    // 3. Diğer Veriler
-	hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.statusEffects = []; hero.mapEffects = []; 
     hero.inventory = new Array(8).fill(null);
     hero.brooches = new Array(6).fill(null);
-    hero.equipment = {
-        earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null
-    };
-
-    delete hero.lastCampfireStage; 
-    delete hero.lastEnemy;
+    hero.equipment = { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null };
+    
 
     GAME_MAP.nodes = []; GAME_MAP.connections = []; GAME_MAP.currentNodeId = null; GAME_MAP.completedNodes = [];
 
@@ -220,10 +221,9 @@ function initGame() {
         marker.style.left = '10px';    
         marker.style.top = '50%';      
     }
-    
-    const mapDisplay = document.getElementById('map-display');
-    if (mapDisplay) { mapDisplay.scrollLeft = 0; }
-
+		const mapDisp = document.getElementById('map-display');
+		if (mapDisp) mapDisp.scrollLeft = 0;
+		
     isHeroDefending = false; monster = null; isHeroTurn = true; 
 
     if (typeof generateMap === 'function') generateMap(); 
@@ -232,9 +232,6 @@ function initGame() {
     if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
 
     writeLog("--- Yeni Oyun Başlatıldı ---");
-    const heroImg = document.querySelector('#hero-display img');
-    if(heroImg) heroImg.src = HERO_IDLE_SRC;
-    
     updateStats();
     if(typeof updateGoldUI === 'function') updateGoldUI();
     if(typeof renderInventory === 'function') renderInventory();
@@ -320,8 +317,106 @@ returnToMenuButton.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    initGame(); 
-    switchScreen(startScreen); 
-    if(btnCloseInventory) btnCloseInventory.addEventListener('click', toggleInventory);
+    // 1. Oyunu ve İlk Ekranı Başlat
+    if (typeof initGame === 'function') initGame(); 
+    if (typeof switchScreen === 'function') switchScreen(window.startScreen); 
 
+    // 2. ANA MENÜ VE SEÇİM BUTONLARI
+    if (window.startButton) {
+        window.startButton.onclick = () => switchScreen(window.classSelectionScreen);
+    }
+
+    if (window.btnConfirmBasicSkills) {
+        window.btnConfirmBasicSkills.onclick = () => {
+            if (typeof window.confirmBasicSkills === 'function') {
+                window.confirmBasicSkills();
+            }
+        };
+    }
+
+    if (window.returnToMenuButton) {
+        window.returnToMenuButton.onclick = () => {
+            if (typeof initGame === 'function') initGame();
+            switchScreen(window.startScreen);
+        };
+    }
+
+    // 3. ÜST NAVİGASYON BAR BUTONLARI (U, I, K)
+    if (window.btnOpenSkills) {
+        window.btnOpenSkills.onclick = () => toggleSkillBook();
+    }
+    if (window.btnOpenStats) {
+        window.btnOpenStats.onclick = () => toggleStatScreen();
+    }
+    if (window.btnOpenInventoryNav) {
+        window.btnOpenInventoryNav.onclick = () => toggleInventory();
+    } else if (window.btnOpenInventory) {
+        window.btnOpenInventory.onclick = () => toggleInventory();
+    }
+
+    // 4. PUAN BİLDİRİMLERİ (STAT + / SKILL +)
+    if (window.statNotif) {
+        window.statNotif.onclick = () => toggleStatScreen();
+    }
+    if (window.skillNotif) {
+        window.skillNotif.onclick = () => toggleSkillBook();
+    }
+
+    // 5. YETENEK KİTABI TABLARI (Gelişmiş Bağlama)
+    const tabList = ['common', 'brutal', 'chaos', 'fervor'];
+    tabList.forEach(tabId => {
+        const tabEl = document.getElementById(`tab-${tabId}`);
+        if (tabEl) {
+            tabEl.onclick = (e) => {
+                e.preventDefault();
+                if (typeof setSkillTab === 'function') setSkillTab(tabId);
+            };
+        }
+    });
+
+    // 6. TÜM KAPATMA TUŞLARI (X) - KESİN ÇÖZÜM
+    if (window.btnCloseSkillBook) {
+        window.btnCloseSkillBook.onclick = (e) => {
+            e.preventDefault();
+            toggleSkillBook();
+        };
+    }
+
+    if (window.btnCloseStat) {
+        window.btnCloseStat.onclick = (e) => {
+            e.preventDefault();
+            toggleStatScreen();
+        };
+    }
+
+    if (window.btnCloseInventory) {
+        window.btnCloseInventory.onclick = (e) => {
+            e.preventDefault();
+            console.log("Envanter kapatma tıklandı.");
+            toggleInventory();
+        };
+    }
+
+    // 7. TOWN (KÖY) ÇIKIŞ BUTONU
+    if (window.btnLeaveTown) {
+        window.btnLeaveTown.onclick = () => {
+            writeLog("Köyden ayrıldın.");
+            switchScreen(window.mapScreen);
+        };
+    }
+	//8. MENU DÖNÜŞ BUTONU
+	if (window.returnToMenuButton) {
+        window.returnToMenuButton.onclick = () => {
+            // KRİTİK: Ana menüye dönerken siyah perdeyi anında YOK ET
+            const overlay = document.getElementById('fade-overlay');
+            if (overlay) {
+                overlay.style.transition = "none"; // Animasyonu kapat
+                overlay.classList.remove('active-fade'); // Sınıfı sil
+                setTimeout(() => { overlay.style.transition = "opacity 1.5s ease-in-out"; }, 100); // Animasyonu geri aç
+            }
+
+            if (typeof initGame === 'function') initGame();
+            switchScreen(window.startScreen);
+        };
+    }
 });

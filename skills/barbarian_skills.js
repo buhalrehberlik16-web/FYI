@@ -12,6 +12,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Saldırı gücü + %60 Str bonusu. 20 Öfke harcar.",
             rageCost: 20,
             levelReq: 1,
+			cooldown: 0,
             icon: 'brutal_slash.png',
             type: 'attack',
             category: 'brutal', 
@@ -31,6 +32,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
             rageCost: 20,
             levelReq: 1,
+			cooldown: 1,
             icon: 'brutal_reckless_strike.png',
             type: 'attack',
             category: 'brutal',
@@ -51,6 +53,7 @@ const BARBARIAN_SKILLS = {
         menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır.",
         rageCost: 0,
         levelReq: 1,
+		cooldown: 2,
         icon: 'brutal_wind_up.png',
         type: 'buff',
         category: 'brutal',
@@ -88,6 +91,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>",
             rageCost: 30,
             levelReq: 3,
+			cooldown: 2,
             icon: 'brutal_bash.png',
             type: 'attack',
             category: 'brutal',
@@ -108,6 +112,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>",
             rageCost: 30,
             levelReq: 3,
+			cooldown: 1,
             icon: 'brutal_pierce_through.png',
             type: 'attack',
             category: 'brutal',
@@ -130,6 +135,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span>",
             rageCost: 25,
             levelReq: 3,
+			cooldown: 2,
             icon: 'brutal_daze.png',
             type: 'attack',
             category: 'brutal',
@@ -150,6 +156,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.",
             rageCost: 30,
             levelReq: 3,
+			cooldown: 2,
             icon: 'brutal_armor_break.png',
             type: 'attack',
             category: 'brutal', 
@@ -170,6 +177,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span>",
             rageCost: 50,
             levelReq: 6,
+			cooldown: 5,
             icon: 'brutal_fury.png',
             type: 'buff',
             category: 'brutal',
@@ -187,17 +195,85 @@ const BARBARIAN_SKILLS = {
     // ======================================================
     // TAB: CHAOS (KAOS)
     // ======================================================
+		blood_price: {
+        data: {
+            name: "Kan Bedeli",
+            menuDescription: "Maksimum Canın %15'ini feda et, o kadar Öfke kazan. <br><span style='color:cyan'>(Hızlı Aksiyon)</span>",
+            rageCost: 10, 
+            levelReq: 1, 
+            cooldown: 5, 
+            icon: 'chaos_blood_price.png',
+            type: 'utility', 
+            category: 'chaos', 
+            tier: 1
+        },
+        onCast: function() {
+            const hpLoss = Math.floor(hero.maxHp * 0.15);
+            hero.hp = Math.max(1, hero.hp - hpLoss);
+            hero.rage = Math.min(hero.maxRage, hero.rage + hpLoss);
 
+            // Cooldown ekle (6 yazıyoruz ki 5 tam tur kilitli kalsın)
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_price', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+
+            showFloatingText(document.getElementById('hero-display'), hpLoss, 'damage');
+            showFloatingText(document.getElementById('hero-display'), `+${hpLoss} Rage`, 'heal');
+            writeLog(`🩸 **Kan Bedeli**: ${hpLoss} Can feda ederek ${hpLoss} Öfke kazandın.`);
+
+            updateStats();
+            // Hızlı aksiyon olduğu için nextTurn() çağrılmıyor, turu sana geri veriyoruz
+            setTimeout(() => { 
+                window.isHeroTurn = true; 
+                toggleSkillButtons(false); 
+            }, 300);
+        }
+    },
+	
+	// --- CHAOS TIER 2 ---
+    fiery_blade: {
+        data: {
+            name: "Alevli Kılıç",
+            menuDescription: "3 Tur boyunca tüm saldırıların %50 daha fazla vurur (Ateş Hasarı).",
+            rageCost: 30, 
+            levelReq: 1, 
+            cooldown: 4, 
+            icon: 'chaos_fiery_blade.png',
+            type: 'buff', 
+            category: 'chaos', 
+            tier: 2			
+        },
+        onCast: function() {
+            // Mevcut hasar motorumuzdaki atk_up_percent çarpanını kullanıyoruz
+            hero.statusEffects.push({ 
+                id: 'atk_up_percent', 
+                name: 'Alevli Kılıç', 
+                value: 0.50, 
+                turns: 4, // Bu tur + 3 tam tur
+                waitForCombat: false, 
+                resetOnCombatEnd: true 
+            });
+
+            // Skill Cooldown
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'fiery_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "ALEVLENDİ!", 'heal');
+            writeLog(`🔥 **Alevli Kılıç**: Silahın alev aldı! 3 tur boyunca %50 ekstra hasar vereceksin.`);
+            
+            setTimeout(nextTurn, 1000);
+        }
+    },
+	
     hell_blade: {
         data: {
             name: "Cehennem Kılıcı",
             menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
             rageCost: 25,
-            levelReq: 1,
-            icon: 'icon_hell_blade.png',
+            levelReq: 2,
+			cooldown: 0,
+            icon: 'chaos_hell_blade.png',
             type: 'attack',
             category: 'chaos', 
-            tier: 1,
+            tier: 2,
             scaling: { atkMult: 1.0, stats: { int: 0.8 }, elements: { fire: 0.0 } }
         },
         onCast: function(attacker, defender) {
@@ -219,7 +295,8 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
-            icon: 'icon_strike.png',
+			cooldown: 0,
+            icon: 'fervor_pommel_bash.png',
             type: 'attack',
             category: 'fervor',
             tier: 1,
@@ -239,6 +316,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>.",
             rageCost: 20,
             levelReq: 2,
+			cooldown: 3,
             icon: 'icon_battle_cry.png',
             type: 'buff',
             category: 'fervor', 
@@ -260,6 +338,7 @@ const BARBARIAN_SKILLS = {
             menuDescription: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.",
             rageCost: 50,
             levelReq: 3,
+			cooldown: 4,
             icon: 'restore_healing.png',
             type: 'defense',
             category: 'fervor', 

@@ -326,7 +326,7 @@
     <div class="stat-window">
         <div class="stat-header">
             <h2>Karakter İstatistikleri</h2>
-            <button id="close-stat-screen" class="close-btn">X</button>
+            <button id="close-stat-screen" class="close-btn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="stat-content">
@@ -532,7 +532,7 @@
                 <div class="inventory-window">
                     <div class="inventory-header">
                         <h3>ENVANTER</h3>
-                        <button id="btn-close-inventory" class="close-btn">X</button>
+                        <button id="btn-close-inventory" class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
 
                     <div class="inventory-content">
@@ -671,16 +671,25 @@
     </div> <!-- game-container KAPANIŞI -->
 
     <!-- Scripts -->
-    <script src="enemy_data.js"></script>
-    <script src="game_data.js"></script>
-	<script src="skills/common_skills.js"></script>
-	<script src="skills/barbarian_skills.js"></script>
-	<script src="skills/magus_skills.js"></script>
-	<script src="skills/trickster_skills.js"></script>
-    <script src="skills/skill_engine.js"></script>
-    <script src="ui_manager.js"></script>
-    <script src="map_manager.js"></script>
-    <script src="combat_manager.js"></script>
-    <script src="main.js" defer></script> 
+    <!-- 1. VERİLER -->
+<script src="enemy_data.js"></script>
+<script src="game_data.js"></script>
+
+<!-- 2. SKILL ENGINE -->
+<script src="skills/common_skills.js"></script>
+<script src="skills/barbarian_skills.js"></script>
+<script src="skills/skill_engine.js"></script>
+
+<!-- 3. UI KATMANI (BÖLÜNMÜŞ) -->
+<script src="js/ui/ui_elements.js"></script>
+<script src="js/ui/screen_manager.js"></script>
+<script src="js/ui/battle_hud.js"></script>
+<script src="js/ui/menu_manager.js"></script>
+<script src="js/ui/interaction_ui.js"></script>
+
+<!-- 4. MANTIK KATMANI -->
+<script src="combat_manager.js"></script>
+<script src="map_manager.js"></script>
+<script src="main.js" defer></script>
 </body>
 </html>

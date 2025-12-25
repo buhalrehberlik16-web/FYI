@@ -1,5 +1,18 @@
 // map_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM
 
+const MAP_CONFIG = {
+    totalStages: 15, 
+    lanes: 3,        
+    townStages: [4, 8, 12]
+};
+let GAME_MAP = {
+    nodes: [],      // Tüm düğümlerin listesi
+    connections: [], // Hangi düğüm hangisine bağlı
+    currentNodeId: null, // Oyuncunun şu anki konumu
+    completedNodes: []   // Oyuncunun geçtiği düğümler
+};
+
+
 // --- HARİTA ÜRETİM (GENERATOR) ---
 let enemiesByStage = {}; // Hangi stage'e hangi düşmanların atandığını tutar
 
@@ -455,6 +468,7 @@ function enterCity() {
 function startNextAct() {
     if(confirm("2. Perdeye geçmek istediğine emin misin? (İlerlemen kaydedilecek)")) {
         writeLog("🚢 Yeni topraklara yelken açıyorsun...");
+		
         // Burada haritayı yeniden üreten veya Act 2'yi başlatan kodlar çalışır
         // generateMap(); 
         // switchScreen(mapScreen);
