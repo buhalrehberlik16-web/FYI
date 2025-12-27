@@ -326,7 +326,7 @@ const BARBARIAN_SKILLS = {
             animateHealingParticles(); updateStats();
             setTimeout(() => { nextTurn(); }, 1000);
         }
-    }
+    },
 
 	// Ulti 1 (Lose all HP, deal as much Dmg) 
 	// Path_of_Pain (Cost: All Rage - Deal ?xInt based damage, gain HP equal to Rage Spent)
@@ -420,4 +420,5 @@ const BARBARIAN_SKILLS = {
 
 
 };
+
 
