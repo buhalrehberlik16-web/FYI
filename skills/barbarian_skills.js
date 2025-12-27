@@ -6,6 +6,27 @@ const BARBARIAN_SKILLS = {
     // TAB: BRUTAL (VAHŞET)
     // ======================================================
 
+	Pommel_Bash: { 
+        data: {
+            name: "Kabzayla Vur",
+            menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
+            rageCost: 0,
+            levelReq: 1,
+			cooldown: 0,
+            icon: 'fervor_pommel_bash.png',
+            type: 'attack',
+            category: 'brutal',
+            tier: 1,
+            scaling: { atkMult: 0, stats: { str: 1.2 }, elements: { physical: 1.0 } }
+        },
+        onCast: function(attacker, defender) {
+            const dmg = SkillEngine.calculate(attacker, this.data);
+            hero.rage = Math.min(hero.maxRage, hero.rage + 18);
+            showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
+            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+        }
+    },
+	
     slash: {
         data: {
             name: "Kesik",
@@ -47,43 +68,6 @@ const BARBARIAN_SKILLS = {
         }
     },
 
-    wind_up: {
-    data: {
-        name: "Kurulma",
-        menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır.",
-        rageCost: 0,
-        levelReq: 1,
-		cooldown: 2,
-        icon: 'brutal_wind_up.png',
-        type: 'buff',
-        category: 'brutal',
-        tier: 1,
-        // Bu bir buff olduğu için hasar motoruna direkt girmez ama 
-        // bonusu belirlemek için scaling verisini burada tutabiliriz.
-        scaling: { stats: { str: 1.0 } } 
-    },
-    onCast: function(attacker, defender) {
-        // Motoru kullanarak bonusu hesapla (Atak mult 0, sadece stat)
-        const bonusDmg = SkillEngine.calculate(attacker, this.data);
-        
-        hero.statusEffects.push({ 
-            id: 'wind_up', 
-            name: 'Güç Toplandı', 
-            value: bonusDmg, 
-            turns: 5, 
-            waitForCombat: false, 
-            resetOnCombatEnd: true 
-        });
-
-        hero.rage = Math.min(hero.maxRage, hero.rage + 15);
-        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-        
-        updateStats();
-        showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
-        writeLog(`💨 **${this.data.name}**: Bir sonraki vuruşa +${bonusDmg} güç eklendi.`);
-        setTimeout(() => { nextTurn(); }, 1000);
-    }
-},
 
     bash: {
         data: {
@@ -285,30 +269,109 @@ const BARBARIAN_SKILLS = {
         }
     },
 
+	// --- CHAOS TIER 3 ---
+    double_blade: {
+        data: {
+            name: "İki Uçlu Değnek",
+            menuDescription: "Kendini umursamadan düşmana saldır.",
+            rageCost: 20, 
+            levelReq: 3, 
+            cooldown: 4, 
+            icon: 'chaos_fiery_blade.png',
+            type: 'buff', 
+            category: 'chaos', 
+            tier: 3			
+        },
+        onCast: function() {
+            // Mevcut hasar motorumuzdaki atk_up_percent çarpanını kullanıyoruz
+            hero.statusEffects.push({ 
+                id: 'atk_up_percent', 
+                name: 'Alevli Kılıç', 
+                value: 0.50, 
+                turns: 4, // Bu tur + 3 tam tur
+                waitForCombat: false, 
+                resetOnCombatEnd: true 
+            });
+
+            // Skill Cooldown
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'fiery_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "ALEVLENDİ!", 'heal');
+            writeLog(`🔥 **Alevli Kılıç**: Silahın alev aldı! 3 tur boyunca %50 ekstra hasar vereceksin.`);
+            
+            setTimeout(nextTurn, 1000);
+        }
+    },
+	
+    Cauterize: {
+		//Lose 10% HP, gain 5%HP+?xInt per turn
+        data: {
+            name: "Yenilenme",
+            menuDescription: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.",
+            rageCost: 50,
+            levelReq: 3,
+			cooldown: 4,
+            icon: 'restore_healing.png',
+            type: 'defense',
+            category: 'chaos', 
+            tier: 3
+        },
+        onCast: function(attacker, defender) {
+            const initialHeal = 30;
+            const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
+            if ((hero.hp - oldHp) > 0) showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
+            hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'restore_healing', resetOnCombatEnd: true });
+            animateHealingParticles(); updateStats();
+            setTimeout(() => { nextTurn(); }, 1000);
+        }
+    }
+
+	// Ulti 1 (Lose all HP, deal as much Dmg) 
+	// Path_of_Pain (Cost: All Rage - Deal ?xInt based damage, gain HP equal to Rage Spent)
+
     // ======================================================
     // TAB: FERVOR (COŞKU)
     // ======================================================
     
-	Pommel_Bash: { 
-        data: {
-            name: "Kabzayla Vur",
-            menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
-            rageCost: 0,
-            levelReq: 1,
-			cooldown: 0,
-            icon: 'fervor_pommel_bash.png',
-            type: 'attack',
-            category: 'fervor',
-            tier: 1,
-            scaling: { atkMult: 0, stats: { str: 1.2 }, elements: { physical: 1.0 } }
-        },
-        onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            hero.rage = Math.min(hero.maxRage, hero.rage + 18);
-            showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
-        }
+    wind_up: {
+    data: {
+        name: "Kurulma",
+        menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır.",
+        rageCost: 0,
+        levelReq: 1,
+		cooldown: 2,
+        icon: 'brutal_wind_up.png',
+        type: 'buff',
+        category: 'fervor',
+        tier: 1,
+        // Bu bir buff olduğu için hasar motoruna direkt girmez ama 
+        // bonusu belirlemek için scaling verisini burada tutabiliriz.
+        scaling: { stats: { str: 1.0 } } 
     },
+    onCast: function(attacker, defender) {
+        // Motoru kullanarak bonusu hesapla (Atak mult 0, sadece stat)
+        const bonusDmg = SkillEngine.calculate(attacker, this.data);
+        
+        hero.statusEffects.push({ 
+            id: 'wind_up', 
+            name: 'Güç Toplandı', 
+            value: bonusDmg, 
+            turns: 5, 
+            waitForCombat: false, 
+            resetOnCombatEnd: true 
+        });
+
+        hero.rage = Math.min(hero.maxRage, hero.rage + 15);
+        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+        
+        updateStats();
+        showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
+        writeLog(`💨 **${this.data.name}**: Bir sonraki vuruşa +${bonusDmg} güç eklendi.`);
+        setTimeout(() => { nextTurn(); }, 1000);
+    }
+},
 	
     battle_cry: {
         data: {
@@ -331,11 +394,11 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
-
-    restore_healing: {
+	//Light_Up 1.5Atk+1.5MP Dmg (light or fire), Reduce enemy def for 2 turns,
+    Healing_Light: {
         data: {
-            name: "Yenilenme",
-            menuDescription: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.",
+            name: "İyileştiren Işık",
+            menuDescription: "Güçlü bir ışık herkesi iyileştirir. 30 Öfke harcar.",
             rageCost: 50,
             levelReq: 3,
 			cooldown: 4,
@@ -354,5 +417,6 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     }
+
 
 };
