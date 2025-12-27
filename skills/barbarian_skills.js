@@ -336,7 +336,7 @@ const BARBARIAN_SKILLS = {
     // ======================================================
     
     wind_up: {
-    data: {
+    	data: {
         name: "Kurulma",
         menuDescription: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır.",
         rageCost: 0,
@@ -420,3 +420,4 @@ const BARBARIAN_SKILLS = {
 
 
 };
+
