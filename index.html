@@ -27,21 +27,21 @@
                 <span id="top-hero-name">Barbar</span> <span id="top-hero-level" style="color:#f0e68c; font-size:0.8em;">(Lv.1)</span>
 		<!-- YENİ: Puan Bildirim Alanı -->
         <div id="points-notification-area">
-            <div id="notif-stat" class="point-notif stat-notif hidden" title="Verilmemiş Stat Puanı!">Stat +</div>
-            <div id="notif-skill" class="point-notif skill-notif hidden" title="Verilmemiş Skill Puanı!">Skill +</div>
+            <div id="notif-stat" class="point-notif stat-notif hidden" title="Verilmemiş Stat Puanı!" data-i18n="stat_plus_notif">Stat +</div>
+            <div id="notif-skill" class="point-notif skill-notif hidden" title="Verilmemiş Skill Puanı!" data-i18n="skill_plus_notif">Skill +</div>
         </div>            
 			</div>
 			<!-- Orta: Menü Butonları (YENİ) -->
     <div id="top-nav-menu">
         <button id="btn-open-skills" class="nav-btn" title="Yetenek Kitabı (K)">
-            <i class="fas fa-book"></i> <span class="nav-text">Skill (K)</span>
+            <i class="fas fa-book"></i> <span class="nav-text" data-i18n="nav_skill">Skill (K)</span>
         </button>
         <button id="btn-open-stats" class="nav-btn" title="Karakter Statları (U)">
-            <i class="fas fa-user"></i> <span class="nav-text">Stat (U)</span>
+            <i class="fas fa-user"></i> <span class="nav-text" data-i18n="nav_stat">Stat (U)</span>
         </button>
 		<button id="btn-open-inventory" class="nav-btn" title="Envanter (I)">
-    <i class="fas fa-briefcase"></i> <span class="nav-text">Çanta (I)</span>
-</button>
+            <i class="fas fa-briefcase"></i> <span class="nav-text" data-i18n="nav_inv">Çanta (I)</span>
+        </button>
     </div>
         </div>
 
@@ -53,16 +53,19 @@
     <div class="menu-overlay">
         <div class="logo-area">
             <h1 class="game-title">SMAUG?</h1>
-            <p class="game-subtitle">Karanlık zindanlarda bir efsane doğuyor?</p>
+            <p class="game-subtitle" data-i18n="game_subtitle">Karanlık zindanlarda bir efsane doğuyor?</p>
         </div>
 
         <div class="menu-actions">
-            <button id="start-button" class="menu-main-btn">
+            <button id="start-button" class="menu-main-btn" data-i18n="start_adventure">
                 <i class="fas fa-sword"></i> MACERAYA BAŞLA
             </button>
+			<button id="btn-continue" class="menu-main-btn hidden" data-i18n="continue_game">
+				<i class="fas fa-play"></i> DEVAM ET
+			</button>
             <div class="menu-sub-actions">
-                <button class="menu-secondary-btn" onclick="alert('Yakında!')">AYARLAR</button>
-                <button class="menu-secondary-btn" onclick="window.close()">ÇIKIŞ</button>
+                <button class="menu-secondary-btn" onclick="openSettings()" data-i18n="settings">AYARLAR</button>
+                <button class="menu-secondary-btn" onclick="window.close()" data-i18n="exit">ÇIKIŞ</button>
             </div>
         </div>
 
@@ -73,7 +76,7 @@
 <!-- SINIF SEÇİM EKRANI -->
 <div id="class-selection-screen" class="screen hidden">
     <div class="selection-overlay">
-        <h1 class="selection-title">Kaderini Belirle</h1>
+        <h1 class="selection-title" data-i18n="class_selection_title">Kaderini Belirle</h1>
         <div class="class-cards-container">
             
             <!-- BARBAR (Aktif) -->
@@ -82,37 +85,37 @@
                     <img src="images/barbarianinventory.png" alt="Barbar">
                 </div>
                 <div class="class-info">
-                    <h2>BARBAR</h2>
-                    <p>Saf fiziksel güç. Öfkesiyle zindanları sarsar.</p>
+                    <h2 data-i18n="class_barbarian_name">BARBAR</h2>
+                    <p data-i18n="class_barbarian_desc">Saf fiziksel güç. Öfkesiyle zindanları sarsar.</p>
                     <ul class="class-stats-preview">
-                        <li> ⚔️ Yüksek Hasar ⚔️</li>
-                        <li> 💖 Yüksek Can 💖</li>
+                        <li data-i18n="class_high_damage"> ⚔️ Yüksek Hasar ⚔️</li>
+                        <li data-i18n="class_high_hp"> 💖 Yüksek Can 💖</li>
                     </ul>
                 </div>
-                <div class="selection-btn">SEÇ</div>
+                <div class="selection-btn" data-i18n="select">SEÇ</div>
             </div>
 
             <!-- MAGUS (Kilitli) -->
             <div class="class-card locked">
-                <div class="lock-overlay"><i class="fas fa-lock"></i><span>YAKINDA</span></div>
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span data-i18n="coming_soon">YAKINDA</span></div>
                 <div class="class-image-box">
                     <img src="images/magus_placeholder.png" alt="Magus" style="filter: grayscale(100%);">
                 </div>
                 <div class="class-info">
-                    <h2>MAGUS</h2>
-                    <p>Kadim büyülerin ustası. Elementleri kontrol eder.</p>
+                    <h2 data-i18n="class_magus_name">MAGUS</h2>
+                    <p data-i18n="class_magus_desc">Kadim büyülerin ustası. Elementleri kontrol eder.</p>
                 </div>
             </div>
 
             <!-- TRICKSTER (Kilitli) -->
             <div class="class-card locked">
-                <div class="lock-overlay"><i class="fas fa-lock"></i><span>YAKINDA</span></div>
+                <div class="lock-overlay"><i class="fas fa-lock"></i><span data-i18n="coming_soon">YAKINDA</span></div>
                 <div class="class-image-box">
                     <img src="images/trickster_placeholder.png" alt="Trickster" style="filter: grayscale(100%);">
                 </div>
                 <div class="class-info">
-                    <h2>TRICKSTER</h2>
-                    <p>Hız ve kurnazlık. Gölgelerin arasından saldırır.</p>
+                    <h2 data-i18n="class_trickster_name">TRICKSTER</h2>
+                    <p data-i18n="class_trickster_desc">Hız ve kurnazlık. Gölgelerin arasından saldırır.</p>
                 </div>
             </div>
 
@@ -123,37 +126,37 @@
 
             <!-- 2. LOADING -->
             <div id="cutscene-screen" class="screen hidden">
-                <h2 id="cutscene-text">Hazırlanılıyor...</h2>
+                <h2 id="cutscene-text" data-i18n="preparing">Hazırlanılıyor...</h2>
                 <div class="loading-bar"></div>
-                <button id="skip-cutscene" class="skip-button">Atla</button>
+                <button id="skip-cutscene" class="skip-button" data-i18n="skip">Atla</button>
             </div>
 
 <!-- 2.5 BASIC SKILL SEÇİM EKRANI -->
 <div id="basic-skill-selection-screen" class="screen hidden">
-    <h1>Savaş Tarzını Seç</h1>
-    <p>Bir Saldırı ve bir Savunma yeteneği belirle.</p>
+    <h1 data-i18n="combat_style_title">Savaş Tarzını Seç</h1>
+    <p data-i18n="combat_style_subtitle">Bir Saldırı ve bir Savunma yeteneği belirle.</p>
 	<!-- YENİ UYARI -->
-    <p style="color:#ff4d4d; font-size:0.9em; font-style:italic;">Dikkat: Seçilmeyen yetenekler bu oyun boyunca kilitli kalacak!</p>
+    <p style="color:#ff4d4d; font-size:0.9em; font-style:italic;" data-i18n="skill_lock_warning">Dikkat: Seçilmeyen yetenekler bu oyun boyunca kilitli kalacak!</p>
     
     <!-- İKİYE BÖLÜNMÜŞ SEÇİM ALANI -->
     <div class="split-selection-container">
         
         <!-- SOL: SALDIRI -->
         <div class="selection-column">
-            <h3 style="color:#ff4d4d;">BİRİNCİL (Saldırı)</h3>
+            <h3 style="color:#ff4d4d;" data-i18n="primary_attack">BİRİNCİL (Saldırı)</h3>
             <div id="selection-list-attack" class="skill-column-grid"></div>
         </div>
 
         <!-- SAĞ: SAVUNMA -->
         <div class="selection-column">
-            <h3 style="color:#3498db;">İKİNCİL (Savunma)</h3>
+            <h3 style="color:#3498db;" data-i18n="secondary_defense">İKİNCİL (Savunma)</h3>
             <div id="selection-list-defense" class="skill-column-grid"></div>
         </div>
 
     </div>
     
     <div class="selection-footer">
-        <button id="btn-confirm-basic-skills" disabled>Maceraya Başla</button>
+        <button id="btn-confirm-basic-skills" disabled data-i18n="start_adventure_btn">Maceraya Başla</button>
     </div>
 </div>
 
@@ -174,7 +177,7 @@
     </div>
     
     <div id="map-info-box">
-        <h2 id="current-node-name">Harita Yükleniyor...</h2>
+        <h2 id="current-node-name" data-i18n="map_loading">Harita Yükleniyor...</h2>
         <p id="map-description">...</p>
         <div id="map-action-buttons"></div>
     </div>
@@ -183,7 +186,7 @@
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
 					<div id="turn-counter-box">
-					<span class="turn-label">TUR</span>
+					<span class="turn-label" data-i18n="turn_label">TUR</span>
 					<span id="turn-count-display">1</span>
 				</div>
 
@@ -252,16 +255,16 @@
             <div id="campfire-screen" class="screen hidden">
                 <div class="fire-glow-effect"></div>
                 <div class="campfire-content">
-                    <h1>🔥 Kamp Ateşi 🔥</h1>
-                    <p id="campfire-desc">Dinlen veya Geliş.</p>
+                    <h1 data-i18n="campfire_title">🔥 Kamp Ateşi 🔥</h1>
+                    <p id="campfire-desc" data-i18n="campfire_desc">Dinlen veya Geliş.</p>
                     <div id="campfire-options">
-                        <button id="btn-camp-rest"><i class="fas fa-bed"></i> Dinlen (+HP)</button>
-                        <button id="btn-camp-train"><i class="fas fa-dumbbell"></i> Antrenman (+XP)</button>
+                        <button id="btn-camp-rest"><i class="fas fa-bed"></i> <span data-i18n="rest_hp">Dinlen (+HP)</span></button>
+                        <button id="btn-camp-train"><i class="fas fa-dumbbell"></i> <span data-i18n="train_xp">Antrenman (+XP)</span></button>
                     </div>
                     <div id="campfire-result" class="hidden">
                         <h2 id="campfire-result-title"></h2>
                         <p id="campfire-result-text"></p>
-                        <button id="btn-camp-continue">Devam</button>
+                        <button id="btn-camp-continue" data-i18n="continue_btn">Devam</button>
                     </div>
                 </div>
             </div>
@@ -269,8 +272,8 @@
             <!-- 6. OLAY (EVENT) -->
             <div id="event-screen" class="screen hidden">
                 <div class="event-content">
-                    <h1 id="event-title">Gizemli Sunak</h1>
-                    <p id="event-desc">Eski bir sunak parlıyor.</p>
+                    <h1 id="event-title" data-i18n="mysterious_altar">Gizemli Sunak</h1>
+                    <p id="event-desc" data-i18n="altar_desc">Eski bir sunak parlıyor.</p>
                     <div id="event-choices-container"></div>
                 </div>
             </div>
@@ -278,45 +281,45 @@
             <!-- 7. ÖDÜL (REWARD) -->
             <div id="reward-screen" class="screen hidden">
                 <div class="reward-content">
-                    <h2>ZAFER!</h2>
-                    <p class="reward-subtitle">Düşmanı alt ettin.</p>
+                    <h2 data-i18n="victory_title">ZAFER!</h2>
+                    <p class="reward-subtitle" data-i18n="defeat_enemy_desc">Düşmanı alt ettin.</p>
                     <hr style="border-color: #444; width: 100%; margin: 15px 0;">
                     <div id="reward-list"></div>
-                    <button id="btn-reward-continue" class="reward-continue-btn">Yola Devam Et</button>
+                    <button id="btn-reward-continue" class="reward-continue-btn" data-i18n="continue_journey">Yola Devam Et</button>
                 </div>
             </div>
             
             <!-- 8. GAME OVER -->
             <div id="game-over-screen" class="screen hidden">
-                <h1 class="game-over-title">ÖLDÜN!</h1>
-                <button id="return-to-menu-button">Ana Menüye Dön</button>
+                <h1 class="game-over-title" data-i18n="dead_title">ÖLDÜN!</h1>
+                <button id="return-to-menu-button" data-i18n="back_to_menu">Ana Menüye Dön</button>
             </div>
 
             <!-- 9. SKILL BOOK (YENİLENEN YAPI) -->
             <div id="skill-book-screen" class="hidden">
                 <div class="skill-book-window">
                     <div class="skill-book-header">
-                        <h2>📖 Yetenek Kitabı</h2>
+                        <h2 data-i18n="skill_book_title">📖 Yetenek Kitabı</h2>
                         <button id="btn-close-skill-book" class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
                     
                     <!-- YENİ: Skill Puanı Göstergesi -->
                     <div id="skill-points-header" class="skill-points-box">
-                        YETENEK PUANI: <span id="skill-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
+                        <span data-i18n="skill_points_label">YETENEK PUANI:</span> <span id="skill-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
                     </div>
 
                     <div class="skill-tabs">
-                        <button id="tab-common" class="tab-btn active">GENEL (Common)</button>
-                        <button id="tab-brutal" class="tab-btn">VAHŞET (Brutal)</button>
-						<button id="tab-chaos" class="tab-btn">KAOS (Chaos)</button>
-						<button id="tab-fervor" class="tab-btn">COŞKU (Fervor)</button>
+                        <button id="tab-common" class="tab-btn active" data-i18n="tab_common">GENEL (Common)</button>
+                        <button id="tab-brutal" class="tab-btn" data-i18n="tab_brutal">VAHŞET (Brutal)</button>
+						<button id="tab-chaos" class="tab-btn" data-i18n="tab_chaos">KAOS (Chaos)</button>
+						<button id="tab-fervor" class="tab-btn" data-i18n="tab_fervor">COŞKU (Fervor)</button>
                     </div>
 
                     <div class="skill-list-container">
-                        <p class="hint-text">Açık yetenekleri aşağıdaki slotlara sürükleyin. Kilitlileri puanla açın.</p>
+                        <p class="hint-text" data-i18n="skill_book_hint">Açık yetenekleri aşağıdaki slotlara sürükleyin. Kilitlileri puanla açın.</p>
                         <div id="skill-book-list" class="skill-grid"></div>
                     </div>
-                    <div class="equipped-area-title">KUŞANILAN YETENEKLER</div>
+                    <div class="equipped-area-title" data-i18n="equipped_skills_label">KUŞANILAN YETENEKLER</div>
                     <div id="skill-book-equipped-bar"></div>
                 </div>
             </div>
@@ -325,7 +328,7 @@
 <div id="stat-screen" class="hidden">
     <div class="stat-window">
         <div class="stat-header">
-            <h2>Karakter İstatistikleri</h2>
+            <h2 data-i18n="char_stats_title">Karakter İstatistikleri</h2>
             <button id="close-stat-screen" class="close-btn"><i class="fas fa-times"></i></button>
         </div>
         
@@ -344,28 +347,28 @@
             </div>
             
             <div id="points-container" class="stat-points-box hidden">
-                DAĞITILABİLİR PUAN: <span id="stat-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
+                <span data-i18n="stat_points_label">DAĞITILABİLİR PUAN:</span> <span id="stat-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
             </div>
 
             <hr style="border-color: #444; margin: 15px 0;">
 
             <!-- HP ve RAGE -->
             <div class="stat-row-detail">
-                <label>Sağlık (HP):</label> <span id="stat-hp" style="color:#43FF64;">100 / 100</span>
+                <label data-i18n="label_hp">Sağlık (HP):</label> <span id="stat-hp" style="color:#43FF64;">100 / 100</span>
             </div>
             
             <hr class="stat-separator">
 
             <div class="stat-row-detail">
-                <label>Öfke (Rage):</label> <span id="stat-rage" style="color:#3498db;">0 / 100</span>
+                <label data-i18n="label_rage">Öfke (Rage):</label> <span id="stat-rage" style="color:#3498db;">0 / 100</span>
             </div>
 
             <hr style="border-color: #444; margin: 15px 0;">
 
             <!-- Savaş Statları -->
             <div class="combat-stats-row">
-                <div class="c-stat">Saldırı: <span id="stat-atk">20</span></div>
-                <div class="c-stat">Defans: <span id="stat-def">5</span></div>
+                <div class="c-stat"><span data-i18n="label_atk">Saldırı:</span> <span id="stat-atk">20</span></div>
+                <div class="c-stat"><span data-i18n="label_def">Defans:</span> <span id="stat-def">5</span></div>
             </div>
 
             <hr style="border-color: #444; margin: 10px 0;">
@@ -373,35 +376,35 @@
             <!-- TEMEL STATLAR (GRID) -->
             <div class="stat-grid">
                 <div class="stat-item highlight">
-                    <label>STR (Güç)</label> 
+                    <label data-i18n="stat_str">STR (Güç)</label> 
                     <div class="stat-val-group">
                         <span id="stat-str">15</span>
                         <button class="btn-stat-plus hidden" onclick="increaseStat('str')">+</button>
                     </div>
                 </div>
                 <div class="stat-item highlight">
-                    <label>DEX (Çeviklik)</label> 
+                    <label data-i18n="stat_dex">DEX (Çeviklik)</label> 
                     <div class="stat-val-group">
                         <span id="stat-dex">10</span>
                         <button class="btn-stat-plus hidden" onclick="increaseStat('dex')">+</button>
                     </div>
                 </div>
                 <div class="stat-item highlight">
-                    <label>INT (Zeka)</label> 
+                    <label data-i18n="stat_int">INT (Zeka)</label> 
                     <div class="stat-val-group">
                         <span id="stat-int">5</span>
                         <button class="btn-stat-plus hidden" onclick="increaseStat('int')">+</button>
                     </div>
                 </div>
                 <div class="stat-item highlight">
-                    <label>VIT (Canlılık)</label> 
+                    <label data-i18n="stat_vit">VIT (Canlılık)</label> 
                     <div class="stat-val-group">
                         <span id="stat-vit">10</span>
                         <button class="btn-stat-plus hidden" onclick="increaseStat('vit')">+</button>
                     </div>
                 </div>
                 <div class="stat-item highlight">
-                    <label>MP (Büyü Gücü)</label> 
+                    <label data-i18n="stat_mp">MP (Büyü Gücü)</label> 
                     <div class="stat-val-group">
                         <span id="stat-mp">0</span>
                         <button class="btn-stat-plus hidden" onclick="increaseStat('mp_pow')">+</button>
@@ -409,40 +412,40 @@
                 </div>
             </div>
 
-            <!-- --- YENİ EKLENEN KISIM (DOĞRU YERDE) --- -->
+            <!-- --- DİRENÇLER --- -->
             <hr style="border-color: #444; margin: 15px 0;">
             
-            <h3 style="text-align:center; color:#aaa; font-size:1em; margin-bottom:10px; margin-top:0;">DİRENÇLER</h3>
+            <h3 style="text-align:center; color:#aaa; font-size:1em; margin-bottom:10px; margin-top:0;" data-i18n="resistances_title">DİRENÇLER</h3>
 
             <div class="res-grid">
                 <div class="res-item" title="Fiziksel Direnç">
                     <span class="res-icon" style="color:#a0a0a0;">🛡️</span> 
-                    <label>Fiziksel</label>
+                    <label data-i18n="res_physical">Fiziksel</label>
                     <span id="res-physical">0</span>
                 </div>
 				<div class="res-item" title="Zehir Direnci">
                     <span class="res-icon" style="color:#43FF64;">🤢</span> 
-                    <label>Zehir</label>
+                    <label data-i18n="res_poison">Zehir</label>
                     <span id="res-poison">0</span>
                 </div>
                 <div class="res-item" title="Lanet Direnci">
                     <span class="res-icon" style="color:#b19cd9;">💀</span> 
-                    <label>Lanet</label>
+                    <label data-i18n="res_curse">Lanet</label>
                     <span id="res-curse">0</span>
                 </div>
                 <div class="res-item" title="Ateş Direnci">
                     <span class="res-icon" style="color:#ff4d4d;">🔥</span> 
-                    <label>Ateş</label>
+                    <label data-i18n="res_fire">Ateş</label>
                     <span id="res-fire">0</span>
                 </div>
                 <div class="res-item" title="Soğuk Direnci">
                     <span class="res-icon" style="color:#00ccff;">❄️</span> 
-                    <label>Buz</label>
+                    <label data-i18n="res_cold">Buz</label>
                     <span id="res-cold">0</span>
                 </div>
                 <div class="res-item" title="Yıldırım Direnci">
                     <span class="res-icon" style="color:#ffd700;">⚡</span> 
-                    <label>Yıldırım</label>
+                    <label data-i18n="res_lightning">Yıldırım</label>
                     <span id="res-lightning">0</span>
                 </div>
                 
@@ -452,7 +455,7 @@
         </div> <!-- stat-content BİTİŞİ -->
 
         <div class="stat-footer">
-            <p class="hint-text">Kapatmak için 'U' veya 'X' tuşuna basın.</p>
+            <p class="hint-text" data-i18n="close_hint">Kapatmak için 'U' veya 'X' tuşuna basın.</p>
         </div>
     </div>
 </div>
@@ -463,31 +466,31 @@
         
         <!-- HAN -->
         <div class="town-building" id="building-inn" onclick="openBuilding('inn')">
-            <span class="town-label-text">HAN</span>
+            <span class="town-label-text" data-i18n="building_inn">HAN</span>
         </div>
         
         <!-- DEMİRCİ -->
         <div class="town-building" id="building-blacksmith" onclick="openBuilding('blacksmith')">
-            <span class="town-label-text">DEMİRCİ</span>
+            <span class="town-label-text" data-i18n="building_blacksmith">DEMİRCİ</span>
         </div>
         
         <!-- TÜCCAR -->
         <div class="town-building" id="building-merchant" onclick="openBuilding('merchant')">
-            <span class="town-label-text">TÜCCAR</span>
+            <span class="town-label-text" data-i18n="building_merchant">TÜCCAR</span>
         </div>
         
         <!-- SİMYACI -->
         <div class="town-building" id="building-alchemist" onclick="openBuilding('alchemist')">
-            <span class="town-label-text">SİMYACI</span>
+            <span class="town-label-text" data-i18n="building_alchemist">SİMYACI</span>
         </div>
         
         <!-- AHIR -->
         <div class="town-building" id="building-stable" onclick="openBuilding('stable')">
-            <span class="town-label-text">AHIR</span>
+            <span class="town-label-text" data-i18n="building_stable">AHIR</span>
         </div>
     </div>
     
-    <button id="btn-leave-town" class="town-exit-btn">Maceraya Dön</button>
+    <button id="btn-leave-town" class="town-exit-btn" data-i18n="return_adventure">Maceraya Dön</button>
 </div>
 
             <!-- KÖY EKRANI BİTİŞİ -->
@@ -498,30 +501,30 @@
         
         <!-- Şehir Başlığı -->
         <div class="city-header">
-            <h1 class="city-title">ALTIN BAŞKENT: ELDORIA</h1>
-            <p class="city-subtitle">1. Perde Tamamlandı</p>
+            <h1 class="city-title" data-i18n="city_name">ALTIN BAŞKENT: ELDORIA</h1>
+            <p class="city-subtitle" data-i18n="act1_complete">1. Perde Tamamlandı</p>
         </div>
 
         <!-- Şehirdeki Binalar (Farklı Konumlar) -->
         <div class="city-building" id="city-palace" onclick="openBuilding('palace')">
-            <span class="city-label-text">SARAY</span>
+            <span class="city-label-text" data-i18n="city_palace">SARAY</span>
         </div>
         
         <div class="city-building" id="city-vault" onclick="toggleVault()">
-            <span class="city-label-text">BANKA / KASA</span>
+            <span class="city-label-text" data-i18n="city_bank">BANKA / KASA</span>
         </div>
         
         <div class="city-building" id="city-arena" onclick="alert('Arena yakında eklenecek!')">
-            <span class="city-label-text">ARENA</span>
+            <span class="city-label-text" data-i18n="city_arena">ARENA</span>
         </div>
 
         <div class="city-building" id="city-market" onclick="openBuilding('merchant')">
-            <span class="city-label-text">BÜYÜK PAZAR</span>
+            <span class="city-label-text" data-i18n="city_market">BÜYÜK PAZAR</span>
         </div>
 
         <!-- Bir Sonraki Perdeye Geçiş Butonu -->
         <div class="next-act-container">
-            <button id="btn-next-act" class="next-act-btn" onclick="startNextAct()">
+            <button id="btn-next-act" class="next-act-btn" onclick="startNextAct()" data-i18n="start_act2">
                 2. PERDEYE YELKEN AÇ <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -531,7 +534,7 @@
             <div id="inventory-screen" class="hidden">
                 <div class="inventory-window">
                     <div class="inventory-header">
-                        <h3>ENVANTER</h3>
+                        <h3 data-i18n="inventory_title">ENVANTER</h3>
                         <button id="btn-close-inventory" class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
 
@@ -593,78 +596,104 @@
                 </div>
             </div>
 
-            <!-- NPC MODALLARI (Envanterin DIŞINDA olmalı) -->
+            <!-- NPC MODALLARI -->
             
             <!-- 1. HAN (INN) -->
             <div id="modal-inn" class="npc-modal hidden">
                 <div class="npc-window" style="background-image: url('images/inn.png');">
-                    <div class="npc-title">HANCI</div>
+                    <div class="npc-title" data-i18n="innkeeper_title">HANCI</div>
                     <div class="npc-actions-left">
-                        <button class="npc-btn" onclick="restAtInn()">Dinlen (10g)</button>
-                        <button class="npc-btn" onclick="buyDrink()">İçecek Al (5g)</button>
+                        <button class="npc-btn" onclick="restAtInn()" data-i18n="rest_btn">Dinlen (10g)</button>
+                        <button class="npc-btn" onclick="buyDrink()" data-i18n="drink_btn">İçecek Al (5g)</button>
                     </div>
                     <div class="npc-actions-right">
-                         <button class="npc-btn close-npc">Çıkış</button>
+                         <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
                     </div>
-                    <div class="npc-dialogue" id="inn-dialogue">Yorgun görünüyorsun gezgin.</div>
+                    <div class="npc-dialogue" id="inn-dialogue" data-i18n="innkeeper_hello">Yorgun görünüyorsun gezgin.</div>
                 </div>
             </div>
 
             <!-- 2. SİMYACI (ALCHEMIST) -->
             <div id="modal-alchemist" class="npc-modal hidden">
                 <div class="npc-window" style="background-image: url('images/alchemist.png');">
-                    <div class="npc-title">SİMYACI</div>
+                    <div class="npc-title" data-i18n="alchemist_title">SİMYACI</div>
                     <div class="npc-actions-left">
-                        <button class="npc-btn">İksir Al</button>
+                        <button class="npc-btn" data-i18n="buy_potion">İksir Al</button>
                     </div>
                     <div class="npc-actions-right">
-                         <button class="npc-btn close-npc">Çıkış</button>
+                         <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
                     </div>
-                    <div class="npc-dialogue">İksirlerim en kalitelisidir...</div>
+                    <div class="npc-dialogue" data-i18n="alchemist_hello">İksirlerim en kalitelisidir...</div>
                 </div>
             </div>
 
             <!-- 3. DEMİRCİ (BLACKSMITH) -->
             <div id="modal-blacksmith" class="npc-modal hidden">
                 <div class="npc-window" style="background-image: url('images/blacksmith.png');">
-                    <div class="npc-title">DEMİRCİ</div>
+                    <div class="npc-title" data-i18n="blacksmith_title">DEMİRCİ</div>
                     <div class="npc-actions-left">
-                        <button class="npc-btn">Eşya Yükselt</button>
+                        <button class="npc-btn" data-i18n="upgrade_item">Eşya Yükselt</button>
                     </div>
                     <div class="npc-actions-right">
-                         <button class="npc-btn close-npc">Çıkış</button>
+                         <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
                     </div>
-                    <div class="npc-dialogue">Ateşim ejderhalar gibi...</div>
+                    <div class="npc-dialogue" data-i18n="blacksmith_hello">Ateşim ejderhalar gibi...</div>
                 </div>
             </div>
 
             <!-- 4. TÜCCAR (MERCHANT) -->
             <div id="modal-merchant" class="npc-modal hidden">
                 <div class="npc-window" style="background-image: url('images/merchant.png');">
-                    <div class="npc-title">TÜCCAR</div>
+                    <div class="npc-title" data-i18n="merchant_title">TÜCCAR</div>
                     <div class="npc-actions-left">
-                        <button class="npc-btn">Satın al</button>
+                        <button class="npc-btn" data-i18n="buy_btn">Satın al</button>
                     </div>
                     <div class="npc-actions-right">
-                         <button class="npc-btn close-npc">Çıkış</button>
+                         <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
                     </div>
-                    <div class="npc-dialogue">Bu diyarın en kalitelileri...</div>
+                    <div class="npc-dialogue" data-i18n="merchant_hello">Bu diyarın en kalitelileri...</div>
                 </div>
             </div>
 
             <!-- 5. AHIR (STABLE) -->
             <div id="modal-stable" class="npc-modal hidden">
                 <div class="npc-window" style="background-image: url('images/stable.png');">
-                    <div class="npc-title">AHIR</div>
+                    <div class="npc-title" data-i18n="stable_title">AHIR</div>
                     <div class="npc-actions-left">
-                        <button class="npc-btn">Hızlı Git</button>
+                        <button class="npc-btn" data-i18n="travel_fast">Hızlı Git</button>
                     </div>
                     <div class="npc-actions-right">
-                         <button class="npc-btn close-npc">Çıkış</button>
+                         <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
                     </div>
-                    <div class="npc-dialogue">Bu diyarın en iyi atları...</div>
+                    <div class="npc-dialogue" data-i18n="stable_hello">Bu diyarın en iyi atları...</div>
                 </div>
             </div>
+			<!--AYARLAR (SETTINGS) -->
+			<div id="settings-modal" class="npc-modal hidden">
+    <div class="stat-window" style="width: 400px; text-align: center;">
+        <h2 data-i18n="settings">AYARLAR</h2>
+        <hr class="stat-separator">
+        
+        <div class="setting-row">
+            <label data-i18n="language">DİL</label>
+            <div style="display:flex; gap:10px; justify-content: center; margin: 10px 0;">
+                <button onclick="setLanguage('tr')">TR</button>
+                <button onclick="setLanguage('en')">EN</button>
+            </div>
+        </div>
+
+        <div class="setting-row">
+            <label data-i18n="resolution">ÇÖZÜNÜRLÜK</label>
+            <select id="res-select" onchange="setResolution(this.value)" style="width:100%; margin-top:10px; padding:5px; background:#111; color:#fff;">
+                <option value="fit" data-i18n="res_fit">Ekrana Uydur (Fit)</option>
+                <option value="1280x720">1280 x 720</option>
+                <option value="1024x576">1024 x 576</option>
+                <option value="1600x900">1600 x 900</option>
+            </select>
+        </div>
+
+        <button onclick="closeSettings()" style="margin-top:20px; width:100%;" data-i18n="back">GERİ</button>
+    </div>
 
         </div> <!-- main-screen-area KAPANIŞI -->
         <div id="fade-overlay"></div>
@@ -681,6 +710,8 @@
 <script src="skills/skill_engine.js"></script>
 
 <!-- 3. UI KATMANI (BÖLÜNMÜŞ) -->
+<script src="js/ui/translations.js"></script>
+<script src="js/ui/settings_manager.js"></script>
 <script src="js/ui/ui_elements.js"></script>
 <script src="js/ui/screen_manager.js"></script>
 <script src="js/ui/battle_hud.js"></script>
@@ -690,6 +721,7 @@
 <!-- 4. MANTIK KATMANI -->
 <script src="combat_manager.js"></script>
 <script src="map_manager.js"></script>
+<script src="save_manager.js"></script>
 <script src="main.js" defer></script>
 </body>
 </html>

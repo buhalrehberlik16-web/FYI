@@ -5,7 +5,7 @@ const MAP_CONFIG = {
     lanes: 3,        
     townStages: [4, 8, 12]
 };
-let GAME_MAP = {
+window.GAME_MAP = {
     nodes: [],      // Tüm düğümlerin listesi
     connections: [], // Hangi düğüm hangisine bağlı
     currentNodeId: null, // Oyuncunun şu anki konumu
@@ -205,6 +205,15 @@ function determineNodeType(stage, lane) {
 
 function renderMap() {
     const mapContent = document.getElementById('map-content');
+	
+	 // --- YENİ TEMİZLİK KISMI ---
+    // Önce ekrandaki tüm eski düğümleri (butonları) sil
+    const existingNodes = document.querySelectorAll('.map-node');
+    existingNodes.forEach(n => n.remove());
+    
+    // Eski çizgileri (SVG) temizle
+    clearTrails(); 
+    // ---------------------------
     
     document.getElementById('current-node-name').textContent = "Maceraya Başla";
     document.getElementById('map-description').textContent = "Haritadan bir başlangıç noktası seç.";
@@ -245,38 +254,9 @@ function renderMap() {
 
     setTimeout(() => {
         drawAllConnections();
+		updateAvailableNodes();
     }, 200);
     
-    updateAvailableNodes();
-}
-function startNextAct() {
-    // 1. Onay al (Yanlışlıkla basılmaları önlemek için)
-    if (!confirm(`${hero.currentAct + 1}. Perdeye geçmek istediğine emin misin? Tüm harita yenilenecek!`)) return;
-
-    // 2. Act değerini artır
-    hero.currentAct++;
-
-    // 3. Kahramanı tazele (Ödül olarak)
-    hero.hp = hero.maxHp;
-    hero.rage = hero.maxRage;
-
-    // 4. Harita Verilerini Tamamen Sıfırla
-    GAME_MAP.currentNodeId = null;
-    GAME_MAP.completedNodes = [];
-    
-    // 5. Haritayı Yeniden Üret (Act 2 parametrelerini kullanacak)
-    generateMap(); 
-
-    // 6. Ekranı Haritaya Çevir
-    switchScreen(mapScreen);
-
-    // 7. Görsel ve Log Güncelleme
-    writeLog(`🚢 Perde Değişti: **${hero.currentAct}. PERDE: LANETLİ TOPRAKLAR**`);
-    updateStats();
-
-    // Haritayı en başa (sola) kaydır
-    const mapDisp = document.getElementById('map-display');
-    if(mapDisp) mapDisp.scrollLeft = 0;
 }
 
 // --- ÇİZGİ SİSTEMİ ---
@@ -465,16 +445,6 @@ function enterCity() {
     // Şehre özel müzik veya efekt başlatılabilir
 }
 
-function startNextAct() {
-    if(confirm("2. Perdeye geçmek istediğine emin misin? (İlerlemen kaydedilecek)")) {
-        writeLog("🚢 Yeni topraklara yelken açıyorsun...");
-		
-        // Burada haritayı yeniden üreten veya Act 2'yi başlatan kodlar çalışır
-        // generateMap(); 
-        // switchScreen(mapScreen);
-    }
-}
-
 // ... Random Event ve Campfire (UI Manager'dan çağrılır) ...
 function startCampfireEvent(node) {
     const screen = document.getElementById('campfire-screen');
@@ -524,50 +494,35 @@ function showCampfireResult(title, text) {
     document.getElementById('campfire-result-text').innerHTML = text;
 }
 
-function triggerRandomEvent() {
-    const eScreen = document.getElementById('event-screen');
-    const eContainer = document.getElementById('event-choices-container');
-    if (!eContainer) return;
-    switchScreen(eScreen);
-    eContainer.innerHTML = ''; 
-    const evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-    document.getElementById('event-title').textContent = evt.title;
-    document.getElementById('event-desc').textContent = evt.desc;
-
-    const createBtn = (opt) => {
-        const btn = document.createElement('button');
-        btn.className = 'event-btn';
-        btn.innerHTML = `<span class="choice-title">${opt.text}</span><span class="choice-detail">${opt.buff}</span><span class="choice-detail">${opt.debuff}</span>`;
-        btn.onclick = () => { opt.action(hero); updateStats(); writeLog(`Seçim: ${opt.text}`); switchScreen(mapScreen); };
-        eContainer.appendChild(btn);
-    };
-    createBtn(evt.option1);
-    if (evt.type === 'permanent' && Math.random() < 0.30) {
-        const fleeBtn = document.createElement('button');
-        fleeBtn.className = 'event-btn';
-        fleeBtn.innerHTML = `<span class="choice-title">Korkup Kaç</span><span class="choice-detail debuff">-10 HP</span>`;
-        fleeBtn.onclick = () => { hero.hp = Math.max(1, hero.hp - 10); updateStats(); writeLog("Kaçtın (-10 HP)."); switchScreen(mapScreen); };
-        eContainer.appendChild(fleeBtn);
-    } else { createBtn(evt.option2); }
-}
 window.startNextAct = function() {
+    // 1. Dil Desteğini Alalım (Çeviri için)
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    
+    // 2. Onay Al (Birinci versiyondaki gibi, kazara basılmayı önler)
+    // confirm içindeki mesajı da dilden çekebiliriz veya şimdilik böyle kalabilir
+    const confirmMsg = hero.currentAct === 1 ? 
+        (window.gameSettings.lang === 'tr' ? "2. Perdeye geçmek istediğine emin misin? Harita yenilenecek!" : "Are you sure you want to sail to Act 2? The map will be reset!") :
+        (window.gameSettings.lang === 'tr' ? "Sonraki perdeye geçilsin mi?" : "Proceed to next act?");
+
+    if (!confirm(confirmMsg)) return;
+
     console.log("DEBUG: startNextAct tetiklendi!");
 
-    // 1. Act Değerini Artır
-    if (!hero.currentAct) hero.currentAct = 1; // Güvenlik kontrolü
+    // 3. Act Değerini Artır
+    if (!hero.currentAct) hero.currentAct = 1; 
     hero.currentAct++;
     console.log("DEBUG: Yeni Act:", hero.currentAct);
 
-    // 2. Kahramanı Tazele
+    // 4. Kahramanı Tazele (Birinci versiyondaki ödül mantığı)
     hero.hp = hero.maxHp;
     hero.rage = hero.maxRage;
 
-    // 3. Harita Verilerini Sıfırla
-    GAME_MAP.currentNodeId = null;
-    GAME_MAP.completedNodes = [];
+    // 5. Harita Verilerini Sıfırla
+    window.GAME_MAP.currentNodeId = null;
+    window.GAME_MAP.completedNodes = [];
     console.log("DEBUG: Harita verileri sıfırlandı.");
 
-    // 4. Haritayı Yeniden Üret (Düşmanlar ve görseller Act 2'ye göre seçilecek)
+    // 6. Haritayı Yeniden Üret (Düşmanlar ve görseller Act 2'ye göre seçilecek)
     if (typeof generateMap === 'function') {
         generateMap();
         console.log("DEBUG: Harita yeniden üretildi.");
@@ -575,20 +530,27 @@ window.startNextAct = function() {
         console.error("HATA: generateMap fonksiyonu bulunamadı!");
     }
 
-    // 5. Ekranı Haritaya Çevir
+    // 7. Ekranı Haritaya Çevir
     if (typeof switchScreen === 'function') {
-        // mapScreen değişkeninin game_data.js'de tanımlı olduğundan emin ol
-        switchScreen(mapScreen); 
+        switchScreen(window.mapScreen); 
         console.log("DEBUG: mapScreen'e geçiş yapıldı.");
     } else {
         console.error("HATA: switchScreen fonksiyonu bulunamadı!");
     }
 
-    // 6. UI Güncelleme
+    // 8. UI Güncelleme ve Log Yazma (Log mesajını dilden alıyoruz)
     updateStats();
-    writeLog(`⚔️ **${hero.currentAct}. PERDE BAŞLADI** ⚔️`);
     
-    // Haritayı başa sar
+    const logMsg = window.gameSettings.lang === 'tr' ? 
+        `🚢 Perde Değişti: **${hero.currentAct}. PERDE**` : 
+        `🚢 Act Changed: **ACT ${hero.currentAct}**`;
+        
+    writeLog(`⚔️ ${logMsg} ⚔️`);
+    
+    // 9. Haritayı başa sar
     const mapDisp = document.getElementById('map-display');
     if(mapDisp) mapDisp.scrollLeft = 0;
+
+    // 10. OTOMATİK KAYIT (Yeni perdeye geçtiğini unutmasın)
+    if(window.saveGame) window.saveGame();
 };

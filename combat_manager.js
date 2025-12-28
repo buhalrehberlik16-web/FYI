@@ -115,13 +115,19 @@ window.checkIfSkillBlocked = function(skillKey) {
         const s = SKILL_DATABASE[skillKey];
         const data = s.data || s;
         
+        const currentLang = window.gameSettings.lang || 'tr';
+        const lang = window.LANGUAGES[currentLang];
+
         const isBlocked = hero.statusEffects.some(e => {
             if (e.waitForCombat) return false;
             return (e.id === 'block_skill' && e.blockedSkill === skillKey) || (e.id === 'block_type' && e.blockedType === data.type);
         });
 
         if (isBlocked) {
-            writeLog(`❌ **Kilitli**: ${data.name} şu an kullanılamaz!`);
+            // Skill ismini çeviriden al
+            const skillName = lang.skills[skillKey]?.name || data.name;
+            // "❌ Kilitli: Kes şu an kullanılamaz!"
+            writeLog(`❌ **${lang.status.locked_skill_msg}**: ${skillName} ${lang.status.currently_unavailable}`);
         }
         return isBlocked;
     }
@@ -240,28 +246,25 @@ window.handleSkillUse = function(skillKey) {
 
 // --- ANİMASYONLAR VE HASAR ---
 window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
-    const attackerImgElement = heroDisplayImg;
-    const targetContainer = document.getElementById('monster-display');
-    
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat; // Savaş çevirilerini al
+
     const windUpIdx = hero.statusEffects.findIndex(e => e.id === 'wind_up' && !e.waitForCombat);
     if (windUpIdx !== -1) { 
         rawDamage += hero.statusEffects[windUpIdx].value; 
         hero.statusEffects.splice(windUpIdx, 1); 
-        writeLog("✨ **Kurulma**: Biriktirilen güç saldırıya eklendi!");
+        writeLog(lang.log_windup); // Çeviri kullanıldı
     }
 
     let def = monster.defense + (window.isMonsterDefending ? window.monsterDefenseBonus : 0);
     if(hero.statusEffects.some(e => e.id === 'ignore_def' && !e.waitForCombat)) {
         def = 0;
-        writeLog("🔨 **Zırh Delme**: Düşman savunması yok sayıldı!");
+        writeLog(lang.log_ignore_def); // Çeviri kullanıldı
     }
 
     const weakDef = hero.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
     if (weakDef) def = Math.floor(def * (1 - weakDef.value));
 
     let finalDmg = Math.max(1, Math.floor(rawDamage - def));
-    const curse = hero.statusEffects.find(e => e.id === 'curse_damage' && !e.waitForCombat);
-    if (curse) finalDmg = Math.floor(finalDmg * (1 + curse.value));
 
     let fIdx = 0;
     function frame() {
@@ -269,19 +272,24 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
             heroDisplayImg.src = skillFrames[fIdx]; 
             if (fIdx === 1 || skillFrames.length === 1) { 
                 monster.hp = Math.max(0, monster.hp - finalDmg);
+                
                 const fury = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
                 if (fury) { 
                     const gain = Math.floor(finalDmg * fury.value);
                     hero.rage = Math.min(hero.maxRage, hero.rage + gain); 
-                    writeLog(`🔥 **Hiddet**: Hasardan ${gain} Öfke kazandın.`);
+                    writeLog(lang.log_fury_gain); // Çeviri kullanıldı
                 }
+
                 animateDamage(false); 
                 showFloatingText(document.getElementById('monster-display'), finalDmg, 'damage');
-                writeLog(`⚔️ **${skillName}**: ${monster.name} adlı düşmana **${finalDmg}** hasar verdin.`);
+                
+                // Dinamik Log: "⚔️ Slash: 15 damage dealt to Goblin"
+                writeLog(`⚔️ **${skillName}**: ${monster.name} ${lang.log_hit_monster} **${finalDmg}**.`);
+
                 if (window.isMonsterDefending) { 
                     window.isMonsterDefending = false; 
                     window.monsterDefenseBonus = 0; 
-                    writeLog(`🛡️ ${monster.name} savunması kırıldı!`);
+                    writeLog(`🛡️ ${monster.name} ${lang.log_shield_break}`); // Çeviri kullanıldı
                 }
                 updateStats();
             }
@@ -295,19 +303,14 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
 };
 
 window.handleMonsterAttack = function(attacker, defender) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     const stats = ENEMY_STATS[attacker.name];
     let attackFrames = stats.attackFrames.map(f => `images/${f}`);
     
     let rawDamage = attacker.attack;
-    const weakAtk = hero.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
-    if (weakAtk) rawDamage = Math.floor(rawDamage * (1 - weakAtk.value));
-
     const heroStats = getHeroEffectiveStats();
     let effectiveDef = heroStats.def + (window.isHeroDefending ? window.heroDefenseBonus : 0);
-
     let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
-    const guard = hero.statusEffects.find(e => e.id === 'guard_active');
-    if (guard) finalDamage = Math.floor(finalDamage * (1 - guard.value));
 
     let fIdx = 0;
     function frame() {
@@ -316,12 +319,12 @@ window.handleMonsterAttack = function(attacker, defender) {
             if (fIdx === 1) { 
                 if (window.heroBlock > 0) {
                     if (window.heroBlock >= finalDamage) { 
-                        writeLog(`🧱 **Blok**: ${finalDamage} hasarı tamamen engelledin!`);
+                        writeLog(lang.log_block_full); 
                         window.heroBlock -= finalDamage; 
                         finalDamage = 0; 
-                        showFloatingText(heroDisplayContainer, "BLOK!", 'heal'); 
+                        showFloatingText(heroDisplayContainer, lang.f_block, 'heal'); 
                     } else { 
-                        writeLog(`🧱 **Blok**: ${window.heroBlock} hasar emildi, kalan hasar: ${finalDamage - window.heroBlock}`);
+                        writeLog(`${lang.log_block_partial} ${finalDamage - window.heroBlock}`);
                         finalDamage -= window.heroBlock; 
                         window.heroBlock = 0; 
                     }
@@ -330,7 +333,7 @@ window.handleMonsterAttack = function(attacker, defender) {
                     defender.hp = Math.max(0, defender.hp - finalDamage); 
                     animateDamage(true); 
                     showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-                    writeLog(`⚠️ **${attacker.name}**: Sana **${finalDamage}** hasar vurdu.`);
+                    writeLog(`⚠️ **${attacker.name}**: ${lang.log_monster_hit} (**${finalDamage}**)`);
                     hero.rage = Math.min(hero.maxRage, hero.rage + 5); 
                 }
                 updateStats(); if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
@@ -378,10 +381,11 @@ window.startBattle = function(enemyType) {
 
 window.nextTurn = function() {
     if (checkGameOver()) return;
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     
     if (window.isHeroTurn) {
         window.combatTurnCount++;
-        writeLog(`--- Tur ${window.combatTurnCount} (Senin Sıran) ---`);
+        writeLog(`--- Tur ${window.combatTurnCount} ---`);
         if(turnCountDisplay) turnCountDisplay.textContent = window.combatTurnCount;
         if (window.heroBlock > 0) {
             window.heroBlock = Math.floor(window.heroBlock * 0.5);
@@ -391,7 +395,7 @@ window.nextTurn = function() {
         hero.statusEffects.filter(e => e.id === 'regen' && !e.waitForCombat).forEach(() => { 
             hero.hp = Math.min(hero.maxHp, hero.hp + 10); 
             showFloatingText(heroDisplayContainer, 10, 'heal'); 
-            writeLog(`💖 **Yenilenme**: 10 HP yenilendi.`);
+            writeLog(lang.log_regen);
         });
 
         hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
@@ -399,8 +403,8 @@ window.nextTurn = function() {
         updateStats(); 
 
         if (hero.statusEffects.some(e => e.id === 'stun' && !e.waitForCombat)) { 
-            writeLog("💫 **Sersemleme**: Bu turu pas geçiyorsun!");
-            showFloatingText(heroDisplayContainer, "SERSEMLEDİ!", 'damage'); 
+            writeLog(lang.log_stun_skip);
+            showFloatingText(heroDisplayContainer, lang.f_stunned, 'damage'); 
             window.isHeroTurn = false; 
             setTimeout(nextTurn, 1500); 
         } else { 
@@ -411,8 +415,8 @@ window.nextTurn = function() {
     } else {
         toggleSkillButtons(true); showMonsterIntention(null); 
         if (hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat)) { 
-            writeLog(`💫 **${monster.name}** sersemlediği için hamle yapamadı!`);
-            showFloatingText(document.getElementById('monster-display'), "SERSEMLEDİ!", 'damage'); 
+            writeLog(lang.log_stun_skip);
+            showFloatingText(document.getElementById('monster-display'), lang.f_stunned, 'damage'); 
             window.isHeroTurn = true; 
             setTimeout(nextTurn, 1000); return; 
         }
@@ -420,10 +424,13 @@ window.nextTurn = function() {
             if (!checkGameOver()) {
                 if (window.monsterNextAction === 'attack') handleMonsterAttack(monster, hero); 
                 else { 
+					const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
                     window.isMonsterDefending = true; 
                     window.monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2); 
-                    showFloatingText(document.getElementById('monster-display'), "SAVUNMA!", 'heal'); 
-                    writeLog(`🛡️ **${monster.name}**: Savunma pozisyonu aldı (+${window.monsterDefenseBonus} Defans).`);
+                    showFloatingText(document.getElementById('monster-display'), lang.monster_defend_text, 'heal'); 
+                    
+                    // LOG MESAJI ÇEVİRİSİ
+                    writeLog(`🛡️ **${monster.name}**: ${lang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
                     window.isHeroTurn = true; 
                     setTimeout(nextTurn, 1000); 
                 }
@@ -451,6 +458,7 @@ window.checkGameOver = function() {
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd); 
         window.heroBlock = 0; updateStats();
         setTimeout(() => { openRewardScreen([{ type: 'gold', value: Math.floor(Math.random() * 11) + 5 }]); monster = null; }, 1000); 
+		window.saveGame();
         return true;
     }
     return false;

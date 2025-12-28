@@ -65,6 +65,11 @@ function learnSkill(skillKey) {
     }
 
     const cost = skill.data.tier || 1;
+	
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const skillName = lang.skills[skillKey]?.name || skill.data.name;
+
 
     if (hero.skillPoints >= cost) {
         hero.skillPoints -= cost;
@@ -166,13 +171,23 @@ function selectClass(className) {
 }
 
 function startCutscene() {
+    // HATAYI ÇÖZEN SATIRLAR: lang değişkenini burada tanımlıyoruz
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
     switchScreen(cutsceneScreen);
-    cutsceneText.textContent = "Zindanlara iniliyor...";
+    cutsceneText.textContent = lang.descending_dungeons;
+    
     let timer1 = null; let timer2 = null;
+    
     function transitionToMap() {
-        if (timer1) clearTimeout(timer1); if (timer2) clearTimeout(timer2);
+        if (timer1) clearTimeout(timer1); 
+        if (timer2) clearTimeout(timer2);
+        
         skipCutsceneButton.onclick = null;
-        cutsceneText.textContent = "Hazır!";
+        
+        // "Hazır!" yazısını da dilden alalım
+        cutsceneText.textContent = lang.ready || "Hazır!";
         
         // Önce Skill Seçimi
         if (typeof openBasicSkillSelection === 'function') {
@@ -184,11 +199,15 @@ function startCutscene() {
         const mapDisplay = document.getElementById('map-display');
         if(mapDisplay) mapDisplay.scrollLeft = 0;
         
-        writeLog("Savaş tarzını seç."); 
+        // "Savaş tarzını seç" yazısını da dilden alalım
+        writeLog(lang.choose_style || "Savaş tarzını seç."); 
     }
+    
     skipCutsceneButton.onclick = transitionToMap;
+    
     timer1 = setTimeout(() => {
-        cutsceneText.textContent = "Harita Yükleniyor...";
+        // "Harita Yükleniyor" yazısını dilden alıyoruz
+        cutsceneText.textContent = lang.map_loading;
         timer2 = setTimeout(() => { transitionToMap(); }, 1000);
     }, 1500);
 }
@@ -236,6 +255,14 @@ function initGame() {
     if(typeof updateGoldUI === 'function') updateGoldUI();
     if(typeof renderInventory === 'function') renderInventory();
 }
+window.openSettings = function() {
+    document.getElementById('settings-modal').classList.remove('hidden');
+};
+
+window.closeSettings = function() {
+    document.getElementById('settings-modal').classList.add('hidden');
+};
+
 
 // --- EVENT LISTENERS ---
 
@@ -317,6 +344,7 @@ returnToMenuButton.addEventListener('click', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+	if(typeof applySettings === 'function') applySettings();
     // 1. Oyunu ve İlk Ekranı Başlat
     if (typeof initGame === 'function') initGame(); 
     if (typeof switchScreen === 'function') switchScreen(window.startScreen); 
@@ -402,6 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.btnLeaveTown.onclick = () => {
             writeLog("Köyden ayrıldın.");
             switchScreen(window.mapScreen);
+			window.saveGame();
         };
     }
 	//8. MENU DÖNÜŞ BUTONU
@@ -419,4 +448,17 @@ document.addEventListener('DOMContentLoaded', () => {
             switchScreen(window.startScreen);
         };
     }
+	//9. KAYIT-DEVAM BUTONLARI
+	const continueBtn = document.getElementById('btn-continue');
+    
+    if (window.hasSaveGame()) {
+        continueBtn.classList.remove('hidden'); // Kayıt varsa butonu göster
+    }
+
+    continueBtn.onclick = () => {
+        if (window.loadGame()) {
+            switchScreen(window.mapScreen); // Kayıt yüklendiyse direkt haritaya at
+            writeLog("Macera kaldığı yerden devam ediyor...");
+        }
+    };
 });
