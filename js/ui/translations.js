@@ -181,7 +181,7 @@ window.LANGUAGES = {
             log_block_partial: "🧱 **Blok**: Hasar emildi, kalan hasar:",
             log_stun_skip: "💫 **Sersemleme**: Bu turu pas geçiyorsun!",
             log_regen: "💖 **Yenilenme**: HP yenilendi.",
-            log_shield_expired: "🧱 Kalkanın süresi doldu."
+            log_shield_expired: "🧱 Kalkanın süresi doldu.",
 			log_double_blade: "🔥 **İki Uçlu Değnek**: Gücün arttı ama bedeli ağır olacak!",
             log_cauterize: "🩹 **Dağlama**: Yaralarını ateşle temizledin.",
             log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı."
@@ -474,7 +474,7 @@ window.LANGUAGES = {
             log_block_partial: "🧱 **Block**: Damage absorbed, remaining:",
             log_stun_skip: "💫 **Stunned**: You skip this turn!",
             log_regen: "💖 **Regeneration**: HP restored.",
-            log_shield_expired: "🧱 Shield expired."
+            log_shield_expired: "🧱 Shield expired.",
 			log_double_blade: "🔥 **Double-Edged Sword**: Your power increased, but at a high cost!",
             log_cauterize: "🩹 **Cauterize**: You cleansed your wounds with fire.",
             log_healing_light: "✨ **Healing Light**: Holy light enveloped you."
