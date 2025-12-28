@@ -1,12 +1,14 @@
 // js/ui/interaction_ui.js
 window.openRewardScreen = function(rewards) {
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
     switchScreen(rewardScreen);
     let currentRewards = [...rewards];
     const render = () => {
         rewardList.innerHTML = '';
         currentRewards.forEach((r, i) => {
             const div = document.createElement('div'); div.className = 'reward-item';
-            div.innerHTML = `<i class="fas fa-coins" style="color:#ffd700 !important; filter:none !important;"></i><span style="color:#fff !important;">${r.value} Altın</span>`;
+            div.innerHTML = `<i class="fas fa-coins" style="color:#ffd700 !important;"></i><span style="color:#fff !important;">${r.value} ${lang.gold_text}</span>`;
             div.onclick = () => { hero.gold += r.value; updateGoldUI(); currentRewards.splice(i, 1); render(); };
             rewardList.appendChild(div);
         });
@@ -45,15 +47,66 @@ window.showCampfireResult = function(title, text) {
 };
 
 window.triggerRandomEvent = function() {
-    switchScreen(eventScreen); eventChoicesContainer.innerHTML = '';
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
+    console.log("DEDEKTİF: Şu anki dil:", currentLang); // KONSOLDA GÖRÜRSÜN
+
+    switchScreen(eventScreen);
+    eventChoicesContainer.innerHTML = ''; 
+    
     const evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-    eventTitle.textContent = evt.title; eventDesc.textContent = evt.desc;
-    [evt.option1, evt.option2].forEach(opt => {
-        const b = document.createElement('button'); b.className = 'event-btn';
-        b.innerHTML = `<span class="choice-title">${opt.text}</span><span class="choice-detail buff">${opt.buff}</span><span class="choice-detail debuff">${opt.debuff}</span>`;
-        b.onclick = () => { opt.action(hero); updateStats(); switchScreen(mapScreen); };
+    const t = lang.events[evt.id];
+
+    // Eğer çeviri bulunamazsa (Hata koruması)
+    if (!t) {
+        console.error("HATA: Çeviri dosyası bulunamadı! ID:", evt.id);
+        eventTitle.textContent = evt.title;
+        eventDesc.textContent = evt.desc;
+    } else {
+        eventTitle.textContent = t.title;
+        eventDesc.textContent = t.desc;
+    }
+
+    const createBtn = (opt, optKey) => {
+        const b = document.createElement('button');
+        b.className = 'event-btn';
+        
+        // KRİTİK: Burası t[optKey] üzerinden dilden çekmeli!
+        const btnText = t ? t[optKey] : opt.text;
+        const bText = t ? t[optKey + "_b"] : "";
+        const dText = t ? t[optKey + "_d"] : "";
+
+        b.innerHTML = `<span class="choice-title">${btnText}</span>
+                       <span class="choice-detail buff">${bText}</span>
+                       <span class="choice-detail debuff">${dText}</span>`;
+        
+        b.onclick = () => { 
+            opt.action(hero); 
+            updateStats(); 
+            switchScreen(mapScreen); 
+            if(window.saveGame) window.saveGame();
+        };
         eventChoicesContainer.appendChild(b);
-    });
+    };
+
+    createBtn(evt.option1, 'opt1');
+
+    if (evt.type === 'permanent' && Math.random() < 0.30) {
+        const fleeBtn = document.createElement('button');
+        fleeBtn.className = 'event-btn';
+        fleeBtn.innerHTML = `<span class="choice-title">${lang.events.flee_option}</span>
+                             <span class="choice-detail debuff">${lang.events.flee_debuff}</span>`;
+        fleeBtn.onclick = () => { 
+            hero.hp = Math.max(1, hero.hp - 10); 
+            updateStats(); 
+            switchScreen(mapScreen); 
+            if(window.saveGame) window.saveGame();
+        };
+        eventChoicesContainer.appendChild(fleeBtn);
+    } else { 
+        createBtn(evt.option2, 'opt2'); 
+    }
 };
 
 document.addEventListener('click', e => {

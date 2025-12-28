@@ -2,6 +2,9 @@
 window.updateStatusIcons = function() {
     if (!heroStatusContainer) return;
     heroStatusContainer.innerHTML = ''; 
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+	
     hero.statusEffects.forEach(effect => {
         const icon = document.createElement('div'); 
         icon.className = 'status-icon';
@@ -23,12 +26,15 @@ window.updateStatusIcons = function() {
 
         if (buffIds.includes(effect.id)) icon.classList.add('status-buff');
         else if (debuffIds.includes(effect.id) || effect.id.startsWith('debuff_')) icon.classList.add('status-debuff');
+		
+		const statusName = lang.status[effect.id] || effect.name; // Dilden ismi al
+        const turnText = lang.turn_suffix; // "Tur" veya "Turns"
 
         if (effect.waitForCombat) { 
             icon.classList.add('status-waiting');
-            icon.title = `${effect.name} (Savaşta Aktifleşecek)`; 
+            icon.title = `${statusName} (${lang.preparing})`; 
         } else { 
-            icon.title = `${effect.name} (${effect.turns} Tur)`; 
+            icon.title = `${statusName} (${effect.turns} ${turnText})`; 
         }
         heroStatusContainer.appendChild(icon);
     });
@@ -51,7 +57,11 @@ window.updateStats = function() {
     if (monster) {
         if(monsterHpBar) monsterHpBar.style.width = (monster.hp / monster.maxHp) * 100 + '%';
         if(monsterHpText) monsterHpText.textContent = `${monster.hp} / ${monster.maxHp}`;
-        if(monsterNameDisplay) monsterNameDisplay.textContent = monster.name;
+        if (monsterNameDisplay) {
+		const currentLang = window.gameSettings.lang;
+		const translatedName = window.LANGUAGES[currentLang].enemy_names[monster.name] || monster.name;
+		monsterNameDisplay.textContent = translatedName;
+}
     }
 
     const monBlockInd = document.getElementById('monster-block-indicator');

@@ -12,6 +12,9 @@ window.toggleStatScreen = function() {
 
 window.updateStatScreen = function() {
     if (!statName || !statClass || !statAtk || !statDef) return;
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang]; // lang tanımını ekledik
+
     
     // 1. Mevcut (Bufflı) Statları Al
     let effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { atk: 0, def: 0 };
@@ -85,7 +88,7 @@ window.updateStatScreen = function() {
         const warning = document.createElement('div');
         warning.id = 'stat-battle-warning';
         warning.style.cssText = "color:orange; text-align:center; margin-top:15px; font-weight:bold;";
-        warning.textContent = "⚠️ SAVAŞ ESNASINDA STAT VERİLEMEZ";
+        warning.textContent = lang.stat_battle_warning;
         document.querySelector('.stat-content').appendChild(warning);
     } else if (hero.statPoints > 0) {
         if (pointsBox) {
@@ -165,27 +168,42 @@ window.renderSkillBookList = function() {
     // Skill Puanı Göster
     if (skillPointsDisplay) skillPointsDisplay.textContent = hero.skillPoints;
 
+    // 1. Mevcut dili al (tr veya en)
+    const currentLang = window.gameSettings.lang || 'tr';
+    
+    // 2. KRİTİK EKSİK: lang değişkenini tanımlıyoruz
+    const lang = window.LANGUAGES[currentLang];
+
     const skills = Object.entries(SKILL_DATABASE)
         .filter(([_, s]) => s.data.category === currentTab)
         .sort((a, b) => a[1].data.tier - b[1].data.tier);
 
+    // DÖNGÜ BAŞLANGICI
     skills.forEach(([key, skill]) => {
         const isLearned = hero.unlockedSkills.includes(key);
+        
+        // Başlangıç skillerini gizle (öğrenilmediyse)
         if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) return;
+
+        // --- ÇEVİRİ ---
+        const skillTranslation = (lang.skills && lang.skills[key]) 
+            ? lang.skills[key] 
+            : { name: skill.data.name, desc: skill.data.menuDescription };
 
         const canAfford = hero.skillPoints >= skill.data.tier;
         const treeMet = checkSkillTreeRequirement(skill.data.category, skill.data.tier);
         const item = document.createElement('div');
         item.className = `skill-book-item ${isLearned ? '' : 'locked'}`;
 		
-		// --- COOLDOWN YAZISI (YENİ) ---
-        let cdHtml = skill.data.cooldown > 0 ? `<br><span style="color:#ffd700; font-size:0.85em;">⌛ Bekleme: ${skill.data.cooldown} Tur</span>` : '';
-		let cdHtml1 = skill.data.cooldown < 1 ? `<br><span style="color:#ffd700; font-size:0.85em;">Aynı tur tekrar kullanılamaz.</span>` : '';
+        let cdHtml = skill.data.cooldown > 0 ? `<br><span style="color:#ffd700; font-size:0.85em;">⌛ ${lang.cooldown_label}: ${skill.data.cooldown} ${lang.turn_suffix}</span>` : '';
+		let cdHtml1 = skill.data.cooldown < 1 ? `<br><span style="color:#ffd700; font-size:0.85em;">${lang.same_turn_warning}</span>` : '';
         
-        let action = isLearned ? '<small style="color:#43FF64; font-weight:bold;">✓ ÖĞRENİLDİ</small>' : 
-                     (isInBattle ? '<small style="color:orange; font-weight:bold;">⚠️ SAVAŞTA ÖĞRENİLEMEZ</small>' : 
-                     (canAfford && treeMet ? `<button class="btn-learn-skill" onclick="learnSkill('${key}')">+</button>` : `<small style="color:#777;">Puan/Tier Eksik</small>`));
+        // Burada lang değişkeni artık tanımlı olduğu için hata vermeyecek
+        let action = isLearned ? `<small style="color:#43FF64; font-weight:bold;">${lang.learned_status}</small>` : 
+             (isInBattle ? `<small style="color:orange; font-weight:bold;">${lang.battle_lock_warning}</small>` : 
+             (canAfford && treeMet ? `<button class="btn-learn-skill" onclick="learnSkill('${key}')">+</button>` : `<small style="color:#777;">${lang.missing_points}</small>`));
 
+        // Metinleri skillTranslation içinden alıyoruz
         item.innerHTML = `
             <div style="position:relative;">
                 <img src="images/${skill.data.icon}" class="skill-book-icon">
@@ -193,9 +211,9 @@ window.renderSkillBookList = function() {
             </div>
             <div class="skill-info" style="flex-grow:1;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="color:#f0e68c !important;">${skill.data.name}</h4>${action}
+                    <h4 style="color:#f0e68c !important;">${skillTranslation.name}</h4>${action}
                 </div>
-                <p>${skill.data.menuDescription}${cdHtml}${cdHtml1}</p>
+                <p>${skillTranslation.desc}${cdHtml}${cdHtml1}</p>
             </div>`;
         
         if (isLearned && skill.data.type !== 'passive') {
@@ -238,9 +256,12 @@ window.renderEquippedSlotsInBook = function() {
 window.openBasicSkillSelection = function() { switchScreen(basicSkillSelectionScreen); selectedAttackKey = null; selectedDefenseKey = null; renderBasicSkillSelection(); updateSelectionUI(); };
 window.renderBasicSkillSelection = function() {
     const atkC = document.getElementById('selection-list-attack'); const defC = document.getElementById('selection-list-defense'); atkC.innerHTML = ''; defC.innerHTML = '';
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang]; // lang tanımı
     for (const [key, skill] of Object.entries(SKILL_DATABASE)) {
         if (skill.data.category === 'common' && skill.data.tier === 1) {
-            const card = document.createElement('div'); card.className = 'selection-card'; card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skill.data.name}</h4><small>${skill.data.menuDescription}</small></div>`;
+			const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
+            const card = document.createElement('div'); card.className = 'selection-card'; card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skillTrans.name}</h4><small>${skillTrans.desc}</small></div>`;
             card.onclick = () => {
                 if (skill.data.type === 'attack') { selectedAttackKey = key; document.querySelectorAll('#selection-list-attack .selection-card').forEach(c => c.classList.remove('selected')); }
                 else { selectedDefenseKey = key; document.querySelectorAll('#selection-list-defense .selection-card').forEach(c => c.classList.remove('selected')); }
@@ -250,5 +271,31 @@ window.renderBasicSkillSelection = function() {
         }
     }
 };
-window.updateSelectionUI = function() { btnConfirmBasicSkills.disabled = !(selectedAttackKey && selectedDefenseKey); btnConfirmBasicSkills.textContent = btnConfirmBasicSkills.disabled ? "Yetenekleri Seç" : "MACERAYA BAŞLA"; };
+function updateSelectionUI() {
+    const confirmBtn = document.getElementById('btn-confirm-basic-skills');
+    
+    // O anki aktif dili alalım
+    const lang = window.LANGUAGES[window.gameSettings.lang];
+
+    if (selectedAttackKey && selectedDefenseKey) {
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = "1";
+        confirmBtn.style.cursor = "pointer";
+        // "Maceraya Başla" metnini dilden çekiyoruz
+        confirmBtn.textContent = lang.start_adventure_btn; 
+    } else {
+        confirmBtn.disabled = true;
+        confirmBtn.style.opacity = "0.5";
+        confirmBtn.style.cursor = "not-allowed";
+        
+        // Buradaki tüm metinleri de dilden çekiyoruz
+        if (!selectedAttackKey && !selectedDefenseKey) {
+            confirmBtn.textContent = lang.select_skills;
+        } else if (!selectedAttackKey) {
+            confirmBtn.textContent = lang.select_attack;
+        } else if (!selectedDefenseKey) {
+            confirmBtn.textContent = lang.select_defense;
+        }
+    }
+}
 window.confirmBasicSkills = function() { if (!selectedAttackKey || !selectedDefenseKey) return; hero.unlockedSkills.push(selectedAttackKey, selectedDefenseKey); hero.equippedSkills[0] = selectedAttackKey; hero.equippedSkills[1] = selectedDefenseKey; if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); switchScreen(mapScreen); writeLog("Savaş tarzı belirlendi."); };
