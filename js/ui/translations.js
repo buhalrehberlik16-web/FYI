@@ -182,6 +182,9 @@ window.LANGUAGES = {
             log_stun_skip: "💫 **Sersemleme**: Bu turu pas geçiyorsun!",
             log_regen: "💖 **Yenilenme**: HP yenilendi.",
             log_shield_expired: "🧱 Kalkanın süresi doldu."
+			log_double_blade: "🔥 **İki Uçlu Değnek**: Gücün arttı ama bedeli ağır olacak!",
+            log_cauterize: "🩹 **Dağlama**: Yaralarını ateşle temizledin.",
+            log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı."
         },
 		
 		status: {
@@ -284,7 +287,10 @@ window.LANGUAGES = {
             hell_blade: { name: "Cehennem Kılıcı", desc: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>." },
             Pommel_Bash: { name: "Kabzayla Vur", desc: "Str'nin %120'si kadar hasar. +18 Rage üretir." },
             battle_cry: { name: "Savaş Çığlığı", desc: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>." },
-            restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." }
+            restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
+			double_blade: { name: "İki Uçlu Değnek", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
+            Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
+            Healing_Light: { name: "İyileştiren Işık", desc: "Güçlü bir ışık seni iyileştirir. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." }
         }
     },
 
@@ -469,6 +475,9 @@ window.LANGUAGES = {
             log_stun_skip: "💫 **Stunned**: You skip this turn!",
             log_regen: "💖 **Regeneration**: HP restored.",
             log_shield_expired: "🧱 Shield expired."
+			log_double_blade: "🔥 **Double-Edged Sword**: Your power increased, but at a high cost!",
+            log_cauterize: "🩹 **Cauterize**: You cleansed your wounds with fire.",
+            log_healing_light: "✨ **Healing Light**: Holy light enveloped you."
         },
 		
 		status: {
@@ -571,7 +580,10 @@ window.LANGUAGES = {
             hell_blade: { name: "Hell Blade", desc: "Bloody attack. 25 Rage.<br>Damage: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP</span>." },
             Pommel_Bash: { name: "Pommel Bash", desc: "Deals 120% of Strength as damage. Generates +18 Rage." },
             battle_cry: { name: "Battle Cry", desc: "Get motivated. Costs 20 Rage.<br><span style='color:#43FF64'>3 Turns: 40% Strength Increase</span>." },
-            restore_healing: { name: "Restoration", desc: "Strong healing. Costs 50 Rage.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." }
+            restore_healing: { name: "Restoration", desc: "Strong healing. Costs 50 Rage.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
+			double_blade: { name: "Double-Edged Sword", desc: "Attack the enemy without regard for yourself. Deal 50% extra damage for 3 turns." },
+            Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
+            Healing_Light: { name: "Healing Light", desc: "A powerful light heals you. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." }
         }
     }
 };
