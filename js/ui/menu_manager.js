@@ -284,6 +284,10 @@ window.renderInventory = function() {
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slotEl.appendChild(img);
+			 const tierBadge = document.createElement('span');
+		tierBadge.className = 'item-tier-badge';
+		tierBadge.textContent = `T${item.tier}`; // Yer darlığından dolayı buraya sadece T yazmak daha şıktır
+		slotEl.appendChild(tierBadge);
             
             // Tooltip
             slotEl.onmouseenter = (e) => showItemTooltip(item, e);
@@ -422,26 +426,72 @@ window.renderSkillBookList = function() {
 window.renderEquippedSlotsInBook = function() {
     if (!skillBookEquippedBar) return;
     skillBookEquippedBar.innerHTML = '';
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+
     for (let i = 0; i < hero.equippedSkills.length; i++) {
-        const slot = document.createElement('div'); slot.className = 'menu-slot' + (i < 2 ? ' basic-menu-slot' : '');
+        const slot = document.createElement('div'); 
+        slot.className = 'menu-slot' + (i < 2 ? ' basic-menu-slot' : '');
         slot.innerHTML = `<span class="key-hint">${(i === 0) ? 'A' : (i === 1) ? 'D' : (i - 1)}</span>`;
+        
+        const key = hero.equippedSkills[i];
+
+        // --- DROP MANTIĞI (Skilli Yerleştirme/Swap) ---
         slot.addEventListener('dragover', e => e.preventDefault());
         slot.addEventListener('drop', e => {
-            e.preventDefault(); const raw = e.dataTransfer.getData('text/plain');
+            e.preventDefault(); 
+            const raw = e.dataTransfer.getData('text/plain');
             try { 
                 const data = JSON.parse(raw); 
                 if (data.type === 'move_skill') { 
-                    const temp = hero.equippedSkills[i]; hero.equippedSkills[i] = hero.equippedSkills[data.index]; hero.equippedSkills[data.index] = temp; 
+                    // İki slotun yerini değiştir (Swap)
+                    const temp = hero.equippedSkills[i]; 
+                    hero.equippedSkills[i] = hero.equippedSkills[data.index]; 
+                    hero.equippedSkills[data.index] = temp; 
                 } 
             }
-            catch(err) { if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) hero.equippedSkills[i] = raw; }
-            renderEquippedSlotsInBook(); if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+            catch(err) { 
+                // Kitaptan bara sürükleme
+                if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) {
+                    hero.equippedSkills[i] = raw; 
+                }
+            }
+            renderEquippedSlotsInBook(); 
+            if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
         });
-        const key = hero.equippedSkills[i];
+
         if (key && SKILL_DATABASE[key]) { 
-            slot.innerHTML += `<img src="images/${SKILL_DATABASE[key].data.icon}" title="${SKILL_DATABASE[key].data.name}">`;
-            slot.setAttribute('draggable', true); slot.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i })));
-            slot.oncontextmenu = e => { e.preventDefault(); hero.equippedSkills[i] = null; renderEquippedSlotsInBook(); if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); };
+            const skillData = SKILL_DATABASE[key].data;
+            const img = document.createElement('img');
+            img.src = `images/${skillData.icon}`;
+            img.title = skillData.name;
+            slot.appendChild(img);
+
+            // --- DRAG START (Skilli Sürüklemeye Başla) ---
+            slot.setAttribute('draggable', true); 
+            slot.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
+            });
+
+            // --- DRAG END (Skilli DIŞARI BIRAKMA MANTIĞI) ---
+            slot.addEventListener('dragend', e => {
+                // Eğer skill bir slotun üzerine bırakılmadıysa (boşluğa atıldıysa)
+                if (e.dataTransfer.dropEffect === "none") {
+                    const unequippedSkillName = lang.skills[key]?.name || skillData.name;
+                    hero.equippedSkills[i] = null; // Slotu boşalt
+                    renderEquippedSlotsInBook();
+                    if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+                    writeLog(`📤 ${unequippedSkillName} ${lang.log_skill_unequipped}`);
+                }
+            });
+
+            // Sağ Tıkla Çıkarma (Hala çalışsın)
+            slot.oncontextmenu = e => { 
+                e.preventDefault(); 
+                hero.equippedSkills[i] = null; 
+                renderEquippedSlotsInBook(); 
+                if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); 
+            };
         }
         skillBookEquippedBar.appendChild(slot);
     }
