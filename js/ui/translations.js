@@ -71,6 +71,11 @@ window.LANGUAGES = {
         continue_journey: "Yola Devam Et",
         dead_title: "ÖLDÜN!",
         back_to_menu: "Ana Menüye Dön",
+		expected_tier: "Beklenen Seviye",
+		result_type_odds: "Tür Olasılığı",
+		crit_chance_label: "Kritik Şans",
+		waiting_ingredients: "Eşyalar bekleniyor...",
+
 
         // Skill Book & Stat Screen
         skill_book_title: "📖 Yetenek Kitabı",
@@ -147,6 +152,7 @@ window.LANGUAGES = {
 		transmute_desc: "3 eşyayı birleştirerek daha güçlü bir eşya elde et.",
 		log_transmute_success: "Simyasal dönüşüm tamamlandı:",
 		log_transmute_fail: "Dönüşüm için 3 slotu da doldurmalısın!",
+		critical_success: "Kritik Başarı!",
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
         enemy_names: {
@@ -370,6 +376,10 @@ window.LANGUAGES = {
         continue_journey: "CONTINUE JOURNEY",
         dead_title: "YOU DIED!",
         back_to_menu: "Back to Menu",
+		expected_tier: "Expected Tier",
+		result_type_odds: "Type Odds",
+		crit_chance_label: "Crit Chance",
+		waiting_ingredients: "Waiting for items...",
 
         // Skill Book & Stat Screen
         skill_book_title: "📖 Skill Book",
@@ -400,6 +410,7 @@ window.LANGUAGES = {
         res_lightning: "Lightning",
         close_hint: "Press 'U' or 'X' to close.",
 		log_skill_unequipped: "unequipped from slot.",
+		critical_success: "CRITICAL SUCCESS!",
 
         // Town & City
         building_inn: "INN",

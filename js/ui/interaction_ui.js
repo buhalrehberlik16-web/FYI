@@ -143,6 +143,21 @@ window.triggerRandomEvent = function() {
 };
 
 document.addEventListener('click', e => {
-    if (e.target.classList.contains('close-npc')) e.target.closest('.npc-modal')?.classList.add('hidden');
-    if (e.target.classList.contains('npc-modal')) e.target.classList.add('hidden');
+    // Eğer tıklanan yer 'close-npc' sınıfına sahipse (Çıkış butonu) her türlü kapat
+    if (e.target.classList.contains('close-npc')) {
+        e.target.closest('.npc-modal')?.classList.add('hidden');
+        return;
+    }
+
+    // Siyah arka plana tıklandığında kapatma mantığı
+    if (e.target.classList.contains('npc-modal')) {
+        // KRİTİK GÜNCELLEME: Eğer tıklanan modal 'transmute-screen' ise HİÇBİR ŞEY YAPMA
+        if (e.target.id === 'transmute-screen') {
+            console.log("Güvenlik: Eşyaların kaybolmaması için geri butonunu kullanmalısın.");
+            return; 
+        }
+        
+        // Diğer modalları (Han, Demirci vb.) dışarı tıklayarak kapatmaya devam edebilir
+        e.target.classList.add('hidden');
+    }
 });
