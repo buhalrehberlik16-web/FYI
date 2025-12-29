@@ -122,8 +122,10 @@ const COMMON_SKILLS = {
             tier: 2
         },
         onCast: function(attacker, defender) {
+			const currentLang = window.gameSettings.lang || 'tr';
+			const lang = window.LANGUAGES[currentLang];
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'distract', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'debuff_enemy_atk', name: 'Düşman Güçsüz', value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect({  id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "ZAYIFLADI!", 'damage');

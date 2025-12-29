@@ -127,8 +127,10 @@ const BARBARIAN_SKILLS = {
             scaling: { atkMult: 2.0 }
         },
         onCast: function(attacker, defender) {
+			const currentLang = window.gameSettings.lang || 'tr';
+			const lang = window.LANGUAGES[currentLang];
             const dmg = SkillEngine.calculate(attacker, this.data);
-            hero.statusEffects.push({ id: 'debuff_enemy_atk', name: 'Düşman Güçsüz', value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect({ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
         }
