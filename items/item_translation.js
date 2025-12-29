@@ -40,7 +40,15 @@ const TR_ITEMS = {
     res_poison: "Zehir Direnci",
     res_curse: "Lanet Direnci",
     
-    tier_label: "Seviye"
+    tier_label: "Seviye",
+	expected_tier: "Beklenen Seviye",
+        result_type_odds: "Tür Olasılığı",
+        crit_chance_label: "Kritik Şans",
+        waiting_ingredients: "3 Eşya Yerleştirin...",
+        type_ring: "Yüzük",
+        type_necklace: "Kolye",
+        type_earring: "Küpe",
+        type_belt: "Kemer",
 };
 
 // İngilizce Eşyalar
@@ -81,7 +89,15 @@ const EN_ITEMS = {
     res_poison: "Poison Resist",
     res_curse: "Curse Resist",
     
-    tier_label: "TIER"
+    tier_label: "TIER",
+	expected_tier: "Expected Tier",
+        result_type_odds: "Type Odds",
+        crit_chance_label: "Crit Chance",
+        waiting_ingredients: "Place 3 Items...",
+        type_ring: "Ring",
+        type_necklace: "Necklace",
+        type_earring: "Earring",
+        type_belt: "Belt",
 };
 
 // Mevcut dile bu listeleri enjekte et
