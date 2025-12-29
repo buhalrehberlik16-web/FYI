@@ -676,13 +676,21 @@
         <h2 data-i18n="transmute_title">Dönüşüm</h2>
         <p style="font-size: 0.8em; color: #888; margin-bottom: 10px;" data-i18n="transmute_desc">3 eşya ver, 1 üst tier al.</p>
         
-        <!-- ÜST KISIM: 3 Giriş Slotu ve Sonuç -->
-        <div class="transmute-container">
+        <!-- ÖNEMLİ: Bu kapsayıcının class'ı transmute-container olmalı -->
+        <div class="transmute-container" id="transmute-main-box">
             <div class="transmute-slots">
-                <div class="item-slot transmute-input" data-index="0"></div>
-                <div class="item-slot transmute-input" data-index="1"></div>
-                <div class="item-slot transmute-input" data-index="2"></div>
+                <div class="item-slot transmute-input" id="t-slot-0" data-index="0"></div>
+                <div class="item-slot transmute-input" id="t-slot-1" data-index="1"></div>
+                <div class="item-slot transmute-input" id="t-slot-2" data-index="2"></div>
             </div>
+            
+            <!-- Efekt Katmanı -->
+            <svg id="transmute-svg-layer">
+                <path id="path-0" class="elec-path" d=""></path>
+                <path id="path-1" class="elec-path" d=""></path>
+                <path id="path-2" class="elec-path" d=""></path>
+            </svg>
+
             <div class="transmute-arrow"><i class="fas fa-chevron-down"></i></div>
             <div class="item-slot transmute-result" id="transmute-result-slot"></div>
         </div>
@@ -692,13 +700,11 @@
             <button onclick="closeTransmuteUI()" style="flex:1;" data-i18n="back">GERİ</button>
         </div>
 
-        <hr class="stat-separator" style="margin: 20px 0;">
+        <div id="transmute-probabilities" class="transmute-probs"></div>
 
-        <!-- ALT KISIM: Çanta (Inventory) Alanı -->
+        <hr class="stat-separator" style="margin: 15px 0;">
         <h3 style="font-size: 1em; color: #f0e68c; margin-bottom: 10px;" data-i18n="nav_inv">Çanta</h3>
-        <div id="transmute-bag-grid" class="bag-grid" style="margin: 0 auto;">
-            <!-- Burası JS ile dolacak -->
-        </div>
+        <div id="transmute-bag-grid" class="bag-grid" style="margin: 0 auto;"></div>
     </div>
 </div>
 			<!--AYARLAR (SETTINGS) -->
