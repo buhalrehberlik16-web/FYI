@@ -127,7 +127,7 @@ const COMMON_SKILLS = {
             hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "ZAYIFLADI!", 'damage');
-            setTimeout(() => { toggleSkillButtons(false); }, 300); 
+            setTimeout(() => {  window.isHeroTurn = true; toggleSkillButtons(false); }, 300); 
         }
     },
 	
