@@ -22,7 +22,7 @@ window.addHeroBlock = function(amount) {
     updateStats(); 
 };
 
-// --- EFEKTİF STAT HESAPLAMA ---
+// --- EFEKTİF STAT HESAPLAMA (GÜNCEL SÜRÜM) ---
 window.getHeroEffectiveStats = function() {
     // 1. TEMEL DEĞERLERİ HAZIRLA
     let s = { 
@@ -30,43 +30,61 @@ window.getHeroEffectiveStats = function() {
         dex: hero.dex, 
         int: hero.int, 
         vit: hero.vit, 
-        mp: hero.mp_pow 
+        mp_pow: hero.mp_pow 
     };
+    
+    // Dirençleri başlangıç değerleriyle (base) hazırla
+    let currentResists = { ...hero.baseResistances };
     
     let flatAtkBonus = 0;  // Sabit artışlar (+15 Atak gibi)
     let flatDefBonus = 0;  // Sabit defanslar (+10 Def gibi)
     let totalAtkMult = 1.0; // Yüzdesel çarpanlar (1.0 = %100)
 
-    // 2. STATUS EFFECT'LERİ TARA (Buff/Debuff)
+    // 2. EKİPMANLARI TARA (Eşyalardan gelen bonusları ekle)
+    for (const slotKey in hero.equipment) {
+        const item = hero.equipment[slotKey];
+        if (item && item.stats) {
+            for (const statKey in item.stats) {
+                // Eğer bu bir ana stat ise (str, dex vb.)
+                if (s.hasOwnProperty(statKey)) {
+                    s[statKey] += item.stats[statKey];
+                }
+                // Eğer bu bir direnç ise (fire, cold vb.)
+                else if (currentResists.hasOwnProperty(statKey)) {
+                    currentResists[statKey] += item.stats[statKey];
+                }
+            }
+        }
+    }
+
+    // 3. STATUS EFFECT'LERİ TARA (Buff/Debuff)
     hero.statusEffects.forEach(e => {
         if (!e.waitForCombat) {
             if (e.id === 'str_up') s.str += e.value;
             if (e.id === 'dex_up') s.dex += e.value;
             if (e.id === 'int_up') s.int += e.value;
             
-            // SABİT BONUSLARI TOPLA
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
             
-            // YÜZDESEL ÇARPANLARI TOPLA
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
+            
+            // Eğer bufflardan gelen direnç varsa (örn: resist_fire)
+            if (e.id === 'resist_fire') currentResists.fire += e.value;
         }
     });
 
-    // 3. SINIF KURALLARINI UYGULA (Barbar Kuralları)
+    // 4. SINIF KURALLARINI UYGULA (Barbar Kuralları)
     const rules = CLASS_CONFIG[hero.class];
     
     // Ham Atak = (Karakterin Baz Atağı + Sabit Bufflar + Statlardan Gelen Bonus)
     let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s.str * (rules.atkStats.str || 0.5));
-    
-    // Final Atak = Ham Atak * Toplam Çarpan
     let finalAtk = Math.floor(rawAtk * totalAtkMult);
 
     // Defans = (Karakterin Baz Defansı + Sabit Bufflar + Statlardan Gelen Bonus)
     let finalDef = (hero.baseDefense || 1) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
 
-    // 4. ÖZEL DURUMLAR
     // Pervasız Vuruş (Defansı 0 yapar)
     if (hero.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat)) {
         finalDef = 0;
@@ -74,6 +92,16 @@ window.getHeroEffectiveStats = function() {
 
     // Blok Gücü
     let finalBlock = Math.floor(s.dex * (rules.blockStats.dex || 0.8));
+	
+	/// 1. Eşyalardan gelen EXTRA Vitality'yi bul (Toplam Vit - Karakterin Kendi Viti)
+    const bonusVitFromItems = s.vit - hero.vit; 
+
+    // 2. Eşya Çarpanını al (item_data içindeki vitToHp: 2)
+    const itemVitMultiplier = window.ITEM_CONFIG.multipliers.vitToHp || 2;
+
+    // 3. Final Max HP = Karakterin Kendi Max HP'si + (Eşya Viti * Eşya Çarpanı)
+    const finalMaxHp = hero.maxHp + (bonusVitFromItems * itemVitMultiplier);
+
 
     // 5. SONUCU DÖNDÜR
     return { 
@@ -84,7 +112,9 @@ window.getHeroEffectiveStats = function() {
         dex: s.dex, 
         int: s.int, 
         vit: s.vit, 
-        mp: s.mp,
+        mp_pow: s.mp_pow,
+		maxHp: finalMaxHp,
+        resists: currentResists, // UI'ın beklediği toplam direnç objesi
         atkMultiplier: totalAtkMult 
     };
 };
@@ -397,6 +427,16 @@ window.nextTurn = function() {
             showFloatingText(heroDisplayContainer, 10, 'heal'); 
             writeLog(lang.log_regen);
         });
+		hero.statusEffects.filter(e => e.id === 'percent_regen' && !e.waitForCombat).forEach((effect) => { 
+			let healAmount = Math.floor(hero.hp * effect.value); 
+			if (healAmount < 1) healAmount = 1; // En az 1 HP iyileştirsin
+
+			const oldHp = hero.hp;
+			hero.hp = Math.min(hero.maxHp, hero.hp + healAmount); 
+    
+			showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
+			writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP (${lang.log_regen})`);
+		});
 
         hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
         hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
@@ -422,16 +462,26 @@ window.nextTurn = function() {
         }
         setTimeout(() => {
             if (!checkGameOver()) {
-                if (window.monsterNextAction === 'attack') handleMonsterAttack(monster, hero); 
-                else { 
-					const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                if (window.monsterNextAction === 'attack') {
+                    handleMonsterAttack(monster, hero); 
+                } else { 
+                    // DİL AYARLARINI ALALIM
+                    const currentLang = window.gameSettings.lang || 'tr';
+                    const combatLang = window.LANGUAGES[currentLang].combat; // .combat ekledik!
+
                     window.isMonsterDefending = true; 
-                    window.monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2); 
-                    showFloatingText(document.getElementById('monster-display'), lang.monster_defend_text, 'heal'); 
                     
-                    // LOG MESAJI ÇEVİRİSİ
-                    writeLog(`🛡️ **${monster.name}**: ${lang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
+                    // Defans bonusu hesaplama
+                    window.monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2); 
+                    
+                    // FLOATING TEXT (Artık 'combatLang' üzerinden çekiyor)
+                    showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal'); 
+                    
+                    // LOG MESAJI (Artık 'combatLang' üzerinden çekiyor)
+                    writeLog(`🛡️ **${monster.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
+                    
                     window.isHeroTurn = true; 
+                    updateStats(); // Kalkan görselini tetikler
                     setTimeout(nextTurn, 1000); 
                 }
             }
@@ -452,13 +502,39 @@ window.checkGameOver = function() {
         monster.hp = 0; updateStats(); 
         monsterDisplayImg.src = `images/${monster.dead}`; 
         monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)'; 
-        if (monsterIntentionOverlay) monsterIntentionOverlay.classList.remove('active');
-        let heroTier = hero.level < 4 ? 1 : (hero.level < 6 ? 2 : (hero.level < 11 ? 3 : 4));
-        gainXP(monster.tier > heroTier ? 4 : (monster.tier === heroTier ? 3 : 1));
+        
+        // --- YENİ GANİMET MANTIĞI ---
+        let rewards = [];
+        
+        // 1. Altın Ödülü (Zaten vardı)
+        rewards.push({ type: 'gold', value: Math.floor(Math.random() * 11) + 5 });
+
+        // 2. Eşya Düşürme Şansı (%40 şansla eşya düşsün)
+        if (Math.random() < 1.0) {
+            // Canavar Tier'ına göre İtem Tier'ı belirle
+            // Tier 2 canavar %50 ihtimalle Tier 1, %50 ihtimalle Tier 2 item atar
+            let itemTier = monster.tier;
+            if (monster.tier > 1 && Math.random() < 0.5) {
+                itemTier = monster.tier - 1;
+            }
+            
+            // Item Generator'ı çağır ve ödüllere ekle
+            const droppedItem = generateRandomItem(itemTier);
+            rewards.push({ type: 'item', value: droppedItem });
+        }
+        // ----------------------------
+
+        gainXP(3); // XP kazanımı (basitleştirildi)
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd); 
-        window.heroBlock = 0; updateStats();
-        setTimeout(() => { openRewardScreen([{ type: 'gold', value: Math.floor(Math.random() * 11) + 5 }]); monster = null; }, 1000); 
-		window.saveGame();
+        window.heroBlock = 0; 
+        updateStats();
+
+        setTimeout(() => { 
+            openRewardScreen(rewards); // Hazırladığımız ödül listesini gönderiyoruz
+            monster = null; 
+        }, 1000); 
+        
+        window.saveGame();
         return true;
     }
     return false;

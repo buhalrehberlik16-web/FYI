@@ -697,12 +697,20 @@
 
         </div> <!-- main-screen-area KAPANIŞI -->
         <div id="fade-overlay"></div>
+			<!-- Eşya Bilgi Kutusu (Tooltip) -->
+		<div id="item-tooltip" class="item-tooltip hidden">
+		<div id="tooltip-name" class="tooltip-name"></div>
+		<div id="tooltip-tier" class="tooltip-tier"></div>
+		<hr class="stat-separator">
+		<div id="tooltip-stats" class="tooltip-stats"></div>
+			</div>
     </div> <!-- game-container KAPANIŞI -->
 
     <!-- Scripts -->
     <!-- 1. VERİLER -->
 <script src="enemy_data.js"></script>
 <script src="game_data.js"></script>
+<script src="items/item_data.js"></script>
 
 <!-- 2. SKILL ENGINE -->
 <script src="skills/common_skills.js"></script>
@@ -711,6 +719,7 @@
 
 <!-- 3. UI KATMANI (BÖLÜNMÜŞ) -->
 <script src="js/ui/translations.js"></script>
+<script src="items/item_translation.js"></script>
 <script src="js/ui/settings_manager.js"></script>
 <script src="js/ui/ui_elements.js"></script>
 <script src="js/ui/screen_manager.js"></script>
@@ -719,6 +728,7 @@
 <script src="js/ui/interaction_ui.js"></script>
 
 <!-- 4. MANTIK KATMANI -->
+<script src="items/item_generator.js"></script>
 <script src="combat_manager.js"></script>
 <script src="map_manager.js"></script>
 <script src="save_manager.js"></script>

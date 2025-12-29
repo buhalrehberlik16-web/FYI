@@ -343,6 +343,19 @@ returnToMenuButton.addEventListener('click', () => {
     switchScreen(startScreen);
 });
 
+window.itemver = function(tier = 1) {
+    const newItem = generateRandomItem(tier);
+    const emptySlot = hero.inventory.indexOf(null);
+    
+    if (emptySlot !== -1) {
+        hero.inventory[emptySlot] = newItem;
+        renderInventory();
+        writeLog(`🛠️ Hile: Tier ${tier} eşya üretildi.`);
+    } else {
+        alert("Envanterin dolu!");
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 	if(typeof applySettings === 'function') applySettings();
     // 1. Oyunu ve İlk Ekranı Başlat
