@@ -1,0 +1,601 @@
+// js/ui/translations.js
+window.LANGUAGES = {
+    tr: {
+        // Üst Bar & Navigasyon
+        stat_plus_notif: "Stat +",
+        skill_plus_notif: "Yetenek +",
+        nav_skill: "Yetenek (K)",
+        nav_stat: "Stat (U)",
+        nav_inv: "Çanta (I)",
+
+        // Ana Menü
+        game_subtitle: "Karanlık zindanlarda bir efsane doğuyor?",
+        start_adventure: "MACERAYA BAŞLA",
+        continue_game: "DEVAM ET",
+        settings: "AYARLAR",
+        exit: "ÇIKIŞ",
+
+        // Sınıf Seçimi
+        class_selection_title: "Kaderini Belirle",
+        class_barbarian_name: "BARBAR",
+        class_barbarian_desc: "Saf fiziksel güç. Öfkesiyle zindanları sarsar.",
+        class_high_damage: "⚔️ Yüksek Hasar ⚔️",
+        class_high_hp: "💖 Yüksek Can 💖",
+        select: "SEÇ",
+        coming_soon: "YAKINDA",
+        class_magus_name: "MAGUS",
+        class_magus_desc: "Kadim büyülerin ustası. Elementleri kontrol eder.",
+        class_trickster_name: "TRICKSTER",
+        class_trickster_desc: "Hız ve kurnazlık. Gölgelerin arasından saldırır.",
+
+        // Yükleme & Skill Seçimi
+        preparing: "Hazırlanılıyor...",
+        skip: "Atla",
+        combat_style_title: "Savaş Tarzını Seç",
+        combat_style_subtitle: "Bir Saldırı ve bir Savunma yeteneği belirle.",
+        select_skills: "Yetenekleri Seç",
+		select_attack: "Atak Yeteneği seç",
+        select_defense: "Defans Yeteneği seç",
+        skill_lock_warning: "Dikkat: Seçilmeyen yetenekler bu oyun boyunca kilitli kalacak!",
+        primary_attack: "BİRİNCİL (Saldırı)",
+        secondary_defense: "İKİNCİL (Savunma)",
+        start_adventure_btn: "Maceraya Başla",
+		gold_text: "Altın",
+        learned_status: "✓ ÖĞRENİLDİ",
+        battle_lock_warning: "⚠️ SAVAŞTA ÖĞRENİLEMEZ",
+        missing_points: "Puan/Tier Eksik",
+        descending_dungeons: "Zindanlara iniliyor...",
+        log_skill_learned: "Yeni Yetenek Öğrenildi:",
+		cooldown_label: "Bekleme",
+        turn_suffix: "Tur",
+        same_turn_warning: "Aynı tur tekrar kullanılamaz.",
+		stat_battle_warning: "⚠️ SAVAŞ ESNASINDA STAT VERİLEMEZ",
+        
+
+        // Harita & Savaş
+        map_loading: "Harita Yükleniyor...",
+        turn_label: "TUR",
+
+        // Kamp Ateşi
+        campfire_title: "🔥 Kamp Ateşi 🔥",
+        campfire_desc: "Dinlen veya Geliş.",
+        rest_hp: "Dinlen (+HP)",
+        train_xp: "Antrenman (+XP)",
+        continue_btn: "Devam",
+
+        // Olaylar & Ödüller
+        mysterious_altar: "Gizemli Sunak",
+        altar_desc: "Eski bir sunak parlıyor.",
+        victory_title: "ZAFER!",
+        defeat_enemy_desc: "Düşmanı alt ettin.",
+        continue_journey: "Yola Devam Et",
+        dead_title: "ÖLDÜN!",
+        back_to_menu: "Ana Menüye Dön",
+
+        // Skill Book & Stat Screen
+        skill_book_title: "📖 Yetenek Kitabı",
+        skill_points_label: "YETENEK PUANI:",
+        tab_common: "GENEL (Common)",
+        tab_brutal: "VAHŞET (Brutal)",
+        tab_chaos: "KAOS (Chaos)",
+        tab_fervor: "COŞKU (Fervor)",
+        skill_book_hint: "Açık yetenekleri aşağıdaki slotlara sürükleyin. Kilitlileri puanla açın.",
+        equipped_skills_label: "KUŞANILAN YETENEKLER",
+        char_stats_title: "Karakter İstatistikleri",
+        stat_points_label: "DAĞITILABİLİR PUAN:",
+        label_hp: "Sağlık (HP):",
+        label_rage: "Öfke (Rage):",
+        label_atk: "Saldırı:",
+        label_def: "Defans:",
+        stat_str: "STR (Güç)",
+        stat_dex: "DEX (Çeviklik)",
+        stat_int: "INT (Zeka)",
+        stat_vit: "VIT (Canlılık)",
+        stat_mp: "MP (Büyü Gücü)",
+        resistances_title: "DİRENÇLER",
+        res_physical: "Fiziksel",
+        res_poison: "Zehir",
+        res_curse: "Lanet",
+        res_fire: "Ateş",
+        res_cold: "Buz",
+        res_lightning: "Yıldırım",
+        close_hint: "Kapatmak için 'U' veya 'X' tuşuna basın.",
+		log_skill_unequipped: "yetenek slotundan çıkarıldı.",
+
+        // Köy & Şehir
+        building_inn: "HAN",
+        building_blacksmith: "DEMİRCİ",
+        building_merchant: "TÜCCAR",
+        building_alchemist: "SİMYACI",
+        building_stable: "AHIR",
+        return_adventure: "Maceraya Dön",
+        city_name: "ALTIN BAŞKENT: ELDORIA",
+        act1_complete: "1. Perde Tamamlandı",
+        city_palace: "SARAY",
+        city_bank: "BANKA / KASA",
+        city_arena: "ARENA",
+        city_market: "BÜYÜK PAZAR",
+        start_act2: "2. PERDEYE YELKEN AÇ",
+
+        // Envanter & Ayarlar
+        inventory_title: "ENVANTER",
+        language: "DİL",
+        resolution: "ÇÖZÜNÜRLÜK",
+        res_fit: "Ekrana Uydur (Fit)",
+        back: "GERİ",
+
+        // NPC Dialogları
+        innkeeper_title: "HANCI",
+        rest_btn: "Dinlen (10g)",
+        drink_btn: "İçecek Al (5g)",
+        exit_btn: "Çıkış",
+        innkeeper_hello: "Yorgun görünüyorsun gezgin.",
+        alchemist_title: "SİMYACI",
+        buy_potion: "İksir Al",
+        alchemist_hello: "İksirlerim en kalitelisidir...",
+        blacksmith_title: "DEMİRCİ",
+        upgrade_item: "Eşya Yükselt",
+        blacksmith_hello: "Ateşim ejderhalar gibi...",
+        merchant_title: "TÜCCAR",
+        buy_btn: "Satın al",
+        merchant_hello: "Bu diyarın en kalitelileri...",
+        stable_title: "AHIR",
+        travel_fast: "Hızlı Git",
+        stable_hello: "Bu diyarın en iyi atları...",
+		transmute_title: "Simyasal Dönüşüm",
+		transmute_btn: "Dönüştür",
+		transmute_desc: "3 eşyayı birleştirerek daha güçlü bir eşya elde et.",
+		log_transmute_success: "Simyasal dönüşüm tamamlandı:",
+		log_transmute_fail: "Dönüşüm için 3 slotu da doldurmalısın!",
+
+        // --- DÜŞMANLAR (ENEMY NAMES) ---
+        enemy_names: {
+            "Zehirli Mantar": "Zehirli Mantar",
+            "Orman Örümceği": "Orman Örümceği",
+            "Hırsız Kobold": "Hırsız Kobold",
+            "Kan Yarasası": "Kan Yarasası",
+            "Goblin Devriyesi": "Goblin Devriyesi",
+            "Kaçak Haydut": "Kaçak Haydut",
+            "Gri Kurt": "Gri Kurt",
+            "Yaban Domuzu": "Yaban Domuzu",
+            "Goblin Savaşçısı": "Goblin Savaşçısı",
+            "Kaya Golemi": "Kaya Golemi",
+            "Orc Fedaisi": "Orc Fedaisi",
+            "Goblin Şefi": "Goblin Şefi",
+            "İskelet Şövalye": "İskelet Şövalye",
+            "Gulyabani": "Gulyabani",
+            "Kemik Golemi": "Kemik Golemi"
+        },
+
+		combat: {
+            f_block: "BLOK!",
+            f_stunned: "SERSEMLEDİ!",
+            f_weakened: "ZAYIFLADI!",
+            f_armor_pierce: "ZIRH DELME!",
+            f_crit: "KRİTİK!",
+            f_fury: "HİDDET!",
+			monster_defend_text: "SAVUNMA!",
+			
+			monster_log_defend: "Savunma pozisyonu aldı",
+            log_windup: "✨ **Kurulma**: Biriktirilen güç saldırıya eklendi!",
+            log_ignore_def: "🔨 **Zırh Delme**: Düşman savunması yok sayıldı!",
+            log_fury_gain: "🔥 **Hiddet**: Hasardan öfke kazandın.",
+            log_hit_monster: "adlı düşmana hasar verdin.",
+            log_shield_break: "savunması kırıldı!",
+            log_monster_hit: "Sana hasar vurdu.",
+            log_block_full: "🧱 **Blok**: Hasarı tamamen engelledin!",
+            log_block_partial: "🧱 **Blok**: Hasar emildi, kalan hasar:",
+            log_stun_skip: "💫 **Sersemleme**: Bu turu pas geçiyorsun!",
+            log_regen: "💖 **Yenilenme**: HP yenilendi.",
+            log_shield_expired: "🧱 Kalkanın süresi doldu.",
+			log_double_blade: "🔥 **İki Uçlu Değnek**: Gücün arttı ama bedeli ağır olacak!",
+            log_cauterize: "🩹 **Dağlama**: Yaralarını ateşle temizledin.",
+            log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı."
+        },
+		
+		status: {
+            atk_up: "Öfke",
+            def_up: "Taş Deri",
+            regen: "Yenilenme",
+            str_up: "Güçlü",
+            atk_up_percent: "Keskinlik",
+            ignore_def: "Zırh Delme",
+            guard_active: "Siper",
+            fury_active: "Hiddet",
+            wind_up: "Kurulma",
+            block_skill: "Bekleme",
+            block_type: "Kilitli",
+            stun: "Sersemleme",
+            monster_stunned: "Düşman Sersem",
+            curse_damage: "Lanetli",
+            atk_half: "Hantal",
+            defense_zero: "Savunmasız",
+            locked_skill_msg: "Kilitli",
+            currently_unavailable: "şu an kullanılamaz!",
+			turn_suffix:"Tur",
+			debuff_enemy_atk: "Düşman Güçsüz",
+            debuff_enemy_def: "Düşman Savunmasız"
+        },
+		
+        // --- OLAYLAR (EVENTS) ---
+        events: {
+            berserk_brew: { 
+                title: "Öfke İksiri", 
+                desc: "Yerde fokurdayan kırmızı bir şişe buldun.",
+                opt1: "İç (Riskli Güç)", opt1_b: "3 Tur: +15 Saldırı", opt1_d: "3 Tur: TÜM İyileşmeler Kilitli",
+                opt2: "Dök (Güvenli)", opt2_b: "+10 XP", opt2_d: ""
+            },
+            stone_skin: { 
+                title: "Taşlaşma Büyüsü", 
+                desc: "Eski bir parşömen.",
+                opt1: "Büyüyü Oku", opt1_b: "5 Tur: +10 Defans", opt1_d: "5 Tur: Yarı Hasar",
+                opt2: "Parşömeni Yak", opt2_b: "+5 Rage", opt2_d: ""
+            },
+            cursed_gold: { 
+                title: "Yorgunluk Laneti", 
+                desc: "Lanetli olduğu belli olan bir altın yığını.",
+                opt1: "Altınları Al", opt1_b: "Anında: +4 XP", opt1_d: "2 Oda: %60 Hasar",
+                opt2: "Uzaklaş", opt2_b: "", opt2_d: ""
+            },
+            adrenaline: { 
+                title: "Adrenalin Meyvesi", 
+                desc: "Çok nadir bir meyve.",
+                opt1: "Meyveyi Ye", opt1_b: "2 Oda: +20 Max HP", opt1_d: "Etki Bitince: -30 Can Kaybı",
+                opt2: "Sakla", opt2_b: "+10 HP", opt2_d: ""
+            },
+            blood_pact: { 
+                title: "Kan Anlaşması", 
+                desc: "Kadim bir varlık fısıldıyor.",
+                opt1: "Anlaşmayı Kabul Et", opt1_b: "Kalıcı: +5 STR", opt1_d: "Anında: Canın %50'si Gider",
+                opt2: "Reddet", opt2_b: "", opt2_d: ""
+            },
+            gambler: { 
+                title: "Kumarbazın Ruhu", 
+                desc: "Önünde iki kadeh var.",
+                opt1: "Kırmızı Kadehi İç", opt1_b: "%50: Canı Fulle", opt1_d: "%50: Canı 1'e İndir",
+                opt2: "Masadan Kalk", opt2_b: "", opt2_d: ""
+            },
+            random_campfire: { 
+                title: "Sönmüş Ateş", 
+                desc: "Yol kenarında korları hala sıcak olan bir kamp alanı buldun. Ne yapacaksın?",
+                opt1: "Dinlen (+HP)", opt1_b: "+25 HP", opt1_d: "",
+                opt2: "Antrenman Yap (+XP)", opt2_b: "+3 XP", opt2_d: ""
+            },
+            flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
+            flee_debuff: "-10 HP"
+        },
+
+        // --- SKİLLER ---
+        skills: {
+            cut: { name: "Kes", desc: "Atağın kadar hasar. +10 Rage üretir." },
+            guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır. -15 Rage." },
+            strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar. +0-9 Rage üretir." },
+            block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage." },
+            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT)." },
+            distract: { name: "Dikkat Dağıt", desc: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>" },
+            tactical_strike: { name: "Taktiksel Vuruş", desc: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>" },
+            hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+2 Broş Slotu</span> kazandırır." },
+            loot_junkie: { name: "Ganimetçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Çanta Slotu</span> kazandırır." },
+            fired_up: { name: "Ateşli", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır." },
+            sharpen: { name: "Bileme", desc: "30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>." },
+            curse: { name: "Lanet", desc: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>" },
+            willful_strike: { name: "İradeli Vuruş", desc: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%)." },
+            slash: { name: "Kesik", desc: "Saldırı gücü + %60 Str bonusu. 20 Öfke harcar." },
+            reckless_strike: { name: "Pervasız Vuruş", desc: "Hasar: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>" },
+            wind_up: { name: "Kurulma", desc: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır." },
+            bash: { name: "Balyoz", desc: "Hasar: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>" },
+            pierce_through: { name: "Delip Geç", desc: "Hasar: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>" },
+            daze: { name: "Afallat", desc: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span>" },
+            armor_break: { name: "Zırh Kıran", desc: "Zırhı parçalar. 30 Öfke harcar.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>." },
+            fury: { name: "Hiddet", desc: "50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span>" },
+            blood_price: { name: "Kan Bedeli", desc: "Maksimum Canın %15'ini feda et, o kadar Öfke kazan. <br><span style='color:cyan'>(Hızlı Aksiyon)</span>" },
+            fiery_blade: { name: "Alevli Kılıç", desc: "3 Tur boyunca tüm saldırıların %50 daha fazla vurur (Ateş Hasarı)." },
+            hell_blade: { name: "Cehennem Kılıcı", desc: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>." },
+            Pommel_Bash: { name: "Kabzayla Vur", desc: "Str'nin %120'si kadar hasar. +18 Rage üretir." },
+            battle_cry: { name: "Savaş Çığlığı", desc: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>." },
+            restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
+			double_blade: { name: "İki Uçlu Değnek", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
+            Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
+            Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."   }
+        }
+    },
+
+    en: {
+        // Upper Bar & Nav
+        stat_plus_notif: "STAT +",
+        skill_plus_notif: "SKILL +",
+        nav_skill: "SKILL (K)",
+        nav_stat: "Stat (U)",
+        nav_inv: "Bag (I)",
+
+        // Main Menu
+        game_subtitle: "A legend is born in dark dungeons.",
+        start_adventure: "START ADVENTURE",
+        continue_game: "CONTINUE",
+        settings: "SETTINGS",
+        exit: "EXIT",
+
+        // Class Selection
+        class_selection_title: "Choose Your Fate",
+        class_barbarian_name: "BARBARIAN",
+        class_barbarian_desc: "Pure physical power. Shakes dungeons with rage.",
+        class_high_damage: "⚔️ High Damage ⚔️",
+        class_high_hp: "💖 High HP 💖",
+        select: "SELECT",
+        coming_soon: "COMING SOON",
+        class_magus_name: "MAGUS",
+        class_magus_desc: "Master of ancient spells. Controls elements.",
+        class_trickster_name: "TRICKSTER",
+        class_trickster_desc: "Speed and cunning. Attacks from shadows.",
+
+        // Loading & Skill Select
+        preparing: "Preparing...",
+        skip: "SKIP",
+        combat_style_title: "Choose Combat Style",
+        combat_style_subtitle: "Determine one Attack and one Defense skill.",
+        select_skills: "Select SKILLS",
+        select_attack: "Select Attack",
+        select_defense: "Select Defense",
+        skill_lock_warning: "Warning: Unselected skills will remain locked for this run!",
+        primary_attack: "PRIMARY (Attack)",
+        secondary_defense: "SECONDARY (Defense)",
+        start_adventure_btn: "Start Adventure",
+		gold_text: "Gold",
+        learned_status: "✓ LEARNED",
+        battle_lock_warning: "⚠️ CANNOT LEARN IN BATTLE",
+        missing_points: "Missing Points/Tier",
+        descending_dungeons: "Descending into dungeons...",
+        log_skill_learned: "New Skill Learned:",
+		cooldown_label: "Cooldown",
+        turn_suffix: "Turns",
+        same_turn_warning: "Cannot be used in the same turn.",
+		stat_battle_warning: "⚠️ CANNOT DISTRIBUTE STATS IN BATTLE",
+
+        // Map & Battle
+        map_loading: "Loading Map...",
+        turn_label: "TURN",
+
+        // Campfire
+        campfire_title: "🔥 Campfire 🔥",
+        campfire_desc: "Rest or Improve.",
+        rest_hp: "Rest (+HP)",
+        train_xp: "Train (+XP)",
+        continue_btn: "Continue",
+
+        // Events & Rewards
+        mysterious_altar: "Mysterious Altar",
+        altar_desc: "An ancient altar is glowing.",
+        victory_title: "VICTORY!",
+        defeat_enemy_desc: "You defeated the enemy.",
+        continue_journey: "CONTINUE JOURNEY",
+        dead_title: "YOU DIED!",
+        back_to_menu: "Back to Menu",
+
+        // Skill Book & Stat Screen
+        skill_book_title: "📖 Skill Book",
+        skill_points_label: "SKILL POINTS:",
+        tab_common: "COMMON",
+        tab_brutal: "BRUTAL",
+        tab_chaos: "CHAOS",
+        tab_fervor: "FERVOR",
+        skill_book_hint: "Drag unlocked skills to slots. Unlock locked ones with points.",
+        equipped_skills_label: "EQUIPPED SKILLS",
+        char_stats_title: "Character Stats",
+        stat_points_label: "DISTRIBUTABLE POINTS:",
+        label_hp: "Health (HP):",
+        label_rage: "Rage:",
+        label_atk: "Attack:",
+        label_def: "Defense:",
+        stat_str: "STR (Strength)",
+        stat_dex: "DEX (Dexterity)",
+        stat_int: "INT (Intelligence)",
+        stat_vit: "VIT (Vitality)",
+        stat_mp: "MP (Magic Power)",
+        resistances_title: "RESISTANCES",
+        res_physical: "Physical",
+        res_poison: "Poison",
+        res_curse: "Curse",
+        res_fire: "Fire",
+        res_cold: "Cold",
+        res_lightning: "Lightning",
+        close_hint: "Press 'U' or 'X' to close.",
+		log_skill_unequipped: "unequipped from slot.",
+
+        // Town & City
+        building_inn: "INN",
+        building_blacksmith: "BLACKSMITH",
+        building_merchant: "MERCHANT",
+        building_alchemist: "ALCHEMIST",
+        building_stable: "STABLE",
+        return_adventure: "Return to Adventure",
+        city_name: "GOLDEN CAPITAL: ELDORIA",
+        act1_complete: "Act 1 Completed",
+        city_palace: "PALACE",
+        city_bank: "BANK / VAULT",
+        city_arena: "ARENA",
+        city_market: "GRAND MARKET",
+        start_act2: "SAIL TO ACT 2",
+
+        // Inventory & Settings
+        inventory_title: "INVENTORY",
+        language: "LANGUAGE",
+        resolution: "RESOLUTION",
+        res_fit: "Fit Screen",
+        back: "BACK",
+
+        // NPC Dialogues
+        innkeeper_title: "INNKEEPER",
+        rest_btn: "Rest (10g)",
+        drink_btn: "Buy Drink (5g)",
+        exit_btn: "EXIT",
+        innkeeper_hello: "You look tired, traveler.",
+        alchemist_title: "ALCHEMIST",
+        buy_potion: "Buy Potion",
+        alchemist_hello: "My potions are of best quality...",
+        blacksmith_title: "BLACKSMITH",
+        upgrade_item: "Upgrade Item",
+        blacksmith_hello: "My fire is like dragons...",
+        merchant_title: "MERCHANT",
+        buy_btn: "Buy",
+        merchant_hello: "The finest goods in this realm...",
+        stable_title: "STABLE",
+        travel_fast: "Travel Fast",
+        stable_hello: "The best horses in this land...",
+		transmute_title: "Alchemical Transmutation",
+		transmute_btn: "Transmute",
+		transmute_desc: "Combine 3 items to obtain a higher-tier item.",
+		log_transmute_success: "Transmutation complete:",
+		log_transmute_fail: "You must fill all 3 slots for transmutation!",
+
+        // Enemy Names
+        enemy_names: {
+            "Zehirli Mantar": "Poisonous Mushroom",
+            "Orman Örümceği": "Forest Spider",
+            "Hırsız Kobold": "Thief Kobold",
+            "Kan Yarasası": "Blood Bat",
+            "Goblin Devriyesi": "Goblin Patrol",
+            "Kaçak Haydut": "Outlaw Rogue",
+            "Gri Kurt": "Grey Wolf",
+            "Yaban Domuzu": "Wild Boar",
+            "Goblin Savaşçısı": "Goblin Warrior",
+            "Kaya Golemi": "Rock Golem",
+            "Orc Fedaisi": "Orc Bodyguard",
+            "Goblin Şefi": "Goblin Chief",
+            "İskelet Şövalye": "Skeleton Knight",
+            "Gulyabani": "Ghoul",
+            "Kemik Golemi": "Bone Golem"
+        },
+		
+		combat: {
+            f_block: "BLOCK!",
+            f_stunned: "STUNNED!",
+            f_weakened: "WEAKENED!",
+            f_armor_pierce: "ARMOR PIERCE!",
+            f_crit: "CRITICAL!",
+            f_fury: "FURY!",
+            
+            log_windup: "✨ **Wind Up**: Stored power added to attack!",
+            log_ignore_def: "🔨 **Armor Pierce**: Enemy defense ignored!",
+            log_fury_gain: "🔥 **Fury**: Gained rage from damage.",
+            log_hit_monster: "damage dealt to",
+            log_shield_break: "defense broken!",
+            log_monster_hit: "hit you for",
+            log_block_full: "🧱 **Block**: You blocked all damage!",
+            log_block_partial: "🧱 **Block**: Damage absorbed, remaining:",
+            log_stun_skip: "💫 **Stunned**: You skip this turn!",
+            log_regen: "💖 **Regeneration**: HP restored.",
+            log_shield_expired: "🧱 Shield expired.",
+			log_double_blade: "🔥 **Double-Edged Sword**: Your power increased, but at a high cost!",
+            log_cauterize: "🩹 **Cauterize**: You cleansed your wounds with fire.",
+            log_healing_light: "✨ **Healing Light**: Holy light enveloped you.",
+			monster_defend_text: "DEFENSE!", 
+            monster_log_defend: "took a defensive stance"
+        },
+		
+		status: {
+            atk_up: "Berserk",
+            def_up: "Stone Skin",
+            regen: "Regeneration",
+            str_up: "Strength Up",
+            atk_up_percent: "Sharpness",
+            ignore_def: "Armor Pierce",
+            guard_active: "Guard",
+            fury_active: "Fury",
+            wind_up: "Wind Up",
+            block_skill: "Cooldown",
+            block_type: "Locked",
+            stun: "Stunned",
+            monster_stunned: "Enemy Stunned",
+            curse_damage: "Cursed",
+            atk_half: "Sluggish",
+            defense_zero: "Vulnerable",
+            locked_skill_msg: "Locked",
+            currently_unavailable: "is currently unavailable!",
+			turn_suffix:"Turns",
+			debuff_enemy_atk: "Enemy Weakened",
+            debuff_enemy_def: "Enemy Vulnerable"
+        },
+
+        // Events
+        events: {
+            berserk_brew: { 
+                title: "Berserk Brew", 
+                desc: "You found a bubbling red bottle on the ground.",
+                opt1: "DRINK (RISKY Power)", opt1_b: "3 Turns: +15 Attack", opt1_d: "3 Turns: ALL HEALING Locked",
+                opt2: "Pour Out (Safe)", opt2_b: "+10 XP", opt2_d: ""
+            },
+            stone_skin: { 
+                title: "Stone Skin Scroll", 
+                desc: "An ancient scroll.",
+                opt1: "Read Spell", opt1_b: "5 Turns: +10 Defense", opt1_d: "5 Turns: Half Damage",
+                opt2: "Burn Scroll", opt2_b: "+5 Rage", opt2_d: ""
+            },
+            cursed_gold: { 
+                title: "Fatigue Curse", 
+                desc: "A PILE of gold that IS clearly cursed.",
+                opt1: "Take Gold", opt1_b: "Instant: +4 XP", opt1_d: "2 Rooms: 60% Damage",
+                opt2: "Walk Away", opt2_b: "", opt2_d: ""
+            },
+            adrenaline: { 
+                title: "Adrenaline Fruit", 
+                desc: "A very rare FRUIT.",
+                opt1: "Eat FRUIT", opt1_b: "2 Rooms: +20 Max HP", opt1_d: "After Effect: -30 HP Loss",
+                opt2: "Stash It", opt2_b: "+10 HP", opt2_d: ""
+            },
+            blood_pact: { 
+                title: "Blood Pact", 
+                desc: "An ancIent entIty whispers.",
+                opt1: "Accept Pact", opt1_b: "Permanent: +5 STR", opt1_d: "Instant: Lose 50% HP",
+                opt2: "Refuse", opt2_b: "", opt2_d: ""
+            },
+            gambler: { 
+                title: "Gambler's Soul", 
+                desc: "Two chalIces are before you.",
+                opt1: "DrInk Red ChalIce", opt1_b: "50%: Full Heal", opt1_d: "50%: Drop HP to 1",
+                opt2: "Leave Table", opt2_b: "", opt2_d: ""
+            },
+            random_campfire: { 
+                title: "Extinguished Fire", 
+                desc: "You found a campsite with still warm embers. What will you do?",
+                opt1: "Rest (+HP)", opt1_b: "+25 HP", opt1_d: "",
+                opt2: "PractIce (+XP)", opt2_b: "+3 XP", opt2_d: ""
+            },
+            flee_option: "Flee In Fear",
+            flee_debuff: "-10 HP"
+        },
+
+        // Skills
+        skills: {
+            cut: { name: "Cut", desc: "Damage equal to Attack. Generates +10 Rage." },
+            guard: { name: "Guard", desc: "Reduces incoming damage by 25%. -15 Rage." },
+            strike: { name: "Strike", desc: "115% Attack damage. Generates +0-9 Rage." },
+            block: { name: "Block", desc: "Gain block equal to 80% of Dex. Block decays 50% at turn end. -10 Rage." },
+            minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT)." },
+            distract: { name: "Distract", desc: "<b>(Fast Action)</b><br>Enemy ATK -25% (1 Turn).<br>Enemy DEF -50% (2 Turns).<br><span style='color:cyan'>-50 Rage. No turn end.</span>" },
+            tactical_strike: { name: "Tactical Strike", desc: "Deals 130% of Attack damage. Costs 15 Rage.<br><span style='color:cyan'>Ignores 10 Defense.</span>" },
+            hoarder: { name: "Hoarder", desc: "Passive Skill.<br>Increases Brooch capacity by <span style='color:gold'>+2 Slots</span>." },
+            loot_junkie: { name: "Loot Junkie", desc: "Passive Skill.<br>Increases Bag capacity by <span style='color:gold'>+1 Slot</span>." },
+            fired_up: { name: "Fired Up", desc: "Passive Skill.<br>Increases Skill capacity by <span style='color:gold'>+1 Slot</span>." },
+            sharpen: { name: "Sharpen", desc: "Costs 30 Rage.<br><span style='color:#43FF64'>4 Turns: +25% Attack Power</span>." },
+            curse: { name: "Curse", desc: "Costs 20 Rage.<br><span style='color:#b19cd9'>5 Turns: Enemy takes 20% more damage.</span>" },
+            willful_strike: { name: "Willful Strike", desc: "Consumes <b>ALL CURRENT RAGE</b>.<br>Damage: ATK x (1 + Consumed Rage%)." },
+            slash: { name: "Slash", desc: "Attack Power + 60% Str bonus. Costs 20 Rage." },
+            reckless_strike: { name: "Reckless Strike", desc: "Damage: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Turns: Your Defense becomes 0.</span>" },
+            wind_up: { name: "Wind Up", desc: "Next attack deals <b style='color:orange'>+1 x STR</b> extra. Gain +15 Rage." },
+            bash: { name: "Bash", desc: "Damage: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>30% Chance to Stun (1 Turn).</span>" },
+            pierce_through: { name: "Pierce Through", desc: "Damage: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Ignores 50% of Enemy Defense.</span>" },
+            daze: { name: "Daze", desc: "Damage: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Turns: Enemy ATK reduced by 25%.</span>" },
+            armor_break: { name: "Armor Break", desc: "Breaks armor. Costs 30 Rage.<br><span style='color:cyan'>2 Turns: Enemy Defense becomes 0</span>." },
+            fury: { name: "Fury", desc: "Costs 50 Rage.<br><span style='color:#43FF64'>4 Turns: Gain Rage equal to 25% of damage dealt.</span>" },
+            blood_price: { name: "Blood Price", desc: "Sacrifice 15% of Max HP to gain equal amount of Rage. <br><span style='color:cyan'>(Fast Action)</span>" },
+            fiery_blade: { name: "Fiery Blade", desc: "All attacks deal 50% more damage for 3 turns (Fire Damage)." },
+            hell_blade: { name: "Hell Blade", desc: "Bloody attack. 25 Rage.<br>Damage: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP</span>." },
+            Pommel_Bash: { name: "Pommel Bash", desc: "Deals 120% of Strength as damage. Generates +18 Rage." },
+            battle_cry: { name: "Battle Cry", desc: "Get motivated. Costs 20 Rage.<br><span style='color:#43FF64'>3 Turns: 40% Strength Increase</span>." },
+            restore_healing: { name: "Restoration", desc: "Strong healing. Costs 50 Rage.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
+			double_blade: { name: "Double-Edged Axe", desc: "Attack the enemy without regard for yourself. Deal 50% extra damage for 3 turns." },
+            Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
+            Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." }
+        }
+    }
+};
