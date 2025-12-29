@@ -41,7 +41,9 @@ const TR_ITEMS = {
     res_curse: "Lanet Direnci",
     
     tier_label: "Seviye",
+	likely_stat: "Baskın Özellik",
 	expected_tier: "Beklenen Seviye",
+	tier_odds: "Seviye Olasılığı",
         result_type_odds: "Tür Olasılığı",
         crit_chance_label: "Kritik Şans",
         waiting_ingredients: "3 Eşya Yerleştirin...",
@@ -90,7 +92,9 @@ const EN_ITEMS = {
     res_curse: "Curse Resist",
     
     tier_label: "TIER",
+	likely_stat: "Likely Attribute",
 	expected_tier: "Expected Tier",
+	tier_odds: "Tier Odds",
         result_type_odds: "Type Odds",
         crit_chance_label: "Crit Chance",
         waiting_ingredients: "Place 3 Items...",
