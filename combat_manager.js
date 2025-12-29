@@ -170,6 +170,8 @@ window.initializeSkillButtons = function() {
     const slotA = document.getElementById('btn-basic-attack');
     const slotD = document.getElementById('btn-basic-defend');
     const totalSlots = hero.equippedSkills.length; 
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
 
     for (let i = 0; i < totalSlots; i++) {
         let slot = (i === 0) ? slotA : (i === 1) ? slotD : document.createElement('div');
@@ -178,11 +180,16 @@ window.initializeSkillButtons = function() {
 
         slot.innerHTML = ''; slot.className = 'skill-slot'; 
         if (i < 2) slot.classList.add('basic-slot'); 
-        slot.dataset.slotIndex = i; slot.setAttribute('draggable', true);
+        slot.dataset.slotIndex = i; 
         
+        const key = hero.equippedSkills[i];
+        slot.innerHTML = `<span class="key-hint">${(i === 0) ? 'A' : (i === 1) ? 'D' : (i - 1)}</span>`;
+
+        // --- DROP MANTIĞI ---
         slot.ondragover = e => e.preventDefault();
         slot.ondrop = e => {
-            e.preventDefault(); const raw = e.dataTransfer.getData('text/plain');
+            e.preventDefault(); 
+            const raw = e.dataTransfer.getData('text/plain');
             try {
                 const d = JSON.parse(raw);
                 if (d.type === 'move_skill') {
@@ -190,6 +197,7 @@ window.initializeSkillButtons = function() {
                     hero.equippedSkills[i] = hero.equippedSkills[d.index];
                     hero.equippedSkills[d.index] = temp;
                     initializeSkillButtons();
+                    if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
                 }
             } catch (err) {
                 if (SKILL_DATABASE[raw]) { 
@@ -200,20 +208,38 @@ window.initializeSkillButtons = function() {
             }
         };
 
-        const key = hero.equippedSkills[i];
-        slot.innerHTML = `<span class="key-hint">${(i === 0) ? 'A' : (i === 1) ? 'D' : (i - 1)}</span>`;
-
         if (key && SKILL_DATABASE[key]) {
             const data = SKILL_DATABASE[key].data || SKILL_DATABASE[key];
-            slot.innerHTML += `<img src="images/${data.icon}">`;
+            const img = document.createElement('img');
+            img.src = `images/${data.icon}`;
+            slot.appendChild(img);
+
             const overlay = document.createElement('div'); overlay.className = 'cooldown-overlay';
             const cdText = document.createElement('span'); cdText.className = 'cooldown-text';
             overlay.appendChild(cdText); slot.appendChild(overlay);
+            
             slot.dataset.skillKey = key; 
             slot.dataset.rageCost = data.rageCost || 0;
             slot.onclick = () => { if (!slot.classList.contains('disabled')) handleSkillUse(key); };
+            
+            // --- DRAG & DROP ÖZELLİKLERİ ---
+            slot.setAttribute('draggable', true);
+            slot.ondragstart = e => {
+                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
+            };
+
+            slot.ondragend = e => {
+                if (e.dataTransfer.dropEffect === "none") {
+                    hero.equippedSkills[i] = null;
+                    initializeSkillButtons();
+                    if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+                    writeLog(`📤 ${lang.log_skill_unequipped}`);
+                }
+            };
         } else {
             slot.classList.add('empty-slot');
+            slot.setAttribute('draggable', false);
+            slot.onclick = null;
         }
     }
     toggleSkillButtons(false);
