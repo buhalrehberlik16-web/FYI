@@ -329,6 +329,53 @@
 .npc-dialogue { position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%); width: 30%; text-align: center; color: #5d4037; font-weight: bold; font-style: italic; }
 
 .fire-glow-effect { position: absolute; bottom: -20%; left: 20%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(255,69,0,0.6) 0%, rgba(139,0,0,0.2) 60%, transparent 80%); filter: blur(30px); animation: fire-flicker 3s infinite alternate; z-index: 0; pointer-events: none; }
+/*============================================================
+   Alchemist Transmute
+============================================================ */
+.transmute-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 10px;
+}
+.transmute-slots {
+    display: flex;
+    gap: 20px;
+}
+.transmute-arrow {
+    font-size: 1.5em;
+    color: #ffd700;
+    animation: bounce 2s infinite;
+}
+.transmute-input { border-color: #3498db !important; }
+.transmute-result { 
+    border-color: #ffd700 !important; 
+    width: 70px !important; 
+    height: 70px !important;
+    background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+}
+
+#transmute-bag-grid {
+    grid-template-columns: repeat(4, 50px);
+    grid-template-rows: repeat(2, 50px);
+    gap: 10px;
+    padding: 15px;
+    background: rgba(0,0,0,0.5);
+    width: fit-content;
+    border: 1px solid #444;
+}
+#transmute-bag-grid .item-slot {
+    width: 50px;
+    height: 50px;
+}
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+
+
+
 
 @media (max-width: 768px) {
     /* Köy yazıları zaten cqw ile küçülüyor, dokunmaya gerek yok. */
