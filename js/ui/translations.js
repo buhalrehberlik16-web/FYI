@@ -100,6 +100,7 @@ window.LANGUAGES = {
         res_cold: "Buz",
         res_lightning: "Yıldırım",
         close_hint: "Kapatmak için 'U' veya 'X' tuşuna basın.",
+		log_skill_unequipped: "yetenek slotundan çıkarıldı.",
 
         // Köy & Şehir
         building_inn: "HAN",
@@ -141,6 +142,11 @@ window.LANGUAGES = {
         stable_title: "AHIR",
         travel_fast: "Hızlı Git",
         stable_hello: "Bu diyarın en iyi atları...",
+		transmute_title: "Simyasal Dönüşüm",
+		transmute_btn: "Dönüştür",
+		transmute_desc: "3 eşyayı birleştirerek daha güçlü bir eşya elde et.",
+		log_transmute_success: "Simyasal dönüşüm tamamlandı:",
+		log_transmute_fail: "Dönüşüm için 3 slotu da doldurmalısın!",
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
         enemy_names: {
@@ -393,6 +399,7 @@ window.LANGUAGES = {
         res_cold: "Cold",
         res_lightning: "Lightning",
         close_hint: "Press 'U' or 'X' to close.",
+		log_skill_unequipped: "unequipped from slot.",
 
         // Town & City
         building_inn: "INN",
@@ -434,6 +441,11 @@ window.LANGUAGES = {
         stable_title: "STABLE",
         travel_fast: "Travel Fast",
         stable_hello: "The best horses in this land...",
+		transmute_title: "Alchemical Transmutation",
+		transmute_btn: "Transmute",
+		transmute_desc: "Combine 3 items to obtain a higher-tier item.",
+		log_transmute_success: "Transmutation complete:",
+		log_transmute_fail: "You must fill all 3 slots for transmutation!",
 
         // Enemy Names
         enemy_names: {
