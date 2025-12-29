@@ -197,6 +197,31 @@
 #skill-book-equipped-bar { display: flex; justify-content: center; gap: 12px; padding: 15px 30px; background-color: rgba(15, 15, 15, 0.95); border: 2px solid #6b5c3b; border-radius: 12px; margin-top: 5px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0,0,0,0.5); }
 #skill-book-equipped-bar .key-hint { position: absolute; top: -4px; left: -4px; background: #444; color: #fff; font-size: 0.7em; padding: 2px 5px; border-radius: 4px; border: 1px solid #777; z-index: 5; }
 
+.item-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid #6b5c3b;
+    border-radius: 6px;
+    padding: 12px;
+    z-index: 9999;
+    min-width: 180px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.8);
+    color: #fff;
+    font-family: 'Georgia', serif;
+}
+.tooltip-name { color: #ffd700; font-weight: bold; font-size: 1.1em; margin-bottom: 4px; }
+.tooltip-tier { color: #888; font-size: 0.85em; text-transform: uppercase; }
+.tooltip-stats { margin-top: 8px; line-height: 1.5; }
+.tooltip-stat-row { display: flex; justify-content: space-between; gap: 20px; font-size: 0.95em; }
+.tooltip-val { color: #43FF64; font-weight: bold; } /* Stat değerleri yeşil */
+
+.item-slot.drag-over {
+    border-color: #43FF64 !important;
+    background-color: rgba(67, 255, 100, 0.1) !important;
+    box-shadow: 0 0 15px #43FF64;
+}
+
 @media (max-width: 768px) {
     /* Pencereleri ekran genişliğine zorla */
     .stat-window, .skill-book-window, .inventory-window {

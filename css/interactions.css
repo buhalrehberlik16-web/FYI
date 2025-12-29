@@ -223,38 +223,80 @@
 
 #reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
 
+/* --- ORTAK ÖDÜL ÖZELLİKLERİ --- */
 .reward-item { 
     background: rgba(40, 40, 40, 0.9); 
     border: 1px solid #ffd700; 
-    padding: 12px 20px; 
     cursor: pointer; 
     border-radius: 6px; 
     display: flex; 
     align-items: center; 
-    justify-content: center; 
-    gap: 12px; 
     margin: 0 auto 15px auto; 
-    width: 35%; /* İstediğin %35 genişlik */
     transition: all 0.2s ease;
 }
 
-/* ALTIN MİKTARI VE YAZISI - BEYAZ YAPILDI */
-.reward-item span { 
-    font-weight: bold; 
-    font-size: 1em; 
-    color: #ffffff !important; /* TERTEMİZ BEYAZ */
-    letter-spacing: 1px; 
-    text-shadow: 1px 1px 2px #000;
+.reward-item:hover {
+    transform: scale(1.02);
+    background: rgba(60, 60, 60, 0.95);
 }
 
-/* ALTIN İKONU - PARLAK ALTIN */
-.reward-item i { 
+/* --- ALTIN ÖDÜLÜ ÖZEL AYARI (MEMNUN OLDUĞUN HALİ) --- */
+.reward-gold {
+    justify-content: center; /* Altın ve yazı ortalı */
+    gap: 12px;
+    width: 35%; 
+    padding: 12px 20px;
+    height: 60px;
+}
+
+.reward-gold i { 
     color: #ffd700 !important; 
     font-size: 1.4em; 
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); 
-    filter: none !important; 
 }
 
+.reward-gold span {
+    font-weight: bold; 
+    font-size: 1.1em; 
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* --- EŞYA ÖDÜLÜ ÖZEL AYARI (YENİ VE BÜYÜK) --- */
+.reward-equipment {
+    justify-content: flex-start; /* İkon sola, metin yanına */
+    width: 60%; /* Metinler sığsın diye biraz daha geniş yaptık */
+    padding: 15px 25px;
+    min-height: 90px; /* Daha yüksek */
+}
+
+.reward-item-icon {
+    width: 64px !important;
+    height: 64px !important;
+    object-fit: contain;
+    margin-right: 20px;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.reward-item-text {
+    display: flex;
+    flex-direction: column; /* İsim üstte, tier altta */
+    text-align: left;
+}
+
+.reward-item-name {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.reward-item-tier {
+    font-size: 0.9em;
+    color: #ffd700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 .reward-continue-btn { 
     margin: auto auto 10px auto; 
     width: 220px !important; 
