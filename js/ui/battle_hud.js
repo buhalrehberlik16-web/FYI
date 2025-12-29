@@ -48,8 +48,16 @@ window.updateStatusIcons = function() {
 };
 
 window.updateStats = function() {
-    if(heroHpBar) heroHpBar.style.width = (hero.hp / hero.maxHp) * 100 + '%';
-    if(heroHpText) heroHpText.textContent = `${hero.hp} / ${hero.maxHp}`;
+	 // 1. O anki tüm efektli/eşyalı statları al
+    const effectiveStats = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp };
+    const currentMaxHp = effectiveStats.maxHp;
+	// --- GÜVENLİK: Can güncel Max HP'den fazlaysa aşağı çek (İtem çıkarınca canın taşmaması için) ---
+    if (hero.hp > currentMaxHp) {
+        hero.hp = currentMaxHp; }
+
+    // HP Bar ve Text güncelleme (currentMaxHp kullanıyoruz)
+    if(heroHpBar) heroHpBar.style.width = (hero.hp / currentMaxHp) * 100 + '%';
+    if(heroHpText) heroHpText.textContent = `${hero.hp} / ${currentMaxHp}`;
     if(heroRageBar) heroRageBar.style.width = (hero.rage / hero.maxRage) * 100 + '%';
     if(heroRageText) heroRageText.textContent = `${hero.rage} / ${hero.maxRage}`;
     if(heroNameDisplay) heroNameDisplay.innerHTML = `${hero.playerName} <span style="color:#ffffff; font-size:0.8em; opacity:0.8;">(${hero.class})</span>`;

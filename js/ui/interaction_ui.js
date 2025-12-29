@@ -1,20 +1,53 @@
 // js/ui/interaction_ui.js
 window.openRewardScreen = function(rewards) {
-	const currentLang = window.gameSettings.lang || 'tr';
+    const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+
     switchScreen(rewardScreen);
-    let currentRewards = [...rewards];
-    const render = () => {
-        rewardList.innerHTML = '';
-        currentRewards.forEach((r, i) => {
-            const div = document.createElement('div'); div.className = 'reward-item';
-            div.innerHTML = `<i class="fas fa-coins" style="color:#ffd700 !important;"></i><span style="color:#fff !important;">${r.value} ${lang.gold_text}</span>`;
-            div.onclick = () => { hero.gold += r.value; updateGoldUI(); currentRewards.splice(i, 1); render(); };
-            rewardList.appendChild(div);
-        });
-    };
-    render();
-    btnRewardContinue.onclick = () => { currentRewards.forEach(r => hero.gold += r.value); updateGoldUI(); switchScreen(mapScreen); };
+    const list = document.getElementById('reward-list');
+    const btnContinue = document.getElementById('btn-reward-continue');
+    list.innerHTML = '';
+    
+    rewards.forEach((reward, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'reward-item reward-gold'; // Altın sınıfı eklendi
+        
+        if (reward.type === 'gold') {
+            itemDiv.innerHTML = `<i class="fas fa-coins" style="color:#ffd700;"></i><span>${reward.value} ${lang.gold_text}</span>`;
+            itemDiv.onclick = () => {
+                hero.gold += reward.value;
+                updateGoldUI();
+                itemDiv.style.opacity = '0';
+                setTimeout(() => itemDiv.remove(), 200);
+            };
+        } 
+        else if (reward.type === 'item') {
+			itemDiv.className = 'reward-item reward-equipment'; // Eşya sınıfı eklendi
+            const item = reward.value;
+            // Daha önce yazdığımız getTranslatedItemName fonksiyonunu kullanıyoruz
+            const itemName = getTranslatedItemName(item);
+            
+            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name">${itemName}</span><span class="reward-item-tier">Tier ${item.tier}</span></div>`;
+            
+            itemDiv.onclick = () => {
+                // Çantada boş yer var mı kontrol et
+                const emptySlotIndex = hero.inventory.indexOf(null);
+                
+                if (emptySlotIndex !== -1) {
+                    hero.inventory[emptySlotIndex] = item;
+                    renderInventory();
+                    writeLog(`🎁 ${itemName} ${currentLang === 'tr' ? 'çantaya eklendi.' : 'added to bag.'}`);
+                    itemDiv.style.opacity = '0';
+                    setTimeout(() => itemDiv.remove(), 200);
+                } else {
+                    alert(currentLang === 'tr' ? "Envanter dolu!" : "Inventory full!");
+                }
+            };
+        }
+        list.appendChild(itemDiv);
+    });
+
+    btnContinue.onclick = () => { switchScreen(mapScreen); };
 };
 
 window.openBuilding = function(type) {

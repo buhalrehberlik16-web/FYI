@@ -290,7 +290,7 @@ window.LANGUAGES = {
             restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
 			double_blade: { name: "İki Uçlu Değnek", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
-            Healing_Light: { name: "İyileştiren Işık", desc: "Güçlü bir ışık seni iyileştirir. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." }
+            Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."   }
         }
     },
 
@@ -344,8 +344,6 @@ window.LANGUAGES = {
         turn_suffix: "Turns",
         same_turn_warning: "Cannot be used in the same turn.",
 		stat_battle_warning: "⚠️ CANNOT DISTRIBUTE STATS IN BATTLE",
-        monster_defend_text: "DEFENSE!",
-        monster_log_defend: "took a defensive stance",
 
         // Map & Battle
         map_loading: "Loading Map...",
@@ -477,7 +475,9 @@ window.LANGUAGES = {
             log_shield_expired: "🧱 Shield expired.",
 			log_double_blade: "🔥 **Double-Edged Sword**: Your power increased, but at a high cost!",
             log_cauterize: "🩹 **Cauterize**: You cleansed your wounds with fire.",
-            log_healing_light: "✨ **Healing Light**: Holy light enveloped you."
+            log_healing_light: "✨ **Healing Light**: Holy light enveloped you.",
+			monster_defend_text: "DEFENSE!", 
+            monster_log_defend: "took a defensive stance"
         },
 		
 		status: {
@@ -581,9 +581,9 @@ window.LANGUAGES = {
             Pommel_Bash: { name: "Pommel Bash", desc: "Deals 120% of Strength as damage. Generates +18 Rage." },
             battle_cry: { name: "Battle Cry", desc: "Get motivated. Costs 20 Rage.<br><span style='color:#43FF64'>3 Turns: 40% Strength Increase</span>." },
             restore_healing: { name: "Restoration", desc: "Strong healing. Costs 50 Rage.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
-			double_blade: { name: "Double-Edged Sword", desc: "Attack the enemy without regard for yourself. Deal 50% extra damage for 3 turns." },
+			double_blade: { name: "Double-Edged Axe", desc: "Attack the enemy without regard for yourself. Deal 50% extra damage for 3 turns." },
             Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
-            Healing_Light: { name: "Healing Light", desc: "A powerful light heals you. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." }
+            Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." }
         }
     }
 };

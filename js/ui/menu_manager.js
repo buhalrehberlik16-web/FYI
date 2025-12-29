@@ -1,4 +1,22 @@
 // js/ui/menu_manager.js
+window.getTranslatedItemName = function(item) {
+    if (!item || !item.nameKey) return "Unknown Item";
+    const currentLang = window.gameSettings.lang || 'tr';
+    
+    // item_translation.js içinde Object.assign ile 'items' altına eklemiştik
+    return window.LANGUAGES[currentLang].items[item.nameKey] || item.nameKey;
+};
+
+// Stat anahtarını (str, fire vb.) okunabilir dile çevirir
+window.getStatDisplayName = function(statKey) {
+    const currentLang = window.gameSettings.lang || 'tr';
+    // item_translation.js içindeki stat_str, res_fire gibi anahtarlara bakar
+    // Eğer statKey 'str' ise 'stat_str' olarak arar
+    const lookupKey = (statKey.length <= 3 || statKey === 'mp_pow' || statKey === 'vit') ? 'stat_' + statKey : 'res_' + statKey;
+    
+    return window.LANGUAGES[currentLang].items[lookupKey] || statKey;
+};
+
 let currentTab = 'common'; 
 let selectedAttackKey = null;
 let selectedDefenseKey = null;
@@ -11,74 +29,70 @@ window.toggleStatScreen = function() {
 };
 
 window.updateStatScreen = function() {
-    if (!statName || !statClass || !statAtk || !statDef) return;
-	const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang]; // lang tanımını ekledik
-
+    if (!statName || !statClass) return;
     
-    // 1. Mevcut (Bufflı) Statları Al
-    let effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { atk: 0, def: 0 };
-    const rules = CLASS_CONFIG[hero.class];
+    // 1. Ham (Kendi verdiğimiz) statları ve Toplam (Eşyalı/Bufflı) statları alalım
+    let effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : {};
+    const baseStats = {
+        str: hero.str,
+        dex: hero.dex,
+        int: hero.int,
+        vit: hero.vit,
+        mp_pow: hero.mp_pow
+    };
 
-    // 2. Doğal (Buffsız) Statları Hesapla
-    // Atak: Base + (STR / 2) | Defans: Base + (DEX / 3)
-    const naturalAtk = (hero.baseAttack || 10) + Math.floor(hero.str / rules.strDivisor);
-    const naturalDef = (hero.baseDefense || 1) + Math.floor(hero.dex / rules.dexDivisor);
-
-    // 3. Başlık Düzeni
+    // 2. Üst Bilgiler (İsim, Level, XP)
     statName.textContent = hero.playerName; 
     statClass.textContent = `(${hero.class})`; 
     statLevel.textContent = `Lv. ${hero.level}`;
     
-    // 4. XP Barı
     let xpPercent = hero.xpToNextLevel > 0 ? Math.min(100, (hero.xp / hero.xpToNextLevel) * 100) : 0;
-    if (statXp) statXp.textContent = `%${Math.floor(xpPercent)}`; 
     const xpBarFill = document.getElementById('stat-xp-bar');
     if (xpBarFill) xpBarFill.style.width = `${xpPercent}%`;
+    if (statXp) statXp.textContent = `%${Math.floor(xpPercent)}`;
 
-    // 5. HP ve Rage
-    statHp.textContent = `${hero.hp} / ${hero.maxHp}`;
-    statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
-    
-    // --- 6. RENKLENDİRME MANTIĞI (SALDIRI VE DEFANS) ---
-    // Saldırı (Atak) Renklendirme
-    if (effective.atk > naturalAtk) {
-        statAtk.innerHTML = `<span style="color:#43FF64">${effective.atk}</span>`; // Yeşil (Buff)
-    } else if (effective.atk < naturalAtk) {
-        statAtk.innerHTML = `<span style="color:#ff4d4d">${effective.atk}</span>`; // Kırmızı (Debuff)
-    } else {
-        statAtk.textContent = effective.atk; // Normal
-    }
+    statHp.textContent = `${hero.hp} / ${effective.maxHp}`;
+    if (statRage) statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
 
-    // Defans Renklendirme
-    if (effective.def > naturalDef) {
-        statDef.innerHTML = `<span style="color:#43FF64">${effective.def}</span>`;
-    } else if (effective.def < naturalDef) {
-        statDef.innerHTML = `<span style="color:#ff4d4d">${effective.def}</span>`;
-    } else {
-        statDef.textContent = effective.def;
-    }
-    // ------------------------------------------------
+    // 3. Savaş Statları (Saldırı ve Defans)
+    // Bunlar zaten hesaplanmış toplam değerlerdir
+    statAtk.textContent = effective.atk;
+    statDef.textContent = effective.def;
 
-    // 7. Ana Statlar
-    statStr.textContent = hero.str; 
-    statDex.textContent = hero.dex; 
-    statInt.textContent = hero.int; 
-    statVit.textContent = hero.vit;
-    statMp.textContent = hero.mp_pow;
-	
-    // 8. Dirençler
-    const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
-    resTypes.forEach(type => {
-        const el = document.getElementById(`res-${type}`);
-        if (el) el.textContent = hero.baseResistances[type] || 0;
-    });
+    // 4. TEMEL STATLAR (ASIL DEĞİŞİKLİK BURADA)
+    // Yardımcı bir fonksiyon: Statı ve yanındaki bonusu yazar
+    const renderStatWithBonus = (elementId, baseVal, effectiveVal) => {
+        const el = document.getElementById(elementId);
+        if (!el) return;
 
-    // 9. Puan Dağıtma ve Savaş Kontrolü
+        const bonus = effectiveVal - baseVal;
+        
+        if (bonus > 0) {
+            // Eğer bonus varsa: "15 (+5)" şeklinde yaz ve bonusu yeşil yap
+            el.innerHTML = `${baseVal} <span style="color:#43FF64; font-size:0.9em; font-weight:bold;">(+${bonus})</span>`;
+        } else if (bonus < 0) {
+            // Eğer debuff varsa (nadir durum): "15 (-3)" şeklinde yaz ve kırmızı yap
+            el.innerHTML = `${baseVal} <span style="color:#ff4d4d; font-size:0.9em; font-weight:bold;">(${bonus})</span>`;
+        } else {
+            // Bonus yoksa sadece ham değeri yaz
+            el.textContent = baseVal;
+        }
+    };
+
+    // Her stat için bu işlemi yapalım
+    renderStatWithBonus('stat-str', baseStats.str, effective.str);
+    renderStatWithBonus('stat-dex', baseStats.dex, effective.dex);
+    renderStatWithBonus('stat-int', baseStats.int, effective.int);
+    renderStatWithBonus('stat-vit', baseStats.vit, effective.vit);
+    renderStatWithBonus('stat-mp', baseStats.mp_pow, effective.mp_pow);
+
+    // 5. Puan Dağıtma Butonları ve Uyarılar
     const pointsBox = document.getElementById('points-container');
     const pointsDisplay = document.getElementById('stat-points-display');
     const plusButtons = document.querySelectorAll('.btn-stat-plus');
     const isInBattle = battleScreen.classList.contains('active');
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
 
     document.getElementById('stat-battle-warning')?.remove();
 
@@ -100,6 +114,26 @@ window.updateStatScreen = function() {
         if (pointsBox) pointsBox.classList.add('hidden');
         plusButtons.forEach(btn => btn.classList.add('hidden'));
     }
+
+    // 6. Dirençler (Resistances)
+    // Eşyalardan gelen dirençleri de burada göstermek isteyebilirsin
+    const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
+    resTypes.forEach(type => {
+        const el = document.getElementById(`res-${type}`);
+        if (el) {
+            // Ham direnç (baseResistances) + Eşya direnci (getHeroEffectiveStats içinde hesaplanıyor)
+            // effective.resists objesini combat_manager'da return ettiğimizden emin olmalıyız
+            const baseRes = hero.baseResistances[type] || 0;
+            const totalRes = effective.resists ? (effective.resists[type] || 0) : baseRes;
+            const resBonus = totalRes - baseRes;
+
+            if (resBonus > 0) {
+                el.innerHTML = `${baseRes} <span style="color:#43FF64; font-size:0.8em;">(+${resBonus})</span>`;
+            } else {
+                el.textContent = baseRes;
+            }
+        }
+    });
 };
 
 // --- ENVANTER ---
@@ -109,38 +143,199 @@ window.toggleInventory = function() {
     if (!inventoryScreen.classList.contains('hidden')) renderInventory();
 };
 
+// --- TOOLTIP FONKSİYONLARI ---
+window.showItemTooltip = function(item, event) {
+    const tooltip = document.getElementById('item-tooltip');
+    if (!tooltip || !item) return;
+
+    const nameEl = document.getElementById('tooltip-name');
+    const tierEl = document.getElementById('tooltip-tier');
+    const statsEl = document.getElementById('tooltip-stats');
+    
+    const currentLang = window.gameSettings.lang || 'tr';
+    const langItems = window.LANGUAGES[currentLang].items;
+
+    nameEl.textContent = getTranslatedItemName(item);
+    tierEl.textContent = `${langItems.tier_label} ${item.tier}`;
+    
+    statsEl.innerHTML = '';
+    for (const [statKey, value] of Object.entries(item.stats)) {
+        const row = document.createElement('div');
+        row.className = 'tooltip-stat-row';
+        row.innerHTML = `<span>${getStatDisplayName(statKey)}</span> <span class="tooltip-val">+${value}</span>`;
+        statsEl.appendChild(row);
+    }
+
+    tooltip.classList.remove('hidden');
+    moveTooltip(event);
+};
+
+window.hideItemTooltip = function() {
+    const tooltip = document.getElementById('item-tooltip');
+    if (tooltip) tooltip.classList.add('hidden');
+};
+
+function moveTooltip(e) {
+    const tooltip = document.getElementById('item-tooltip');
+    if (tooltip) {
+        tooltip.style.left = (e.clientX + 15) + 'px';
+        tooltip.style.top = (e.clientY + 15) + 'px';
+    }
+}// --- EŞYA TAKMA / ÇIKARMA MANTIĞI ---
+
+// Eşyayı Çıkar (Ekipmandan Çantaya)
+window.unequipItem = function(slotKey) {
+    hideItemTooltip();
+    const item = hero.equipment[slotKey];
+    if (!item) return;
+
+    const emptySlotIndex = hero.inventory.indexOf(null);
+    if (emptySlotIndex !== -1) {
+        hero.inventory[emptySlotIndex] = item;
+        hero.equipment[slotKey] = null;
+        renderInventory();
+        updateStats();
+        writeLog(`📤 ${getTranslatedItemName(item)} ${window.gameSettings.lang === 'tr' ? 'çıkarıldı.' : 'unequipped.'}`);
+    } else {
+        alert(window.gameSettings.lang === 'tr' ? "Çanta dolu!" : "Bag is full!");
+    }
+};
+// Eşyayı Tak (Çantadan Ekipmana)
+window.equipItem = function(inventoryIndex) {
+    hideItemTooltip();
+    const item = hero.inventory[inventoryIndex];
+    if (!item) return;
+
+    let targetSlot = null;
+    // Otomatik slot belirleme mantığı
+    if (item.type === 'earring') {
+        targetSlot = !hero.equipment.earring1 ? 'earring1' : 'earring2';
+    } else if (item.type === 'ring') {
+        targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
+    } else {
+        targetSlot = item.type; // necklace veya belt
+    }
+
+    // Seçilen slotta zaten bir şey varsa onu çantaya geri al (Swap)
+    const oldItem = hero.equipment[targetSlot];
+    hero.equipment[targetSlot] = item;
+    hero.inventory[inventoryIndex] = oldItem; 
+
+    renderInventory();
+    updateStats();
+    writeLog(`🎒 ${getTranslatedItemName(item)} ${window.gameSettings.lang === 'tr' ? 'kuşanıldı.' : 'equipped.'}`);
+};
+
+// --- SÜRÜKLE BIRAK (DRAG & DROP) ---
+function handleDragStart(e, source, id) {
+    hideItemTooltip();
+    const dragData = { source: source, id: id };
+    e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+}
+
+function handleDrop(e, targetType, targetId) {
+    e.preventDefault();
+    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+	const currentLang = window.gameSettings.lang || 'tr';
+    
+    // 1. Çantadan Ekipmana Sürükleme
+    if (data.source === 'bag' && targetType === 'equip') {
+        const item = hero.inventory[data.id];
+        if (item && (item.type === targetId || targetId.startsWith(item.type))) {
+            const oldItem = hero.equipment[targetId];
+            hero.equipment[targetId] = item;
+            hero.inventory[data.id] = oldItem;
+			writeLog(`🎒 ${getTranslatedItemName(item)} ${currentLang === 'tr' ? 'kuşanıldı.' : 'equipped.'}`);
+        }
+    }
+    // 2. Ekipmandan Çantaya Sürükleme
+    else if (data.source === 'equip' && targetType === 'bag') {
+        const item = hero.equipment[data.id];
+        const oldBagItem = hero.inventory[targetId];
+        
+        // Sadece boş yere veya başka bir itemın üstüne bırakma (Swap)
+        hero.equipment[data.id] = oldBagItem; // Eğer bagItem varsa ve tipi uymuyorsa ileride kontrol eklenebilir
+        hero.inventory[targetId] = item;
+		writeLog(`📤 ${getTranslatedItemName(item)} ${currentLang === 'tr' ? 'çıkarıldı.' : 'unequipped.'}`);
+    }
+    // 3. Çanta İçinde Yer Değiştirme
+    else if (data.source === 'bag' && targetType === 'bag') {
+        const temp = hero.inventory[targetId];
+        hero.inventory[targetId] = hero.inventory[data.id];
+        hero.inventory[data.id] = temp;
+    }
+
+    renderInventory();
+    updateStats();
+}
+
+// --- ANA RENDER FONKSİYONU ---
 window.renderInventory = function() {
-    document.getElementById('inv-gold-text').textContent = hero.gold;
-    const broochContainer = document.querySelector('.brooch-overlay');
-    if (broochContainer) {
-        broochContainer.innerHTML = ''; 
-        hero.brooches.forEach(item => {
-            const slot = document.createElement('div'); slot.className = 'item-slot brooch-slot';
-            if (item) slot.innerHTML = `<img src="images/${item.icon}" title="${item.name}">`; broochContainer.appendChild(slot);
-        });
+    hideItemTooltip();
+    const goldText = document.getElementById('inv-gold-text');
+    if (goldText) goldText.textContent = hero.gold;
+
+    // Slot Kurulum Yardımcısı
+    const setupSlot = (slotEl, item, type, identifier) => {
+        slotEl.innerHTML = '';
+        slotEl.draggable = item ? true : false;
+        
+        if (item) {
+            const img = document.createElement('img');
+            img.src = `items/images/${item.icon}`;
+            slotEl.appendChild(img);
+            
+            // Tooltip
+            slotEl.onmouseenter = (e) => showItemTooltip(item, e);
+            slotEl.onmousemove = (e) => moveTooltip(e);
+            slotEl.onmouseleave = () => hideItemTooltip();
+            
+            // Sürükleme Başlat
+            slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
+
+            // Sağ Tıkla Çıkar/Tak
+            slotEl.oncontextmenu = (e) => {
+                e.preventDefault();
+                if (type === 'equip') unequipItem(identifier);
+                else equipItem(identifier);
+            };
+
+            // Sol Tıkla Tak (Sadece Çanta İçin)
+            if (type === 'bag') {
+                slotEl.onclick = () => equipItem(identifier);
+            }
+        } else {
+            slotEl.onmouseenter = null;
+            slotEl.oncontextmenu = (e) => e.preventDefault();
+        }
+
+        // Üzerine Bırakma (Drop) Hedefi Yap
+        slotEl.ondragover = (e) => e.preventDefault();
+        slotEl.ondrop = (e) => handleDrop(e, type, identifier);
+    };
+
+    // 1. Broşlar (Şimdilik statik ama altyapı hazır)
+    document.querySelectorAll('.brooch-slot').forEach((slot, i) => {
+        setupSlot(slot, hero.brooches[i], 'brooch', i);
+    });
+
+    // 2. Ekipmanlar
+    for (const slotKey in hero.equipment) {
+        const slotEl = document.querySelector(`.equip-slot[data-slot="${slotKey}"]`);
+        if (slotEl) setupSlot(slotEl, hero.equipment[slotKey], 'equip', slotKey);
     }
-    for (const [slotName, item] of Object.entries(hero.equipment)) {
-        const slotEl = document.querySelector(`.equip-slot[data-slot="${slotName}"]`);
-        if (slotEl) slotEl.innerHTML = item ? `<img src="images/${item.icon}" title="${item.name}">` : '';
-    }
+
+    // 3. Çanta (Bag)
     const bagGrid = document.querySelector('.bag-grid');
     if (bagGrid) {
         bagGrid.innerHTML = '';
         hero.inventory.forEach((item, index) => {
-            const slot = document.createElement('div'); slot.className = 'item-slot bag-slot';
-            if (item) { slot.innerHTML = `<img src="images/${item.icon}" title="${item.name}">`; slot.onclick = () => equipItem(index); }
+            const slot = document.createElement('div');
+            slot.className = 'item-slot bag-slot';
+            setupSlot(slot, item, 'bag', index);
             bagGrid.appendChild(slot);
         });
     }
-};
-
-window.equipItem = function(inventoryIndex) {
-    const item = hero.inventory[inventoryIndex]; if (!item) return;
-    let targetSlot = null;
-    if (item.type === 'earring') targetSlot = !hero.equipment.earring1 ? 'earring1' : (!hero.equipment.earring2 ? 'earring2' : 'earring1');
-    else if (item.type === 'ring') targetSlot = !hero.equipment.ring1 ? 'ring1' : (!hero.equipment.ring2 ? 'ring2' : 'ring1');
-    else targetSlot = item.type;
-    if (targetSlot) { const old = hero.equipment[targetSlot]; hero.equipment[targetSlot] = item; hero.inventory[inventoryIndex] = old; renderInventory(); updateStats(); writeLog(`🎒 ${item.name} kuşandın.`); }
 };
 
 // --- YETENEK KİTABI (K) ---
