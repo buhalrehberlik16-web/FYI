@@ -374,6 +374,123 @@
 }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
 
+/* Kritik Başarı Parlama Efekti */
+.critical-glow {
+    animation: critical-pulse 1s infinite alternate !important;
+    border-color: #ff00ff !important; /* Mor/Pembe bir parlama */
+    box-shadow: 0 0 30px #ff00ff, inset 0 0 20px #ff00ff !important;
+}
+
+@keyframes critical-pulse {
+    from { filter: brightness(1) drop-shadow(0 0 5px #ff00ff); }
+    to { filter: brightness(1.5) drop-shadow(0 0 20px #ff00ff); transform: scale(1.1); }
+}
+
+/* Badge'in sonuç slotunda doğru görünmesi için */
+.transmute-result {
+    position: relative;
+}
+/*============================================================
+   Alchemist Transmute İhtimaller
+============================================================ */
+.transmute-probs {
+    margin: 15px auto;
+    width: 80%;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #6b5c3b; /* Altın/Kahve çerçeve */
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.prob-row {
+    display: flex; /* Yanyana getirir */
+    justify-content: space-between; /* Birini en sola, birini en sağa iter */
+    align-items: center;
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 4px;
+}
+
+.prob-row:last-child {
+    border-bottom: none;
+}
+
+.prob-label { 
+    color: #aaa; 
+    font-style: italic;
+}
+
+.prob-value { 
+    color: #f0e68c; 
+    font-weight: bold; 
+}
+
+.prob-critical { 
+    color: #ff00ff; 
+    text-shadow: 0 0 8px rgba(255, 0, 255, 0.6); 
+}
+
+/*============================================================
+   Alchemist Transmute Effekt
+============================================================ */
+
+.transmute-container {
+    position: relative; /* Çizgilerin burayı merkez alması için şart */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    margin-top: 20px;
+    background: rgba(0,0,0,0.3);
+    padding: 30px;
+    border-radius: 10px;
+    min-height: 300px;
+}
+
+#transmute-svg-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1; /* Slotların altında veya üstünde olması fark etmez ama görünsün */
+}
+
+/* Çizgiler daha belirgin olsun */
+.elec-path {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 4;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 8px #00ccff);
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+}
+
+/* Aktif olduğunda çalışma animasyonu */
+.elec-path.active {
+    animation: draw-electric 0.6s ease-out forwards;
+}
+
+@keyframes draw-electric {
+    to { stroke-dashoffset: 0; }
+}
+
+/* Sonuç kutusu parlaması */
+.result-flash {
+    animation: flash-white 0.5s ease-out;
+}
+
+@keyframes flash-white {
+    0% { box-shadow: 0 0 0px #fff; filter: brightness(1); }
+    50% { box-shadow: 0 0 50px #fff; filter: brightness(3); }
+    100% { box-shadow: 0 0 0px #fff; filter: brightness(1); }
+}
+
 
 
 
