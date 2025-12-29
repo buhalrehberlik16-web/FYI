@@ -14,6 +14,33 @@ window.combatTurnCount = 1;
 window.heroBlock = 0; 
 window.isHeroTurn = false; 
 
+window.applyStatusEffect = function(newEffect) {
+    // 1. Aynı ID'ye sahip mevcut bir etki var mı bak (Örn: debuff_enemy_atk)
+    // Not: block_skill (cooldown) etkilerini birleştirmemeli, onları hariç tutuyoruz.
+    const existingIndex = hero.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
+
+    if (existingIndex !== -1) {
+        // 2. Eğer varsa, değerleri güncelle
+        const existing = hero.statusEffects[existingIndex];
+        
+        // SÜRE MANTIĞI: Süreleri toplayalım mı yoksa en uzun olanı mı alalım?
+        // Genelde profesyonel oyunlarda en uzun olan alınır (Refresh):
+        existing.turns = Math.max(existing.turns, newEffect.turns);
+        
+        // DEĞER MANTIĞI: Eğer biri %25, diğeri %50 azaltıyorsa, güçlü olanı alalım:
+        if (newEffect.value !== undefined) {
+            existing.value = Math.max(existing.value, newEffect.value);
+        }
+        
+        writeLog(`✨ **${existing.name}** etkisi yenilendi.`);
+    } else {
+        // 3. Eğer yoksa, yeni bir etki olarak ekle
+        hero.statusEffects.push(newEffect);
+    }
+    
+    updateStats();
+};
+
 // --- YARDIMCI: Blok Ekleme ---
 window.addHeroBlock = function(amount) {
     window.heroBlock += amount;
