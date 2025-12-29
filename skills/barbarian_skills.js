@@ -277,7 +277,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 20, 
             levelReq: 3, 
             cooldown: 4, 
-            icon: 'chaos_fiery_blade.png',
+            icon: 'chaos_double_blade.png',
             type: 'buff', 
             category: 'chaos', 
             tier: 3			
@@ -294,7 +294,7 @@ const BARBARIAN_SKILLS = {
             });
 
             // Skill Cooldown
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'fiery_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'double_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
 
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "ALEVLENDİ!", 'heal');
@@ -312,7 +312,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 50,
             levelReq: 3,
 			cooldown: 4,
-            icon: 'restore_healing.png',
+            icon: 'chaos_cauterize.png',
             type: 'defense',
             category: 'chaos', 
             tier: 3
@@ -322,7 +322,7 @@ const BARBARIAN_SKILLS = {
             const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
             if ((hero.hp - oldHp) > 0) showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
             hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'restore_healing', resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'Cauterize', resetOnCombatEnd: true });
             animateHealingParticles(); updateStats();
             setTimeout(() => { nextTurn(); }, 1000);
         }
@@ -396,29 +396,55 @@ const BARBARIAN_SKILLS = {
     },
 	//Light_Up 1.5Atk+1.5MP Dmg (light or fire), Reduce enemy def for 2 turns,
     Healing_Light: {
-        data: {
-            name: "İyileştiren Işık",
-            menuDescription: "Güçlü bir ışık herkesi iyileştirir. 30 Öfke harcar.",
-            rageCost: 50,
-            levelReq: 3,
-			cooldown: 4,
-            icon: 'restore_healing.png',
-            type: 'defense',
-            category: 'fervor', 
-            tier: 3
-        },
-        onCast: function(attacker, defender) {
-            const initialHeal = 30;
-            const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
-            if ((hero.hp - oldHp) > 0) showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
-            hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'restore_healing', resetOnCombatEnd: true });
-            animateHealingParticles(); updateStats();
-            setTimeout(() => { nextTurn(); }, 1000);
-        }
+    data: {
+        name: "İyileştiren Işık",
+        rageCost: 50,
+        levelReq: 3,
+        cooldown: 5,
+        icon: 'fervor_healing_light.png',
+        type: 'defense',
+        category: 'fervor', 
+        tier: 3
+    },
+    onCast: function(attacker, defender) {
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+        
+        // --- 1. KAHRAMAN ANLIK İYİLEŞME (%20 MAX HP) ---
+        const heroBurstHeal = Math.floor(hero.maxHp * 0.20);
+        const oldHeroHp = hero.hp;
+        hero.hp = Math.min(hero.maxHp, hero.hp + heroBurstHeal);
+        showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHeroHp), 'heal');
+
+        // --- 2. DÜŞMAN ANLIK İYİLEŞME (%15 MAX HP) ---
+        const monsterBurstHeal = Math.floor(monster.maxHp * 0.15);
+        const oldMonsterHp = monster.hp;
+        monster.hp = Math.min(monster.maxHp, monster.hp + monsterBurstHeal);
+        showFloatingText(document.getElementById('monster-display'), (monster.hp - oldMonsterHp), 'heal');
+
+        // --- 3. KAHRAMAN İÇİN ÖZEL YENİLENME EFEKTİ (%10 CURRENT HP) ---
+        hero.statusEffects.push({ 
+            id: 'percent_regen', // Standart 'regen'den ayırmak için farklı ID verdik
+            name: lang.skills.Healing_Light.name, 
+            turns: 3, 
+            value: 0.10, // %10
+            resetOnCombatEnd: true 
+        });
+
+        // --- 4. COOLDOWN VE GÖRSELLER ---
+        hero.statusEffects.push({ 
+            id: 'block_skill', 
+            turns: 6, 
+            maxTurns: 6, 
+            blockedSkill: 'Healing_Light', 
+            resetOnCombatEnd: true 
+        });
+
+        animateHealingParticles(); 
+        updateStats();
+        writeLog(lang.combat.log_healing_light);
+        setTimeout(() => { nextTurn(); }, 1000);
     }
-
-
+},
 };
 
 
