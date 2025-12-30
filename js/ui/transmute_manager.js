@@ -222,53 +222,97 @@ window.processTransmutation = async function() {
     }
     targetTier = Math.max(1, Math.min(5, targetTier)); // T1-T5 arası sınırla
 
-    // --- 4. TÜR VE STAT BASKINLIĞI (BEST STAT) ---
-    const typeCounts = {};
-    transmuteIngredients.forEach(item => typeCounts[item.type] = (typeCounts[item.type] || 0) + 1);
-    
-    // Eğer bir türden 2 veya 3 tane varsa o tür baskın olur
-    const majorityType = Object.keys(typeCounts).find(key => typeCounts[key] >= 2);
-    let resultType = majorityType || transmuteIngredients[Math.floor(Math.random() * 3)].type;
+    // --- 4. AĞIRLIKLI OLASILIK TABLOSU OLUŞTURMA ---
+    const statWeights = {};
+    let totalStatWeight = 0;
 
-    // Statları topla (Best Stat bulma)
-    const statSums = {};
     transmuteIngredients.forEach(item => {
         for (const [sKey, val] of Object.entries(item.stats)) {
-            // Sadece ana statları topla (str, dex, int, vit, mp_pow)
-            if (window.ITEM_CONFIG.statsPool.includes(sKey)) {
-                statSums[sKey] = (statSums[sKey] || 0) + val;
-            }
+            const isResist = window.ITEM_CONFIG.resistsPool.includes(sKey);
+            const w = isResist ? val / window.ITEM_CONFIG.multipliers.resists : val;
+            statWeights[sKey] = (statWeights[sKey] || 0) + w;
+            totalStatWeight += w;
         }
     });
 
-    let bestStat = null; 
-    let maxVal = -1;
-    for (const [sKey, val] of Object.entries(statSums)) {
-        if (val > maxVal) { 
-            maxVal = val; 
-            bestStat = sKey; 
+    // Rastgele bir stat seçen yardımcı fonksiyon (Ağırlığa göre)
+    const pickWeightedStat = () => {
+        let roll = Math.random() * totalStatWeight;
+        for (const [sKey, w] of Object.entries(statWeights)) {
+            if (roll < w) return sKey;
+            roll -= w;
         }
+        return window.ITEM_CONFIG.statsPool[0]; // Fallback
+    };
+
+    // --- 5. ÜRETİM (ADIM ADIM PUAN DAĞITIMI) ---
+    // Önce türü belirle (Tür şansını kullanıyoruz)
+    const typeCounts = {};
+    transmuteIngredients.forEach(item => typeCounts[item.type] = (typeCounts[item.type] || 0) + 1);
+    const majorityType = Object.keys(typeCounts).find(key => typeCounts[key] >= 2);
+    let resultType = majorityType; 
+    if (!majorityType || Math.random() > 0.7) { 
+        resultType = transmuteIngredients[Math.floor(Math.random()*3)].type; 
     }
 
-    // --- 5. ÜRETİM ---
-    // Önce ham item'ı üret
-    const newItem = generateRandomItem(targetTier);
-    
-    // Eğer bir tür veya stat baskınlığı varsa item'ı modifiye et
-    if (bestStat && window.BASE_ITEMS[resultType] && window.BASE_ITEMS[resultType][bestStat]) {
-        newItem.type = resultType;
-        newItem.nameKey = window.BASE_ITEMS[resultType][bestStat].nameKey;
-        newItem.icon = window.BASE_ITEMS[resultType][bestStat].icon;
+    // Ana Stat'ı ağırlığa göre seç
+    const finalMainStat = pickWeightedStat();
+
+    // Yeni item objesini hazırla (Ama stats içini biz dolduracağız)
+    const newItem = {
+        id: "item_" + Date.now(),
+        type: resultType,
+        tier: targetTier,
+        stats: {},
+        propertyKeys: []
+    };
+
+    // Puan Dağıtımı (Tier kadar puan dağıtılacak)
+    let pointsToDistribute = targetTier;
+
+    while (pointsToDistribute > 0) {
+        let selectedStat;
         
-        // Statları temizle ve sadece bestStat'ı ana stat yap (Generator mantığına uygun)
-        const oldVal = newItem.stats[newItem.propertyKeys[0]] || 1;
-        newItem.stats = {}; 
-        newItem.propertyKeys = [bestStat];
-        newItem.stats[bestStat] = oldVal;
+        // İlk puan her zaman 'finalMainStat'a gider (Eşya kimliği için)
+        if (newItem.propertyKeys.length === 0) {
+            selectedStat = finalMainStat;
+        } else {
+            // Sonraki puanlar için: 
+            // %70 ihtimalle ağırlıklı tablodan seç (Inputlar önemli), 
+            // %30 ihtimalle tamamen rastgele (Sürpriz faktörü)
+            if (Math.random() < 0.7) {
+                selectedStat = pickWeightedStat();
+            } else {
+                const allOptions = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
+                selectedStat = allOptions[Math.floor(Math.random() * allOptions.length)];
+            }
+        }
+
+        // 3 Slot Sınırı Kontrolü: 
+        // Eğer seçilen stat yeni bir stat ise ve zaten 3 stat varsa, 
+        // mevcut statlardan birini rastgele seçip ona ver.
+        if (!newItem.propertyKeys.includes(selectedStat) && newItem.propertyKeys.length >= 3) {
+            selectedStat = newItem.propertyKeys[Math.floor(Math.random() * newItem.propertyKeys.length)];
+        }
+
+        if (!newItem.propertyKeys.includes(selectedStat)) {
+            newItem.propertyKeys.push(selectedStat);
+        }
+
+        // Puanı değere çevir (Resist ise x3, Stat ise x1)
+        const isResist = window.ITEM_CONFIG.resistsPool.includes(selectedStat);
+        const mult = isResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
         
-        // Kalan puanları tekrar dağıtmak yerine generator'ın ürettiği 
-        // toplam puan gücünü bestStat üzerinden koruyoruz.
+        newItem.stats[selectedStat] = (newItem.stats[selectedStat] || 0) + mult;
+        pointsToDistribute--;
     }
+
+    // İsim ve İkon Ataması (Ana stat neyse ona göre takı ismini belirle)
+    // Eğer o kombinasyon (örn: Belt of Fire Resist) BASE_ITEMS'ta yoksa, 
+    // en yakın stat eşleşmesini veya varsayılanı kullanır.
+    const template = window.BASE_ITEMS[newItem.type][finalMainStat] || window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
+    newItem.nameKey = template.nameKey;
+    newItem.icon = template.icon;
 
     // --- 6. GÖRSEL SONUÇ VE EFEKTLER ---
     resultSlot.innerHTML = '';
@@ -326,7 +370,7 @@ window.updateTransmuteProbabilities = function() {
 
     let html = "";
 
-    // --- 1. TIER OLASILIĞI ---
+    // --- 1. TIER OLASILIĞI (Küsüratlı Mantık) ---
     let sumTiers = ingredients.reduce((sum, item) => sum + item.tier, 0);
     let avg = sumTiers / 3;
     let tierOdds = [];
@@ -343,61 +387,67 @@ window.updateTransmuteProbabilities = function() {
         if (nextChance > 0 && nextTier !== baseTier) tierOdds.push({ tier: nextTier, chance: nextChance });
     }
 
-    html += `<div class="prob-row" style="border-bottom: 1px solid #444; padding-bottom: 5px;">
+    html += `<div class="prob-row" style="border-bottom: 1px solid #444; margin-bottom: 8px; padding-bottom: 5px;">
                 <span class="prob-label">${langItems.tier_odds}:</span>
                 <span class="prob-value">${tierOdds.map(o => `T${o.tier} (%${o.chance})`).join(" / ")}</span>
              </div>`;
 
-    // --- 2. STAT BASKINLIĞI (YENİ KISIM) ---
-    const statSums = {};
+    // --- 2. STAT/RESIST DAĞILIM OLASILIĞI (Ağırlıklı Hesaplama) ---
+    const weights = {};
+    let totalWeight = 0;
+
     ingredients.forEach(item => {
         for (const [sKey, val] of Object.entries(item.stats)) {
-            // Hem statları hem resistleri hesaba katıyoruz
-            statSums[sKey] = (statSums[sKey] || 0) + val;
+            // Statların puanlarını ağırlık olarak ekle
+            // Resist ise puanı bölerek (3'e) normalize ediyoruz ki statlarla dengeli olsun
+            const isResist = window.ITEM_CONFIG.resistsPool.includes(sKey);
+            const weightValue = isResist ? val / window.ITEM_CONFIG.multipliers.resists : val;
+            
+            weights[sKey] = (weights[sKey] || 0) + weightValue;
+            totalWeight += weightValue;
         }
     });
 
-    let bestStat = null;
-    let maxVal = -1;
-    for (const [sKey, val] of Object.entries(statSums)) {
-        if (val > maxVal) { maxVal = val; bestStat = sKey; }
-    }
+    html += `<div style="color:#888; font-size:0.8em; margin-bottom:5px; text-align:left;">${langItems.likely_stat}:</div>`;
 
-    if (bestStat) {
-        const localizedStatName = window.getStatDisplayName(bestStat);
-        html += `<div class="prob-row">
-                    <span class="prob-label">${langItems.likely_stat}:</span>
-                    <span class="prob-value" style="color:#43FF64;">${localizedStatName} (%100)</span>
-                 </div>`;
-    }
+    // Ağırlıkları yüzdelere çevir ve sırala (En yüksek şans üstte)
+    const sortedStats = Object.entries(weights).sort((a, b) => b[1] - a[1]);
+    
+    sortedStats.forEach(([sKey, w]) => {
+        const chance = Math.round((w / totalWeight) * 100);
+        if (chance > 0) {
+            const localizedName = window.getStatDisplayName(sKey);
+            html += `<div class="prob-row">
+                        <span class="prob-label">${localizedName}:</span>
+                        <span class="prob-value" style="color:#43FF64;">%${chance}</span>
+                     </div>`;
+        }
+    });
 
     // --- 3. TÜR OLASILIKLARI ---
+    // (Mevcut tür olasılığı kodun buraya gelecek...)
     const typeCounts = {};
     ingredients.forEach(item => typeCounts[item.type] = (typeCounts[item.type] || 0) + 1);
     const types = ['ring', 'necklace', 'earring', 'belt'];
     const majorityType = Object.keys(typeCounts).find(key => typeCounts[key] >= 2);
 
+    html += `<div style="color:#888; font-size:0.8em; margin:10px 0 5px 0; text-align:left;">${langItems.result_type_odds}:</div>`;
     types.forEach(tKey => {
         let percent = 0;
         if (typeCounts[tKey] === 3) percent = 100;
         else if (majorityType) {
-            if (tKey === majorityType) percent = 70;
-            else percent = 10;
+            if (tKey === majorityType) percent = 70; else percent = 10;
         } else {
-            if (typeCounts[tKey] === 1) percent = 30;
-            else percent = 10;
+            if (typeCounts[tKey] === 1) percent = 30; else percent = 10;
         }
         if (percent > 0) {
             const localizedTypeName = langItems['type_' + tKey] || tKey;
-            html += `<div class="prob-row">
-                        <span class="prob-label">${localizedTypeName}:</span>
-                        <span class="prob-value">%${percent}</span>
-                     </div>`;
+            html += `<div class="prob-row"><span class="prob-label">${localizedTypeName}:</span><span class="prob-value">%${percent}</span></div>`;
         }
     });
 
     // --- 4. KRİTİK ŞANS ---
-    html += `<div class="prob-row">
+    html += `<div class="prob-row" style="margin-top:5px; border-top:1px solid #444; padding-top:5px;">
                 <span class="prob-label">${langItems.crit_chance_label}:</span>
                 <span class="prob-value prob-critical">%1</span>
              </div>`;
