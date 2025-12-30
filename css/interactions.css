@@ -351,6 +351,35 @@
 #modal-stable .npc-title {top: 185px;}
 #modal-stable .npc-dialogue {bottom: 180px;}
 
+.npc-stats-header {
+    position: absolute;
+    top: 205px; /* İsimlik ile aynı hizada veya biraz altında */
+    width: 100%;
+    pointer-events: none; /* Butonlara tıklamayı engellememesi için */
+    z-index: 10;
+}
+
+.npc-stats-left {
+    position: absolute;
+    left: 370px; /* Kırmızı kutunun olduğu bölge */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.npc-stats-right {
+    position: absolute;
+    right: 390px; /* Lacivert kutunun olduğu bölge */
+}
+
+/* Değerlerin Görünümü */
+.npc-hp-stat { color: #ff4d4d; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.1em; }
+.npc-rage-stat { color: #3498db; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.1em; }
+.npc-gold-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.2em; }
+
+.npc-stats-header i { margin-right: 5px; font-size: 0.9em; }
+
 /*============================================================
    Alchemist Transmute
 ============================================================ */
@@ -578,6 +607,35 @@
 	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
 	modal-stable .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-stable .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	.npc-stats-header {
+    position: absolute;
+    top: 37.5%; /* İsimlik ile aynı hizada veya biraz altında */
+    width: 100%;
+    pointer-events: none; /* Butonlara tıklamayı engellememesi için */
+    z-index: 10;
+}
+
+	.npc-stats-left {
+    position: absolute;
+    left: 18%; /* Kırmızı kutunun olduğu bölge */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+	.npc-stats-right {
+    position: absolute;
+    right: 18%; /* Lacivert kutunun olduğu bölge */
+}
+
+	/* Değerlerin Görünümü */
+	.npc-hp-stat { color: #ff4d4d; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
+	.npc-rage-stat { color: #3498db; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
+	.npc-gold-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.6em; }
+
+	.npc-stats-header i { margin-right: 5px; font-size: 0.9em; }
 	
 .reward-content { 
     width: 100%; 
