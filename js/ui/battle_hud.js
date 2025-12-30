@@ -90,6 +90,7 @@ window.updateStats = function() {
 	
     if (statNotif) statNotif.classList.toggle('hidden', !(hero.statPoints > 0));
     if (skillNotif) skillNotif.classList.toggle('hidden', !(hero.skillPoints > 0));
+	if(typeof updateNPCStatsDisplay === 'function') updateNPCStatsDisplay();
 };
 
 window.showFloatingText = function(targetContainer, amount, type) {

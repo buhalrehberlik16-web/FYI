@@ -51,19 +51,99 @@ window.openRewardScreen = function(rewards) {
 };
 
 window.openBuilding = function(type) {
-    const m = document.getElementById(`modal-${type}`); if (m) { m.classList.remove('hidden'); writeLog(`${type.toUpperCase()} binasına girdin.`); }
+    const modalId = `modal-${type}`;
+    const modal = document.getElementById(modalId);
+    
+    if (modal) {
+        // Her açılışta orijinal selamlamayı geri getir (Özellikle Han için)
+        const currentLang = window.gameSettings.lang || 'tr';
+        const lang = window.LANGUAGES[currentLang];
+        
+        if (type === 'inn') {
+            const dialogue = document.getElementById('inn-dialogue');
+            if (dialogue) {
+                dialogue.textContent = lang.innkeeper_hello;
+                dialogue.style.color = ""; // Rengi sıfırla
+            }
+        }
+
+		updateNPCStatsDisplay();
+        modal.classList.remove('hidden');
+        writeLog(`${type.toUpperCase()} binasına girdin.`);
+    }
 };
 
+// 2. Han: Dinlenme
 window.restAtInn = function() {
-    const cost = 10; const d = document.getElementById('inn-dialogue');
-    if (hero.gold >= cost) { hero.gold -= cost; hero.hp = hero.maxHp; hero.rage = hero.maxRage; updateGoldUI(); updateStats(); d.textContent = "Mışıl mışıl uyudun!"; d.style.color = "#43FF64"; }
-    else { d.textContent = "Paran yetmiyor!"; d.style.color = "#ff4d4d"; }
+    const cost = 10;
+    const dialogue = document.getElementById('inn-dialogue');
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
+    if (hero.gold >= cost) {
+        hero.gold -= cost;
+        hero.hp = hero.maxHp;
+        hero.rage = hero.maxRage;
+        updateGoldUI();
+        updateStats();
+        
+        dialogue.textContent = lang.rest_success;
+        dialogue.style.color = "#43FF64"; // Yeşil
+    } else {
+        dialogue.textContent = lang.rest_fail;
+        dialogue.style.color = "#ff4d4d"; // Kırmızı
+    }
+
+    // 3 SANİYE SONRA ESKİ HALİNE DÖN
+    setTimeout(() => {
+        if (dialogue) {
+            dialogue.textContent = lang.innkeeper_hello;
+            dialogue.style.color = ""; // Rengi normale döndür
+        }
+    }, 3000);
 };
 
+// 3. Han: İçecek Al
 window.buyDrink = function() {
-     const cost = 5; const d = document.getElementById('inn-dialogue');
-     if (hero.gold >= cost) { hero.gold -= cost; hero.rage = Math.min(hero.maxRage, hero.rage + 10); updateGoldUI(); updateStats(); d.textContent = "Bira içtin. (+10 Rage)"; d.style.color = "#3498db"; }
-     else { d.textContent = "Paran yoksa içki de yok!"; d.style.color = "#ff4d4d"; }
+     const cost = 5;
+     const dialogue = document.getElementById('inn-dialogue');
+     const currentLang = window.gameSettings.lang || 'tr';
+     const lang = window.LANGUAGES[currentLang];
+     
+     if (hero.gold >= cost) {
+         hero.gold -= cost;
+         hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+         updateGoldUI();
+         updateStats();
+         
+         dialogue.textContent = lang.drink_success;
+         dialogue.style.color = "#3498db"; // Mavi
+     } else {
+         dialogue.textContent = lang.drink_fail;
+         dialogue.style.color = "#ff4d4d"; // Kırmızı
+     }
+
+     // 3 SANİYE SONRA ESKİ HALİNE DÖN
+     setTimeout(() => {
+        if (dialogue) {
+            dialogue.textContent = lang.innkeeper_hello;
+            dialogue.style.color = ""; 
+        }
+    }, 3000);
+};
+
+window.updateNPCStatsDisplay = function() {
+    // Tüm açık NPC pencerelerindeki stat alanlarını bul
+    const hpDisplays = document.querySelectorAll('.npc-hp-stat .hp-val');
+    const rageDisplays = document.querySelectorAll('.npc-rage-stat .rage-val');
+    const goldDisplays = document.querySelectorAll('.npc-gold-stat .gold-val');
+
+    // Effective Stats'tan güncel Max HP'yi alalım
+    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp };
+
+    hpDisplays.forEach(el => el.textContent = `${hero.hp}/${effective.maxHp}`);
+    rageDisplays.forEach(el => el.textContent = `${hero.rage}/${hero.maxRage}`);
+    goldDisplays.forEach(el => el.textContent = hero.gold);
 };
 
 window.startCampfireEvent = function(node) {

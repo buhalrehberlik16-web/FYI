@@ -11,6 +11,7 @@ window.updateGoldUI = function() {
     if(goldText) goldText.textContent = hero.gold;
     if(topHeroName) topHeroName.textContent = hero.playerName;
     if(topHeroLevel) topHeroLevel.textContent = `(Lv.${hero.level})`;
+	if(typeof updateNPCStatsDisplay === 'function') updateNPCStatsDisplay();
 };
 
 window.switchScreen = function(targetScreen) {
