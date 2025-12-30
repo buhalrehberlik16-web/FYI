@@ -320,15 +320,37 @@
 /* ============================================================
    NPC MODALLARI VE KAMP ATEŞİ
    ============================================================ */
+.npc-window { width: 1280px; height: 900px; background-size: contain; background-repeat: no-repeat; background-position: center; position: relative; }
 .npc-modal { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 5000; display: none; justify-content: center; align-items: center; }
 .npc-modal:not(.hidden) { display: flex !important; }
-.npc-window { width: 1280px; height: 900px; background-size: contain; background-repeat: no-repeat; background-position: center; position: relative; }
 .npc-title { position: absolute; width: 100%; text-align: center; color: #3e2723; font-weight: 900; font-size: 1.8em; top: 185px; text-transform: uppercase; }
 .npc-actions-left, .npc-actions-right { position: absolute; width: 140px; top: 300px; display: flex; flex-direction: column; gap: 15px; }
 .npc-actions-left { left: 300px; } .npc-actions-right { right: 310px; }
 .npc-dialogue { position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%); width: 30%; text-align: center; color: #5d4037; font-weight: bold; font-style: italic; }
 
 .fire-glow-effect { position: absolute; bottom: -20%; left: 20%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(255,69,0,0.6) 0%, rgba(139,0,0,0.2) 60%, transparent 80%); filter: blur(30px); animation: fire-flicker 3s infinite alternate; z-index: 0; pointer-events: none; }
+
+
+/* --- HANCI (INN) --- */
+#modal-inn .npc-title {top: 185px;}
+#modal-inn .npc-dialogue {bottom: 170px; font-size: 0.9em}
+
+/* --- SİMYACI (ALCHEMIST) --- */
+#modal-alchemist .npc-title {top: 170px;}
+#modal-alchemist .npc-dialogue {bottom: 170px;}
+
+/* --- DEMİRCİ (BLACKSMITH) --- */
+#modal-blacksmith .npc-title {top: 170px;}
+#modal-blacksmith .npc-dialogue {bottom: 175px;}
+
+/* --- TÜCCAR (MERCHANT) --- */
+#modal-merchant .npc-title {top: 185px;}
+#modal-merchant .npc-dialogue {bottom: 176px;}
+
+/* --- AHIR (STABLE) --- */
+#modal-stable .npc-title {top: 185px;}
+#modal-stable .npc-dialogue {bottom: 180px;}
+
 /*============================================================
    Alchemist Transmute
 ============================================================ */
