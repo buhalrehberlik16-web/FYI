@@ -94,10 +94,18 @@ const ENEMY_STATS = {
     }
 };
 // Düşman Havuzları
-const TIER_1_ENEMIES = ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"];
-const TIER_2_ENEMIES = ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"];
-const TIER_3_ENEMIES = ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"];
-const TIER_4_ENEMIES = ["Orc Fedaisi"];
+const TIER_ENEMIES = {
+    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"],
+    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "İskelet Şövalye", "Gulyabani"],
+    4: ["Kaya Golemi", "Orc Fedaisi", "Kemik Golemi"],
+    5: ["Goblin Şefi"], // Boss/Elite
+    6: [], // Buradan sonrasını yeni ekleyeceğin düşmanlarla doldurabilirsin
+    7: [],
+    8: [],
+    9: [],
+    10: []
+};
 
 Object.assign(ENEMY_STATS, {
     "İskelet Şövalye": { maxHp: 180, attack: 25, defense: 15, tier: 3, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },

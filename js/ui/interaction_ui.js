@@ -27,8 +27,7 @@ window.openRewardScreen = function(rewards) {
             // Daha önce yazdığımız getTranslatedItemName fonksiyonunu kullanıyoruz
             const itemName = getTranslatedItemName(item);
             
-            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name">${itemName}</span><span class="reward-item-tier">Tier ${item.tier}</span></div>`;
-            
+            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name tier-${item.tier}">${itemName}</span><span class="reward-item-tier tier-${item.tier}">${lang.items.tier_label} ${item.tier}</span></div>`;
             itemDiv.onclick = () => {
                 // Çantada boş yer var mı kontrol et
                 const emptySlotIndex = hero.inventory.indexOf(null);
@@ -223,17 +222,19 @@ window.triggerRandomEvent = function() {
 };
 
 document.addEventListener('click', e => {
-    // Eğer tıklanan yer 'close-npc' sınıfına sahipse (Çıkış butonu) her türlü kapat
+    // 1. Eğer tıklanan yer 'close-npc' sınıfına sahipse (NPC çıkış butonu) kapat
     if (e.target.classList.contains('close-npc')) {
         e.target.closest('.npc-modal')?.classList.add('hidden');
         return;
     }
 
-    // Siyah arka plana tıklandığında kapatma mantığı
+    // 2. Siyah arka plana tıklandığında kapatma mantığı
     if (e.target.classList.contains('npc-modal')) {
-        // KRİTİK GÜNCELLEME: Eğer tıklanan modal 'transmute-screen' ise HİÇBİR ŞEY YAPMA
-        if (e.target.id === 'transmute-screen') {
-            console.log("Güvenlik: Eşyaların kaybolmaması için geri butonunu kullanmalısın.");
+        // GÜVENLİK: Transmute ve Merchant Trade ekranları dışarı tıklanarak KAPANAMAZ
+        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal'];
+        
+        if (forbiddenModals.includes(e.target.id)) {
+            console.log("Güvenlik: İşlemi tamamlamak veya iptal etmek için butonları kullanmalısın.");
             return; 
         }
         

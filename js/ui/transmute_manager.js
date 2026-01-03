@@ -51,8 +51,8 @@ function renderTransmuteSlots() {
             slot.appendChild(img);
 			
 			const badge = document.createElement('span');
-            badge.className = 'item-tier-badge';
-            badge.textContent = `T${item.tier}`;
+			badge.className = `item-tier-badge badge-${item.tier}`; // Renkli badge
+			badge.textContent = `T${item.tier}`;
             slot.appendChild(badge);
             
             // Tooltip desteği (menu_manager'daki fonksiyonu kullanıyoruz)
@@ -113,10 +113,17 @@ function renderTransmuteInventory() {
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
             slot.draggable = true;
-			const badge = document.createElement('span');
-            badge.className = 'item-tier-badge';
+			// --- RENKLİ TIER BADGE EKLEME ---
+            const badge = document.createElement('span');
+            // Hem genel badge sınıfını hem de o tier'a özel renk sınıfını veriyoruz
+            badge.className = `item-tier-badge badge-${item.tier}`; 
             badge.textContent = `T${item.tier}`;
             slot.appendChild(badge);
+
+            // Eğer item seviyesi yüksekse çerçeveyi de renklendir (Opsiyonel)
+            if (item.tier >= 4) {
+                slot.classList.add(`border-tier-${item.tier}`);
+            }
 
             // Drag-Drop desteği
             slot.ondragstart = (e) => {
@@ -324,8 +331,8 @@ window.processTransmutation = async function() {
     resultSlot.appendChild(img);
 
     const badge = document.createElement('span');
-    badge.className = 'item-tier-badge';
-    badge.textContent = `T${newItem.tier}`;
+	badge.className = `item-tier-badge badge-${newItem.tier}`; // Renkli badge
+	badge.textContent = `T${newItem.tier}`;
     resultSlot.appendChild(badge);
 
     if (isCritical) {
@@ -388,9 +395,11 @@ window.updateTransmuteProbabilities = function() {
     }
 
     html += `<div class="prob-row" style="border-bottom: 1px solid #444; margin-bottom: 8px; padding-bottom: 5px;">
-                <span class="prob-label">${langItems.tier_odds}:</span>
-                <span class="prob-value">${tierOdds.map(o => `T${o.tier} (%${o.chance})`).join(" / ")}</span>
-             </div>`;
+            <span class="prob-label">${langItems.tier_odds}:</span>
+            <span class="prob-value">
+                ${tierOdds.map(o => `<span class="tier-${o.tier}">T${o.tier} (%${o.chance})</span>`).join(" / ")}
+            </span>
+         </div>`;
 
     // --- 2. STAT/RESIST DAĞILIM OLASILIĞI (Ağırlıklı Hesaplama) ---
     const weights = {};

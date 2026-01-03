@@ -49,6 +49,7 @@ window.hero = {
     baseAttack: 10, baseDefense: 1,
     baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+	highestTierDefeated: 1, // Oyun başında 1 olarak başlar
     statusEffects: [],
     mapEffects: [],
     unlockedSkills: [],

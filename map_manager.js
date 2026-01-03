@@ -142,45 +142,47 @@ function generateMap() {
 }
 
 function getPreDeterminedEnemy(stage) {
-    const rand = Math.random();
-    let selectedPool = [];
+    let pool = [];
     let isHard = false;
+    let targetTier = 1;
 
-    // 1. HAVUZ BELİRLEME
-    if (hero.currentAct === 1) {
-        let baseTier = (stage < 5) ? 1 : (stage < 10 ? 2 : 3);
-        if (rand < 0.80) {
-            if (baseTier === 1) selectedPool = [...TIER_1_ENEMIES];
-            else if (baseTier === 2) selectedPool = [...TIER_2_ENEMIES];
-            else selectedPool = [...TIER_3_ENEMIES];
-            isHard = false;
-        } else {
-            if (baseTier === 1) selectedPool = [...TIER_2_ENEMIES];
-            else if (baseTier === 2) selectedPool = [...TIER_3_ENEMIES];
-            else selectedPool = [...TIER_4_ENEMIES];
-            isHard = true;
-        }
-    } else {
-        selectedPool = hero.currentAct === 2 ? ["İskelet Şövalye", "Gulyabani", "Kemik Golemi"] : TIER_3_ENEMIES;
-        isHard = rand > 0.8;
+    // --- BÖLGE MANTIĞI (Senin kurgun) ---
+
+    // Bölge 1: İlk Town'a kadar (Stage 0-3) -> Sadece T1
+    if (stage <= 3) {
+        targetTier = 1;
+        isHard = false;
+    } 
+    // Bölge 2: Town 1 ile Town 2 arası (Stage 5-7) -> T1 Normal, T2 Strong
+    else if (stage > 4 && stage <= 7) {
+        // %70 T1 (Normal), %30 T2 (Strong)
+        targetTier = (Math.random() < 0.7) ? 1 : 2;
+        isHard = (targetTier === 2);
+    }
+    // Bölge 3: Town 2 ile Town 3 arası (Stage 9-11) -> T2 Normal, T3 Strong
+    else if (stage > 8 && stage <= 11) {
+        // %70 T2 (Normal), %30 T3 (Strong)
+        targetTier = (Math.random() < 0.7) ? 2 : 3;
+        isHard = (targetTier === 3);
+    }
+    // Bölge 4: Town 3'ten sonrası (Stage 13-14) -> T3 Normal, T4 Elite/Boss
+    else if (stage > 12) {
+        targetTier = (Math.random() < 0.6) ? 3 : 4;
+        isHard = (targetTier === 4);
     }
 
-    // 2. GELİŞMİŞ TEKRAR ENGELLEME (Stage Bazlı)
-    // Bir önceki stage'de kullanılan düşmanları bul
-    let forbiddenEnemies = enemiesByStage[stage - 1] || [];
+    // Act 2 ve sonrası için otomatik Tier artış sistemi (Opsiyonel Güvenlik)
+    if (hero.currentAct > 1) {
+        targetTier += (hero.currentAct - 1) * 3; // Her Act düşmanları +3 Tier kaydırır
+    }
+
+    // Seçilen Tier havuzundan rastgele düşman al
+    const currentPool = TIER_ENEMIES[targetTier] || TIER_ENEMIES[1];
     
-    // Havuzdan yasaklı olanları çıkar
-    let availableEnemies = selectedPool.filter(enemy => !forbiddenEnemies.includes(enemy));
-
-    // Eğer havuz boşaldıysa (seçenek kalmadıysa) mecburen orijinal havuzu kullan
-    if (availableEnemies.length === 0) availableEnemies = selectedPool;
-
-    // Rastgele seçim yap
-    const enemyName = availableEnemies[Math.floor(Math.random() * availableEnemies.length)];
-
-    // 3. HAFIZAYA KAYDET (Bu stage'e bu düşman atandı de)
-    if (!enemiesByStage[stage]) enemiesByStage[stage] = [];
-    enemiesByStage[stage].push(enemyName);
+    // Eğer havuz boşsa bir alt havuza bak (Hata koruması)
+    let selectedPool = currentPool.length > 0 ? currentPool : TIER_ENEMIES[1];
+    
+    const enemyName = selectedPool[Math.floor(Math.random() * selectedPool.length)];
 
     return { name: enemyName, isHard: isHard };
 }
@@ -430,6 +432,7 @@ function triggerNodeAction(node) {
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
+	refreshMerchantStock();
     switchScreen(townScreen);
     writeLog("🏰 Köye giriş yaptın.");
     if(btnLeaveTown) {

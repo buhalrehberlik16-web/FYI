@@ -26,6 +26,13 @@ const TR_ITEMS = {
     item_belt_int: "Kahin Kemeri",
     item_belt_vit: "Zırhlı Kemer",
     item_belt_mp: "Efsunlu Kemer",
+	
+	merch_lizard_cold: "Donmuş Kertenkele Gözü",
+	merch_lizard_fire: "Alevli Kertenkele Gözü",
+	merch_lizard_lightning: "Elektrikli Kertenkele Gözü",
+	merch_lizard_physical: "Zırhlı Kertenkele Gözü",
+	merch_lizard_curse: "Lanetli Kertenkele Gözü",
+	merch_lizard_poison: "Zehirli Kertenkele Gözü",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",
@@ -78,6 +85,13 @@ const EN_ITEMS = {
     item_belt_int: "Seer's Belt",
     item_belt_vit: "Plated Belt",
     item_belt_mp: "Enchanted Belt",
+	
+	merch_lizard_cold: "Frozen Lizard Eye",
+	merch_lizard_fire: "Fiery Lizard Eye",
+	merch_lizard_lightning: "Electric Lizard Eye",
+	merch_lizard_physical: "Armored Lizard Eye",
+	merch_lizard_curse: "Cursed Lizard Eye",
+	merch_lizard_poison: "Poisonous Lizard Eye",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",

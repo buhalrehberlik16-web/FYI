@@ -338,14 +338,77 @@
 /* --- SİMYACI (ALCHEMIST) --- */
 #modal-alchemist .npc-title {top: 170px;}
 #modal-alchemist .npc-dialogue {bottom: 170px;}
+#modal-alchemist .npc-stats-left {left:340px;}
+#modal-alchemist .npc-stats-right {right:390px;}
+#modal-alchemist .npc-stats-header {top:192px;}
+
 
 /* --- DEMİRCİ (BLACKSMITH) --- */
 #modal-blacksmith .npc-title {top: 170px;}
 #modal-blacksmith .npc-dialogue {bottom: 175px;}
+#modal-blacksmith .npc-stats-left {left:340px;}
+#modal-blacksmith .npc-stats-right {right:390px;}
+#modal-blacksmith .npc-stats-header {top:192px;}
 
 /* --- TÜCCAR (MERCHANT) --- */
 #modal-merchant .npc-title {top: 185px;}
 #modal-merchant .npc-dialogue {bottom: 176px;}
+/*============================================================
+   Merchant Trade
+============================================================ */
+.price-tag {position: absolute; top: 0px; right: -1px; background: #000; color: #ffd700; font-size: 0.7em; padding: 2px 6px;
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    z-index: 10;
+    font-weight: bold;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+/* Onay Butonları Konteynırı */
+#trade-confirm-modal .stat-window {
+    background: #1a150e !important;
+    border: 3px solid #6b5c3b !important;
+    box-shadow: 0 0 30px rgba(0,0,0,1);
+}
+
+/* EVET Butonu (Yeşil/Güvenli) */
+.confirm-btn-yes {
+    background: linear-gradient(to bottom, #2d5a27, #1e3d1a) !important;
+    border-color: #43ff64 !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-yes:hover {
+    background: #3a7532 !important;
+    box-shadow: 0 0 10px rgba(67, 255, 100, 0.4);
+}
+
+/* HAYIR Butonu (Kırmızı/İptal) */
+.confirm-btn-no {
+    background: linear-gradient(to bottom, #8b0000, #5a0000) !important;
+    border-color: #ff4d4d !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-no:hover {
+    background: #a00000 !important;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+/* Metin ayarı */
+#trade-confirm-text {
+    font-size: 1.1em;
+    color: #f0e68c;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+}
+/*============================================================
+   Merchant Trade Bitişi
+============================================================ */
 
 /* --- AHIR (STABLE) --- */
 #modal-stable .npc-title {top: 185px;}
@@ -361,7 +424,7 @@
 
 .npc-stats-left {
     position: absolute;
-    left: 370px; /* Kırmızı kutunun olduğu bölge */
+    left: 350px; /* Kırmızı kutunun olduğu bölge */
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -591,6 +654,46 @@
 	#modal-merchant .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.46em !important; }
 	modal-merchant .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	/* Onay Butonları Konteynırı */
+#trade-confirm-modal .stat-window {
+    background: #1a150e !important;
+    border: 3px solid #6b5c3b !important;
+    box-shadow: 0 0 30px rgba(0,0,0,1);
+}
+
+/* EVET Butonu (Yeşil/Güvenli) */
+.confirm-btn-yes {
+    background: linear-gradient(to bottom, #2d5a27, #1e3d1a) !important;
+    border-color: #43ff64 !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-yes:hover {
+    background: #3a7532 !important;
+    box-shadow: 0 0 10px rgba(67, 255, 100, 0.4);
+}
+
+/* HAYIR Butonu (Kırmızı/İptal) */
+.confirm-btn-no {
+    background: linear-gradient(to bottom, #8b0000, #5a0000) !important;
+    border-color: #ff4d4d !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-no:hover {
+    background: #a00000 !important;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+/* Metin ayarı */
+#trade-confirm-text {
+    font-size: 1.1em;
+    color: #f0e68c;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+}
 
     /* 4. SİMYACI (ALCHEMIST) MOBİL */
     #modal-alchemist .npc-actions-left { top: 41% !important; left: 9.7% !important; }

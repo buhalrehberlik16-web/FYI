@@ -157,6 +157,13 @@ window.LANGUAGES = {
 		log_transmute_success: "Simyasal dönüşüm tamamlandı:",
 		log_transmute_fail: "Dönüşüm için 3 slotu da doldurmalısın!",
 		critical_success: "Kritik Başarı!",
+		sell_btn: "SAT",
+		confirm_buy: "Bu eşyayı satın almak istediğine emin misin?",
+		confirm_sell: "Bu eşyayı satmak istediğine emin misin?",
+		yes: "EVET",
+		no: "HAYIR",
+		merchant_empty: "Dükkanda ürün kalmadı.",
+
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
         enemy_names: {
@@ -465,6 +472,12 @@ window.LANGUAGES = {
 		transmute_desc: "Combine 3 items to obtain a higher-tier item.",
 		log_transmute_success: "Transmutation complete:",
 		log_transmute_fail: "You must fill all 3 slots for transmutation!",
+		sell_btn: "SELL",
+		confirm_buy: "Are you sure you want to buy this item?",
+		confirm_sell: "Are you sure you want to sell this item?",
+		yes: "YES",
+		no: "NO",
+		merchant_empty: "No items left in stock.",
 
         // Enemy Names
         enemy_names: {

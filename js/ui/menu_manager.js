@@ -156,7 +156,10 @@ window.showItemTooltip = function(item, event) {
     const langItems = window.LANGUAGES[currentLang].items;
 
     nameEl.textContent = getTranslatedItemName(item);
+	nameEl.className = `tooltip-name tier-${item.tier}`; // İsim renkli
+
     tierEl.textContent = `${langItems.tier_label} ${item.tier}`;
+	tierEl.className = `tooltip-tier tier-${item.tier}`; // "Seviye X" yazısı renkli
     
     statsEl.innerHTML = '';
     for (const [statKey, value] of Object.entries(item.stats)) {
@@ -277,6 +280,27 @@ window.renderInventory = function() {
 
     // Slot Kurulum Yardımcısı
     const setupSlot = (slotEl, item, type, identifier) => {
+		slotEl.onclick = (e) => {
+    // Eğer cihaz mobilse (dokunmatikse)
+    if ('ontouchstart' in window) {
+        // İlk tıklamada tooltip göster, ikinci tıklamada işlem yap mantığı
+        if (document.getElementById('item-tooltip').classList.contains('hidden')) {
+            showItemTooltip(item, e);
+            // Tooltip mobilde 3 saniye sonra kapansın
+            setTimeout(hideItemTooltip, 3000);
+            return; // İşlemi (takma/satma) durdur, sadece bilgiyi göster
+        }
+    }
+    
+    // PC'de veya ikinci tıklamada normal işlem devam eder
+    if (type === 'bag') {
+        hideItemTooltip();
+        equipItem(identifier);
+    }
+};
+		
+		
+		
         slotEl.innerHTML = '';
         slotEl.draggable = item ? true : false;
         
@@ -284,10 +308,13 @@ window.renderInventory = function() {
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slotEl.appendChild(img);
-			 const tierBadge = document.createElement('span');
-		tierBadge.className = 'item-tier-badge';
-		tierBadge.textContent = `T${item.tier}`; // Yer darlığından dolayı buraya sadece T yazmak daha şıktır
+		const tierBadge = document.createElement('span');
+		tierBadge.className = `item-tier-badge badge-${item.tier}`; // Renkli arka plan
+		tierBadge.textContent = `T${item.tier}`;
 		slotEl.appendChild(tierBadge);
+
+		// Slotun çerçevesini de yüksek seviyelerde değiştirelim
+		if (item.tier >= 4) slotEl.classList.add(`border-tier-${item.tier}`);
             
             // Tooltip
             slotEl.onmouseenter = (e) => showItemTooltip(item, e);

@@ -83,6 +83,22 @@ window.getHeroEffectiveStats = function() {
             }
         }
     }
+	
+			// 2.1 ÇANTADAKİ PASİF EŞYALARI (CHARMS) TARA
+			hero.inventory.forEach(item => {
+			if (item && item.type === "passive_charm" && item.stats) {
+				for (const statKey in item.stats) {
+					// Dirençleri ekle
+					if (currentResists.hasOwnProperty(statKey)) {
+						currentResists[statKey] += item.stats[statKey];
+					}
+					// Statları ekle (İleride kertenkeleler stat da verirse diye)
+					else if (s.hasOwnProperty(statKey)) {
+						s[statKey] += item.stats[statKey];
+					}
+				}
+			}
+		});
 
     // 3. STATUS EFFECT'LERİ TARA (Buff/Debuff)
     hero.statusEffects.forEach(e => {
@@ -555,6 +571,12 @@ window.checkGameOver = function() {
         monster.hp = 0; updateStats(); 
         monsterDisplayImg.src = `images/${monster.dead}`; 
         monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)'; 
+		
+		// EN YÜKSEK TIER GÜNCELLEME
+    if (monster.tier > hero.highestTierDefeated) {
+        hero.highestTierDefeated = monster.tier;
+        writeLog(`🌟 **Yeni Tehdit Seviyesi**: Dükkanlar artık Tier ${hero.highestTierDefeated} ürünler getirebilir!`);
+    }
         
         // --- YENİ GANİMET MANTIĞI ---
         let rewards = [];
