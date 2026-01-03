@@ -1,8 +1,8 @@
 // combat_manager.js - TÜM LOGLAR VE MEKANİKLER DAHİL TAM SÜRÜM
 
-const HERO_IDLE_SRC = 'images/barbarian.png'; 
-const HERO_ATTACK_FRAMES = ['images/barbarian_attack1.png', 'images/barbarian_attack2.png', 'images/barbarian_attack3.png'];
-const HERO_DEAD_SRC = 'images/barbarian_dead.png'; 
+const HERO_IDLE_SRC = 'images/heroes/barbarian/barbarian.webp'; 
+const HERO_ATTACK_FRAMES = ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'];
+const HERO_DEAD_SRC = 'images/heroes/barbarian/barbarian_dead.webp'; 
 
 // Savaş Değişkenleri
 window.heroDefenseBonus = 0; 

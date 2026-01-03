@@ -82,7 +82,7 @@
             <!-- BARBAR (Aktif) -->
             <div class="class-card available" id="select-barbar" onclick="selectClass('Barbar')">
                 <div class="class-image-box">
-                    <img src="images/barbarianinventory.png" alt="Barbar">
+                    <img src="images/heroes/barbarian/barbarianinventory.webp" alt="Barbar">
                 </div>
                 <div class="class-info">
                     <h2 data-i18n="class_barbarian_name">BARBAR</h2>
@@ -99,7 +99,7 @@
             <div class="class-card locked">
                 <div class="lock-overlay"><i class="fas fa-lock"></i><span data-i18n="coming_soon">YAKINDA</span></div>
                 <div class="class-image-box">
-                    <img src="images/magus_placeholder.png" alt="Magus" style="filter: grayscale(100%);">
+                    <img src="images/heroes/magus/magus_placeholder.webp" alt="Magus" style="filter: grayscale(100%);">
                 </div>
                 <div class="class-info">
                     <h2 data-i18n="class_magus_name">MAGUS</h2>
@@ -111,7 +111,7 @@
             <div class="class-card locked">
                 <div class="lock-overlay"><i class="fas fa-lock"></i><span data-i18n="coming_soon">YAKINDA</span></div>
                 <div class="class-image-box">
-                    <img src="images/trickster_placeholder.png" alt="Trickster" style="filter: grayscale(100%);">
+                    <img src="images/heroes/trickster/trickster_placeholder.webp" alt="Trickster" style="filter: grayscale(100%);">
                 </div>
                 <div class="class-info">
                     <h2 data-i18n="class_trickster_name">TRICKSTER</h2>
@@ -167,20 +167,34 @@
     <div id="map-display">
         <!-- İÇERİK KUTUSU (Geniş Harita - Scroll edilecek olan bu) -->
         <div id="map-content">
-            <img src="images/map_background.png" alt="Harita Arka Planı" id="map-background">
+            <img src="images/utils/map_background.webp" alt="Harita Arka Planı" id="map-background">
             <svg id="map-trails-layer"></svg>
             <div id="player-marker-container">
-                <img src="images/player_marker.png" alt="Kahraman" id="player-marker">
+                <img src="images/utils/player_marker.webp" alt="Kahraman" id="player-marker">
             </div>
             <!-- Node butonları JS ile buraya eklenecek -->
         </div>
     </div>
     
-    <div id="map-info-box">
+    <div id="map-info-box" class="expanded">
+    <!-- Tıklanabilir Üst Bar (Handle) -->
+    <div id="map-info-header" onclick="toggleMapInfo()">
         <h2 id="current-node-name" data-i18n="map_loading">Harita Yükleniyor...</h2>
+        <div class="toggle-control">
+            <label class="switch">
+                <input type="checkbox" id="info-toggle-check" checked>
+                <span class="slider round"></span>
+            </label>
+            <i class="fas fa-chevron-down" id="info-arrow"></i>
+        </div>
+    </div>
+
+    <!-- Gizlenebilir İçerik Alanı -->
+    <div id="map-info-content">
         <p id="map-description">...</p>
         <div id="map-action-buttons"></div>
     </div>
+</div>
 </div>
 
             <!-- 4. SAVAŞ EKRANI -->
@@ -229,14 +243,14 @@
     <div class="basic-skills-container">
         <!-- Temel Saldırı -->
         <div id="btn-basic-attack" class="skill-slot basic-slot" title="Saldır">
-            <img src="images/icon_attack.png" alt="Saldır">
+            <img src="images/skills/common/icon_attack.webp" alt="Saldır">
             <!-- Sol üstte küçük ipucu (Opsiyonel) -->
             <span class="key-hint">A</span> 
         </div>
         
         <!-- Temel Savunma -->
         <div id="btn-basic-defend" class="skill-slot basic-slot" title="Savun">
-            <img src="images/icon_defend.png" alt="Savun">
+            <img src="images/skills/common/icon_defend.webp" alt="Savun">
             <span class="key-hint">D</span>
         </div>
     </div>
@@ -462,7 +476,7 @@
                      <!-- 11. KÖY (TOWN) EKRANI -->
             <div id="town-screen" class="screen hidden">
     <div class="town-container">
-        <img src="images/town_bg.png" alt="Köy Meydanı" class="town-background">
+        <img src="images/utils/town_bg.webp" alt="Köy Meydanı" class="town-background">
         
         <!-- HAN -->
         <div class="town-building" id="building-inn" onclick="openBuilding('inn')">
@@ -497,7 +511,7 @@
 			<!-- 13. ŞEHİR (CITY) EKRANI -->
 <div id="city-screen" class="screen hidden">
     <div class="city-container">
-        <img src="images/city_bg.png" alt="Büyük Başkent" class="city-background">
+        <img src="images/utils/city_bg.webp" alt="Büyük Başkent" class="city-background">
         
         <!-- Şehir Başlığı -->
         <div class="city-header">
@@ -542,7 +556,7 @@
                         <!-- SOL TARA: Karakter ve Para -->
                         <div class="paper-doll-left">
                             <div class="char-preview-box">
-                                <img src="images/barbarianinventory.png" alt="Karakter" id="inv-char-img">
+                                <img src="images/heroes/barbarian/barbarianinventory.webp" alt="Karakter" id="inv-char-img">
                                 <!-- Broş Slotları -->
                                 <div class="brooch-overlay">
                                     <div class="item-slot brooch-slot" data-brooch-index="0"></div>
@@ -600,7 +614,7 @@
             
             <!-- 1. HAN (INN) -->
             <div id="modal-inn" class="npc-modal hidden">
-                <div class="npc-window" style="background-image: url('images/inn.png');">
+                <div class="npc-window" style="background-image: url('images/npc/inn.webp');">
 				<div class="npc-stats-header">
     <div class="npc-stats-left">
         <span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>
@@ -624,7 +638,7 @@
 
             <!-- 2. SİMYACI (ALCHEMIST) -->
             <div id="modal-alchemist" class="npc-modal hidden">
-    <div class="npc-window" style="background-image: url('images/alchemist.png');">
+    <div class="npc-window" style="background-image: url('images/npc/alchemist.webp');">
 	<div class="npc-stats-header">
     <div class="npc-stats-left">
         <span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>
@@ -649,7 +663,7 @@
 
             <!-- 3. DEMİRCİ (BLACKSMITH) -->
             <div id="modal-blacksmith" class="npc-modal hidden">
-                <div class="npc-window" style="background-image: url('images/blacksmith.png');">
+                <div class="npc-window" style="background-image: url('images/npc/blacksmith.webp');">
 				<div class="npc-stats-header">
     <div class="npc-stats-left">
         <span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>
@@ -672,7 +686,7 @@
 
             <!-- 4. TÜCCAR (MERCHANT) -->
             <div id="modal-merchant" class="npc-modal hidden">
-                <div class="npc-window" style="background-image: url('images/merchant.png');">
+                <div class="npc-window" style="background-image: url('images/npc/merchant.webp');">
 				<div class="npc-stats-header">
     <div class="npc-stats-left">
         <span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>
@@ -696,7 +710,7 @@
 
             <!-- 5. AHIR (STABLE) -->
             <div id="modal-stable" class="npc-modal hidden">
-                <div class="npc-window" style="background-image: url('images/stable.png');">
+                <div class="npc-window" style="background-image: url('images/npc/stable.webp');">
 				<div class="npc-stats-header">
 				<div class="npc-stats-left">
 					<span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>

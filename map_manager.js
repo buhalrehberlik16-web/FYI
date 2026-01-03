@@ -24,9 +24,9 @@ function generateMap() {
     // --- ACT'E GÖRE GÖRSEL AYARI ---
     if (mapBg) {
         if (hero.currentAct === 2) {
-            mapBg.src = "images/map_background.png"; // Act 2 harita resmi
+            mapBg.src = "images/utils/map_background.webp"; // Act 2 harita resmi
         } else {
-            mapBg.src = "images/map_background.png"; // Act 1 harita resmi
+            mapBg.src = "images/utils//map_background.webp"; // Act 1 harita resmi
         }
     }
 
@@ -238,12 +238,12 @@ function renderMap() {
         btn.style.top = `calc(${baseTop}% + ${node.jitterY}px)`; 
 
         const img = document.createElement('img');
-        if (node.type === 'encounter') img.src = 'images/skull_icon.png';
-        else if (node.type === 'town') img.src = 'images/village_icon.png';
-        else if (node.type === 'choice') img.src = 'images/choice_icon.png';
-        else if (node.type === 'boss') img.src = 'images/skull_icon.png';
-        else if (node.type === 'city') img.src = 'images/village_icon.png';
-        else if (node.type === 'start') img.src = 'images/skull_icon.png';
+        if (node.type === 'encounter') img.src = 'images/utils/skull_icon.webp';
+        else if (node.type === 'town') img.src = 'images/utils/village_icon.webp';
+        else if (node.type === 'choice') img.src = 'images/utils/choice_icon.webp';
+        else if (node.type === 'boss') img.src = 'images/utils/skull_icon.webp';
+        else if (node.type === 'city') img.src = 'images/utils/village_icon.webp';
+        else if (node.type === 'start') img.src = 'images/utils/skull_icon.webp';
         
         btn.appendChild(img);
         btn.onclick = () => handleNodeClick(node);
@@ -554,3 +554,61 @@ window.startNextAct = function() {
     // 10. OTOMATİK KAYIT (Yeni perdeye geçtiğini unutmasın)
     if(window.saveGame) window.saveGame();
 };
+
+window.toggleMapInfo = function() {
+    const box = document.getElementById('map-info-box');
+    const checkbox = document.getElementById('info-toggle-check');
+    const arrow = document.getElementById('info-arrow');
+
+    if (box.classList.contains('collapsed')) {
+        // Aç
+        box.classList.remove('collapsed');
+        box.classList.add('expanded');
+        checkbox.checked = true;
+    } else {
+        // Kapat
+        box.classList.remove('expanded');
+        box.classList.add('collapsed');
+        checkbox.checked = false;
+    }
+};
+
+// Tik kutusuna tıklandığında da çalışması için (opsiyonel ama iyi olur)
+document.getElementById('info-toggle-check').addEventListener('change', function(e) {
+    // Tıklama event'i header'a da sıçramaması için stopPropagation kullanıyoruz
+    e.stopPropagation();
+    const box = document.getElementById('map-info-box');
+    if (this.checked) {
+        box.classList.remove('collapsed');
+    } else {
+        box.classList.add('collapsed');
+    }
+});
+// Haritayı fareyle tutup kaydırma (Drag to Scroll)
+const mapDisplay = document.getElementById('map-display');
+let isDown = false;
+let startX;
+let scrollLeft;
+
+mapDisplay.addEventListener('mousedown', (e) => {
+    isDown = true;
+    mapDisplay.classList.add('active-dragging');
+    startX = e.pageX - mapDisplay.offsetLeft;
+    scrollLeft = mapDisplay.scrollLeft;
+});
+
+mapDisplay.addEventListener('mouseleave', () => {
+    isDown = false;
+});
+
+mapDisplay.addEventListener('mouseup', () => {
+    isDown = false;
+});
+
+mapDisplay.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - mapDisplay.offsetLeft;
+    const walk = (x - startX) * 2; // Kaydırma hızı (2 katı)
+    mapDisplay.scrollLeft = scrollLeft - walk;
+});
