@@ -60,7 +60,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 
 .healing-particle {
     position: absolute; width: 20px; height: 20px;
-    background-image: url('../images/healing_particles.png'); background-size: contain; background-repeat: no-repeat;
+    background-image: url('../images/utils/healing_particles.png'); background-size: contain; background-repeat: no-repeat;
     opacity: 0; pointer-events: none; animation: particle-float 2s forwards;
 }
 @keyframes particle-float {

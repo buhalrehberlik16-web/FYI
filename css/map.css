@@ -12,10 +12,23 @@
 #map-display { 
     position: relative; 
     width: 100%; 
-    height: 75%; 
+    height: 100%; 
     overflow-x: auto; /* Yatay scroll */
     overflow-y: hidden;
     background-color: #111;
+	/* --- SCROLLBAR GİZLEME (TÜM TARAYICILAR İÇİN) --- */
+    -ms-overflow-style: none;  /* Internet Explorer ve Eski Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+/* Chrome, Safari ve Yeni Edge (Blink motoru) için */
+#map-display::-webkit-scrollbar {
+    display: none;
+}
+#map-display {
+    cursor: grab; /* Harita üzerinde el simgesi çıksın */
+}
+#map-display:active {
+    cursor: grabbing; /* Tutarken yumruk simgesi çıksın */
 }
 
 /* İÇERİK: Tüm harita elemanlarını tutan geniş kutu */
@@ -24,6 +37,68 @@
     width: 200%; /* Harita ekranın 2 katı genişliğinde */
     height: 100%;
 }
+
+#map-info-box {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px; /* Genişliği isteğine göre ayarla */
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid #6b5c3b;
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
+}
+
+/* Kutu kapalıyken sadece başlık barı görünecek */
+#map-info-box.collapsed {
+    height: 45px; 
+    overflow: hidden;
+    background: rgba(10, 10, 10, 0.8);
+}
+
+#map-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    background: linear-gradient(to bottom, #2b2218, #1a150e);
+    border-radius: 12px 12px 0 0;
+}
+
+#map-info-header h2 {
+    margin: 0;
+    font-size: 1.1em;
+    color: #f0e68c;
+    pointer-events: none;
+}
+
+#map-info-content {
+    padding: 15px 25px;
+    text-align: center;
+}
+
+/* Ok İkonu Animasyonu */
+#info-arrow {
+    transition: transform 0.4s;
+    color: #f0e68c;
+}
+#map-info-box.collapsed #info-arrow {
+    transform: rotate(180deg);
+}
+
+/* --- TİK KUTUSU (TOGGLE SWITCH) STİLİ --- */
+.toggle-control { display: flex; align-items: center; gap: 15px; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 34px; border: 1px solid #6b5c3b; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 2px; background-color: #f0e68c; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #5d4a30; }
+input:checked + .slider:before { transform: translateX(20px); }
 
 /* Arka plan artık map-content boyutuna uyacak */
 #map-background { 

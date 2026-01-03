@@ -1,7 +1,7 @@
 /* css/battle.css - TAM VE HATASIZ NİHAİ SÜRÜM */
 
 #battle-screen {
-    background-image: url('../images/colony_zone_bg.png'); 
+    background-image: url('../images/utils/colony_zone_bg.webp'); 
     background-size: cover; 
     background-position: center;
     display: flex; 

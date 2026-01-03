@@ -2,7 +2,7 @@
    ANA GİRİŞ EKRANI (START SCREEN)
    ============================================================ */
 #start-screen {
-    background: url('../images/main_screen.png') no-repeat center center;
+    background: url('../images/utils/main_screen.webp') no-repeat center center;
     background-size: cover;
     position: relative;
     display: flex;
@@ -84,7 +84,7 @@
    SINIF SEÇİM EKRANI (CLASS SELECTION)
    ============================================================ */
 #class-selection-screen {
-    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('../images/main_screen.png') no-repeat center center;
+    background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('../images/utils/main_screen.webp') no-repeat center center;
     background-size: cover;
     flex-direction: column;
 }
@@ -176,7 +176,7 @@
 #basic-skill-selection-screen {
     flex-direction: column;
     padding: 20px;
-    background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('../images/main_screen.png');
+    background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('../images/utils/main_screen.webp');
     background-size: cover;
 }
 
