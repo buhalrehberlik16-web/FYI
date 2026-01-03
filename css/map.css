@@ -222,3 +222,46 @@ input:checked + .slider:before { transform: translateX(20px); }
     50% { transform: scale(1.15); box-shadow: 0 0 25px #ff9800; }
     100% { transform: scale(1); box-shadow: 0 0 10px #ff9800; }
 }
+#map-info-box {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px; /* Genişliği isteğine göre ayarla */
+    background: rgba(20, 20, 20, 0.95);
+    border: 2px solid #6b5c3b;
+    border-bottom: none;
+    border-radius: 15px 15px 0 0;
+    z-index: 1000;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.8);
+}
+
+/* Kutu kapalıyken sadece başlık barı görünecek */
+#map-info-box.collapsed {
+    height: 55px; 
+    overflow: hidden;
+    background: rgba(10, 10, 10, 0.8);
+}
+
+#map-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    cursor: pointer;
+    background: linear-gradient(to bottom, #2b2218, #1a150e);
+    border-radius: 12px 12px 0 0;
+}
+
+#map-info-header h2 {
+    margin: 0;
+    font-size: 0.8em;
+    color: #f0e68c;
+    pointer-events: none;
+}
+
+#map-info-content {
+    padding: 15px 25px;
+    text-align: center;
+}
