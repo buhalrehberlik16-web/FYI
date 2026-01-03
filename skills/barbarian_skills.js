@@ -13,7 +13,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 0,
             levelReq: 1,
 			cooldown: 0,
-            icon: 'fervor_pommel_bash.png',
+            icon: 'skills/barbarian/brutal/brutal_pommel_bash.webp',
             type: 'attack',
             category: 'brutal',
             tier: 1,
@@ -23,7 +23,7 @@ const BARBARIAN_SKILLS = {
             const dmg = SkillEngine.calculate(attacker, this.data);
             hero.rage = Math.min(hero.maxRage, hero.rage + 18);
             showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 	
@@ -34,7 +34,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 20,
             levelReq: 1,
 			cooldown: 0,
-            icon: 'brutal_slash.png',
+            icon: 'skills/barbarian/brutal/brutal_slash.webp',
             type: 'attack',
             category: 'brutal', 
             tier: 1,
@@ -43,7 +43,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender) {
             const dmg = SkillEngine.calculate(attacker, this.data);
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'slash', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
     
@@ -54,7 +54,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 20,
             levelReq: 1,
 			cooldown: 1,
-            icon: 'brutal_reckless_strike.png',
+            icon: 'skills/barbarian/brutal/brutal_reckless_strike.webp',
             type: 'attack',
             category: 'brutal',
             tier: 1,
@@ -64,7 +64,7 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -76,7 +76,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 30,
             levelReq: 3,
 			cooldown: 2,
-            icon: 'brutal_bash.png',
+            icon: 'skills/barbarian/brutal/brutal_bash.webp',
             type: 'attack',
             category: 'brutal',
             tier: 2,
@@ -86,7 +86,7 @@ const BARBARIAN_SKILLS = {
             const dmg = SkillEngine.calculate(attacker, this.data);
             if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -97,7 +97,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 30,
             levelReq: 3,
 			cooldown: 1,
-            icon: 'brutal_pierce_through.png',
+            icon: 'skills/barbarian/brutal/brutal_pierce_through.webp',
             type: 'attack',
             category: 'brutal',
             tier: 2,
@@ -109,7 +109,7 @@ const BARBARIAN_SKILLS = {
             let monsterDef = monster.defense;
             if(typeof isMonsterDefending !== 'undefined' && isMonsterDefending) monsterDef += monsterDefenseBonus;
             const ignoredDef = Math.floor(monsterDef * 0.50);
-            animateCustomAttack(dmg + ignoredDef, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(dmg + ignoredDef, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -120,7 +120,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 25,
             levelReq: 3,
 			cooldown: 2,
-            icon: 'brutal_daze.png',
+            icon: 'skills/barbarian/brutal/brutal_daze.webp',
             type: 'attack',
             category: 'brutal',
             tier: 2,
@@ -132,7 +132,7 @@ const BARBARIAN_SKILLS = {
             const dmg = SkillEngine.calculate(attacker, this.data);
             applyStatusEffect({ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -143,7 +143,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 30,
             levelReq: 3,
 			cooldown: 2,
-            icon: 'brutal_armor_break.png',
+            icon: 'skills/barbarian/brutal/brutal_armor_break.webp',
             type: 'attack',
             category: 'brutal', 
             tier: 3,
@@ -153,7 +153,7 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'armor_break', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/barbarian_attack2.png', 'images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -164,7 +164,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 50,
             levelReq: 6,
 			cooldown: 5,
-            icon: 'brutal_fury.png',
+            icon: 'skills/barbarian/brutal/brutal_fury.webp',
             type: 'buff',
             category: 'brutal',
             tier: 4
@@ -188,7 +188,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 10, 
             levelReq: 1, 
             cooldown: 5, 
-            icon: 'chaos_blood_price.png',
+            icon: 'skills/barbarian/chaos/chaos_blood_price.webp',
             type: 'utility', 
             category: 'chaos', 
             tier: 1
@@ -222,7 +222,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 30, 
             levelReq: 1, 
             cooldown: 4, 
-            icon: 'chaos_fiery_blade.png',
+            icon: 'skills/barbarian/chaos/chaos_fiery_blade.webp',
             type: 'buff', 
             category: 'chaos', 
             tier: 2			
@@ -256,7 +256,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 25,
             levelReq: 2,
 			cooldown: 0,
-            icon: 'chaos_hell_blade.png',
+            icon: 'skills/barbarian/chaos/chaos_hell_blade.webp',
             type: 'attack',
             category: 'chaos', 
             tier: 2,
@@ -267,7 +267,7 @@ const BARBARIAN_SKILLS = {
             hero.hp = Math.max(1, hero.hp - hpCost);
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
             const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/barbarian_hellblade_strike1.png', 'images/barbarian_hellblade_strike2.png', 'images/barbarian_hellblade_strike3.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
         }
     },
 
@@ -279,7 +279,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 20, 
             levelReq: 3, 
             cooldown: 4, 
-            icon: 'chaos_double_blade.png',
+            icon: 'skills/barbarian/chaos/chaos_double_blade.webp',
             type: 'buff', 
             category: 'chaos', 
             tier: 3			
@@ -314,7 +314,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 50,
             levelReq: 3,
 			cooldown: 4,
-            icon: 'chaos_cauterize.png',
+            icon: 'skills/barbarian/chaos/chaos_cauterize.webp',
             type: 'defense',
             category: 'chaos', 
             tier: 3
@@ -344,7 +344,7 @@ const BARBARIAN_SKILLS = {
         rageCost: 0,
         levelReq: 1,
 		cooldown: 2,
-        icon: 'brutal_wind_up.png',
+        icon: 'skills/barbarian/fervor/fervor_wind_up.webp',
         type: 'buff',
         category: 'fervor',
         tier: 1,
@@ -382,7 +382,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 20,
             levelReq: 2,
 			cooldown: 3,
-            icon: 'icon_battle_cry.png',
+            icon: 'skills/barbarian/fervor/icon_battle_cry.webp',
             type: 'buff',
             category: 'fervor', 
             tier: 2
@@ -403,7 +403,7 @@ const BARBARIAN_SKILLS = {
         rageCost: 50,
         levelReq: 3,
         cooldown: 5,
-        icon: 'fervor_healing_light.png',
+        icon: 'skills/barbarian/fervor/fervor_healing_light.webp',
         type: 'defense',
         category: 'fervor', 
         tier: 3

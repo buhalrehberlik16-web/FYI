@@ -10,7 +10,7 @@ const COMMON_SKILLS = {
             menuDescription: "Atağın kadar hasar. +10 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
-            icon: 'icon_attack.png',
+            icon: 'skills/common/icon_attack.webp',
             type: 'attack',
             category: 'common',
             tier: 1,
@@ -20,7 +20,7 @@ const COMMON_SKILLS = {
             const dmg = SkillEngine.calculate(attacker, this.data);
             hero.rage = Math.min(hero.maxRage, hero.rage + 10);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -30,7 +30,7 @@ const COMMON_SKILLS = {
             menuDescription: "Gelen hasarı %25 azaltır. -15 Rage.",
             rageCost: 15,
             levelReq: 1,
-            icon: 'icon_defend.png',
+            icon: 'skills/common/icon_defend.webp',
             type: 'defense',
             category: 'common',
             tier: 1
@@ -50,7 +50,7 @@ const COMMON_SKILLS = {
             menuDescription: "Atağın %115'i kadar hasar. +0-9 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
-            icon: 'icon_strike.png',
+            icon: 'skills/common/icon_strike.webp',
             type: 'attack',
             category: 'common',
             tier: 1,
@@ -61,7 +61,7 @@ const COMMON_SKILLS = {
             const genRage = Math.floor(Math.random() * 13);
             hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
-            animateCustomAttack(dmg, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -71,7 +71,7 @@ const COMMON_SKILLS = {
             menuDescription: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage.",
             rageCost: 10,
             levelReq: 1,
-            icon: 'icon_block.png',
+            icon: 'skills/common/icon_block.webp',
             type: 'utility',
             category: 'common',
             tier: 1
@@ -92,7 +92,7 @@ const COMMON_SKILLS = {
             menuDescription: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).",
             rageCost: 20,
             levelReq: 1,
-            icon: 'icon_minor_healing.png',
+            icon: 'skills/common/icon_minor_healing.webp',
             type: 'defense',
             category: 'common', 
             tier: 2
@@ -116,7 +116,7 @@ const COMMON_SKILLS = {
             rageCost: 50,
             levelReq: 1,
 			cooldown: 1,
-            icon: 'icon_distract.png',
+            icon: 'skills/common/icon_distract.webp',
             type: 'debuff',
             category: 'common',
             tier: 2
@@ -139,7 +139,7 @@ const COMMON_SKILLS = {
             menuDescription: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
             rageCost: 15,
             levelReq: 1, 
-            icon: 'icon_tactical_strike.png',
+            icon: 'skills/common/icon_tactical_strike.webp',
             type: 'attack',
             category: 'common', 
             tier: 2,
@@ -150,7 +150,7 @@ const COMMON_SKILLS = {
             let currentMonsterDef = monster.defense + (isMonsterDefending ? monsterDefenseBonus : 0);
             const ignoredAmount = Math.min(currentMonsterDef, 10);
             
-            animateCustomAttack(dmg + ignoredAmount, ['images/barbarian_attack1.png', 'images/barbarian_attack2.png'], this.data.name);
+            animateCustomAttack(dmg + ignoredAmount, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -162,7 +162,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Broş Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 2,
-            icon: 'icon_hoarder.png',
+            icon: 'skills/common/icon_hoarder.webp',
             type: 'passive',
             category: 'common',
             tier: 3,
@@ -180,7 +180,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Çanta Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 2,
-            icon: 'icon_loot_junkie.png',
+            icon: 'skills/common/icon_loot_junkie.webp',
             type: 'passive',
             category: 'common',
             tier: 3,
@@ -198,7 +198,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 3,
-            icon: 'icon_fired_up.png',
+            icon: 'skills/common/icon_fired_up.webp',
             type: 'passive',
             category: 'common',
             tier: 3,
@@ -219,7 +219,7 @@ const COMMON_SKILLS = {
             rageCost: 30,
             levelReq: 6, 
 			cooldown: 5,
-            icon: 'icon_sharpen.png',
+            icon: 'skills/common/icon_sharpen.webp',
             type: 'buff',
             category: 'common',
             tier: 4
@@ -240,7 +240,7 @@ const COMMON_SKILLS = {
             rageCost: 20,
             levelReq: 6,
 			cooldown: 9,
-            icon: 'icon_curseskill.png',
+            icon: 'skills/common/icon_curseskill.webp',
             type: 'debuff',
             category: 'common',
             tier: 4
@@ -261,7 +261,7 @@ const COMMON_SKILLS = {
             menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%).",
             rageCost: 0, 
             levelReq: 8, 
-            icon: 'icon_willful_strike.png',
+            icon: 'skills/common/icon_willful_strike.webp',
             type: 'attack',
             category: 'common',
             tier: 5,
@@ -275,7 +275,7 @@ const COMMON_SKILLS = {
             const dmg = SkillEngine.calculate(attacker, this.data);
             const totalDamage = Math.floor(dmg * multiplier);
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'willful_strike', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
-            animateCustomAttack(totalDamage, ['images/barbarian_attack2.png','images/barbarian_attack3.png'], this.data.name);
+            animateCustomAttack(totalDamage, ['images/heroes/barbarian/barbarian_attack2.webp','images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },	
 };
