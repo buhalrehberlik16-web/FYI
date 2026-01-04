@@ -350,6 +350,21 @@
 #modal-blacksmith .npc-stats-right {right:390px;}
 #modal-blacksmith .npc-stats-header {top:192px;}
 
+.salvage-yield-info {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 10px;
+    width: 80%;
+    font-size: 0.9em;
+    color: #f0e68c;
+}
+.salvage-input {
+    border-color: #ff4d4d !important; /* Parçalama tehlikelidir kırmızısı */
+    width: 70px !important;
+    height: 70px !important;
+}
+
 /* --- TÜCCAR (MERCHANT) --- */
 #modal-merchant .npc-title {top: 185px;}
 #modal-merchant .npc-dialogue {bottom: 176px;}
@@ -644,6 +659,9 @@
     #modal-blacksmith .npc-actions-right { top: 41% !important; right: 12% !important; }
 	#modal-blacksmith .npc-title { top: 36.2% !important; font-size: 1em !important;}
 	#modal-blacksmith .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.5em !important; }
+	#modal-blacksmith .npc-stats-left {left:18%;}
+	#modal-blacksmith .npc-stats-right {right:20%;}
+	#modal-blacksmith .npc-stats-header {top:37.5%;}
 	modal-blacksmith .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-blacksmith .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 
@@ -700,6 +718,9 @@
     #modal-alchemist .npc-actions-right { top: 41% !important; right: 12% !important; }
 	#modal-alchemist .npc-title { top: 36.2% !important; font-size: 1em !important;}
 	#modal-alchemist .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.46em !important; }
+	#modal-alchemist .npc-stats-left {left:18%;}
+	#modal-alchemist .npc-stats-right {right:20%;}
+	#modal-alchemist .npc-stats-header {top:37.5%;}
 	modal-alchemist .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-alchemist .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 

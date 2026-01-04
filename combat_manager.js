@@ -562,8 +562,19 @@ window.checkGameOver = function() {
     if (hero.hp <= 0) { 
         writeLog("💀 **Yenilgi**: Canın tükendi...");
         hero.hp = 0; updateStats(); heroDisplayImg.src = HERO_DEAD_SRC; 
+		
+		// --- PERMADEATH: KAYDI SİL ---
+        if (window.deleteSave) {
+            window.deleteSave(); 
+        }
+        // ----------------------------
+		
         triggerDeathEffect(); 
-        setTimeout(() => { switchScreen(gameOverScreen); resetDeathEffect(); }, 1800); 
+        setTimeout(() => { switchScreen(gameOverScreen); resetDeathEffect(); 
+		// "Devam Et" butonunu ana menüde gizlemek için kontrolü tetikle
+            const continueBtn = document.getElementById('btn-continue');
+            if (continueBtn) continueBtn.classList.add('hidden');
+			}, 1800); 
         return true; 
     }
     if (monster && monster.hp <= 0) {

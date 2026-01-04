@@ -212,6 +212,30 @@ function startCutscene() {
     }, 1500);
 }
 
+window.addItemToInventory = function(item, amount = 1) {
+    // 1. Stackable kontrolü
+    if (item.isStack) {
+        // Çantada aynı isimde/ID'de başka bir stack var mı?
+        const existingStack = hero.inventory.find(i => i && i.nameKey === item.nameKey);
+        
+        if (existingStack) {
+            existingStack.count += amount;
+            return true; // Mevcut stack'e eklendi
+        }
+    }
+
+    // 2. Eğer stackable değilse veya mevcut stack yoksa, boş slot bul
+    for (let i = 0; i < hero.inventory.length; i++) {
+        if (hero.inventory[i] === null) {
+            item.count = amount; // İlk miktar
+            hero.inventory[i] = item;
+            return true; // Boş slot bulundu
+        }
+    }
+
+    return false; // Çanta dolu
+};
+
 // --- INIT GAME (TAM SIFIRLAMA) ---
 function initGame() {
     hero.maxHp = 100; hero.hp = hero.maxHp;
@@ -240,8 +264,6 @@ function initGame() {
         marker.style.left = '10px';    
         marker.style.top = '50%';      
     }
-		const mapDisp = document.getElementById('map-display');
-		if (mapDisp) mapDisp.scrollLeft = 0;
 		
     isHeroDefending = false; monster = null; isHeroTurn = true; 
 
@@ -339,9 +361,15 @@ startButton.addEventListener('click', () => {
 });
 
 returnToMenuButton.addEventListener('click', () => {
-    initGame();
+    initGame(); // Bu fonksiyon zaten GAME_MAP.currentNodeId'yi null yapıyor.
+	// "Devam Et" butonu kontrolü: Kayıt silindiği için artık görünmemeli
+    const continueBtn = document.getElementById('btn-continue');
+    if (window.hasSaveGame && !window.hasSaveGame()) {
+        if (continueBtn) continueBtn.classList.add('hidden');
+    }
     switchScreen(startScreen);
 });
+
 
 window.itemver = function(tier = 1) {
     const newItem = generateRandomItem(tier);

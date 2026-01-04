@@ -20,6 +20,8 @@ function generateMap() {
 	enemiesByStage = {};
     const mapContent = document.getElementById('map-content');
     const mapBg = document.getElementById('map-background');
+	const mapDisp = document.getElementById('map-display');
+    if (mapDisp) mapDisp.scrollLeft = 0; // Üretim anında başa sar
     
     // --- ACT'E GÖRE GÖRSEL AYARI ---
     if (mapBg) {
@@ -432,6 +434,7 @@ function triggerNodeAction(node) {
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
+	window.saveGame();
 	refreshMerchantStock();
     switchScreen(townScreen);
     writeLog("🏰 Köye giriş yaptın.");

@@ -64,6 +64,12 @@ window.hasSaveGame = function() {
 };
 
 window.deleteSave = function() {
-    localStorage.removeItem(SAVE_KEY);
-    writeLog("🗑️ Kayıt silindi.");
+    try {
+        localStorage.removeItem(SAVE_KEY);
+        console.log("🗑️ Permadeath Sistemi: Kayıt dosyası başarıyla imha edildi.");
+        return true;
+    } catch (e) {
+        console.error("Kayıt silinemedi:", e);
+        return false;
+    }
 };

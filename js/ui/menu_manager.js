@@ -312,6 +312,14 @@ window.renderInventory = function() {
 		tierBadge.className = `item-tier-badge badge-${item.tier}`; // Renkli arka plan
 		tierBadge.textContent = `T${item.tier}`;
 		slotEl.appendChild(tierBadge);
+		
+		// YENİ: ADET (COUNT) BADGE
+    if (item.isStack && item.count > 1) {
+        const countBadge = document.createElement('span');
+        countBadge.className = 'item-count-badge';
+        countBadge.textContent = item.count;
+        slotEl.appendChild(countBadge);
+    }
 
 		// Slotun çerçevesini de yüksek seviyelerde değiştirelim
 		if (item.tier >= 4) slotEl.classList.add(`border-tier-${item.tier}`);

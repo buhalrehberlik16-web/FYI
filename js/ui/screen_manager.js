@@ -46,12 +46,22 @@ window.switchScreen = function(targetScreen) {
     if (skillBookScreen) skillBookScreen.classList.add('hidden');
 
     if (targetScreen === mapScreen) {
+        const mapDisp = document.getElementById('map-display');
+        
+        // Ekran display: flex olduktan hemen sonra (50ms) bu kodu çalıştır
         setTimeout(() => {
-            if (typeof drawAllConnections === 'function') drawAllConnections();
-            if (typeof GAME_MAP !== 'undefined' && GAME_MAP.currentNodeId !== null) {
-                 movePlayerMarkerToNode(GAME_MAP.currentNodeId, true);
+            if (window.GAME_MAP.currentNodeId === null) {
+                // Eğer yeni bir oyunsa veya sıfırlanmışsa ZORLA en başa çek
+                if (mapDisp) mapDisp.scrollLeft = 0;
+            } else {
+                // Eğer bir kayıttan geliyorsa kaldığı yere odakla
+                if (typeof movePlayerMarkerToNode === 'function') {
+                    movePlayerMarkerToNode(window.GAME_MAP.currentNodeId, true);
+                }
             }
-        }, 100);
+            
+            if (typeof drawAllConnections === 'function') drawAllConnections();
+        }, 50); // 50ms, tarayıcının ekranı çizmesi için yeterli, göz için anlıktır.
     }
 };
 

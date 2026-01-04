@@ -163,6 +163,12 @@ window.LANGUAGES = {
 		yes: "EVET",
 		no: "HAYIR",
 		merchant_empty: "Dükkanda ürün kalmadı.",
+		salvage_title: "Eşya Parçalama",
+		salvage_btn: "Parçala",
+		salvage_desc: "Eşyayı parçalayarak takı parçaları elde et.",
+		salvage_yield: "Olası Kazanç",
+		log_salvage_success: "Eşya başarıyla parçalandı:",
+		salvage_material_name: "Takı Parçaları",
 
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
@@ -478,6 +484,12 @@ window.LANGUAGES = {
 		yes: "YES",
 		no: "NO",
 		merchant_empty: "No items left in stock.",
+		salvage_title: "Salvage Items",
+		salvage_btn: "Salvage",
+		salvage_desc: "Dismantle items to obtain jewelry fragments.",
+		salvage_yield: "Possible Yield",
+		log_salvage_success: "Item successfully salvaged:",
+		salvage_material_name: "Jewelry Fragments",
 
         // Enemy Names
         enemy_names: {

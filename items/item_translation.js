@@ -54,10 +54,13 @@ const TR_ITEMS = {
         result_type_odds: "Tür Olasılığı",
         crit_chance_label: "Kritik Şans",
         waiting_ingredients: "3 Eşya Yerleştirin...",
+		waiting_salvage_ingredients: "Takı Yerleştirin..",
         type_ring: "Yüzük",
         type_necklace: "Kolye",
         type_earring: "Küpe",
         type_belt: "Kemer",
+		salvage_material_name: "Takı Parçaları",
+		salvage_yield: "Olası Kazanç",
 };
 
 // İngilizce Eşyalar
@@ -112,10 +115,13 @@ const EN_ITEMS = {
         result_type_odds: "Type Odds",
         crit_chance_label: "Crit Chance",
         waiting_ingredients: "Place 3 Items...",
+		waiting_salvage_ingredients: "Place Jewelry...",
         type_ring: "Ring",
         type_necklace: "Necklace",
         type_earring: "Earring",
         type_belt: "Belt",
+		salvage_material_name: "Jewelry Fragments",
+		salvage_yield: "Possible Yield",
 };
 
 // Mevcut dile bu listeleri enjekte et
