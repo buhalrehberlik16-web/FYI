@@ -50,9 +50,17 @@ function renderTransmuteSlots() {
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
 			
-			const badge = document.createElement('span');
-			badge.className = `item-tier-badge badge-${item.tier}`; // Renkli badge
-			badge.textContent = `T${item.tier}`;
+            // --- GÜNCEL BADGE MANTIĞI ---
+            const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+            const badge = document.createElement('span');
+            
+            if (isMaterial) {
+                badge.className = 'item-tier-badge badge-craft';
+                badge.textContent = 'C';
+            } else {
+                badge.className = `item-tier-badge badge-${item.tier}`;
+                badge.textContent = `T${item.tier}`;
+            }
             slot.appendChild(badge);
             
             // Tooltip desteği (menu_manager'daki fonksiyonu kullanıyoruz)
@@ -112,40 +120,59 @@ function renderTransmuteInventory() {
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
-            slot.draggable = true;
-			// --- RENKLİ TIER BADGE EKLEME ---
+
+            // --- 1. GÖRSEL DÜZELTME: TIER / MATERYAL BADGE ---
+            const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
             const badge = document.createElement('span');
-            // Hem genel badge sınıfını hem de o tier'a özel renk sınıfını veriyoruz
-            badge.className = `item-tier-badge badge-${item.tier}`; 
-            badge.textContent = `T${item.tier}`;
+            
+            if (isMaterial) {
+                badge.className = 'item-tier-badge badge-craft';
+                badge.textContent = 'C';
+            } else {
+                badge.className = `item-tier-badge badge-${item.tier}`;
+                badge.textContent = `T${item.tier}`;
+            }
             slot.appendChild(badge);
 
-            // Eğer item seviyesi yüksekse çerçeveyi de renklendir (Opsiyonel)
-            if (item.tier >= 4) {
-                slot.classList.add(`border-tier-${item.tier}`);
+            // Count Badge (Miktar)
+            if (item.isStack && item.count > 1) {
+                const countBadge = document.createElement('span');
+                countBadge.className = 'item-count-badge';
+                countBadge.textContent = item.count;
+                slot.appendChild(countBadge);
             }
 
-            // Drag-Drop desteği
-            slot.ondragstart = (e) => {
-			window.hideItemTooltip(); // Sürükleme başladığı an tooltip'i gizle
-			const dragData = { source: 'bag', id: index };
-			e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
-			};
+            // --- 2. KISITLAMA: SADECE TAKILAR DÖNÜŞEBİLİR ---
+            const allowedTypes = ['ring', 'necklace', 'earring', 'belt'];
+            const isJewelry = allowedTypes.includes(item.type);
 
-            // Tooltip
+            if (isJewelry) {
+                slot.draggable = true;
+                slot.ondragstart = (e) => {
+                    window.hideItemTooltip(); 
+                    const dragData = { source: 'bag', id: index };
+                    e.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+                };
+
+                slot.onclick = () => {
+                    window.hideItemTooltip();
+                    const emptyIdx = transmuteIngredients.indexOf(null);
+                    if (emptyIdx !== -1) {
+                        transmuteIngredients[emptyIdx] = item;
+                        hero.inventory[index] = null;
+                        renderTransmuteUIAll();
+                    }
+                };
+            } else {
+                // Materyaller: Tıklanamaz ve Soluk
+                slot.style.opacity = "0.3";
+                slot.style.filter = "grayscale(100%)";
+                slot.style.cursor = "not-allowed";
+            }
+
+            // Tooltip her zaman çalışsın
             slot.onmouseenter = (e) => window.showItemTooltip(item, e);
             slot.onmouseleave = () => window.hideItemTooltip();
-
-            // Tıklayınca boş olan ilk transmute slotuna gönder
-            slot.onclick = () => {
-				window.hideItemTooltip(); // TOOLTIP FIX: Tıklayınca kapat
-				const emptyIdx = transmuteIngredients.indexOf(null);
-				if (emptyIdx !== -1) {
-					transmuteIngredients[emptyIdx] = item;
-					hero.inventory[index] = null;
-					renderTransmuteUIAll();
-				}
-			};
         }
 
         grid.appendChild(slot);

@@ -137,7 +137,7 @@ window.LANGUAGES = {
         innkeeper_hello: "Yorgun görünüyorsun gezgin.",
         alchemist_title: "SİMYACI",
         buy_potion: "İksir Al",
-        alchemist_hello: "İksirlerim en kalitelisidir...",
+        alchemist_hello: "Düşün, Sentezle, Dönüştür...",
         blacksmith_title: "DEMİRCİ",
         upgrade_item: "Eşya Yükselt",
         blacksmith_hello: "Ateşim ejderhalar gibi...",
@@ -169,6 +169,8 @@ window.LANGUAGES = {
 		salvage_yield: "Olası Kazanç",
 		log_salvage_success: "Eşya başarıyla parçalandı:",
 		salvage_material_name: "Takı Parçaları",
+		crafting_material: "Üretim Materyali",
+		synthesis_btn:"Sentezle",
 
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
@@ -459,7 +461,7 @@ window.LANGUAGES = {
         innkeeper_hello: "You look tired, traveler.",
         alchemist_title: "ALCHEMIST",
         buy_potion: "Buy Potion",
-        alchemist_hello: "My potions are of best quality...",
+        alchemist_hello: "Think, Synthesize, Transmute...",
         blacksmith_title: "BLACKSMITH",
         upgrade_item: "Upgrade Item",
         blacksmith_hello: "My fire is like dragons...",
@@ -490,6 +492,8 @@ window.LANGUAGES = {
 		salvage_yield: "Possible Yield",
 		log_salvage_success: "Item successfully salvaged:",
 		salvage_material_name: "Jewelry Fragments",
+		crafting_material: "Crafting Material",
+		synthesis_btn:"Synthesis",
 
         // Enemy Names
         enemy_names: {

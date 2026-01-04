@@ -152,21 +152,37 @@ window.showItemTooltip = function(item, event) {
     const tierEl = document.getElementById('tooltip-tier');
     const statsEl = document.getElementById('tooltip-stats');
     
+    // SIRALAMA DÜZELTİLDİ: Önce dili ve langItems'ı tanımlıyoruz
     const currentLang = window.gameSettings.lang || 'tr';
     const langItems = window.LANGUAGES[currentLang].items;
 
     nameEl.textContent = getTranslatedItemName(item);
-	nameEl.className = `tooltip-name tier-${item.tier}`; // İsim renkli
 
-    tierEl.textContent = `${langItems.tier_label} ${item.tier}`;
-	tierEl.className = `tooltip-tier tier-${item.tier}`; // "Seviye X" yazısı renkli
+    // MATERYAL KONTROLÜ
+    const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+    nameEl.className = isMaterial ? 'tooltip-name' : `tooltip-name tier-${item.tier}`;
     
+    // TIER / MATERYAL YAZISI
+    if (isMaterial) {
+        tierEl.textContent = langItems.material_label || (currentLang === 'tr' ? 'Materyal' : 'Material');
+        tierEl.className = 'tooltip-tier'; // Materyaller için standart renk
+    } else {
+        tierEl.textContent = `${langItems.tier_label} ${item.tier}`;
+        tierEl.className = `tooltip-tier tier-${item.tier}`; // Ekipmanlar için Tier rengi
+    }
+    
+    // STATLARI LİSTELE
     statsEl.innerHTML = '';
-    for (const [statKey, value] of Object.entries(item.stats)) {
-        const row = document.createElement('div');
-        row.className = 'tooltip-stat-row';
-        row.innerHTML = `<span>${getStatDisplayName(statKey)}</span> <span class="tooltip-val">+${value}</span>`;
-        statsEl.appendChild(row);
+    if (item.stats && Object.keys(item.stats).length > 0) {
+        for (const [statKey, value] of Object.entries(item.stats)) {
+            const row = document.createElement('div');
+            row.className = 'tooltip-stat-row';
+            row.innerHTML = `<span>${getStatDisplayName(statKey)}</span> <span class="tooltip-val">+${value}</span>`;
+            statsEl.appendChild(row);
+        }
+    } else {
+        const hint = currentLang === 'tr' ? 'Üretim materyali' : 'Crafting material';
+        statsEl.innerHTML = `<div style="color:#888; font-size:0.8em; font-style:italic;">${hint}</div>`;
     }
 
     tooltip.classList.remove('hidden');
@@ -191,6 +207,13 @@ window.unequipItem = function(slotKey) {
     hideItemTooltip();
     const item = hero.equipment[slotKey];
     if (!item) return;
+	
+	// GÜVENLİK: Sadece takılabilir türdeki eşyalar kuşanılabilir
+    const equipableTypes = ['ring', 'necklace', 'earring', 'belt'];
+    if (!equipableTypes.includes(item.type)) {
+        console.log("Bu eşya kuşanılabilir bir takı değil.");
+        return; 
+    }
 
     const emptySlotIndex = hero.inventory.indexOf(null);
     if (emptySlotIndex !== -1) {
@@ -209,24 +232,34 @@ window.equipItem = function(inventoryIndex) {
     const item = hero.inventory[inventoryIndex];
     if (!item) return;
 
+    // --- GÜVENLİK KİLİDİ: Sadece bu türler kuşanılabilir ---
+    const equippableTypes = ['ring', 'necklace', 'earring', 'belt'];
+    if (!equippableTypes.includes(item.type)) {
+        // Eğer kuşanılabilir bir eşya değilse (Materyal, Scroll vb.) hiçbir şey yapma
+        console.log("Bu eşya bir materyal veya parşömen, kuşanılamaz.");
+        return; 
+    }
+    // -------------------------------------------------------
+
     let targetSlot = null;
-    // Otomatik slot belirleme mantığı
     if (item.type === 'earring') {
         targetSlot = !hero.equipment.earring1 ? 'earring1' : 'earring2';
     } else if (item.type === 'ring') {
         targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
     } else {
-        targetSlot = item.type; // necklace veya belt
+        targetSlot = item.type;
     }
 
-    // Seçilen slotta zaten bir şey varsa onu çantaya geri al (Swap)
     const oldItem = hero.equipment[targetSlot];
     hero.equipment[targetSlot] = item;
     hero.inventory[inventoryIndex] = oldItem; 
 
     renderInventory();
     updateStats();
-    writeLog(`🎒 ${getTranslatedItemName(item)} ${window.gameSettings.lang === 'tr' ? 'kuşanıldı.' : 'equipped.'}`);
+    
+    const currentLang = window.gameSettings.lang || 'tr';
+    const msg = currentLang === 'tr' ? 'kuşanıldı.' : 'equipped.';
+    writeLog(`🎒 ${getTranslatedItemName(item)} ${msg}`);
 };
 
 // --- SÜRÜKLE BIRAK (DRAG & DROP) ---
@@ -280,78 +313,67 @@ window.renderInventory = function() {
 
     // Slot Kurulum Yardımcısı
     const setupSlot = (slotEl, item, type, identifier) => {
-		slotEl.onclick = (e) => {
-    // Eğer cihaz mobilse (dokunmatikse)
-    if ('ontouchstart' in window) {
-        // İlk tıklamada tooltip göster, ikinci tıklamada işlem yap mantığı
-        if (document.getElementById('item-tooltip').classList.contains('hidden')) {
-            showItemTooltip(item, e);
-            // Tooltip mobilde 3 saniye sonra kapansın
-            setTimeout(hideItemTooltip, 3000);
-            return; // İşlemi (takma/satma) durdur, sadece bilgiyi göster
-        }
-    }
+    slotEl.innerHTML = '';
+    slotEl.draggable = item ? true : false;
     
-    // PC'de veya ikinci tıklamada normal işlem devam eder
-    if (type === 'bag') {
-        hideItemTooltip();
-        equipItem(identifier);
-    }
-};
-		
-		
-		
-        slotEl.innerHTML = '';
-        slotEl.draggable = item ? true : false;
+    if (item) {
+        const img = document.createElement('img');
+        img.src = `items/images/${item.icon}`;
+        slotEl.appendChild(img);
+
+        // --- TIER / MATERYAL BADGE (C veya T) ---
+        const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+        const badge = document.createElement('span');
         
-        if (item) {
-            const img = document.createElement('img');
-            img.src = `items/images/${item.icon}`;
-            slotEl.appendChild(img);
-		const tierBadge = document.createElement('span');
-		tierBadge.className = `item-tier-badge badge-${item.tier}`; // Renkli arka plan
-		tierBadge.textContent = `T${item.tier}`;
-		slotEl.appendChild(tierBadge);
-		
-		// YENİ: ADET (COUNT) BADGE
-    if (item.isStack && item.count > 1) {
-        const countBadge = document.createElement('span');
-        countBadge.className = 'item-count-badge';
-        countBadge.textContent = item.count;
-        slotEl.appendChild(countBadge);
+        if (isMaterial) {
+            badge.className = 'item-tier-badge badge-craft'; // CSS'e eklediğimiz mavi/gri renk
+            badge.textContent = 'C';
+        } else {
+            badge.className = `item-tier-badge badge-${item.tier}`;
+            badge.textContent = `T${item.tier}`;
+        }
+        slotEl.appendChild(badge);
+
+        // COUNT BADGE (Miktar)
+        if (item.isStack && item.count > 1) {
+            const countBadge = document.createElement('span');
+            countBadge.className = 'item-count-badge';
+            countBadge.textContent = item.count;
+            slotEl.appendChild(countBadge);
+        }
+        
+        // ... (Tooltip ve Olaylar - Drag, Right Click vb. aynı kalıyor)
+        slotEl.onmouseenter = (e) => showItemTooltip(item, e);
+        slotEl.onmousemove = (e) => moveTooltip(e);
+        slotEl.onmouseleave = () => hideItemTooltip();
+        slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
+        
+        // Sağ tık mantığı
+        slotEl.oncontextmenu = (e) => {
+            e.preventDefault();
+            if (type === 'equip') unequipItem(identifier);
+            else equipItem(identifier);
+        };
+
+        // Sol Tık (Sadece Ekipman ise takma çalışsın)
+        if (type === 'bag') {
+            const equippableTypes = ['ring', 'necklace', 'earring', 'belt'];
+            if (equippableTypes.includes(item.type)) {
+                slotEl.onclick = () => { hideItemTooltip(); equipItem(identifier); };
+            } else {
+                slotEl.onclick = null;
+            }
+        }
+    } else {
+        // Boş slot işlemleri
+        slotEl.onmouseenter = null;
+        slotEl.oncontextmenu = (e) => e.preventDefault();
+        slotEl.onclick = null;
     }
 
-		// Slotun çerçevesini de yüksek seviyelerde değiştirelim
-		if (item.tier >= 4) slotEl.classList.add(`border-tier-${item.tier}`);
-            
-            // Tooltip
-            slotEl.onmouseenter = (e) => showItemTooltip(item, e);
-            slotEl.onmousemove = (e) => moveTooltip(e);
-            slotEl.onmouseleave = () => hideItemTooltip();
-            
-            // Sürükleme Başlat
-            slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
-
-            // Sağ Tıkla Çıkar/Tak
-            slotEl.oncontextmenu = (e) => {
-                e.preventDefault();
-                if (type === 'equip') unequipItem(identifier);
-                else equipItem(identifier);
-            };
-
-            // Sol Tıkla Tak (Sadece Çanta İçin)
-            if (type === 'bag') {
-                slotEl.onclick = () => equipItem(identifier);
-            }
-        } else {
-            slotEl.onmouseenter = null;
-            slotEl.oncontextmenu = (e) => e.preventDefault();
-        }
-
-        // Üzerine Bırakma (Drop) Hedefi Yap
-        slotEl.ondragover = (e) => e.preventDefault();
-        slotEl.ondrop = (e) => handleDrop(e, type, identifier);
-    };
+    slotEl.ondragover = (e) => e.preventDefault();
+    slotEl.ondrop = (e) => handleDrop(e, type, identifier);
+};
 
     // 1. Broşlar (Şimdilik statik ama altyapı hazır)
     document.querySelectorAll('.brooch-slot').forEach((slot, i) => {

@@ -33,11 +33,19 @@ function renderSalvageUIAll() {
         img.src = `items/images/${salvageItem.icon}`;
         inputSlot.appendChild(img);
 
-        // 2. Seviye Badge'ini oluştur
+        // --- GÜNCEL BADGE MANTIĞI ---
+        const isMaterial = ['material', 'stat_scroll', 'type_scroll'].includes(salvageItem.type);
         const badge = document.createElement('span');
-        badge.className = `item-tier-badge badge-${salvageItem.tier}`;
-        badge.textContent = `T${salvageItem.tier}`;
+        
+        if (isMaterial) {
+            badge.className = 'item-tier-badge badge-craft';
+            badge.textContent = 'C';
+        } else {
+            badge.className = `item-tier-badge badge-${salvageItem.tier}`;
+            badge.textContent = `T${salvageItem.tier}`;
+        }
         inputSlot.appendChild(badge);
+        // ---------------------------
 
         // --- YENİ: TOOLTIP DESTEĞİ (PC İÇİN HOVER) ---
         inputSlot.onmouseenter = (e) => window.showItemTooltip(salvageItem, e);
@@ -120,11 +128,19 @@ function renderSalvageInventory() {
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
             
-            // 2. Tier Badge Ekle (Renkli)
+            // 2.  GÜNCEL BADGE MANTIĞI 
+            const isMaterial = ['material', 'stat_scroll', 'type_scroll'].includes(item.type);
             const badge = document.createElement('span');
-            badge.className = `item-tier-badge badge-${item.tier}`;
-            badge.textContent = `T${item.tier}`;
+            
+            if (isMaterial) {
+                badge.className = 'item-tier-badge badge-craft';
+                badge.textContent = 'C';
+            } else {
+                badge.className = `item-tier-badge badge-${item.tier}`;
+                badge.textContent = `T${item.tier}`;
+            }
             slot.appendChild(badge);
+            // ---------------------------
 
             // 3. ADET (COUNT) BADGE EKLE (Eksik olan kısım burasıydı)
             if (item.isStack && item.count > 1) {

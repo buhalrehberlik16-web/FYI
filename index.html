@@ -651,12 +651,51 @@
 		<div class="npc-title" data-i18n="alchemist_title">SİMYACI</div>	
         <div class="npc-actions-left">
             <!-- Eski buton değişti -->
+			<button class="npc-btn" onclick="openSynthesisUI()" data-i18n="synthesis_btn">Sentezle (Craft)</button>
             <button class="npc-btn" onclick="openTransmuteUI()" data-i18n="transmute_btn">Dönüştür</button>
         </div>
         <div class="npc-actions-right">
              <button class="npc-btn close-npc" data-i18n="exit_btn">Çıkış</button>
         </div>
         <div class="npc-dialogue" data-i18n="alchemist_hello">İksirlerim yerine kadim dönüşümleri deneyelim mi?</div>
+    </div>
+</div>
+<!-- 2.2 Sentez Ekranı (Diğerlerinin altına ekle) -->
+<div id="synthesis-screen" class="npc-modal hidden">
+    <div class="stat-window" style="width: 500px; text-align: center; max-height: 95vh; overflow-y: auto;">
+        <h2 data-i18n="synthesis_title">SENTEZ</h2>
+        <div class="synthesis-main">
+            <!-- ÜST SLOT (PARÇA) -->
+            <div class="craft-slot-top">
+                <div class="item-slot craft-input" id="c-slot-fragments"></div>
+            </div>
+            
+            <!-- ALT SLOTLAR (SCROLLAR) -->
+            <div class="craft-slots-bottom">
+                <div class="item-slot craft-input" id="c-slot-stat" title="Stat Scroll"></div>
+                <div class="item-slot craft-input" id="c-slot-type" title="Type Scroll"></div>
+            </div>
+            
+            <div class="tier-selector">
+                <button onclick="changeCraftTier(-1)">-</button>
+                <span>TIER <span id="craft-target-tier">1</span></span>
+                <button onclick="changeCraftTier(1)">+</button>
+            </div>
+            
+            <p id="fragments-status" style="font-size:0.85em; font-weight: bold; margin: 5px 0;"></p>
+            
+            <div class="transmute-arrow"><i class="fas fa-magic"></i></div>
+            <div class="item-slot transmute-result" id="synthesis-result-slot"></div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:15px;">
+            <button id="btn-do-synthesis" onclick="processSynthesis()" style="flex:2;" data-i18n="synthesis_btn">SENTEZLE</button>
+            <button onclick="closeSynthesisUI()" style="flex:1;" data-i18n="back">GERİ</button>
+        </div>
+        
+        <hr class="stat-separator">
+        <h3 style="font-size: 0.9em; color:#f0e68c" data-i18n="nav_inv">Çanta</h3>
+        <div id="synthesis-bag-grid" class="bag-grid"></div>
     </div>
 </div>
 
@@ -878,6 +917,7 @@
 <script src="js/ui/interaction_ui.js"></script>
 <!-- 3.1 TOWN NPC KATMANI  -->
 <script src="js/alchemist/transmute_manager.js"></script>
+<script src="js/alchemist/synthesis_manager.js"></script>
 <script src="js/merchant/merchant_manager.js"></script>
 <script src="js/blacksmith/salvage_manager.js"></script>
 

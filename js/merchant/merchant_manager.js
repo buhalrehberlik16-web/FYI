@@ -5,32 +5,37 @@ window.currentTradeMode = 'buy';
 
 // 1. STOK YENİLEME
 window.refreshMerchantStock = function() {
-    console.log("🛠️ Dükkan stoku yenileniyor...");
     window.merchantStock = [];
-    const progress = (window.hero && window.hero.highestTierDefeated) ? window.hero.highestTierDefeated : 1;
+    const progress = hero.highestTierDefeated || 1;
     let targetTier = 1;
 
-    for (let i = 0; i < (window.MERCHANT_CONFIG?.stockCount || 6); i++) {
-        // Tier Belirleme Mantığı
+    for (let i = 0; i < window.MERCHANT_CONFIG.stockCount; i++) {
+        // Tier belirleme mantığı aynı kalıyor...
         if (progress === 1) targetTier = 1;
         else if (progress === 2) targetTier = Math.random() < 0.5 ? 1 : 2;
         else if (progress === 3) targetTier = 2;
         else if (progress === 4) targetTier = Math.random() < 0.5 ? 2 : 3;
-        else targetTier = Math.max(1, Math.floor(progress * 0.7));
+        else targetTier = Math.floor(progress * 0.7) || 1;
 
         if (Math.random() < 0.5) { 
+            // %50 Normal Takı
             window.merchantStock.push(generateRandomItem(targetTier));
-        } else { 
-            const base = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
-            const charmItem = {
-                ...base,
-                tier: targetTier,
-                type: "passive_charm",
-                stats: {}
-            };
-            const resistValue = targetTier * (window.ITEM_CONFIG?.multipliers?.resists || 3);
-            charmItem.stats[base.resistType] = resistValue;
-            window.merchantStock.push(charmItem);
+        } else {
+            // %50 Özel Eşya (Lizard veya Scroll)
+            const randomBase = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
+            
+            // Kopyasını oluştur
+            const newItem = { ...randomBase };
+
+            // Eğer bu bir pasif charm (Lizard) ise, Tier'a göre stat ver
+            if (newItem.type === "passive_charm") {
+                newItem.tier = targetTier;
+                newItem.stats = {};
+                const resistValue = targetTier * (window.ITEM_CONFIG.multipliers.resists || 3);
+                newItem.stats[newItem.resistType] = resistValue;
+            }
+
+            window.merchantStock.push(newItem);
         }
     }
 };
@@ -103,35 +108,37 @@ window.renderMerchantUI = function() {
 
 // 4. SLOT OLUŞTURMA
 function createTradeSlot(item, action, isBuying) {
+    // Materyal kontrolü
+    const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+    
+    // Slotun çerçeve rengini belirle
+    const slotClass = isMaterial ? 'item-slot' : `item-slot border-tier-${item.tier}`;
     const slot = document.createElement('div');
-    slot.className = `item-slot badge-${item.tier || 1}`;
-    slot.style.position = 'relative'; // Fiyat etiketi için şart
+    slot.className = slotClass;
     
     const img = document.createElement('img');
-    // İkon yolunu garantiye alalım
-    let iconPath = item.icon;
-    if (!iconPath.startsWith('items/images/')) {
-        iconPath = `items/images/${item.icon}`;
-    }
-    img.src = iconPath;
+    img.src = `items/images/${item.icon}`;
     slot.appendChild(img);
 
+    // --- TIER / MATERYAL BADGE EKLEME ---
+    const badge = document.createElement('span');
+    if (isMaterial) {
+        badge.className = 'item-tier-badge badge-craft'; // Gri/Mavi "C" badge
+        badge.textContent = 'C';
+    } else {
+        badge.className = `item-tier-badge badge-${item.tier}`; // Renkli "T1-T5" badge
+        badge.textContent = `T${item.tier}`;
+    }
+    slot.appendChild(badge);
+
+    // Fiyat Etiketi
     const price = calculateItemPrice(item, isBuying);
     const priceTag = document.createElement('span');
     priceTag.className = 'price-tag';
-    priceTag.innerHTML = `${price}<i class="fas fa-coins" style="color:gold; margin-left:3px;"></i>`;
+    priceTag.innerHTML = `${price}<i class="fas fa-coins"></i>`;
     slot.appendChild(priceTag);
 
-    const badge = document.createElement('span');
-    badge.className = `item-tier-badge badge-${item.tier || 1}`;
-    badge.textContent = `T${item.tier || 1}`;
-    slot.appendChild(badge);
-
-    slot.onclick = () => {
-        window.hideItemTooltip();
-        action();
-    };
-    
+    slot.onclick = action;
     slot.onmouseenter = (e) => window.showItemTooltip(item, e);
     slot.onmouseleave = () => window.hideItemTooltip();
     
@@ -194,6 +201,9 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     const textEl = document.getElementById('trade-confirm-text');
     const nameEl = document.getElementById('confirm-item-name');
     const statsEl = document.getElementById('confirm-item-stats');
+	
+	const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+    nameEl.className = isMaterial ? '' : `tier-${item.tier}`;
 
     // 1. Ana mesajı yaz (Satın alıyor musun? / Satıyor musun?)
     textEl.textContent = msg;

@@ -26,16 +26,24 @@ window.openRewardScreen = function(rewards) {
             const item = reward.value;
             // Daha önce yazdığımız getTranslatedItemName fonksiyonunu kullanıyoruz
             const itemName = getTranslatedItemName(item);
+			
+			// --- YENİ KONTROL ---
+			const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+			const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
+			// --------------------
             
-            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name tier-${item.tier}">${itemName}</span><span class="reward-item-tier tier-${item.tier}">${lang.items.tier_label} ${item.tier}</span></div>`;
-            itemDiv.onclick = () => {
-                // Çantada boş yer var mı kontrol et
-                const emptySlotIndex = hero.inventory.indexOf(null);
+            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name tier-${isMaterial ? '' : item.tier}">${itemName}</span><span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span></div>`;
+			itemDiv.onclick = () => {
+                // 'amount' varsa onu kullan, yoksa 1 adet ekle
+                const countToAdd = reward.amount || 1;
+                const success = window.addItemToInventory(item, countToAdd);
                 
-                if (emptySlotIndex !== -1) {
-                    hero.inventory[emptySlotIndex] = item;
+                if (success) {
                     renderInventory();
-                    writeLog(`🎁 ${itemName} ${currentLang === 'tr' ? 'çantaya eklendi.' : 'added to bag.'}`);
+                    // Log mesajını adetli yazdır
+                    const msg = countToAdd > 1 ? `${countToAdd}x ${itemName}` : itemName;
+                    writeLog(`🎁 ${msg} ${currentLang === 'tr' ? 'çantaya eklendi.' : 'added to bag.'}`);
+                    
                     itemDiv.style.opacity = '0';
                     setTimeout(() => itemDiv.remove(), 200);
                 } else {
@@ -231,7 +239,7 @@ document.addEventListener('click', e => {
     // 2. Siyah arka plana tıklandığında kapatma mantığı
     if (e.target.classList.contains('npc-modal')) {
         // GÜVENLİK: Transmute ve Merchant Trade ekranları dışarı tıklanarak KAPANAMAZ
-        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen',];
+        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen', 'synthesis-screen',];
         
         if (forbiddenModals.includes(e.target.id)) {
             console.log("Güvenlik: İşlemi tamamlamak veya iptal etmek için butonları kullanmalısın.");

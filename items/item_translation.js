@@ -33,6 +33,16 @@ const TR_ITEMS = {
 	merch_lizard_physical: "Zırhlı Kertenkele Gözü",
 	merch_lizard_curse: "Lanetli Kertenkele Gözü",
 	merch_lizard_poison: "Zehirli Kertenkele Gözü",
+	
+	item_scroll_ring: "Yüzük Parşömeni",
+    item_scroll_neck: "Kolye Parşömeni",
+    item_scroll_ear: "Küpe Parşömeni",
+    item_scroll_belt: "Kemer Parşömeni",
+    item_scroll_str: "Güç Parşömeni",
+    item_scroll_dex: "Çeviklik Parşömeni",
+    item_scroll_int: "Zeka Parşömeni",
+    item_scroll_vit: "Canlılık Parşömeni",
+    item_scroll_mp: "Büyü Parşömeni",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",
@@ -61,6 +71,12 @@ const TR_ITEMS = {
         type_belt: "Kemer",
 		salvage_material_name: "Takı Parçaları",
 		salvage_yield: "Olası Kazanç",
+		synthesis_title: "Eşya Sentezi",
+		synthesis_btn: "Sentezle",
+		synthesis_desc: "Parçalar ve parşömenler kullanarak özel eşya üret.",
+		needed_fragments: "Gereken Parça",
+		crafting_material: "Üretim Materyali",
+		material_label: "Materyal",
 };
 
 // İngilizce Eşyalar
@@ -95,6 +111,16 @@ const EN_ITEMS = {
 	merch_lizard_physical: "Armored Lizard Eye",
 	merch_lizard_curse: "Cursed Lizard Eye",
 	merch_lizard_poison: "Poisonous Lizard Eye",
+	
+	item_scroll_ring: "Ring Scroll",
+    item_scroll_neck: "Necklace Scroll",
+    item_scroll_ear: "Earring Scroll",
+    item_scroll_belt: "Belt Scroll",
+    item_scroll_str: "Strength Scroll",
+    item_scroll_dex: "Dexterity Scroll",
+    item_scroll_int: "Intelligence Scroll",
+    item_scroll_vit: "Vitality Scroll",
+    item_scroll_mp: "Magic Scroll",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",
@@ -122,6 +148,12 @@ const EN_ITEMS = {
         type_belt: "Belt",
 		salvage_material_name: "Jewelry Fragments",
 		salvage_yield: "Possible Yield",
+		synthesis_title: "Item Synthesis",
+		synthesis_btn: "Synthesize",
+		synthesis_desc: "Craft custom items using fragments and scrolls.",
+		needed_fragments: "Required Fragments",
+		crafting_material: "Crafting Material",
+		material_label: "Material",
 };
 
 // Mevcut dile bu listeleri enjekte et

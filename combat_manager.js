@@ -603,6 +603,30 @@ window.checkGameOver = function() {
             if (monster.tier > 1 && Math.random() < 0.5) {
                 itemTier = monster.tier - 1;
             }
+		// 3. Jewelry Fragment Drop (%50 Şans)
+			if (Math.random() < 0.5) {
+		const fragCount = Math.floor(Math.random() * 4) + 1; 		
+        ///(const fragCount = Math.floor(Math.random() * monster.tier) + 1;)
+        const fragmentItem = { 
+            nameKey: "salvage_material_name", 
+            icon: "drop_items/salvage_jewelry.webp", 
+            type: "material", 
+            isStack: true,
+            tier: 1,      // Seviye hatasını çözer
+            stats: {}     // Tooltip çökmesini çözer
+        };
+        rewards.push({ type: 'item', value: fragmentItem, amount: fragCount });
+    }
+
+		// 4. Stat Scroll Drop (%10 Şans)
+			if (Math.random() < 0.1) {
+        // Havuzdan sadece stat_scroll tipindekileri filtrele
+        const statScrollPool = window.SPECIAL_MERCH_ITEMS.filter(i => i.type === "stat_scroll");
+        const selected = statScrollPool[Math.floor(Math.random() * statScrollPool.length)];
+        
+        // Ödül listesine ekle
+        rewards.push({ type: 'item', value: { ...selected } });
+    }
             
             // Item Generator'ı çağır ve ödüllere ekle
             const droppedItem = generateRandomItem(itemTier);
