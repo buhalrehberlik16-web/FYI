@@ -21,68 +21,33 @@ window.closeSalvageUI = function() {
 function renderSalvageUIAll() {
     const inputSlot = document.getElementById('salvage-input-slot');
     const yieldDiv = document.getElementById('salvage-output-display');
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
     inputSlot.innerHTML = '';
     yieldDiv.innerHTML = `<span style="color:#666">${lang.items.waiting_salvage_ingredients}</span>`;
 
     if (salvageItem) {
-        // 1. Görseli oluştur
         const img = document.createElement('img');
         img.src = `items/images/${salvageItem.icon}`;
         inputSlot.appendChild(img);
 
-        // --- GÜNCEL BADGE MANTIĞI ---
-        const isMaterial = ['material', 'stat_scroll', 'type_scroll'].includes(salvageItem.type);
-        const badge = document.createElement('span');
-        
-        if (isMaterial) {
-            badge.className = 'item-tier-badge badge-craft';
-            badge.textContent = 'C';
-        } else {
-            badge.className = `item-tier-badge badge-${salvageItem.tier}`;
-            badge.textContent = `T${salvageItem.tier}`;
-        }
-        inputSlot.appendChild(badge);
-        // ---------------------------
+        // YENİ: Tek satırda merkezi badge kontrolü
+        inputSlot.innerHTML += window.getItemBadgeHTML(salvageItem);
 
-        // --- YENİ: TOOLTIP DESTEĞİ (PC İÇİN HOVER) ---
+        // Tooltip ve Tıklama (Geri verme) aynı kalıyor...
         inputSlot.onmouseenter = (e) => window.showItemTooltip(salvageItem, e);
         inputSlot.onmouseleave = () => window.hideItemTooltip();
-        inputSlot.onmousemove = (e) => {
-            const tooltip = document.getElementById('item-tooltip');
-            if(tooltip) {
-                tooltip.style.left = (e.clientX + 15) + 'px';
-                tooltip.style.top = (e.clientY + 15) + 'px';
-            }
-        };
-
-        // --- YENİ: MOBİL UYUMLU TIKLAMA MANTIĞI ---
-        inputSlot.onclick = (e) => {
-            // Eğer cihaz mobilse (dokunmatikse)
-            if ('ontouchstart' in window) {
-                // Eğer kutu kapalıysa önce Tooltip'i göster
-                if (document.getElementById('item-tooltip').classList.contains('hidden')) {
-                    window.showItemTooltip(salvageItem, e);
-                    // 3 saniye sonra otomatik kapansın
-                    setTimeout(window.hideItemTooltip, 3000);
-                    return; // Fonksiyondan çık (item'ı henüz geri verme)
-                }
-            }
-
-            // Normal davranış (PC'de direkt, Mobilde 2. tıklamada): Item'ı çantaya geri ver
+        inputSlot.onclick = () => {
             window.hideItemTooltip();
             const emptyBag = hero.inventory.indexOf(null);
             if (emptyBag !== -1) {
                 hero.inventory[emptyBag] = salvageItem;
                 salvageItem = null;
                 renderSalvageUIAll();
-                renderInventory(); // Ana çantayı tazele
+                renderInventory();
             }
         };
 
-        // 3. Olasılıkları hesapla ve göster
         const range = getSalvageRange(salvageItem.tier);
         yieldDiv.innerHTML = `
             <div style="margin-bottom:5px; border-bottom:1px solid #444">${lang.items.salvage_yield}:</div>
@@ -90,12 +55,6 @@ function renderSalvageUIAll() {
             <div class="prob-row"><span>${range.mid} adet:</span> <span style="color:#f0e68c">%30</span></div>
             <div class="prob-row"><span>${range.max} adet:</span> <span style="color:#ff9800">%10</span></div>
         `;
-    } else {
-        // Slot boşsa eventleri temizle
-        inputSlot.onclick = null;
-        inputSlot.onmouseenter = null;
-        inputSlot.onmouseleave = null;
-        inputSlot.onmousemove = null;
     }
     renderSalvageInventory();
 }
@@ -123,40 +82,22 @@ function renderSalvageInventory() {
         slot.className = 'item-slot bag-slot';
 
         if (item) {
-            // 1. Görseli Ekle
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
             
-            // 2.  GÜNCEL BADGE MANTIĞI 
-            const isMaterial = ['material', 'stat_scroll', 'type_scroll'].includes(item.type);
-            const badge = document.createElement('span');
-            
-            if (isMaterial) {
-                badge.className = 'item-tier-badge badge-craft';
-                badge.textContent = 'C';
-            } else {
-                badge.className = `item-tier-badge badge-${item.tier}`;
-                badge.textContent = `T${item.tier}`;
-            }
-            slot.appendChild(badge);
-            // ---------------------------
+            // YENİ: Merkezi badge sistemi
+            slot.innerHTML += window.getItemBadgeHTML(item);
 
-            // 3. ADET (COUNT) BADGE EKLE (Eksik olan kısım burasıydı)
             if (item.isStack && item.count > 1) {
-                const countBadge = document.createElement('span');
-                countBadge.className = 'item-count-badge';
-                countBadge.textContent = item.count;
-                slot.appendChild(countBadge);
+                slot.innerHTML += `<span class="item-count-badge">${item.count}</span>`;
             }
 
-            // 4. PARÇALAMA İZNİ KONTROLÜ
-            // Sadece bu tipler parçalanabilir:
-            const allowedTypes = ['ring', 'necklace', 'earring', 'belt'];
-            const isSalvageable = allowedTypes.includes(item.type);
+            // YENİ: ARTIK LISTE TUTMAYA GEREK YOK! 
+            // Direkt kuralı soruyoruz: "Bu item demircide çalışır mı?"
+            const isSalvageable = window.isItemAllowedInUI(item, 'blacksmith');
 
             if (isSalvageable) {
-                // Parçalanabilir eşya: Normal görünüm ve tıklanabilirlik
                 slot.onclick = () => {
                     if (!salvageItem) {
                         window.hideItemTooltip();
@@ -166,19 +107,14 @@ function renderSalvageInventory() {
                     }
                 };
             } else {
-                // Parçalanamaz eşya (Charm, Materyal vb.): 
-                // Listede görünsün ama tıklanamasın ve soluk dursun
                 slot.style.opacity = "0.4";
                 slot.style.filter = "grayscale(100%)";
                 slot.style.cursor = "not-allowed";
-                slot.title = "Bu eşya parçalanamaz!";
             }
 
-            // Tooltip her türlü görünsün (Oyuncu neye sahip olduğunu bilsin)
             slot.onmouseenter = (e) => window.showItemTooltip(item, e);
             slot.onmouseleave = () => window.hideItemTooltip();
         }
-
         grid.appendChild(slot);
     });
 }
@@ -198,14 +134,7 @@ window.processSalvage = function() {
     else finalCount = range.min;
 
     // MATERYAL OBJESİ
-    const materialItem = {
-        nameKey: "salvage_material_name",
-        icon: "drop_items/salvage_jewelry.webp",
-        type: "material",
-        isStack: true, // <--- KRİTİK AYAR
-        tier: 1,
-        stats: {}
-    };
+    const materialItem = { ...window.BASE_MATERIALS["jewelry_fragment"] };
 
     // Merkezi fonksiyonu çağır
     const success = addItemToInventory(materialItem, finalCount);

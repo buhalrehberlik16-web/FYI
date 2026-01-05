@@ -171,6 +171,13 @@ window.LANGUAGES = {
 		salvage_material_name: "Takı Parçaları",
 		crafting_material: "Üretim Materyali",
 		synthesis_btn:"Sentezle",
+		reforge_title: "Yeniden Döv",
+		reforge_desc: "İstenilen sonuca ulaşmak için parşömen ya da direnç taşı ekle.",
+		reforge_btn: "Yeniden Döv",
+		remove_stat_select: "Çıkarmak istediğin özelliği seç.",
+		gold_label: "Altın",
+		fragments_label: "Takı Parçaları",
+		reforge_material_name: "Yeniden dövülecek bir takı yerleştirin.",
 
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
@@ -494,6 +501,13 @@ window.LANGUAGES = {
 		salvage_material_name: "Jewelry Fragments",
 		crafting_material: "Crafting Material",
 		synthesis_btn:"Synthesis",
+		reforge_title: "Reforge",
+		reforge_desc: "Add Scrolls or Stones to have targeted reforge",
+		reforge_btn: "Reforge",
+		remove_stat_select: "Choose to de-stat",
+		gold_label: "Gold",
+		fragments_label: "Jewelry Fragments",
+		reforge_material_name: "Place a piece of jewelry to reforge.",
 
         // Enemy Names
         enemy_names: {

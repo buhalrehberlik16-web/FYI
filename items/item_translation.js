@@ -43,6 +43,13 @@ const TR_ITEMS = {
     item_scroll_int: "Zeka Parşömeni",
     item_scroll_vit: "Canlılık Parşömeni",
     item_scroll_mp: "Büyü Parşömeni",
+	
+	item_stone_phys: "Fiziksel Direnç Taşı",
+    item_stone_fire: "Ateş Direnci Taşı",
+    item_stone_cold: "Buz Direnci Taşı",
+    item_stone_lightning: "Yıldırım Direnci Taşı",
+    item_stone_poison: "Zehir Direnci Taşı",
+    item_stone_curse: "Lanet Direnci Taşı",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",
@@ -121,6 +128,13 @@ const EN_ITEMS = {
     item_scroll_int: "Intelligence Scroll",
     item_scroll_vit: "Vitality Scroll",
     item_scroll_mp: "Magic Scroll",
+	
+	item_stone_phys: "Physical Resist Stone",
+    item_stone_fire: "Fire Resist Stone",
+    item_stone_cold: "Cold Resist Stone",
+    item_stone_lightning: "Lightning Resist Stone",
+    item_stone_poison: "Poison Resist Stone",
+    item_stone_curse: "Curse Resist Stone",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",
@@ -153,7 +167,7 @@ const EN_ITEMS = {
 		synthesis_desc: "Craft custom items using fragments and scrolls.",
 		needed_fragments: "Required Fragments",
 		crafting_material: "Crafting Material",
-		material_label: "Material",
+		material_label: "MaterIal",
 };
 
 // Mevcut dile bu listeleri enjekte et

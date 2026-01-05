@@ -1,7 +1,4 @@
-// item_generator.js
-
 window.generateRandomItem = function(tier) {
-    // window. üzerinden erişiyoruz
     const types = Object.keys(window.BASE_ITEMS);
     const type = types[Math.floor(Math.random() * types.length)];
     const mainStats = Object.keys(window.BASE_ITEMS[type]);
@@ -11,6 +8,7 @@ window.generateRandomItem = function(tier) {
     
     let newItem = {
         id: "item_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        subtype: "jewelry", // <--- KRİTİK EKLEME: Artık kurallar buradan okunacak
         nameKey: baseTemplate.nameKey, 
         type: type,
         tier: tier,
@@ -19,7 +17,7 @@ window.generateRandomItem = function(tier) {
         propertyKeys: [mainStat] 
     };
 
-    // window.ITEM_CONFIG üzerinden erişiyoruz
+    // Stat puanı dağıtımı (Mevcut mantığın aynı kalıyor)
     newItem.stats[mainStat] = window.ITEM_CONFIG.multipliers.stats;
 
     let remainingPoints = tier - 1;
@@ -49,5 +47,6 @@ window.generateRandomItem = function(tier) {
         remainingPoints--;
     }
 
+    // ARTIK BURADA 'rules' tanımlamaya gerek yok, sistem subtype'dan bulacak.
     return newItem;
 };

@@ -607,16 +607,9 @@ window.checkGameOver = function() {
 			if (Math.random() < 0.5) {
 		const fragCount = Math.floor(Math.random() * 4) + 1; 		
         ///(const fragCount = Math.floor(Math.random() * monster.tier) + 1;)
-        const fragmentItem = { 
-            nameKey: "salvage_material_name", 
-            icon: "drop_items/salvage_jewelry.webp", 
-            type: "material", 
-            isStack: true,
-            tier: 1,      // Seviye hatasını çözer
-            stats: {}     // Tooltip çökmesini çözer
-        };
-        rewards.push({ type: 'item', value: fragmentItem, amount: fragCount });
-    }
+        const fragmentItem = { ...window.BASE_MATERIALS["jewelry_fragment"] };
+		rewards.push({ type: 'item', value: fragmentItem, amount: fragCount });
+		}
 
 		// 4. Stat Scroll Drop (%10 Şans)
 			if (Math.random() < 0.1) {

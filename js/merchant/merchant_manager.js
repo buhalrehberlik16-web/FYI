@@ -108,28 +108,17 @@ window.renderMerchantUI = function() {
 
 // 4. SLOT OLUŞTURMA
 function createTradeSlot(item, action, isBuying) {
-    // Materyal kontrolü
-    const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
-    
-    // Slotun çerçeve rengini belirle
-    const slotClass = isMaterial ? 'item-slot' : `item-slot border-tier-${item.tier}`;
     const slot = document.createElement('div');
-    slot.className = slotClass;
+    // Artık manuel border-tier-X sınıflarına gerek yok, badge fonksiyonu halledecek
+    slot.className = 'item-slot'; 
+    slot.style.position = 'relative';
     
     const img = document.createElement('img');
-    img.src = `items/images/${item.icon}`;
+    img.src = item.icon.startsWith('items/') ? item.icon : `items/images/${item.icon}`;
     slot.appendChild(img);
 
-    // --- TIER / MATERYAL BADGE EKLEME ---
-    const badge = document.createElement('span');
-    if (isMaterial) {
-        badge.className = 'item-tier-badge badge-craft'; // Gri/Mavi "C" badge
-        badge.textContent = 'C';
-    } else {
-        badge.className = `item-tier-badge badge-${item.tier}`; // Renkli "T1-T5" badge
-        badge.textContent = `T${item.tier}`;
-    }
-    slot.appendChild(badge);
+    // YENİ: Manuel kontrol bitti! Merkezi badge sistemi:
+    slot.innerHTML += window.getItemBadgeHTML(item);
 
     // Fiyat Etiketi
     const price = calculateItemPrice(item, isBuying);
@@ -201,22 +190,26 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     const textEl = document.getElementById('trade-confirm-text');
     const nameEl = document.getElementById('confirm-item-name');
     const statsEl = document.getElementById('confirm-item-stats');
-	
-	const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
-    nameEl.className = isMaterial ? '' : `tier-${item.tier}`;
+    
+    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
-    // 1. Ana mesajı yaz (Satın alıyor musun? / Satıyor musun?)
+    // 1. Ana mesaj
     textEl.textContent = msg;
 
-    // 2. Eşya ismini ve rengini ayarla
-    nameEl.textContent = getTranslatedItemName(item) + ` (T${item.tier})`;
-    nameEl.className = `tier-${item.tier}`; // Daha önce yaptığımız renk sınıflarını kullanır
+    // 2. Eşya ismi ve seviyesi (YENİ SİSTEM)
+    const levelLabel = window.getItemLevelLabel(item);
+    nameEl.textContent = `${getTranslatedItemName(item)} (${levelLabel})`;
+    
+    // Eğer materyal ise tier rengi verme, takı ise ver
+    nameEl.className = (rules.badgeType === "tier") ? `tier-${item.tier}` : "";
 
-    // 3. Eşya statlarını listele
+    // 3. Statları listele
     statsEl.innerHTML = '';
-    for (const [statKey, value] of Object.entries(item.stats)) {
-        const statName = window.getStatDisplayName(statKey);
-        statsEl.innerHTML += `<div>${statName}: <span style="color:#43FF64">+${value}</span></div>`;
+    if (item.stats && Object.keys(item.stats).length > 0) {
+        for (const [statKey, value] of Object.entries(item.stats)) {
+            const statName = window.getStatDisplayName(statKey);
+            statsEl.innerHTML += `<div>${statName}: <span style="color:#43FF64">+${value}</span></div>`;
+        }
     }
 
     modal.classList.remove('hidden');

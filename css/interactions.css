@@ -349,7 +349,9 @@
 #modal-blacksmith .npc-stats-left {left:340px;}
 #modal-blacksmith .npc-stats-right {right:390px;}
 #modal-blacksmith .npc-stats-header {top:192px;}
-
+/*============================================================
+   Salvage Ekranı
+============================================================ */
 .salvage-yield-info {
     background: rgba(0,0,0,0.5);
     border: 1px solid #444;
@@ -363,6 +365,68 @@
     border-color: #ff4d4d !important; /* Parçalama tehlikelidir kırmızısı */
     width: 70px !important;
     height: 70px !important;
+}
+/*============================================================
+   Reforge Ekranı
+============================================================ */
+/* Reforge Özellik Kartları */
+.stat-selection-list {
+    margin: 15px auto;
+    width: 90%;
+    background: rgba(0,0,0,0.4);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px inset #444;
+}
+
+#reforge-property-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.reforge-prop-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 15px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+}
+
+.reforge-prop-card:hover {
+    background: #333;
+    border-color: #f0e68c;
+}
+
+.reforge-prop-card.selected {
+    background: linear-gradient(to right, #5d4a30, #2b2218);
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.reforge-prop-card .prop-name { color: #aaa; }
+.reforge-prop-card.selected .prop-name { color: #fff; font-weight: bold; }
+.reforge-prop-card .prop-val { color: #43FF64; font-weight: bold; }
+
+/* Maliyet Alanı */
+.reforge-costs {
+    display: flex;
+    justify-content: space-around;
+    font-size: 0.95em;
+    font-weight: bold;
+    color: #f0e68c;
+}
+
+/* Slot Vurgusu */
+.reforge-input {
+    width: 70px !important;
+    height: 70px !important;
+    border-color: #8e44ad !important; /* Reforge'un rengi Mor olsun */
 }
 
 /* --- TÜCCAR (MERCHANT) --- */

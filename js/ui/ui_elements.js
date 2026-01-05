@@ -91,3 +91,50 @@ window.campfireOptionsDiv = document.getElementById('campfire-options');
 window.campfireResultDiv = document.getElementById('campfire-result');
 window.campfireResultTitle = document.getElementById('campfire-result-title');
 window.campfireResultText = document.getElementById('campfire-result-text');
+
+
+// --- TIER VE BADGE ---
+window.getItemBadgeHTML = function(item) {
+    if (!item) return "";
+    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
+    if (rules.badgeType === "craft") {
+        return `<span class="item-tier-badge badge-craft">C</span>`;
+    }
+    return `<span class="item-tier-badge badge-${item.tier}">T${item.tier}</span>`;
+};
+
+// UI Kısıtlamasını merkezi kurala göre kontrol eder
+window.isItemAllowedInUI = function(item, uiKey) {
+    if (!item) return false;
+    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
+    const permissions = {
+        'blacksmith': rules.canSalvage,
+        'alchemist_transmute': rules.canTransmute,
+        'alchemist_synthesis': rules.canSynthesize,
+        'equip': rules.canEquip,
+		'reforge': rules.canReforge,
+    };
+    return permissions[uiKey] || false;
+};
+
+window.getItemLevelLabel = function(item) {
+    if (!item) return "";
+    
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const langItems = lang.items || {};
+    
+    // Eşyanın kural setini bul
+    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
+
+    // 1. Durum: Eğer eşya bir materyal/craft eşyası ise (C badge alıyorsa)
+    if (rules.badgeType === "craft") {
+        return langItems.material_label || (currentLang === 'tr' ? "Materyal" : "Material");
+    }
+    
+    // 2. Durum: Eğer eşya bir takı ise (T badge alıyorsa)
+    // "Tier" kelimesini translation.js içindeki tier_label'dan çekiyoruz
+    const label = langItems.tier_label || (currentLang === 'tr' ? "Seviye" : "Tier");
+    
+    return `${label} ${item.tier}`;
+};

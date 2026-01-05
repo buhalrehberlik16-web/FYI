@@ -239,7 +239,7 @@ document.addEventListener('click', e => {
     // 2. Siyah arka plana tıklandığında kapatma mantığı
     if (e.target.classList.contains('npc-modal')) {
         // GÜVENLİK: Transmute ve Merchant Trade ekranları dışarı tıklanarak KAPANAMAZ
-        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen', 'synthesis-screen',];
+        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen', 'synthesis-screen', 'reforge-screen',];
         
         if (forbiddenModals.includes(e.target.id)) {
             console.log("Güvenlik: İşlemi tamamlamak veya iptal etmek için butonları kullanmalısın.");
