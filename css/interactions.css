@@ -39,13 +39,29 @@
     top: 50%; 
     left: 50%; 
     transform: translate(-50%, -50%);
-    white-space: nowrap; 
-    color: #e0d0b0; 
-    font-family: 'Georgia', serif; 
-    font-weight: 900;
+    white-space: nowrap;  
     text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000; 
-    transition: all 0.3s ease;
     pointer-events: auto;
+	font-family: 'Cinzel', serif; /* Yeni Font */
+    font-weight: 700;
+    text-transform: uppercase; /* Her zaman büyük harf Cinzel'e çok yakışır */
+    letter-spacing: 2px; /* Harf arası boşluk antik hava katar */
+    font-size: 1.1rem; /* Okunabilirlik için hafif büyütebiliriz */
+    color: #e0d0b0;
+    
+    /* Daha derin bir gölge ekleyerek yazıların arka plandan ayrılmasını sağlayalım */
+    text-shadow: 
+        2px 2px 0 #000, 
+        -1px -1px 0 #000, 
+        0px 0px 10px rgba(0,0,0,0.8);
+    
+    transition: all 0.3s ease;
+}
+.town-building:hover .town-label-text, 
+.city-building:hover .city-label-text {
+    color: #ffd700; /* Altın rengine dön */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 2px 2px 0 #000;
+    transform: translate(-50%, -50%) scale(1.15); /* Hafif büyüme */
 }
 
 /* TOWN KOORDİNATLARI (Orijinal Açı ve Yerleşim) */
@@ -56,6 +72,7 @@
 #building-merchant { top: 61.4%; left: 64.7%; }
 #building-merchant .town-label-text { transform: translate(-50%, -50%) rotate(10deg); }
 #building-alchemist { top: 36.6%; right: 20.5%; }
+#building-alchemist .town-label-text {transform: translate(-50%, -50%)}
 #building-stable { top: 64.4%; right: 9.8%; }
 #building-stable .town-label-text { transform: translate(-50%, -50%) rotate(10deg); }
 
@@ -67,8 +84,12 @@
     padding: 12px 30px !important; font-size: 1.1em !important;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8) !important;
     cursor: pointer; border-radius: 4px; transition: all 0.2s;
+	font-family: 'Cinzel', serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-.town-exit-btn:hover { background: #a00000 !important; transform: scale(1.05); }
+.town-exit-btn:hover { background: #a00000 !important; transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 77, 77, 0.4) !important; }
 
 /* ŞEHİR BAŞLIĞI - YUKARIYA SABİTLENDİ VE CİLANLANDI */
 .city-header {
@@ -201,6 +222,7 @@
 
 /* ZAFER YAZISI - ALTIN PARLAMA (GLOW) EFEKTİ */
 .reward-content h2 {
+	font-family: 'Cinzel', serif;
     color: #ffd700;
     font-size: 3em;
     margin-top: 0;
@@ -225,6 +247,7 @@
 
 /* --- ORTAK ÖDÜL ÖZELLİKLERİ --- */
 .reward-item { 
+	font-family: 'Cinzel', serif;
     background: rgba(40, 40, 40, 0.9); 
     border: 1px solid #ffd700; 
     cursor: pointer; 
@@ -249,13 +272,14 @@
     height: 60px;
 }
 
-.reward-gold i { 
+.reward-gold i {	
     color: #ffd700 !important; 
     font-size: 1.4em; 
     text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); 
 }
 
 .reward-gold span {
+	font-family: 'Cinzel', serif;
     font-weight: bold; 
     font-size: 1.1em; 
     color: #ffffff !important;
@@ -285,6 +309,7 @@
 }
 
 .reward-item-name {
+	font-family: 'Cinzel', serif;
     font-size: 1.3em;
     font-weight: bold;
     color: #fff;
@@ -292,12 +317,14 @@
 }
 
 .reward-item-tier {
+	font-family: 'Cinzel', serif;
     font-size: 0.9em;
     color: #ffd700;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 .reward-continue-btn { 
+	font-family: 'Cinzel', serif;
     margin: auto auto 10px auto; 
     width: 220px !important; 
     padding: 12px 20px !important;
@@ -320,13 +347,13 @@
 /* ============================================================
    NPC MODALLARI VE KAMP ATEŞİ
    ============================================================ */
-.npc-window { width: 1280px; height: 900px; background-size: contain; background-repeat: no-repeat; background-position: center; position: relative; }
-.npc-modal { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 5000; display: none; justify-content: center; align-items: center; }
+.npc-window { font-family: 'Cinzel', serif; width: 1280px; height: 900px; background-size: contain; background-repeat: no-repeat; background-position: center; position: relative; }
+.npc-modal { font-family: 'Cinzel', serif; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.85); z-index: 5000; display: none; justify-content: center; align-items: center; }
 .npc-modal:not(.hidden) { display: flex !important; }
-.npc-title { position: absolute; width: 100%; text-align: center; color: #3e2723; font-weight: 900; font-size: 1.8em; top: 185px; text-transform: uppercase; }
+.npc-title { font-family: 'Cinzel', serif; position: absolute; width: 100%; text-align: center; color: #3e2723; font-weight: 900; font-size: 1.8em; top: 185px; text-transform: uppercase; }
 .npc-actions-left, .npc-actions-right { position: absolute; width: 140px; top: 300px; display: flex; flex-direction: column; gap: 15px; }
 .npc-actions-left { left: 300px; } .npc-actions-right { right: 310px; }
-.npc-dialogue { position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%); width: 30%; text-align: center; color: #5d4037; font-weight: bold; font-style: italic; }
+.npc-dialogue { font-family: 'Cinzel', serif; position: absolute; bottom: 170px; left: 50%; transform: translateX(-50%); width: 30%; text-align: center; color: #5d4037; font-weight: bold; font-style: italic; }
 
 .fire-glow-effect { position: absolute; bottom: -20%; left: 20%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(255,69,0,0.6) 0%, rgba(139,0,0,0.2) 60%, transparent 80%); filter: blur(30px); animation: fire-flicker 3s infinite alternate; z-index: 0; pointer-events: none; }
 
@@ -492,6 +519,11 @@
 /* --- AHIR (STABLE) --- */
 #modal-stable .npc-title {top: 185px;}
 #modal-stable .npc-dialogue {bottom: 180px;}
+
+.scouted-node {
+    box-shadow: 0 0 15px #00ccff !important;
+    border-color: #00ccff !important;
+}
 
 .npc-stats-header {
     position: absolute;
@@ -934,20 +966,6 @@
 
 #reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
 
-.reward-item { 
-    background: rgba(40, 40, 40, 0.9); 
-    border: 1px solid #ffd700; 
-    padding: 12px 20px; 
-    cursor: pointer; 
-    border-radius: 6px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 12px; 
-    margin: 0 auto 15px auto; 
-    width: 35%; /* İstediğin %35 genişlik */
-    transition: all 0.2s ease;
-}
 
 /* ALTIN MİKTARI VE YAZISI - BEYAZ YAPILDI */
 .reward-item span { 
@@ -958,22 +976,58 @@
     text-shadow: 1px 1px 2px #000;
 }
 
-/* ALTIN İKONU - PARLAK ALTIN */
-.reward-item i { 
-    color: #ffd700 !important; 
-    font-size: 1.4em; 
-    text-shadow: 0 0 8px rgba(255, 215, 0, 0.5); 
-    filter: none !important; 
-}
+ /* Ödül kutularının genel genişliği */
+    .reward-item { 
+        width: 95% !important; /* %35 yerine %95 yaparak alanı ferahlattık */
+        min-height: 80px !important; /* Yüksekliği içeriğe göre esnek bıraktık */
+        margin: 0 auto 10px auto !important;
+        padding: 10px 15px !important;
+        justify-content: flex-start !important; /* İçeriği sola yasladık */
+        gap: 15px !important;
+        background: rgba(30, 30, 30, 0.9) !important;
+    }
 
-.reward-continue-btn { 
-    margin: auto auto 10px auto; 
-    width: 220px !important; 
-    padding: 12px 20px !important;
-    background: linear-gradient(to bottom, #5d4a30, #3e3221) !important;
-    border: 1px solid #ffd700 !important; 
-    color: #f0e68c !important; 
-    align-self: center;
-}
+    /* Altın Ödülü Özel Ayarı */
+    .reward-gold {
+        justify-content: center !important; /* Sadece altını ortalı tutabiliriz */
+        width: 60% !important; /* Altın kutusu çok geniş olmasın */
+    }
 
+    /* İkonların boyutu ve taşmasını engelleme */
+    .reward-item-icon {
+        width: 45px !important;
+        height: 45px !important;
+        margin-right: 5px !important;
+        flex-shrink: 0; /* İkonun ezilmesini engeller */
+        object-fit: contain !important;
+    }
+
+    /* Metin alanı (İsim ve Seviye) */
+    .reward-item-text {
+        text-align: left !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden; /* Taşmayı engelle */
+    }
+
+    /* Ödül İsmi */
+    .reward-item-name {
+        font-size: 0.9rem !important; /* Mobilde fontu biraz küçülttük */
+        line-height: 1.1;
+        white-space: normal; /* Uzun isimler alt satıra geçebilsin */
+    }
+
+    /* Ödül Seviyesi (Tier/Materyal) */
+    .reward-item-tier {
+        font-size: 0.7rem !important;
+        margin-top: 2px;
+    }
+
+    /* Devam Et Butonu */
+    .reward-continue-btn {
+        width: 80% !important;
+        padding: 10px !important;
+        font-size: 1rem !important;
+    }
 }

@@ -167,7 +167,7 @@ const EN_ITEMS = {
 		synthesis_desc: "Craft custom items using fragments and scrolls.",
 		needed_fragments: "Required Fragments",
 		crafting_material: "Crafting Material",
-		material_label: "MaterIal",
+		material_label: "Material",
 };
 
 // Mevcut dile bu listeleri enjekte et

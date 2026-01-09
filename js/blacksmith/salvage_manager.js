@@ -22,6 +22,7 @@ function renderSalvageUIAll() {
     const inputSlot = document.getElementById('salvage-input-slot');
     const yieldDiv = document.getElementById('salvage-output-display');
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+	const qtyText = lang.qty_suffix || "Adet"; // Dilden çek
 
     inputSlot.innerHTML = '';
     yieldDiv.innerHTML = `<span style="color:#666">${lang.items.waiting_salvage_ingredients}</span>`;
@@ -51,9 +52,9 @@ function renderSalvageUIAll() {
         const range = getSalvageRange(salvageItem.tier);
         yieldDiv.innerHTML = `
             <div style="margin-bottom:5px; border-bottom:1px solid #444">${lang.items.salvage_yield}:</div>
-            <div class="prob-row"><span>${range.min} adet:</span> <span style="color:#43FF64">%60</span></div>
-            <div class="prob-row"><span>${range.mid} adet:</span> <span style="color:#f0e68c">%30</span></div>
-            <div class="prob-row"><span>${range.max} adet:</span> <span style="color:#ff9800">%10</span></div>
+            <div class="prob-row"><span>${range.min} ${qtyText}:</span> <span style="color:#43FF64">%60</span></div>
+            <div class="prob-row"><span>${range.mid} ${qtyText}:</span> <span style="color:#f0e68c">%30</span></div>
+            <div class="prob-row"><span>${range.max} ${qtyText}:</span> <span style="color:#ff9800">%10</span></div>
         `;
     }
     renderSalvageInventory();
@@ -148,4 +149,5 @@ window.processSalvage = function() {
     } else {
         alert(currentLang === 'tr' ? "Envanter dolu!" : "Inventory full!");
     }
+	window.CalendarManager.passDay();
 };

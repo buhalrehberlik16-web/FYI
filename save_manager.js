@@ -33,6 +33,7 @@ window.loadGame = function() {
         // Verileri enjekte et
         if (saveData.hero) window.hero = saveData.hero;
         if (saveData.GAME_MAP) window.GAME_MAP = saveData.GAME_MAP;
+		if (window.CalendarManager) window.CalendarManager.updateTownUI();
 
         // UI'ı tazele
         setTimeout(() => {

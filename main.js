@@ -245,6 +245,7 @@ function initGame() {
     hero.unlockedSkills = []; 
     hero.equippedSkills = [null, null, null, null, null, null]; 
     hero.currentAct = 1;
+	CalendarManager.init();
 
     hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.elementalDamage = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
@@ -386,6 +387,7 @@ window.itemver = function(tier = 1) {
 
 document.addEventListener('DOMContentLoaded', () => {
 	if(typeof applySettings === 'function') applySettings();
+	if(typeof CalendarManager !== 'undefined') CalendarManager.init();
     // 1. Oyunu ve İlk Ekranı Başlat
     if (typeof initGame === 'function') initGame(); 
     if (typeof switchScreen === 'function') switchScreen(window.startScreen); 

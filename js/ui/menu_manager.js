@@ -31,17 +31,32 @@ window.toggleStatScreen = function() {
 window.updateStatScreen = function() {
     if (!statName || !statClass) return;
     
-    // 1. Ham (Kendi verdiğimiz) statları ve Toplam (Eşyalı/Bufflı) statları alalım
-    let effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : {};
-    const baseStats = {
-        str: hero.str,
-        dex: hero.dex,
-        int: hero.int,
-        vit: hero.vit,
-        mp_pow: hero.mp_pow
-    };
+    // 1. Verileri Hazırla
+    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : {};
+    const rules = CLASS_CONFIG[hero.class];
 
-    // 2. Üst Bilgiler (İsim, Level, XP)
+    // --- SADECE İTEM VE ANA STATLARDAN GELEN (SKILL-SIZ) DEĞERLERİ HESAPLA ---
+    let itemOnlyStr = hero.str;
+    let itemOnlyDex = hero.dex;
+    let itemAtkBonus = 0;
+    let itemDefBonus = 0;
+
+    // Ekipmanları tara (Sadece item bonuslarını topluyoruz)
+    for (const slotKey in hero.equipment) {
+        const item = hero.equipment[slotKey];
+        if (item && item.stats) {
+            if (item.stats.str) itemOnlyStr += item.stats.str;
+            if (item.stats.dex) itemOnlyDex += item.stats.dex;
+            if (item.stats.atk) itemAtkBonus += item.stats.atk;
+            if (item.stats.def) itemDefBonus += item.stats.def;
+        }
+    }
+
+    // "Stabil" değer (İtemler var ama Skill Buffları yok)
+    const stableAtk = (hero.baseAttack || 10) + itemAtkBonus + Math.floor(itemOnlyStr * (rules.atkStats.str || 0.5));
+    const stableDef = (hero.baseDefense || 1) + itemDefBonus + Math.floor(itemOnlyDex * (rules.defStats.dex || 0.34));
+
+    // 2. Üst Bilgiler
     statName.textContent = hero.playerName; 
     statClass.textContent = `(${hero.class})`; 
     statLevel.textContent = `Lv. ${hero.level}`;
@@ -54,45 +69,52 @@ window.updateStatScreen = function() {
     statHp.textContent = `${hero.hp} / ${effective.maxHp}`;
     if (statRage) statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
 
-    // 3. Savaş Statları (Saldırı ve Defans)
-    // Bunlar zaten hesaplanmış toplam değerlerdir
-    statAtk.textContent = effective.atk;
-    statDef.textContent = effective.def;
+    // 3. SAVAŞ STATLARI (ATAK VE DEFANS) - Sadece Skill/Choice etkisine duyarlı
+    const applyEffectColor = (el, current, stable) => {
+        el.textContent = current;
+        if (current > stable) {
+            el.style.color = "#43FF64"; // Skill/Choice Buff varsa YEŞİL
+            el.style.textShadow = "0 0 10px rgba(67, 255, 100, 0.5)";
+        } else if (current < stable) {
+            el.style.color = "#ff4d4d"; // Skill/Choice Debuff varsa KIRMIZI
+            el.style.textShadow = "0 0 10px rgba(255, 77, 77, 0.5)";
+        } else {
+            el.style.color = ""; // Sadece item varsa veya etki yoksa NORMAL
+            el.style.textShadow = "";
+        }
+    };
 
-    // 4. TEMEL STATLAR (ASIL DEĞİŞİKLİK BURADA)
-    // Yardımcı bir fonksiyon: Statı ve yanındaki bonusu yazar
+    applyEffectColor(statAtk, effective.atk, stableAtk);
+    applyEffectColor(statDef, effective.def, stableDef);
+
+    // 4. TEMEL STATLAR (STR, DEX vb.)
+    // Burada hem item hem skill bonusları parantez içinde (+X) olarak gözükür
     const renderStatWithBonus = (elementId, baseVal, effectiveVal) => {
         const el = document.getElementById(elementId);
         if (!el) return;
-
         const bonus = effectiveVal - baseVal;
         
         if (bonus > 0) {
-            // Eğer bonus varsa: "15 (+5)" şeklinde yaz ve bonusu yeşil yap
             el.innerHTML = `${baseVal} <span style="color:#43FF64; font-size:0.9em; font-weight:bold;">(+${bonus})</span>`;
         } else if (bonus < 0) {
-            // Eğer debuff varsa (nadir durum): "15 (-3)" şeklinde yaz ve kırmızı yap
             el.innerHTML = `${baseVal} <span style="color:#ff4d4d; font-size:0.9em; font-weight:bold;">(${bonus})</span>`;
         } else {
-            // Bonus yoksa sadece ham değeri yaz
             el.textContent = baseVal;
         }
     };
 
-    // Her stat için bu işlemi yapalım
-    renderStatWithBonus('stat-str', baseStats.str, effective.str);
-    renderStatWithBonus('stat-dex', baseStats.dex, effective.dex);
-    renderStatWithBonus('stat-int', baseStats.int, effective.int);
-    renderStatWithBonus('stat-vit', baseStats.vit, effective.vit);
-    renderStatWithBonus('stat-mp', baseStats.mp_pow, effective.mp_pow);
+    renderStatWithBonus('stat-str', hero.str, effective.str);
+    renderStatWithBonus('stat-dex', hero.dex, effective.dex);
+    renderStatWithBonus('stat-int', hero.int, effective.int);
+    renderStatWithBonus('stat-vit', hero.vit, effective.vit);
+    renderStatWithBonus('stat-mp', hero.mp_pow, effective.mp_pow);
 
-    // 5. Puan Dağıtma Butonları ve Uyarılar
-    const pointsBox = document.getElementById('points-container');
-    const pointsDisplay = document.getElementById('stat-points-display');
-    const plusButtons = document.querySelectorAll('.btn-stat-plus');
+    // 5. Puan Dağıtma / Savaş Uyarısı (Aynı kalıyor)
     const isInBattle = battleScreen.classList.contains('active');
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+    const pointsBox = document.getElementById('points-container');
+    const plusButtons = document.querySelectorAll('.btn-stat-plus');
 
     document.getElementById('stat-battle-warning')?.remove();
 
@@ -101,13 +123,13 @@ window.updateStatScreen = function() {
         plusButtons.forEach(btn => btn.classList.add('hidden'));
         const warning = document.createElement('div');
         warning.id = 'stat-battle-warning';
-        warning.style.cssText = "color:orange; text-align:center; margin-top:15px; font-weight:bold;";
+        warning.style.cssText = "color:#ff9800; text-align:center; margin-top:15px; font-weight:bold; font-size:0.8em; font-family:'Cinzel',serif;";
         warning.textContent = lang.stat_battle_warning;
         document.querySelector('.stat-content').appendChild(warning);
     } else if (hero.statPoints > 0) {
         if (pointsBox) {
             pointsBox.classList.remove('hidden');
-            pointsDisplay.textContent = hero.statPoints;
+            document.getElementById('stat-points-display').textContent = hero.statPoints;
         }
         plusButtons.forEach(btn => btn.classList.remove('hidden'));
     } else {
@@ -115,23 +137,16 @@ window.updateStatScreen = function() {
         plusButtons.forEach(btn => btn.classList.add('hidden'));
     }
 
-    // 6. Dirençler (Resistances)
-    // Eşyalardan gelen dirençleri de burada göstermek isteyebilirsin
+    // 6. Dirençler (Aynı kalıyor)
     const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
     resTypes.forEach(type => {
         const el = document.getElementById(`res-${type}`);
         if (el) {
-            // Ham direnç (baseResistances) + Eşya direnci (getHeroEffectiveStats içinde hesaplanıyor)
-            // effective.resists objesini combat_manager'da return ettiğimizden emin olmalıyız
             const baseRes = hero.baseResistances[type] || 0;
             const totalRes = effective.resists ? (effective.resists[type] || 0) : baseRes;
             const resBonus = totalRes - baseRes;
-
-            if (resBonus > 0) {
-                el.innerHTML = `${baseRes} <span style="color:#43FF64; font-size:0.8em;">(+${resBonus})</span>`;
-            } else {
-                el.textContent = baseRes;
-            }
+            if (resBonus > 0) el.innerHTML = `${baseRes} <span style="color:#43FF64; font-size:0.8em;">(+${resBonus})</span>`;
+            else el.textContent = baseRes;
         }
     });
 };

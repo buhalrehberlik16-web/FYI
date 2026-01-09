@@ -237,4 +237,5 @@ window.processSynthesis = function() {
 
     // İşlem bitti, butonu geri aç (renderSynthesisUI zaten kontrol edecektir ama garanti olsun)
     setTimeout(() => { btn.disabled = false; }, 500);
+	window.CalendarManager.passDay();
 };

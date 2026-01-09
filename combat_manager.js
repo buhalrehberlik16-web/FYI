@@ -453,9 +453,22 @@ window.determineMonsterAction = function() {
 
 window.startBattle = function(enemyType) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
+	
+	let scaling = 1.0;
+    // Data-driven kontrol
+    if (stats.isBoss) {
+        scaling = window.EventManager.getModifier('boss_scaling');
+    }
+	
     switchScreen(battleScreen);
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
+    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, isBoss: stats.isBoss, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
     
+	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
+    const bonus = window.EventManager.getCombatBonus();
+    hero.rage = Math.min(hero.maxRage, hero.rage + bonus.rage);
+
+    if (scaling > 1) writeLog(`⚠️ Boss Karanlık Zamanın Etkisiyle Güçlendi! (x${scaling.toFixed(2)})`);
+	
     monsterDisplayImg.style.filter = 'none'; 
     monsterDisplayImg.style.opacity = '1';
     monsterDisplayImg.src = `images/${monster.idle}`;

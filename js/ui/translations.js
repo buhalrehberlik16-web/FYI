@@ -128,6 +128,20 @@ window.LANGUAGES = {
         resolution: "ÇÖZÜNÜRLÜK",
         res_fit: "Ekrana Uydur (Fit)",
         back: "GERİ",
+		
+		// Harita LOG
+		map_start_title: "MACERAYA BAŞLA",
+		map_start_desc: "Haritadan bir başlangıç noktası seç.",
+		stage_label: "AŞAMA",
+		enemy_spotted: "$1 BELİRDİ!",
+		node_start: "BAŞLANGIÇ",
+		node_encounter: "DÜŞMAN",
+		node_town: "KÖY",
+		node_choice: "OLAY",
+		node_boss: "BOSS",
+		node_city: "ŞEHİR",
+		hard_enemy_warning: "⚠️ GÜÇLÜ BİR DÜŞMAN HİSSEDİYORSUN!",
+		normal_enemy_spotted: "DÜŞMAN GÖRÜNDÜ.",
 
         // NPC Dialogları
         innkeeper_title: "HANCI",
@@ -178,6 +192,19 @@ window.LANGUAGES = {
 		gold_label: "Altın",
 		fragments_label: "Takı Parçaları",
 		reforge_material_name: "Yeniden dövülecek bir takı yerleştirin.",
+		synthesis_title: "Sentez",
+		qty_suffix: "Adet",
+		stable_steed_success: "Hızlı bir at kiraladın! Artık yolculuklar daha kısa sürecek.",
+		stable_scout_success: "Ulak yola çıktı, ilerideki tehlikeleri artık biliyorsun.",
+		stable_steed_dialogue: "Bu asil kısrak seni rüzgar gibi taşıyacak.",
+		stable_scout_dialogue: "Kuşlarım senin için ilerideki yolları gözlüyor.",
+		scout_report: "Keşif Raporu",
+		stable_steed_popup_title: "HIZLI YOLCULUK",
+		stable_steed_popup_text: "Asil bir binek kiraladın! Önündeki 4 bölge boyunca seyahatlerin normalden iki kat daha hızlı sürecek. (Her adım 0.5 gün).",
+		stable_scout_popup_title: "KEŞİF RAPORU",
+		scout_stage: "AŞAMA",
+		stable_rent: "At Kirala(40G)",
+		stable_scout: "Gözcü(20G)",
 
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
@@ -422,11 +449,11 @@ window.LANGUAGES = {
         label_rage: "Rage:",
         label_atk: "Attack:",
         label_def: "Defense:",
-        stat_str: "STR (Strength)",
-        stat_dex: "DEX (Dexterity)",
-        stat_int: "INT (Intelligence)",
-        stat_vit: "VIT (Vitality)",
-        stat_mp: "MP (Magic Power)",
+        stat_str: "Strength",
+        stat_dex: "Dexterity",
+        stat_int: "Intelligence",
+        stat_vit: "Vitality",
+        stat_mp: "Magic Power",
         resistances_title: "RESISTANCES",
         res_physical: "Physical",
         res_poison: "Poison",
@@ -437,6 +464,7 @@ window.LANGUAGES = {
         close_hint: "Press 'U' or 'X' to close.",
 		log_skill_unequipped: "unequipped from slot.",
 		critical_success: "CRITICAL SUCCESS!",
+		qty_suffix: "Qty",
 
         // Town & City
         building_inn: "INN",
@@ -459,6 +487,21 @@ window.LANGUAGES = {
         resolution: "RESOLUTION",
         res_fit: "Fit Screen",
         back: "BACK",
+		
+		// Map LOG
+		map_start_title: "START ADVENTURE",
+		map_start_desc: "Choose a starting point on the map.",
+		stage_label: "STAGE",
+		enemy_spotted: "$1 APPEARED!",
+		node_start: "START",
+		node_encounter: "ENCOUNTER",
+		node_town: "TOWN",
+		node_choice: "EVENT",
+		node_boss: "BOSS",
+		node_city: "CITY",
+		hard_enemy_warning: "⚠️ YOU SENSE A POWERFUL ENEMY!",
+		normal_enemy_spotted: "ENEMY SPOTTED.",
+		
 
         // NPC Dialogues
         innkeeper_title: "INNKEEPER",
@@ -508,6 +551,18 @@ window.LANGUAGES = {
 		gold_label: "Gold",
 		fragments_label: "Jewelry Fragments",
 		reforge_material_name: "Place a piece of jewelry to reforge.",
+		synthesis_title: "Synthesis",
+		stable_steed_success: "You rented a swift steed! Journeys will take less time.",
+		stable_scout_success: "The scout is on the way, you now know the dangers ahead.",
+		stable_steed_dialogue: "This noble mare will carry you like the wind.",
+		stable_scout_dialogue: "My birds are watching the roads ahead for you.",
+		scout_report: "Scout Report",
+		stable_steed_popup_title: "SWIFT JOURNEY",
+		stable_steed_popup_text: "You rented a noble steed! For the next 4 nodes, your travel speed will be doubled. (0.5 days per step).",
+		stable_scout_popup_title: "SCOUT REPORT",
+		scout_stage: "STAGE",
+		stable_rent: "Horse Rental(40G)",
+		stable_scout: "Scout(20G)",
 
         // Enemy Names
         enemy_names: {

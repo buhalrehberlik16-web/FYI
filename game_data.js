@@ -56,7 +56,10 @@ window.hero = {
     equippedSkills: [null, null, null, null, null, null],
     inventory: new Array(8).fill(null), 
     brooches: new Array(6).fill(null), 
-    equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null }
+    equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null },
+	calendar: {startDayOfYear: 0, daysPassed: 0, isInitialized: false },
+	mountedNodesLeft: 0, 
+    scoutedNodesLeft: 0
 };
 
 // EVENT HAVUZU

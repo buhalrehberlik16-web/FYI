@@ -60,6 +60,14 @@ window.openRewardScreen = function(rewards) {
 window.openBuilding = function(type) {
     const modalId = `modal-${type}`;
     const modal = document.getElementById(modalId);
+	
+	 // EVENT KONTROLÜ
+    if (window.EventManager.isSystemLocked(type)) {
+        const currentLang = window.gameSettings.lang || 'tr';
+        const msg = currentLang === 'tr' ? "⚠️ Bu ay burası kapalı!" : "⚠️ This place is closed this month!";
+        alert(msg);
+        return;
+    }
     
     if (modal) {
         // Her açılışta orijinal selamlamayı geri getir (Özellikle Han için)
@@ -108,6 +116,7 @@ window.restAtInn = function() {
             dialogue.style.color = ""; // Rengi normale döndür
         }
     }, 3000);
+	window.CalendarManager.passDay();
 };
 
 // 3. Han: İçecek Al
@@ -239,7 +248,7 @@ document.addEventListener('click', e => {
     // 2. Siyah arka plana tıklandığında kapatma mantığı
     if (e.target.classList.contains('npc-modal')) {
         // GÜVENLİK: Transmute ve Merchant Trade ekranları dışarı tıklanarak KAPANAMAZ
-        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen', 'synthesis-screen', 'reforge-screen',];
+        const forbiddenModals = ['transmute-screen', 'merchant-trade-screen', 'trade-confirm-modal', 'salvage-screen', 'synthesis-screen', 'reforge-screen','info-popup-modal',];
         
         if (forbiddenModals.includes(e.target.id)) {
             console.log("Güvenlik: İşlemi tamamlamak veya iptal etmek için butonları kullanmalısın.");

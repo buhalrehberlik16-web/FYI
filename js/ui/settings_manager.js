@@ -8,6 +8,8 @@ window.gameSettings = {
 window.applySettings = function() {
     // 1. Dili Uygula
     localStorage.setItem('game_lang', window.gameSettings.lang);
+	
+    document.documentElement.lang = window.gameSettings.lang; // 'tr' veya 'en' olur
     updateUITexts();
 
     // 2. Çözünürlüğü Uygula

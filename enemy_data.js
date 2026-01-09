@@ -86,7 +86,7 @@ const ENEMY_STATS = {
 
     // --- BOSS ---
     "Goblin Şefi": { 
-        maxHp: 250, attack: 35, defense: 20, xp: 0, 
+        maxHp: 250, attack: 35, defense: 20, xp: 0, isBoss:true,
         tier: 5, // Boss T5 olsun
         idle: 'enemies/goblin_sef.webp',
         attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],

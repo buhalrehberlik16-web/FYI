@@ -209,6 +209,11 @@ function determineNodeType(stage, lane) {
 
 function renderMap() {
     const mapContent = document.getElementById('map-content');
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr']; // Dili al
+    
+    // Hardcoded yazıları dille değiştir
+    document.getElementById('current-node-name').textContent = lang.map_start_title;
+    document.getElementById('map-description').textContent = lang.map_start_desc;
 	
 	 // --- YENİ TEMİZLİK KISMI ---
     // Önce ekrandaki tüm eski düğümleri (butonları) sil
@@ -219,8 +224,6 @@ function renderMap() {
     clearTrails(); 
     // ---------------------------
     
-    document.getElementById('current-node-name').textContent = "Maceraya Başla";
-    document.getElementById('map-description').textContent = "Haritadan bir başlangıç noktası seç.";
 
     GAME_MAP.nodes.forEach(node => {
         const btn = document.createElement('button');
@@ -251,6 +254,18 @@ function renderMap() {
         
         btn.appendChild(img);
         btn.onclick = () => handleNodeClick(node);
+		// KEŞİF MEKANİĞİ: Eğer scoutedNodesLeft aktifse ve bu düğüm bir sonraki aşamalardaysa
+const nodeDistance = node.stage - (GAME_MAP.currentNodeId !== null ? GAME_MAP.nodes.find(n=>n.id === GAME_MAP.currentNodeId).stage : -1);
+
+if (hero.scoutedNodesLeft > 0 && nodeDistance <= hero.scoutedNodesLeft && nodeDistance > 0) {
+    // Düğümün üzerine gelince içeriği göster
+    let contentInfo = "";
+    if (node.type === 'encounter') contentInfo = lang.enemy_names[node.enemyName] || node.enemyName;
+    else if (node.type === 'choice') contentInfo = lang.node_choice;
+    
+    btn.title = `🔍 ${lang.scout_report}: ${contentInfo}`;
+    btn.classList.add('scouted-node'); // CSS ile parlatabiliriz
+}
         btn.disabled = true;
 
         mapContent.appendChild(btn);
@@ -316,22 +331,30 @@ function clearTrails() {
 
 // --- OYUNCU İLERLEME ---
 function handleNodeClick(node) {
+	window.CalendarManager.passDay();
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     GAME_MAP.currentNodeId = node.id;
     GAME_MAP.completedNodes.push(node.id);
 
     processMapEffects();
     drawAllConnections();
 
+    // DÜZELTME: Tür isimlerini dilden al
     const typeNames = {
-        'start': 'Başlangıç', 'encounter': 'Düşman', 'town': 'Köy',
-        'choice': 'Olay', 'boss': 'BOSS', 'city': 'Şehir'
+        'start': lang.node_start, 
+        'encounter': lang.node_encounter, 
+        'town': lang.node_town,
+        'choice': lang.node_choice, 
+        'boss': lang.node_boss, 
+        'city': lang.node_city
     };
     
-    let desc = "İlerleniyor...";
-    if (node.isHard) desc = "⚠️ Güçlü bir düşman hissediyorsun!";
-    else if (node.type === 'encounter') desc = "Düşman göründü.";
+    let desc = "";
+    if (node.isHard) desc = lang.hard_enemy_warning;
+    else if (node.type === 'encounter') desc = lang.normal_enemy_spotted;
     
-    document.getElementById('current-node-name').textContent = `Aşama ${node.stage + 1}: ${typeNames[node.type]}`;
+    // DÜZELTME: "Aşama 1" yazısını dile bağla
+    document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
     document.getElementById('map-description').textContent = desc;
 
     movePlayerMarkerToNode(node.id);
@@ -407,12 +430,20 @@ function updateAvailableNodes() {
 
 // --- AKSİYON TETİKLEME ---
 function triggerNodeAction(node) {
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
-             let enemy = node.enemyName;
-             if (!enemy) enemy = "Goblin Devriyesi"; 
-             document.getElementById('map-description').textContent = `Vahşi bir ${enemy} belirdi!`;
-             startBattle(enemy);
+            let enemy = node.enemyName;
+            
+            // Düşman ismini çeviriden al
+            const translatedEnemy = lang.enemy_names[enemy] || enemy;
+            
+            // DÜZELTME: "Vahşi bir ... belirdi" yazısını dile bağla
+            const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
+            document.getElementById('map-description').textContent = appearanceMsg;
+
+            startBattle(enemy);
+         
 
         } else if (node.type === 'town') {
             document.getElementById('map-description').textContent = "Güvenli bölge.";

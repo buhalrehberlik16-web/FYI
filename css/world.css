@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap');
+
 /* Köy ve Şehir Konteynırları */
 .town-container, .city-container {
     position: absolute; inset: 0; margin: auto; aspect-ratio: 16/9; max-width: 100%; max-height: 100%;
@@ -12,3 +14,43 @@
 
 /* Perde Geçiş Butonu */
 .next-act-btn { background: linear-gradient(to bottom, #ffd700, #b8860b) !important; color: #000 !important; }
+/* Dark RPG Takvim Stili */
+.town-calendar-text {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    color: #a89373; /* Eskitilmiş pirinç/altın rengi */
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 2px #000;
+    z-index: 9999;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.7), transparent);
+    padding: 10px 30px;
+    letter-spacing: 3px;
+    border-right: 3px solid #6b5c3b;
+    transition: all 0.3s ease;
+}
+
+/* --- MOBİL UYUMLULUK --- */
+@media (max-width: 768px) {
+    .town-calendar-text {
+        top: 15px;      /* Mobilde biraz daha yukarıya çekiyoruz */
+        right: 20px;    /* Kenar boşluğunu daraltıyoruz */
+        font-size: 1.1rem; /* Yazıyı mobilde küçültüyoruz ki butonlara binmesin */
+        padding: 5px 15px;
+        letter-spacing: 1px;
+        border-right-width: 2px;
+    }
+}
+
+/* Opsiyonel: Çok küçük ekranlar için (Dikey telefonlar) */
+@media (max-width: 480px) {
+    .town-calendar-text {
+        font-size: 0.9rem;
+        top: 10px;
+        right: 10px;
+        letter-spacing: 0.5px;
+    }
+}

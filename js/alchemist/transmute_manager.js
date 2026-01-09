@@ -337,7 +337,8 @@ window.processTransmutation = async function() {
     if (bagSlot !== -1) hero.inventory[bagSlot] = newItem;
 
     writeLog(`${lang.log_transmute_success} ${getTranslatedItemName(newItem)} (T${newItem.tier})`);
-    
+    window.CalendarManager.passDay();
+	
     setTimeout(() => {
         resultSlot.classList.remove('result-flash');
         document.querySelectorAll('.elec-path').forEach(p => p.classList.remove('active'));
