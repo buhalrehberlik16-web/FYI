@@ -77,10 +77,20 @@ const COMMON_SKILLS = {
             tier: 1
         },
         onCast: function(attacker, defender) {
+            const currentLang = window.gameSettings.lang || 'tr';
+            const lang = window.LANGUAGES[currentLang];
+            
             const stats = getHeroEffectiveStats();
             const blockVal = stats.blockPower;
+            
             if(typeof addHeroBlock === 'function') addHeroBlock(blockVal);
-            writeLog(`🧱 **${this.data.name}**: ${blockVal} Blok kazandın.`);
+
+            const skillName = lang.skills.block.name;
+            const logMsg = currentLang === 'tr' ? "kazandın." : "gained.";
+            const blockLabel = lang.combat.f_block.replace('!', '');
+
+            writeLog(`🧱 **${skillName}**: ${blockVal} ${blockLabel} ${logMsg}`);
+            
             setTimeout(() => { nextTurn(); }, 1000);
         }
     },

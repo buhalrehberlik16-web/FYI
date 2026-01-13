@@ -62,8 +62,16 @@ window.StableManager = {
                 report += `<div style="margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
                             <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
                 
-                nodesInStage.forEach(node => {
-                    let typeName = lang[`node_${node.type}`] || node.type;
+                 nodesInStage.forEach(node => {
+        let typeName = lang[`node_${node.type}`] || node.type;
+        let biomeInfo = "";
+        
+        // Eğer biyom varsa raporun yanına ekle
+        if (node.biome) {
+            // "Biyom: Orman" gibi
+            const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+            biomeInfo = ` <span style="color: #43FF64; font-size: 0.9em;">(${biomeLabel})</span>`;
+        }
                     let detail = "";
                     if (node.type === 'encounter') {
                         const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;

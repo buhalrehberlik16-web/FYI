@@ -121,6 +121,9 @@ window.LANGUAGES = {
         city_arena: "ARENA",
         city_market: "BÜYÜK PAZAR",
         start_act2: "2. PERDEYE YELKEN AÇ",
+		
+		//BIOMES
+		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Şehir Yıkıntıları", biome_plains: "Ova",
 
         // Envanter & Ayarlar
         inventory_title: "ENVANTER",
@@ -223,7 +226,8 @@ window.LANGUAGES = {
             "Goblin Şefi": "Goblin Şefi",
             "İskelet Şövalye": "İskelet Şövalye",
             "Gulyabani": "Gulyabani",
-            "Kemik Golemi": "Kemik Golemi"
+            "Kemik Golemi": "Kemik Golemi",
+			"İskelet": "İskelet"
         },
 
 		combat: {
@@ -465,6 +469,9 @@ window.LANGUAGES = {
 		log_skill_unequipped: "unequipped from slot.",
 		critical_success: "CRITICAL SUCCESS!",
 		qty_suffix: "Qty",
+		
+		//BIOMES
+		biome_forest: "Forest", biome_iceland: "Iceland", biome_mountain: "Mountains", biome_cave: "Cave", biome_urban: "Urban", biome_plains: "Plains",
 
         // Town & City
         building_inn: "INN",
@@ -580,7 +587,8 @@ window.LANGUAGES = {
             "Goblin Şefi": "Goblin Chief",
             "İskelet Şövalye": "Skeleton Knight",
             "Gulyabani": "Ghoul",
-            "Kemik Golemi": "Bone Golem"
+            "Kemik Golemi": "Bone Golem",
+			"İskelet": "Skeleton"
         },
 		
 		combat: {
