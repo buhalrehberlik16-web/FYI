@@ -31,10 +31,22 @@
     cursor: grabbing; /* Tutarken yumruk simgesi çıksın */
 }
 
+#map-display::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 450%; height: 100%;
+    /* Değişiklik: Şeffaf alan %30'dan %60'a çıkarıldı, kenar siyahlığı %85'ten %60'a çekildi */
+    background: radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 100;
+}
+
+
 /* İÇERİK: Tüm harita elemanlarını tutan geniş kutu */
 #map-content {
     position: relative;
-    width: 200%; /* Harita ekranın 2 katı genişliğinde */
+    width: 450%; /* Harita ekranın 2 katı genişliğinde */
     height: 100%;
 }
 
@@ -105,7 +117,8 @@ input:checked + .slider:before { transform: translateX(20px); }
     width: 100%; 
     height: 100%; 
     object-fit: cover; 
-    opacity: 0.4;
+    filter: brightness(1.2) contrast(1.1) saturate(0.85); 
+    opacity: 0.95;
     position: absolute; /* Sabitle */
     top: 0; left: 0;
     z-index: 0;
@@ -123,23 +136,20 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Gidilen Yol (Kalıcı - Parlak Sarı) */
 .map-trail-line {
-    stroke: #ffd700; /* Altın Sarısı */
-    stroke-width: 4; 
-    stroke-dasharray: 10, 10;
-    opacity: 1.0; /* Tam görünür */
-    stroke-linecap: round; 
-    animation: dash-animation 60s linear infinite;
-    filter: drop-shadow(0 0 3px #000); /* Arkasına gölge attık ki belli olsun */
+    stroke: #ffd700;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4)); /* Hafif altın ışığı */
+    stroke-dasharray: 12;
+    animation: dash-animation 40s linear infinite;
 }
 
-/* Gidilebilecek Yollar (Hint - Kesikli Gri/Beyaz) */
+/* Gidilebilecek yolları daha hayaletvari yapalım */
 .map-path-hint {
-     stroke: #cccccc; /* Hafif Gri */
-     stroke-width: 3; /* Biraz kalınlaştırdık */
-     stroke-dasharray: 5, 8;
-     opacity: 0.6; /* Görünürlüğü artırdık */
-     stroke-linecap: round;
-     filter: drop-shadow(0 0 2px #000); /* Arkasına gölge attık */
+    stroke: #1a1a1a; /* Koyu mürekkep rengi */
+    stroke-width: 4; /* Daha kalın ve görünür */
+    stroke-dasharray: 8, 5;
+    opacity: 0.8; /* Daha az şeffaf */
+    filter: drop-shadow(0 0 1px rgba(255,255,255,0.2)); /* Koyu zeminde ayrışması için hafif ışık */
 }
 
 @keyframes dash-animation { to { stroke-dashoffset: -1000; } }
@@ -151,16 +161,20 @@ input:checked + .slider:before { transform: translateX(20px); }
     width: 50px; height: 50px; 
     border-radius: 50%; 
     padding: 0;
-    background: #333; 
+    background: transparent; 
     border: 2px solid #777; 
     z-index: 10; 
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    /* transition'dan transform'u çıkardık veya sabit bıraktık */
+    transition: box-shadow 0.2s, opacity 0.2s; 
     display: flex; justify-content: center; align-items: center;
+    overflow: visible; /* Kar taneleri içinde kalsın */
+    transform: scale(1.2); /* Sabit boyut */
 }
 
+/* Hover durumunda büyümesini engelledik */
 .map-node:hover:not(:disabled) { 
-    transform: scale(1.2); 
+    transform: scale(1.5); 
     box-shadow: 0 0 15px rgba(240, 230, 140, 0.8); 
     z-index: 15;
 }
@@ -168,20 +182,289 @@ input:checked + .slider:before { transform: translateX(20px); }
 .map-node img { width: 70%; height: 70%; pointer-events: none; }
 
 /* Node Renkleri */
-.map-node.start-node { border-color: #fff; background: #555; }
-.map-node.encounter-node { border-color: #ff4d4d; }
-.map-node.campfire-node { border-color: #ffa500; }
-.map-node.choice-node { border-color: #3498db; }
-.map-node.town-node { border-color: #f0e68c; box-shadow: 0 0 10px #f0e68c; }
-.map-node.boss-node { border-color: #ff0000; width: 70px; height: 70px; }
-.map-node.city-node { border-color: #00ff00; width: 70px; height: 70px; }
+.map-node.start-node { border-color: #fff; background: transparent; }
+.map-node.encounter-node { border-color: #ff4d4d; background: transparent; }
+.map-node.campfire-node { border-color: #ffa500; background: transparent; }
+.map-node.choice-node { border-color: #3498db; background: transparent; }
+.map-node.town-node { border-color: #f0e68c; background: transparent; }
+.map-node.boss-node { border-color: #ff4d4d; width: 70px; height: 70px; background: transparent;}
+.map-node.city-node { border-color: #f0e68c; width: 70px; height: 70px; background: transparent; }
 
 /* Durumlar */
-.map-node:disabled { filter: grayscale(100%) brightness(0.5); cursor: not-allowed; border-style: dashed; }
-.map-node.available { filter: none; border-color: #43FF64; box-shadow: 0 0 10px #43FF64; animation: pulse-node 1.5s infinite; }
+.map-node:disabled { filter: grayscale(100%) brightness(0.8); opacity: 0.8; cursor: not-allowed; border-style: dashed;}
+.map-node.available {
+    filter: none;
+    border-color: #43FF64;
+    box-shadow: 0 0 10px #43FF64;
+    animation: none; /* Pulse animasyonu sildik */
+    transform: scale(1);
+}
 .map-node.visited { border-color: #ffd700; opacity: 0.6; }
 
 @keyframes pulse-node { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+/* Biyom Arka Planı (Hover veya Available durumunda) */
+.map-node::before {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 140px; height: 140px;
+    z-index: -1;
+    pointer-events: none;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    
+    /* JS'den gelen değişkeni burada kullanıyoruz */
+    background-image: var(--biome-bg-img);
+    
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0;
+    
+    /* Dark RPG havası için ortak filtreler */
+    filter: brightness(0.8) contrast(1.2);
+}
+
+/* Masaüstü Hover ve Mobil/Genel Aktiflik Durumu */
+.map-node.available:hover::before,
+.map-node.available::before,
+.map-node.current-node::before,
+.map-node.scouted-node::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+}
+
+.map-node:not(.available):hover::before {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+}
+.map-node.available span[class*="-particle"], 
+.map-node.current-node span[class*="-particle"],
+.map-node.scouted-node span[class*="-particle"] {
+    opacity: 1 !important;
+    display: block !important;
+}
+
+/* Biome Efektleri --- */
+/* 1. TÜM PARTİKÜLLERİ VARSAYILAN OLARAK TAMAMEN GİZLE */
+.ash-particle, 
+.cave-particle, 
+.leaf-particle, 
+.snow-particle, 
+.cloud-particle {
+    opacity: 0 !important;
+    display: none !important; /* Hem görünmez hem de işleme girmesinler */
+    pointer-events: none;
+}
+
+/* 2. SADECE AKTİF (AVAILABLE) VEYA ÜSTÜNDE OLUNAN (CURRENT) NODE'LARDA GÖSTER */
+.map-node.available .ash-particle, .map-node.current-node .ash-particle,
+.map-node.available .cave-particle, .map-node.current-node .cave-particle,
+.map-node.available .leaf-particle, .map-node.current-node .leaf-particle,
+.map-node.available .snow-particle, .map-node.current-node .snow-particle,
+.map-node.available .cloud-particle, .map-node.current-node .cloud-particle {
+    opacity: 1 !important;
+    display: block !important; /* Aktif olduğunda canlansınlar */
+}
+
+/* --- ICELAND (Kar Yağışı Efekti) --- */
+/* KAR TANESİ TEMEL STİLİ */
+.snow-particle {
+    position: absolute;
+    top: -10px; /* Node'un tepesinden başlasın */
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: 0; /* Varsayılan olarak gizli */
+    pointer-events: none;
+    z-index: 12;
+    filter: blur(0.3px);
+}
+
+/* Sadece gidilebilir (available) veya üzerinde olduğun node'larda göster */
+.map-node.available .snow-particle,
+.map-node.current-node .snow-particle {
+    opacity: 0.8;
+    animation-name: snow-fall-random;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes snow-fall-random {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    /* Ortada hafifçe sağa/sola savrulsun */
+    50% {
+        transform: translateY(30px) translateX(var(--drift));
+    }
+    90% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(60px) translateX(0);
+        opacity: 0;
+    }
+}
+
+/* Iceland Kar Birikmesi (Current Node için) */
+.biome-iceland.current-node {
+    box-shadow: 
+        0 10px 20px 2px rgba(255, 255, 255, 0.8), 
+        inset 0 -8px 10px rgba(255, 255, 255, 0.4) !important;
+    transition: box-shadow 2s ease-in-out;
+}
+
+/* --- PLAINS (Rüzgar Çizgileri) --- */
+.biome-plains::after {
+    content: "";
+    position: absolute;
+    /* Çizgileri biraz daha uzattık ve kalınlaştırdık */
+    width: 100px;
+    height: 2px; 
+    /* Renk geçişini daha opak (0.8) yaptık */
+    background: linear-gradient(to right, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.1) 10%, 
+        rgba(255, 255, 255, 0.8) 50%, 
+        rgba(255, 255, 255, 0.1) 90%, 
+        transparent 100%
+    );
+    
+    /* Yan çizgileri (box-shadow) daha net ve geniş hale getirdik */
+    box-shadow: 
+        -30px 15px 1.5px rgba(255, 255, 255, 0.5), 
+        30px -15px 1.5px rgba(255, 255, 255, 0.5);
+    
+    /* Bluru azalttık ki çizgiler keskinleşsin */
+    filter: blur(0.8px);
+    top: 50%; 
+    left: 50%;
+    pointer-events: none;
+    z-index: 15;
+    opacity: 0;
+}
+
+/* Aktif node'larda görünürlük artırıldı */
+.biome-plains.available:hover::after,
+.biome-plains.available::after {
+    /* Opacity 1 yaptık (Tam görünürlük) */
+    opacity: 1;
+    animation: wind-bold-flow 2.5s linear infinite;
+}
+
+@keyframes wind-bold-flow {
+    0% {
+        transform: translate(-200%, -50%) scaleX(0.5);
+        opacity: 0;
+    }
+    /* Geçişin ortasında parlama zirveye çıksın */
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(0%, -50%) scaleX(2);
+        opacity: 0;
+    }
+}
+
+/* FOREST: Yapraklar (Sallanarak düşme) */
+.leaf-particle {
+    position: absolute; width: 6px; height: 4px;
+    background: #334d29; /* Koyu yeşil/kahve */
+    border-radius: 2px 50%;
+    opacity: 0; top: -5px; pointer-events: none;
+    animation: leaf-fall linear infinite;
+}
+@keyframes leaf-fall {
+    0% { transform: translateY(0) rotate(0deg) translateX(0); }
+    50% { transform: translateY(30px) rotate(180deg) translateX(15px); }
+    100% { transform: translateY(60px) rotate(var(--rot)) translateX(-5px); }
+}
+
+/* RUINS: Küller ve Kıvılcımlar */
+.ash-particle {
+    position: absolute; width: 2px; height: 2px;
+    background: #bbb; opacity: 0; top: 50%; left: 50%; pointer-events: none;
+    animation: ash-up linear infinite;
+	z-index:15;
+}
+.ash-particle.ember { background: #ffcc00; box-shadow: 0 0 8px #ff4500, 0 0 12px #ffcc00; width: 4px; height:4px; }
+@keyframes ash-up {
+    0% { transform: translate(-50%, 0) scale(1); opacity: 0; }
+    50% { opacity: 1; transform: translate(calc(-50% + 30px), -40px) scale(1.2); }
+    100% { transform: translate(calc(-50% - 20px), -90px) scale(0.5); opacity: 0; }
+}
+.map-node.available .ash-particle, 
+.map-node.current-node .ash-particle { animation: ash-up 3s linear infinite; }
+.map-node.scouted-node .ash-particle { animation: ash-rise 3s linear infinite; }
+
+/* CAVE: Mağara Tozu (Olduğu yerde süzülme) */
+.cave-particle {
+    position: absolute; 
+    width: 7px; height: 7px; /* Boyut büyütüldü */
+    background: rgba(200, 230, 255, 0.5); 
+    border-radius: 50%;
+    filter: blur(2px); /* Sis efekti için blur */
+    pointer-events: none;
+    animation: cave-float ease-in-out infinite;
+    z-index: 15;
+}
+@keyframes cave-float {
+    0%, 100% { transform: translate(0, 0); opacity: 0.2; }
+    50% { transform: translate(10px, -10px); opacity: 0.6; }
+}
+
+.map-node.available .cave-particle, 
+.map-node.current-node .cave-particle { animation: cave-float 5s ease-in-out infinite; }
+.map-node.scouted-node .cave-particle { animation: cave-float 5s ease-in-out infinite; }
+
+/* MOUNTAIN: Sis Bulutları */
+
+.cloud-particle {
+    position: absolute; 
+    width: 120px; height: 120px; /* Daha yuvarlak ve büyük */
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 60%);
+    filter: blur(15px);
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+    transform: translate(-50%, -50%); /* Merkeze sabitle */
+    animation: mist-pulse ease-in-out infinite;
+}
+
+@keyframes mist-pulse {
+    0%, 100% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8) rotate(0deg); 
+    }
+    50% { 
+        opacity: 0.5; 
+        transform: translate(50%, -50%) scale(1.3) rotate(15deg); 
+    }
+}
+
+.map-node.available .cloud-particle, 
+.map-node.current-node .cloud-particle { animation: mist-pulse 6s ease-in-out infinite; }
+.map-node.scouted-node .cloud-particle { animation: mist-pulse 6s ease-in-out infinite; }
+
+/* Eğer node'da biome- ile başlayan bir klas yoksa dekoru gösterme */
+.map-node:not([class*="biome-"])::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Sadece biyom klası olanlarda dekoru etkinleştir */
+.map-node[class*="biome-"]::before {
+    /* Mevcut dekor ayarların (size, transform vb.) */
+}
 
 /* Oyuncu İkonu */
 #player-marker-container { 
@@ -195,8 +478,19 @@ input:checked + .slider:before { transform: translateX(20px); }
 @media (max-width: 768px) {
     /* Harita içeriğini mobilde daha geniş yap ki düğümler arası açılsın */
     #map-content {
-        width: 300%; /* Masaüstünde 200% idi, mobilde 300% olsun */
+        width: 900%; /* Masaüstünde 200% idi, mobilde 300% olsun */
     }
+	
+	#map-display::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 900%; height: 100%;
+    /* Değişiklik: Şeffaf alan %30'dan %60'a çıkarıldı, kenar siyahlığı %85'ten %60'a çekildi */
+    background: radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 100;
+}
 
     .map-node {
         width: 60px; /* Parmakla basmak için büyüttük */
