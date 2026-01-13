@@ -28,6 +28,13 @@ const ENEMY_STATS = {
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp'
     },
+	"İskelet": { 
+        maxHp: 50, attack: 24, defense: 2, xp: 0, 
+        tier: 1, // YENİ
+        idle: 'enemies/skeleton_idle.webp',
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/skeleton_dead.webp'
+    },
 
     // --- TIER 2 ---
     "Goblin Devriyesi": { 
@@ -95,7 +102,7 @@ const ENEMY_STATS = {
 };
 // Düşman Havuzları
 const TIER_ENEMIES = {
-    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası"],
+    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet"],
     2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "İskelet Şövalye", "Gulyabani"],
     4: ["Kaya Golemi", "Orc Fedaisi", "Kemik Golemi"],
@@ -112,3 +119,25 @@ Object.assign(ENEMY_STATS, {
     "Gulyabani": { maxHp: 150, attack: 35, defense: 5, tier: 3, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
     "Kemik Golemi": { maxHp: 300, attack: 28, defense: 20, tier: 4, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] }
 });
+
+window.BIOME_WEIGHTS = {
+    // Düşman İsmi: { biyom_adi: ihtimal_orani }
+    "Zehirli Mantar": { forest: 0.6, plains: 0.2, cave: 0.1, iceland: 0.05, mountain: 0.05, urban: 0.0 },
+    "Orman Örümceği": { forest: 0.5, cave: 0.3, plains: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.0 },
+    "Hırsız Kobold":  { plains: 0.4, forest: 0.3, urban: 0.2, mountain: 0.1, cave: 0.0, iceland: 0.0 },
+    "Kan Yarasası":   { cave: 0.5, urban: 0.2, forest: 0.1, mountain: 0.1, plains: 0.05, iceland: 0.05 },
+    "İskelet":        { urban: 0.4, cave: 0.3, forest: 0.1, plains: 0.1, mountain: 0.1, iceland: 0.0 },
+    "Goblin Devriyesi": { plains: 0.4, forest: 0.4, mountain: 0.1, urban: 0.1, cave: 0.0, iceland: 0.0 },
+    "Kaçak Haydut":   { urban: 0.5, plains: 0.3, forest: 0.1, mountain: 0.1, cave: 0.0, iceland: 0.0 },
+    "Gri Kurt":       { iceland: 0.4, forest: 0.3, plains: 0.2, mountain: 0.1, cave: 0.0, urban: 0.0 },
+    "Yaban Domuzu":   { forest: 0.4, plains: 0.4, mountain: 0.1, iceland: 0.1, cave: 0.0, urban: 0.0 },
+    "Goblin Savaşçısı": { plains: 0.3, urban: 0.3, forest: 0.2, cave: 0.1, mountain: 0.1, iceland: 0.0 },
+    "Kaya Golemi":    { mountain: 0.6, cave: 0.3, plains: 0.1, iceland: 0.0, forest: 0.0, urban: 0.0 },
+    "İskelet Şövalye": { urban: 0.6, cave: 0.2, mountain: 0.1, forest: 0.1, plains: 0.0, iceland: 0.0 },
+    "Gulyabani":      { cave: 0.4, urban: 0.4, forest: 0.1, mountain: 0.1, plains: 0.0, iceland: 0.0 },
+    "Orc Fedaisi":    { mountain: 0.4, urban: 0.3, plains: 0.2, forest: 0.1, cave: 0.0, iceland: 0.0 },
+    "Kemik Golemi":   { urban: 0.4, cave: 0.4, mountain: 0.2, forest: 0.0, plains: 0.0, iceland: 0.0 },
+    "Goblin Şefi":    { urban: 0.7, plains: 0.2, mountain: 0.1, forest: 0.0, cave: 0.0, iceland: 0.0 }
+};
+// Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
+window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };

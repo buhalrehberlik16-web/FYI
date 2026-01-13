@@ -1,9 +1,9 @@
 // map_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM
 
 const MAP_CONFIG = {
-    totalStages: 15, 
+    totalStages: 25, 
     lanes: 3,        
-    townStages: [4, 8, 12]
+    townStages: [4, 9, 14, 19]
 };
 window.GAME_MAP = {
     nodes: [],      // Tüm düğümlerin listesi
@@ -12,9 +12,20 @@ window.GAME_MAP = {
     completedNodes: []   // Oyuncunun geçtiği düğümler
 };
 
-
 // --- HARİTA ÜRETİM (GENERATOR) ---
 let enemiesByStage = {}; // Hangi stage'e hangi düşmanların atandığını tutar
+
+function pickBiomeBasedOnEnemy(enemyName) {
+    const weights = window.BIOME_WEIGHTS[enemyName] || window.DEFAULT_BIOME_WEIGHTS;
+    const rand = Math.random();
+    let cumulative = 0;
+
+    for (const [biome, chance] of Object.entries(weights)) {
+        cumulative += chance;
+        if (rand < cumulative) return biome;
+    }
+    return "plains"; // Fallback
+}
 
 function generateMap() {
 	enemiesByStage = {};
@@ -28,7 +39,7 @@ function generateMap() {
         if (hero.currentAct === 2) {
             mapBg.src = "images/utils/map_background.webp"; // Act 2 harita resmi
         } else {
-            mapBg.src = "images/utils//map_background.webp"; // Act 1 harita resmi
+            mapBg.src = "images/utils//map_background1.webp"; // Act 1 harita resmi
         }
     }
 
@@ -78,27 +89,38 @@ function generateMap() {
         availableLanes.forEach(lane => {
             const nodeType = determineNodeType(stage, lane);
             
-            const jitterX = (Math.random() * 6 - 3); 
-            const waveOffset = Math.sin(stage * 0.5) * 40; 
-            const jitterY = (Math.random() * 16 - 8) + waveOffset; 
+            // 1. Değişkenleri tertemiz başlatalım
+            let nodeEnemy = null;
+            let nodeIsHard = false;
+            let nodeBiome = null; 
+            let imgName = null;
+            
+            // 2. SADECE Düşmanlı Node'lar için Biyom ve Resim atayalım
+            if (nodeType === 'encounter' || nodeType === 'start' || nodeType === 'boss') {
+                const enemyData = (nodeType === 'boss') ? { name: "Goblin Şefi", isHard: true } : getPreDeterminedEnemy(stage);
+                nodeEnemy = enemyData.name;
+                nodeIsHard = enemyData.isHard;
 
+                // Biyom ve Resim ataması sadece bu if bloğu içinde kalmalı!
+                nodeBiome = pickBiomeBasedOnEnemy(nodeEnemy);
+                const variation = Math.floor(Math.random() * 4); 
+                imgName = variation === 0 ? `biome_${nodeBiome}.webp` : `biome_${nodeBiome}${variation}.webp`;
+            }
+
+            // 3. Node objesini oluşturalım
             const node = {
                 id: nodeIdCounter++,
                 stage: stage,
                 lane: lane,
                 type: nodeType,
-                jitterX: jitterX,
-                jitterY: jitterY,
+                biome: nodeBiome,     // Yukarıdaki if'e girmezse null kalır
+                biomeImg: imgName,    // Yukarıdaki if'e girmezse null kalır
+                jitterX: (Math.random() * 6 - 3), 
+                jitterY: (Math.random() * 16 - 8) + (Math.sin(stage * 0.5) * 40), 
                 next: [],
-                enemyName: null,
-                isHard: false
+                enemyName: nodeEnemy,
+                isHard: nodeIsHard
             };
-
-            if (nodeType === 'encounter' || nodeType === 'start') {
-                const enemyData = getPreDeterminedEnemy(stage);
-                node.enemyName = enemyData.name;
-                node.isHard = enemyData.isHard; 
-            }
 
             nodesInThisStage.push(node);
         });
@@ -228,8 +250,28 @@ function renderMap() {
     GAME_MAP.nodes.forEach(node => {
         const btn = document.createElement('button');
         btn.id = `node-${node.id}`;
-        btn.className = `map-node ${node.type}-node`;
+        btn.className = `map-node ${node.type}-node biome-${node.biome}`;
+		
+		// BİYOM KONTROLÜ: Sadece biyom varsa resim ve efekt ata
+    if (node.biome) {
+        btn.classList.add(`biome-${node.biome}`); // Klası şimdi ekle
+        btn.style.setProperty('--biome-bg-img', `url('../images/biomes/${node.biomeImg}')`);
         
+        // Partikülleri sadece biyom varsa oluştur
+        if (node.biome === 'iceland') createSnowParticles(btn);
+        else if (node.biome === 'forest') createLeafParticles(btn);
+        else if (node.biome === 'urban') createAshParticles(btn);
+        else if (node.biome === 'cave') createMistParticles(btn);
+        else if (node.biome === 'mountain') createCloudParticles(btn);
+    } else {
+        // Biyom yoksa (Town, Choice, City) CSS değişkenini temizle
+        btn.style.setProperty('--biome-bg-img', 'none');
+    }
+			
+        if (GAME_MAP.currentNodeId === node.id) {
+			btn.classList.add('current-node'); // Oyuncunun o an durduğu node
+		}
+		
         if (node.isHard) {
             btn.classList.add('hard-encounter');
             btn.title = "Tehlikeli Düşman (Yüksek Ödül)"; 
@@ -237,9 +279,9 @@ function renderMap() {
 
         const baseLeft = (node.stage / (MAP_CONFIG.totalStages - 1)) * 92 + 4;
         let baseTop = 50;
-        if (node.lane === 0) baseTop = 15; 
-        if (node.lane === 1) baseTop = 50;
-        if (node.lane === 2) baseTop = 85; 
+        if (node.lane === 0) baseTop = 10; 
+        if (node.lane === 1) baseTop = 40;
+        if (node.lane === 2) baseTop = 75; 
 
         btn.style.left = `calc(${baseLeft}% + ${node.jitterX}px)`;
         btn.style.top = `calc(${baseTop}% + ${node.jitterY}px)`; 
@@ -333,8 +375,14 @@ function clearTrails() {
 function handleNodeClick(node) {
 	window.CalendarManager.passDay();
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+	// Önceki "current" olanları temizle
+    document.querySelectorAll('.map-node').forEach(n => n.classList.remove('current-node'));
+    // Şimdiki seçilene ekle
+    document.getElementById(`node-${node.id}`).classList.add('current-node');
     GAME_MAP.currentNodeId = node.id;
     GAME_MAP.completedNodes.push(node.id);
+		
+	
 
     processMapEffects();
     drawAllConnections();
@@ -529,6 +577,83 @@ function showCampfireResult(title, text) {
     res.classList.remove('hidden');
     document.getElementById('campfire-result-title').textContent = title;
     document.getElementById('campfire-result-text').innerHTML = text;
+}
+
+
+// BIOME EFEKTLERİ
+function createSnowParticles(parentEl) {
+    const particleCount = 45; // Her node için kar tanesi sayısı
+    for (let i = 0; i < particleCount; i++) {
+        const snow = document.createElement('span');
+        snow.className = 'snow-particle';
+        
+        // Rastgele değerler atayalım
+        const left = Math.random() * 100; // Başlangıç X pozisyonu (%)
+        const delay = Math.random() * 5;  // Başlangıç gecikmesi (s)
+        const duration = 2 + Math.random() * 3; // Düşüş hızı (s)
+        const size = 1 + Math.random() * 2.5; // Kar tanesi boyutu (px)
+        const drift = (Math.random() * 50 - 25); // Havada sağa sola savrulma miktarı (px)
+
+        snow.style.left = `${left}%`;
+        snow.style.width = `${size}px`;
+        snow.style.height = `${size}px`;
+        snow.style.setProperty('--drift', `${drift}px`);
+        snow.style.animationDuration = `${duration}s`;
+        snow.style.animationDelay = `-${delay}s`; // Negatif delay animasyonun ortadan başlamasını sağlar
+
+        parentEl.appendChild(snow);
+    }
+}
+
+function createLeafParticles(parentEl) {
+    for (let i = 0; i < 15; i++) {
+        const leaf = document.createElement('span');
+        leaf.className = 'leaf-particle';
+        leaf.style.left = `${Math.random() * 200 - 50}%`;
+        leaf.style.animationDuration = `${5 + Math.random() * 5}s`;
+        leaf.style.animationDelay = `-${Math.random() * 5}s`;
+        leaf.style.setProperty('--rot', `${Math.random() * 360}deg`);
+        parentEl.appendChild(leaf);
+    }
+}
+
+// RUINS: Uçuşan Küller ve Kıvılcımlar
+function createAshParticles(parentEl) {
+    for (let i = 0; i < 20; i++) {
+        const ash = document.createElement('span');
+        ash.className = 'ash-particle';
+        ash.style.left = `${Math.random() * 140 - 20}%`;
+        ash.style.animationDuration = `${3 + Math.random() * 3}s`;
+        ash.style.animationDelay = `-${Math.random() * 5}s`;
+        // Bazıları turuncu (kıvılcım), bazıları gri (kül) olsun
+        if(Math.random() > 0.6) ash.classList.add('ember'); 
+        parentEl.appendChild(ash);
+    }
+}
+
+// CAVE: Tavandan Sızan Toz ve Polenler (Yavaş ve Kaotik)
+function createMistParticles(parentEl) {
+    for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('span');
+        particle.className = 'cave-particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${5 + Math.random() * 5}s`;
+        particle.style.animationDelay = `-${Math.random() * 10}s`;
+        parentEl.appendChild(particle);
+    }
+}
+
+// MOUNTAIN: Hızlı Geçen Sis Bulutları
+function createCloudParticles(parentEl) {
+    for (let i = 0; i < 3; i++) {
+        const cloud = document.createElement('span');
+        cloud.className = 'cloud-particle';
+        cloud.style.top = `${20 + Math.random() * 60}%`;
+        cloud.style.animationDuration = `${6 + Math.random() * 4}s`;
+        cloud.style.animationDelay = `-${Math.random() * 10}s`;
+        parentEl.appendChild(cloud);
+    }
 }
 
 window.startNextAct = function() {

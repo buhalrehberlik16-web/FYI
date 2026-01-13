@@ -45,7 +45,16 @@ window.applyStatusEffect = function(newEffect) {
 window.addHeroBlock = function(amount) {
     window.heroBlock += amount;
     const display = document.getElementById('hero-display');
-    if(display) showFloatingText(display, `+${amount} Blok`, 'heal');
+    
+    // DİL DESTEĞİ EKLE:
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang].combat; // f_block: "BLOK!" veya "BLOCK!"
+
+    if(display) {
+        // "!" işaretini metinden temizleyerek "+15 BLOK" şeklinde gösteririz
+        const label = lang.f_block.replace('!', ''); 
+        showFloatingText(display, `+${amount} ${label}`, 'heal');
+    }
     updateStats(); 
 };
 
@@ -458,6 +467,14 @@ window.startBattle = function(enemyType) {
     // Data-driven kontrol
     if (stats.isBoss) {
         scaling = window.EventManager.getModifier('boss_scaling');
+		// Log Mesajı
+    if (scaling > 1) {
+        const percent = Math.round((scaling - 1) * 100);
+        writeLog(`⚠️ Boss Karanlık Zamanın Etkisiyle %${percent} GÜÇLENDİ!`);
+    } else if (scaling < 1) {
+        const percent = Math.round((1 - scaling) * 100);
+        writeLog(`✨ Hazırlıksız Yakalandı! Boss normalden %${percent} daha ZAYIF.`);
+    }
     }
 	
     switchScreen(battleScreen);
