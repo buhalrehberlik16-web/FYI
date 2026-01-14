@@ -61,6 +61,8 @@ window.openBuilding = function(type) {
     const modalId = `modal-${type}`;
     const modal = document.getElementById(modalId);
 	
+	
+	
 	 // EVENT KONTROLÜ
     if (window.EventManager.isSystemLocked(type)) {
         const currentLang = window.gameSettings.lang || 'tr';
@@ -70,6 +72,24 @@ window.openBuilding = function(type) {
     }
     
     if (modal) {
+		if (type === 'blacksmith') {
+            const reforgeBtn = document.getElementById('btn-reforge-master');
+            // Eğer bu kasabanın ustası blacksmith değilse butonu gizle
+            if (reforgeBtn) reforgeBtn.classList.toggle('hidden', window.currentTownMaster !== 'blacksmith');
+        }
+
+        if (type === 'alchemist') {
+            const synthesisBtn = document.getElementById('btn-synthesis-master');
+            // Eğer bu kasabanın ustası alchemist değilse butonu gizle
+            if (synthesisBtn) synthesisBtn.classList.toggle('hidden', window.currentTownMaster !== 'alchemist');
+        }
+
+        if (type === 'stable') {
+            const horseBtn = document.getElementById('btn-stable-master');
+            // Eğer bu kasabanın ustası stable değilse butonu gizle
+            if (horseBtn) horseBtn.classList.toggle('hidden', window.currentTownMaster !== 'stable');
+        }
+		
         // Her açılışta orijinal selamlamayı geri getir (Özellikle Han için)
         const currentLang = window.gameSettings.lang || 'tr';
         const lang = window.LANGUAGES[currentLang];
