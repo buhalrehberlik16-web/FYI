@@ -94,6 +94,7 @@ function generateMap() {
             let nodeIsHard = false;
             let nodeBiome = null; 
             let imgName = null;
+			let masterNPC = null;
             
             // 2. SADECE Düşmanlı Node'lar için Biyom ve Resim atayalım
             if (nodeType === 'encounter' || nodeType === 'start' || nodeType === 'boss') {
@@ -106,6 +107,11 @@ function generateMap() {
                 const variation = Math.floor(Math.random() * 4); 
                 imgName = variation === 0 ? `biome_${nodeBiome}.webp` : `biome_${nodeBiome}${variation}.webp`;
             }
+			
+			if (nodeType === 'town') {
+    const masters = ['blacksmith', 'alchemist', 'stable'];
+    masterNPC = masters[Math.floor(Math.random() * masters.length)];
+}
 
             // 3. Node objesini oluşturalım
             const node = {
@@ -115,6 +121,7 @@ function generateMap() {
                 type: nodeType,
                 biome: nodeBiome,     // Yukarıdaki if'e girmezse null kalır
                 biomeImg: imgName,    // Yukarıdaki if'e girmezse null kalır
+				masterNPC: masterNPC, 
                 jitterX: (Math.random() * 6 - 3), 
                 jitterY: (Math.random() * 16 - 8) + (Math.sin(stage * 0.5) * 40), 
                 next: [],
@@ -252,6 +259,17 @@ function renderMap() {
         btn.id = `node-${node.id}`;
         btn.className = `map-node ${node.type}-node biome-${node.biome}`;
 		
+		// --- MASTER NPC GÖRSELİ EKLEME (YENİ YÖNTEM) ---
+    if (node.type === 'town' && node.masterNPC) {
+        btn.classList.add(`master-${node.masterNPC}`);
+        
+        // Butonun içine ayrı bir dekorasyon div'i ekliyoruz
+        const masterDeco = document.createElement('div');
+        masterDeco.className = 'master-decorator';
+        masterDeco.style.backgroundImage = `url('images/npc/master_${node.masterNPC}.webp')`;
+        btn.appendChild(masterDeco);
+    }
+		
 		// BİYOM KONTROLÜ: Sadece biyom varsa resim ve efekt ata
     if (node.biome) {
         btn.classList.add(`biome-${node.biome}`); // Klası şimdi ekle
@@ -271,6 +289,7 @@ function renderMap() {
         if (GAME_MAP.currentNodeId === node.id) {
 			btn.classList.add('current-node'); // Oyuncunun o an durduğu node
 		}
+		
 		
         if (node.isHard) {
             btn.classList.add('hard-encounter');
@@ -404,7 +423,8 @@ function handleNodeClick(node) {
     // DÜZELTME: "Aşama 1" yazısını dile bağla
     document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
     document.getElementById('map-description').textContent = desc;
-
+	
+	window.currentTownMaster = node.masterNPC || null; 
     movePlayerMarkerToNode(node.id);
     updateAvailableNodes();
     triggerNodeAction(node);
