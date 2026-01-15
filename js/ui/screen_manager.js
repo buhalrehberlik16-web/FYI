@@ -1,7 +1,7 @@
 // js/ui/screen_manager.js
 
 window.isCharacterUIAllowed = function() {
-    const forbidden = [startScreen, classSelectionScreen, cutsceneScreen, basicSkillSelectionScreen, gameOverScreen];
+    const forbidden = [startScreen, nameEntryScreen, starterCityScreen, classSelectionScreen, cutsceneScreen, basicSkillSelectionScreen, gameOverScreen];
     const active = document.querySelector('.screen.active');
     return !forbidden.includes(active);
 };
@@ -67,4 +67,5 @@ window.switchScreen = function(targetScreen) {
 
 window.writeLog = function(message) {
     console.log("[Oyun]: " + message.replace(/<[^>]*>?/gm, ''));
+
 };
