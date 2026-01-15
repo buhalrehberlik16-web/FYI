@@ -32,6 +32,44 @@
     border-right: 3px solid #6b5c3b;
     transition: all 0.3s ease;
 }
+/* Başlangıç Şehri Özel Stilleri */
+#building-barracks { top: 40%; left: 30%; }
+#building-elder { top: 35%; left: 65%; }
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    background: #ff4d4d;
+    border-radius: 50%;
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border: 2px solid white;
+}
+
+.starter-city-info {
+    position: absolute;
+    bottom: 15%;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+	z-index:999;
+}
+
+#starter-city-msg {
+    background: rgba(0, 0, 0, 0.85); /* Daha koyu yaptık ki her zeminde okunsun */
+    color: #f0e68c;
+    padding: 15px 40px;
+    border-radius: 8px;
+    display: inline-block;
+    font-size: 1.3rem; /* PC için biraz büyüttük */
+    border: 2px solid #6b5c3b;
+    box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+}
 
 /* --- MOBİL UYUMLULUK --- */
 @media (max-width: 768px) {
@@ -42,6 +80,12 @@
         padding: 5px 15px;
         letter-spacing: 1px;
         border-right-width: 2px;
+    }
+}
+    #starter-city-msg {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        bottom: 80px;
     }
 }
 

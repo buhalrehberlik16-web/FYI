@@ -15,7 +15,7 @@ window.updateGoldUI = function() {
 };
 
 window.switchScreen = function(targetScreen) {
-    const screens = [startScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, cityScreen, basicSkillSelectionScreen];
+    const screens = [startScreen, nameEntryScreen, starterCityScreen, classSelectionScreen, cutsceneScreen, mapScreen, battleScreen, gameOverScreen, campfireScreen, eventScreen, rewardScreen, townScreen, cityScreen, basicSkillSelectionScreen];
     const topBar = document.getElementById('top-info-bar');
     const mainArea = document.getElementById('main-screen-area');
 

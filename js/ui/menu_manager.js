@@ -607,4 +607,8 @@ function updateSelectionUI() {
         }
     }
 }
-window.confirmBasicSkills = function() { if (!selectedAttackKey || !selectedDefenseKey) return; hero.unlockedSkills.push(selectedAttackKey, selectedDefenseKey); hero.equippedSkills[0] = selectedAttackKey; hero.equippedSkills[1] = selectedDefenseKey; if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); switchScreen(mapScreen); writeLog("Savaş tarzı belirlendi."); };
+window.confirmBasicSkills = function() { if (!selectedAttackKey || !selectedDefenseKey) return; hero.unlockedSkills.push(selectedAttackKey, selectedDefenseKey); hero.equippedSkills[0] = selectedAttackKey; hero.equippedSkills[1] = selectedDefenseKey; if (typeof initializeSkillButtons === 'function') initializeSkillButtons(); // DEĞİŞEN KISIM:
+    window.starterCityProgress.skillsChosen = true;
+    switchScreen(window.starterCityScreen); // Şehre geri dön
+    updateStarterCityUI();
+};

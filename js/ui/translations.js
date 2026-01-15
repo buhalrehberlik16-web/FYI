@@ -14,6 +14,34 @@ window.LANGUAGES = {
         continue_game: "DEVAM ET",
         settings: "AYARLAR",
         exit: "ÇIKIŞ",
+		name_entry_title: "KAHRAMANININ ADI NE?",
+		confirm_name: "KADERİNİ ÇİZ",
+		back_to_menu_btn: "GERİ DÖN",
+		
+		// İstatistikler
+		stats_title: "SON MACERA KAYDI",
+		stats_empty: "Henüz bir macera kaydı bulunamadı.",
+		stats_hero: "Kahraman",
+		stats_nodes: "Geçilen Oda",
+		stats_damage_dealt: "Verilen Hasar",
+		stats_damage_taken: "Alınan Hasar",
+		stats_most_met: "En Çok Karşılaşılan",
+		stats_inventory: "Çantadaki Eşyalar",
+		stats_duration: "Süre",
+		stats_minutes: "dk",
+		profile_placeholder: "Karakter İsmi Gir...",
+		save_warning: "Mevcut bir maceran var! Yeni profil oluşturursan eskisi SİLİNECEK. Devam edilsin mi?",
+		btn_stats: "İSTATİSTİKLER",
+		stats_close: "KAPAT",
+		
+		// Tutorial Şehri
+		building_barracks: "KIŞLA",
+		building_elder: "BİLGE",
+		leave_starter_city: "YOLA ÇIK",
+		starter_step_1: "Önce Kışla'ya git ve sınıfını seç.",
+		starter_step_2: "Güzel, şimdi Bilge'den savaş tarzını öğren.",
+		starter_ready: "Hazırsın! Yola çıkma vakti geldi.",
+		choose_class_first: "Önce kışladan bir sınıf seçmelisin!",
 
         // Sınıf Seçimi
         class_selection_title: "Kaderini Belirle",
@@ -377,6 +405,34 @@ window.LANGUAGES = {
         continue_game: "CONTINUE",
         settings: "SETTINGS",
         exit: "EXIT",
+		name_entry_title: "WHAT IS YOUR HERO'S NAME?",
+		confirm_name: "CHOOSE YOUR DESTINY",
+		back_to_menu_btn: "GO BACK",
+		
+		// Tutorial CITY
+		building_barracks: "BARRACKS",
+		building_elder: "ELDER",
+		leave_starter_city: "SET OUT",
+		starter_step_1: "Go to the Barracks first to choose your class.",
+		starter_step_2: "Good, now learn your combat style from the Elder.",
+		starter_ready: "You are ready! Time to set out.",
+		choose_class_first: "You must choose a class from the barracks first!",
+		
+		// Statistics
+		stats_title: "LAST ADVENTURE LOG",
+		stats_empty: "No adventure record found yet.",
+		stats_hero: "Hero",
+		stats_nodes: "Rooms Cleared",
+		stats_damage_dealt: "Damage Dealt",
+		stats_damage_taken: "Damage Taken",
+		stats_most_met: "Most Encountered",
+		stats_inventory: "Final Inventory",
+		stats_duration: "Duration",
+		stats_minutes: "min",
+		profile_placeholder: "Enter Hero Name...",
+		save_warning: "You have an existing journey! Creating a new profile will DELETE the old one. Proceed?",
+		btn_stats: "STATISTICS",
+		stats_close: "CLOSE",
 
         // Class Selection
         class_selection_title: "Choose Your Fate",

@@ -333,6 +333,105 @@
     font-weight: 700;
 }
 
+.name-entry-box {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    background: radial-gradient(circle, rgba(43, 34, 24, 0.4) 0%, transparent 80%);
+    padding: 60px;
+    border-radius: 50%;
+}
+
+.name-title-glow {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: #f0e68c;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(240, 230, 140, 0.5), 2px 2px 4px #000;
+    margin: 0;
+}
+
+/* Input Alanı Tasarımı */
+.name-input-wrapper {
+    position: relative;
+    width: 350px;
+}
+
+#player-nick-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #ffd700;
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    text-align: center;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+}
+
+#player-nick-input::placeholder {
+    color: #3e3221;
+}
+
+.input-underline {
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #6b5c3b, transparent);
+    margin-top: 5px;
+}
+
+#player-nick-input:focus + .input-underline {
+    background: linear-gradient(90deg, transparent, #f0e68c, transparent);
+    box-shadow: 0 0 10px rgba(240, 230, 140, 0.4);
+}
+
+/* Butonlar ve Hizalama */
+.name-actions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.name-confirm-btn {
+    width: 350px !important;
+    height: 65px !important;
+    font-size: 1.3rem !important;
+    letter-spacing: 3px !important;
+}
+
+.name-back-link {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #6b5c3b !important;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: underline;
+}
+
+.name-back-link:hover {
+    color: #f0e68c !important;
+    transform: none !important;
+}
+
+/* Animasyon: Hafifçe belirme */
+.name-entry-box {
+    animation: fadeInName 1s ease-out;
+}
+
+@keyframes fadeInName {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* ============================================================
    --- MOBİL DÜZENLEMELER (RESPONSIVE) ---
    ============================================================ */

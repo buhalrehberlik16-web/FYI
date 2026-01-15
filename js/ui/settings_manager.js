@@ -40,6 +40,8 @@ window.setResolution = function(resString) {
 
 function updateUITexts() {
     const lang = window.LANGUAGES[window.gameSettings.lang];
+	const nickInput = document.getElementById('player-nick-input');
+	if(nickInput) nickInput.placeholder = lang.profile_placeholder;
     
     // HTML'de data-i18n niteliği olan her şeyi bul ve güncelle
     document.querySelectorAll('[data-i18n]').forEach(el => {

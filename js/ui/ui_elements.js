@@ -2,6 +2,7 @@
 
 // --- EKRANLAR ---
 window.startScreen = document.getElementById('start-screen');
+window.nameEntryScreen = document.getElementById('name-entry-screen');
 window.classSelectionScreen = document.getElementById('class-selection-screen');
 window.cutsceneScreen = document.getElementById('cutscene-screen');
 window.mapScreen = document.getElementById('map-screen');
@@ -16,6 +17,7 @@ window.cityScreen = document.getElementById('city-screen');
 window.basicSkillSelectionScreen = document.getElementById('basic-skill-selection-screen');
 window.campfireScreen = document.getElementById('campfire-screen');
 window.eventScreen = document.getElementById('event-screen');
+window.starterCityScreen = document.getElementById('starter-city-screen');
 
 // --- ÜST BAR VE NAVİGASYON ---
 window.topHeroName = document.getElementById('top-hero-name');
