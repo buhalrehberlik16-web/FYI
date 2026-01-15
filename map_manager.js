@@ -393,6 +393,7 @@ function clearTrails() {
 // --- OYUNCU İLERLEME ---
 function handleNodeClick(node) {
 	window.CalendarManager.passDay();
+	StatsManager.trackNode();
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 	// Önceki "current" olanları temizle
     document.querySelectorAll('.map-node').forEach(n => n.classList.remove('current-node'));
@@ -502,6 +503,7 @@ function triggerNodeAction(node) {
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
             let enemy = node.enemyName;
+			if (node.type === 'encounter') StatsManager.trackMonster(node.enemyName);
             
             // Düşman ismini çeviriden al
             const translatedEnemy = lang.enemy_names[enemy] || enemy;

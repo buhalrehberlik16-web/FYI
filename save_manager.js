@@ -3,8 +3,10 @@
 const SAVE_KEY = "RPG_Adventure_SaveGame";
 
 window.saveGame = function() {
+	window.StatsManager.saveToProfile();
     try {
         const saveData = {
+			
             hero: window.hero,
             GAME_MAP: window.GAME_MAP,
             saveDate: new Date().toISOString(),

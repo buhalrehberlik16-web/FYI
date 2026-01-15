@@ -1,5 +1,56 @@
 // main.js - FİNAL VE HATASIZ SÜRÜM
 
+window.starterCityProgress = {
+    classChosen: false,
+    skillsChosen: false
+};
+
+window.openStarterActivity = function(type) {
+    // Mevcut dili al
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+
+    if (type === 'barracks') {
+        switchScreen(window.classSelectionScreen);
+    } else if (type === 'elder') {
+        if (!window.starterCityProgress.classChosen) {
+            // Hardcoded alert yerine dilden çekiyoruz
+            alert(lang.choose_class_first || "Önce kışladan bir sınıf seçmelisin!");
+            return;
+        }
+        openBasicSkillSelection(); 
+    }
+};
+
+window.updateStarterCityUI = function() {
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+
+    const leaveBtn = document.getElementById('btn-leave-starter-city');
+    const msgEl = document.getElementById('starter-city-msg');
+    
+    // Lambaları güncelle
+    document.getElementById('status-barracks').style.background = window.starterCityProgress.classChosen ? "#43FF64" : "#ff4d4d";
+    document.getElementById('status-elder').style.background = window.starterCityProgress.skillsChosen ? "#43FF64" : "#ff4d4d";
+
+    // Mesajları dilden çek
+    if (!window.starterCityProgress.classChosen) {
+        msgEl.textContent = lang.starter_step_1;
+    } else if (!window.starterCityProgress.skillsChosen) {
+        msgEl.textContent = lang.starter_step_2;
+    } else {
+        msgEl.textContent = lang.starter_ready;
+        leaveBtn.classList.remove('hidden');
+        leaveBtn.textContent = lang.leave_starter_city; // Buton yazısını da dilden güncelle
+    }
+};
+
+window.leaveStarterCity = function() {
+    writeLog("Maceran başlıyor...");
+    generateMap(); 
+    switchScreen(window.mapScreen);
+};
+
 function levelUp() {
     if (hero.level >= MAX_LEVEL) return; 
     
@@ -147,6 +198,7 @@ function selectClass(className) {
     if (!config) return;
 
     hero.class = className;
+	StatsManager.initNewRun(hero.playerName, className); // İstatistikleri sıfırla ve başlat
 
     // 1. Temel Statları Kopyala
     for (const [stat, value] of Object.entries(config.startingStats)) {
@@ -167,11 +219,14 @@ function selectClass(className) {
     // UI'ı hemen güncelle (Özellikle U ekranındaki direnç kutuları dolsun)
     updateStats(); 
     
-    startCutscene();
+    // DEĞİŞEN KISIM:
+    window.starterCityProgress.classChosen = true;
+    switchScreen(window.starterCityScreen); // Şehre geri dön
+    updateStarterCityUI();
 }
 
+
 function startCutscene() {
-    // HATAYI ÇÖZEN SATIRLAR: lang değişkenini burada tanımlıyoruz
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
     
@@ -180,37 +235,26 @@ function startCutscene() {
     
     let timer1 = null; let timer2 = null;
     
-    function transitionToMap() {
+    function transitionToCity() {
         if (timer1) clearTimeout(timer1); 
         if (timer2) clearTimeout(timer2);
         
         skipCutsceneButton.onclick = null;
         
-        // "Hazır!" yazısını da dilden alalım
-        cutsceneText.textContent = lang.ready || "Hazır!";
-        
-        // Önce Skill Seçimi
-        if (typeof openBasicSkillSelection === 'function') {
-            openBasicSkillSelection();
-        } else {
-            switchScreen(mapScreen);
-        }
-        
-        const mapDisplay = document.getElementById('map-display');
-        if(mapDisplay) mapDisplay.scrollLeft = 0;
-        
-        // "Savaş tarzını seç" yazısını da dilden alalım
-        writeLog(lang.choose_style || "Savaş tarzını seç."); 
+        // Şehre geçiş yap (screen_manager'da artık listede olduğu için çalışacak)
+        switchScreen(window.starterCityScreen);
+        if(window.updateStarterCityUI) window.updateStarterCityUI(); 
+        writeLog("Başlangıç şehrine ulaşıldı."); 
     }
     
-    skipCutsceneButton.onclick = transitionToMap;
+    skipCutsceneButton.onclick = transitionToCity;
     
     timer1 = setTimeout(() => {
-        // "Harita Yükleniyor" yazısını dilden alıyoruz
         cutsceneText.textContent = lang.map_loading;
-        timer2 = setTimeout(() => { transitionToMap(); }, 1000);
-    }, 1500);
+        timer2 = setTimeout(() => { transitionToCity(); }, 1500);
+    }, 2000);
 }
+
 
 window.addItemToInventory = function(item, amount = 1) {
     // 1. Stackable kontrolü
@@ -286,6 +330,68 @@ window.closeSettings = function() {
     document.getElementById('settings-modal').classList.add('hidden');
 };
 
+// 1. İstatistik Butonu ve invItems Çeviri Mantığı
+document.getElementById('btn-show-stats').onclick = () => {
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const data = StatsManager.loadProfile();
+    const content = document.getElementById('stats-content');
+    
+    if (!data) {
+        content.innerHTML = `<p style='text-align:center;'>${lang.stats_empty}</p>`;
+    } else {
+        const duration = Math.floor((Date.now() - data.startTime) / 60000);
+        const mostMetMonster = data.monsterEncounters ? StatsManager.getMostEncountered(data.monsterEncounters) : "-";
+        const translatedMonster = lang.enemy_names[mostMetMonster] || mostMetMonster;
+
+        
+        const invItems = data.finalInventory.map(key => lang.items[key] || key).join(", ");
+
+        content.innerHTML = `
+            <p><strong>${lang.stats_hero}:</strong> ${data.playerName} (${data.className})</p>
+            <p><strong>${lang.stats_nodes}:</strong> ${data.nodesPassed}</p>
+            <p><strong>${lang.stats_damage_dealt}:</strong> ${data.totalDamageDealt}</p>
+            <p><strong>${lang.stats_damage_taken}:</strong> ${data.totalDamageTaken}</p>
+            <p><strong>${lang.stats_most_met}:</strong> ${translatedMonster}</p>
+            <p><strong>${lang.stats_duration}:</strong> ${duration} ${lang.stats_minutes}</p>
+            <p><strong>${lang.stats_inventory}:</strong> ${invItems || "-"}</p>
+        `;
+    }
+    document.getElementById('modal-stats').classList.remove('hidden');
+};
+
+// 2. Akış Yönetimi
+// Ana Menüden İsim Ekranına Geçiş
+startButton.onclick = () => {
+    switchScreen(window.nameEntryScreen);
+    // Ekran açıldığında otomatik olarak inputa odaklan (Kullanıcı dostu)
+    setTimeout(() => {
+        document.getElementById('player-nick-input').focus();
+    }, 100);
+};
+
+// İsim Ekranından Sınıf Seçimine Geçiş
+document.getElementById('btn-confirm-name').onclick = () => {
+    const input = document.getElementById('player-nick-input');
+    const nick = input.value.trim();
+    if (!nick) return;
+
+    hero.playerName = nick; 
+	
+	// EĞER KAYIT VARSA UYAR
+    if (window.hasSaveGame()) {
+        const currentLang = window.gameSettings.lang;
+        const msg = currentLang === 'tr' ? 
+            "Mevcut bir maceran var! Yeni profil oluşturursan eskisi SİLİNECEK. Devam edilsin mi?" : 
+            "You have an existing journey! Creating a new profile will DELETE the old one. Proceed?";
+        
+        if (!confirm(msg)) return;
+    }
+	
+    startCutscene(); // Önce loading/cutscene
+
+};
+
 
 // --- EVENT LISTENERS ---
 
@@ -356,11 +462,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-
-startButton.addEventListener('click', () => {
-    switchScreen(classSelectionScreen); // Direkt cutscene yerine seçim ekranına git
-});
-
 returnToMenuButton.addEventListener('click', () => {
     initGame(); // Bu fonksiyon zaten GAME_MAP.currentNodeId'yi null yapıyor.
 	// "Devam Et" butonu kontrolü: Kayıt silindiği için artık görünmemeli
@@ -394,8 +495,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. ANA MENÜ VE SEÇİM BUTONLARI
     if (window.startButton) {
-        window.startButton.onclick = () => switchScreen(window.classSelectionScreen);
-    }
+    window.startButton.onclick = () => {
+        const nickInput = document.getElementById('player-nick-input');
+        
+        // 1. Önce içeriği temizleyelim (Sıfırlama)
+        if (nickInput) {
+            nickInput.value = ""; 
+        }
+
+        // 2. Ekranı değiştirelim
+        switchScreen(window.nameEntryScreen);
+
+        // 3. Odaklanma (Focus) - Süreyi biraz artırdık (150ms) ve ZORLA focus yapıyoruz
+        setTimeout(() => {
+            if (nickInput) {
+                nickInput.focus();
+                // Bazı tarayıcılar için imleci sona atma hilesi
+                nickInput.click(); 
+            }
+        }, 150);
+    };
+}
 
     if (window.btnConfirmBasicSkills) {
         window.btnConfirmBasicSkills.onclick = () => {

@@ -373,6 +373,7 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
     if (weakDef) def = Math.floor(def * (1 - weakDef.value));
 
     let finalDmg = Math.max(1, Math.floor(rawDamage - def));
+	StatsManager.trackDamageDealt(finalDmg);
 
     let fIdx = 0;
     function frame() {
@@ -419,6 +420,7 @@ window.handleMonsterAttack = function(attacker, defender) {
     const heroStats = getHeroEffectiveStats();
     let effectiveDef = heroStats.def + (window.isHeroDefending ? window.heroDefenseBonus : 0);
     let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
+	StatsManager.trackDamageTaken(finalDamage);
 
     let fIdx = 0;
     function frame() {
