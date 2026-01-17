@@ -343,7 +343,7 @@
 
 @media (max-width: 768px) {
     /* Pencereleri ekran genişliğine zorla */
-    .stat-window, .skill-book-window, .inventory-window {
+    .stat-window, .inventory-window {
         width: 95vw !important;
         max-height: 90vh;
         padding: 15px;
@@ -376,5 +376,73 @@
 
     .res-grid {
         grid-template-columns: repeat(2, 1fr); /* Dirençler 2 sütun */
+    }
+	.skill-book-window {
+        width: 95vw !important;
+        height: 92vh !important; /* Ekranın çoğunu kaplasın ama taşmasın */
+        padding: 10px !important;
+    }
+
+    /* Tab Butonları (Fervor'un sığması için) */
+    .skill-tabs {
+        gap: 3px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .tab-btn {
+        font-size: 0.55rem !important; /* Yazıları küçült */
+        padding: 6px 2px !important;
+        letter-spacing: 0px !important; /* Harf arasını kapat */
+    }
+
+    /* Skill Kartları */
+    .skill-book-item {
+        width: 100% !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        flex-direction: row; /* İkon ve metin yan yana kalsın */
+        align-items: flex-start !important;
+    }
+
+    .skill-book-icon {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Yazıların birbirine girmesini engelleme */
+    .skill-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .skill-info h4 {
+        font-size: 0.8rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    /* "MISSING POINTS" veya "LEARNED" yazısı */
+    .skill-book-item small {
+        font-size: 0.6rem !important;
+        display: block;
+        margin-bottom: 4px;
+        white-space: nowrap;
+    }
+
+    .skill-info p {
+        font-size: 0.65rem !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Alttaki Kuşanılmış Skill Barı */
+    #skill-book-equipped-bar {
+        padding: 10px !important;
+        gap: 5px !important;
+        margin-top: 5px !important;
+    }
+
+    #skill-book-equipped-bar .menu-slot {
+        width: 40px !important;
+        height: 40px !important;
     }
 }

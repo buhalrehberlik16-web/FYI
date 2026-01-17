@@ -257,6 +257,13 @@
     font-size: 0.9rem; /* Bir tık küçülterek sığmasını sağlıyoruz */
     margin: 0;
     white-space: nowrap; /* Başlığın alt satıra inmesini engeller */
+	color: #f0e68c;
+	border-bottom: 1px solid rgba(240, 230, 140, 0.4); /* Yarı şeffaf altın çizgi */
+    padding-bottom: 6px; /* Yazı ile çizgi arası boşluk */
+    margin-bottom: 8px;  /* Çizgi ile açıklama arası boşluk */
+    width: fit-content;  /* Çizgi sadece yazı kadar uzasın */
+    min-width: 100px;    /* Kısa isimlerde (örn: CUT) çizginin çok cüce kalmaması için */
+    display: block;
 }
 
 .selection-card small {
@@ -264,6 +271,7 @@
     line-height: 1.2;
     font-size: 0.75rem;
     color: #ccc;
+	padding-top:4px;
     /* Eğer açıklama 2 satırdan fazlaysa üç nokta koyar (opsiyonel) */
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -473,13 +481,99 @@
     .class-stats-preview { margin: 5px 0; font-size: 0.75em; }
 
     /* Skill Seçim Ekranı Mobilde */
-    .split-selection-container { flex-direction: column; gap: 20px; }
-    .selection-column h3 { font-size: 1.1em; margin-bottom: 10px; }
-    
-    .menu-main-btn { width: 280px; height: 60px; font-size: 1.2em !important; }
-    .menu-secondary-btn { width: 130px; }
+    /* 1. Ekranı Aşağı Çek ve Ortalı Görünüm Sağla */
+    #basic-skill-selection-screen {
+        padding-top: 70px !important; /* Üst barın çok daha altına aldık */
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        justify-content: flex-start !important;
+        height: 100%;
+        overflow-y: auto !important;
+    }
 
-    .selection-footer { margin-top: 30px; }
+    /* Başlık ve Uyarı Metinlerini Küçülterek Yer Kazanalım */
+    #basic-skill-selection-screen h1 {
+        font-size: 1.1rem !important;
+        margin-bottom: 5px !important;
+        letter-spacing: 2px !important;
+    }
+
+    #basic-skill-selection-screen p {
+        font-size: 0.6rem !important;
+        margin-bottom: 10px !important;
+        line-height: 1.2 !important;
+    }
+
+    /* 2. Sütun Başlıklarını Hizala (Secondary Defense'in kaymasını önler) */
+    .selection-column h3 {
+        font-size: 0.65rem !important;
+        margin-bottom: 12px !important;
+        min-height: 35px; /* İki başlığı da aynı yüksekliğe zorlar */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        line-height: 1.1;
+    }
+
+    .split-selection-container {
+        gap: 8px !important;
+        align-items: flex-start !important;
+        width: 100% !important;
+    }
+
+    /* 3. Skill Kartları - Metinlerin Kesilmesini Kökten Çöz */
+    .selection-card {
+        width: 100% !important;
+        min-height: 90px !important; /* İçeriğe göre uzasın */
+        height: auto !important;
+        padding: 10px 6px !important;
+        gap: 6px !important;
+        display: flex !important;
+        flex-direction: column !important; /* Mobilde ikon üstte, metin altta daha çok yer açar */
+        align-items: center !important;
+        text-align: center !important;
+    }
+
+    .selection-card img {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+    }
+
+    /* İsim ve Alt Çizgi */
+    .selection-card h4 {
+        font-size: 0.7rem !important;
+        margin-bottom: 5px !important;
+        border-bottom: 1px solid rgba(240, 230, 140, 0.4);
+        padding-bottom: 3px;
+        width: 100%; /* Çizgi kartı boydan boya sarsın */
+        display: block !important;
+    }
+
+    /* Açıklama Metni (KESİLMEYİ ENGELLEYEN KISIM) */
+    .selection-card small {
+        font-size: 0.55rem !important;
+        line-height: 1.2 !important;
+        white-space: normal !important; /* Metnin alt satıra geçmesini sağlar */
+        overflow: visible !important;   /* Taşan metni gizlemez */
+        text-overflow: clip !important; /* Üç noktayı kaldırır */
+        display: block !important;
+        height: auto !important;
+        -webkit-line-clamp: unset !important; /* Satır kısıtlamasını kaldırır */
+    }
+
+    /* 4. Alt Buton */
+    .selection-footer {
+        margin-top: 20px !important;
+        padding-bottom: 40px !important;
+    }
+
+    #btn-confirm-basic-skills {
+        width: 90% !important;
+        height: 45px !important;
+        font-size: 0.9rem !important;
+    }
 }
 
 @keyframes titleGlow {

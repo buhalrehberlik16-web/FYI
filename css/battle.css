@@ -106,31 +106,53 @@
 /* --- CANAVAR NİYET (INTENTION) --- */
 .intention-overlay {
     position: absolute; 
-    bottom: 430px; 
+    /* Canavarın kafa hizasına (alt kısımdan yukarıya) yerleştirir */
+    bottom: 420px; 
     left: 50%; 
-    z-index: 40;
-    padding: 12px 18px; 
-    border-radius: 10px; 
-    font-size: 2.2em; 
-    border: 2px solid #f0e68c; 
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.9); 
-    min-width: 70px; 
-    text-align: center;
-    pointer-events: none;
+    z-index: 100;
+    width: 100px; 
+    height: 100px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.6); 
+    border: 0px solid rgba(240, 230, 140, 0.5); 
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 215, 0, 0.2);
+    
+    /* Başlangıç durumu: Görünmez ve aşağıda küçük */
     opacity: 0;
+    visibility: hidden;
     transform: translate(-50%, 20px) scale(0); 
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    visibility: hidden;
+    pointer-events: none;
 }
 
+/* Aktifleştiğinde: Yukarı süzülür ve büyür */
 .intention-overlay.active {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, 0) scale(1.1);
 }
 
-.intention-overlay.attack { background: linear-gradient(135deg, #ff4d4d, #8b0000); color: #fff; }
-.intention-overlay.defend { background: linear-gradient(135deg, #3cb371, #006400); color: #fff; }
+.intention-overlay img {
+    width: 80%;
+    height: 100%;
+    object-fit: contain;
+    /* İkonun arkasındaki beyazlığı temizlemek için (isteğe bağlı) */
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+/* Floating Text için Mor Parlama Stili */
+.skill-text {
+    color: #df9cff !important; /* Açık mor / lila */
+    font-size: 1.8em !important;
+    font-weight: 900 !important;
+    text-shadow: 
+        0 0 10px #a349a4, 
+        0 0 20px #800080, 
+        2px 2px 2px #000 !important;
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+}
 
 /* --- ACTION BAR (ALT KONTROL PANELİ) --- */
 #battle-controls {
@@ -328,10 +350,12 @@
     
     /* KRİTİK: Mobilde İntention Layer Daha Aşağıda */
     .intention-overlay { 
-        bottom: 310px !important; /* Gökyüzünden indirildi */
+        bottom: 290px !important; /* Gökyüzünden indirildi */
         font-size: 1.6em;
         min-width: 55px;
         padding: 8px 12px;
+		width: 70px; 
+		height: 70px;
     }
 
     #battle-controls { height: 40%; padding-bottom: 10px; }
@@ -345,6 +369,30 @@
     .separator { display: none; }
     .basic-skills-container, 
     #skill-bar-container { width: 100%; justify-content: center; gap: 8px; }
+	
+	#turn-counter-box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #6b5c3b;
+    border-radius: 8px;
+    padding: 2px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 25px rgba(0,0,0,1);
+}
+	#turn-count-display {
+    font-size: 1.9em;
+    font-weight: bold;
+    color: #f0e68c;
+    text-shadow: 0 0 15px orange, 2px 2px 2px #000;
+    font-family: 'Cinzel', serif;
+}
+
 }
 
 @media (max-height: 600px) {
