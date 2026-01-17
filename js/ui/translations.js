@@ -173,6 +173,12 @@ window.LANGUAGES = {
 		node_city: "ŞEHİR",
 		hard_enemy_warning: "⚠️ GÜÇLÜ BİR DÜŞMAN HİSSEDİYORSUN!",
 		normal_enemy_spotted: "DÜŞMAN GÖRÜNDÜ.",
+		desc_town: "Güvenli bölge. Burada dinlenebilir ve hazırlık yapabilirsin.",
+		desc_event: "Yolun üzerinde gizemli bir şeyler var...",
+		desc_boss: "BÖLÜM SONU CANAVARI! KAÇIŞIN YOK!",
+		log_enter_town: "🏰 Köye giriş yaptın.",
+		log_leave_town: "Köyden ayrıldın.",
+
 
         // NPC Dialogları
         innkeeper_title: "HANCI",
@@ -257,6 +263,41 @@ window.LANGUAGES = {
             "Kemik Golemi": "Kemik Golemi",
 			"İskelet": "İskelet"
         },
+		
+		enemy_skills: {
+			spore_poison: { name: "ZEHİRLİ SPORLAR", effect: "ZEHİRLENDİN" },
+			fungal_regrow: { name: "MANTAR YENİLENMESİ", effect: "İYİLEŞTİ" },
+			web_trap: { name: "AĞ TUZAĞI", effect: "DONDUN" },
+			chitin_harden: { name: "KABUK SERTLEŞTİRME", effect: "+DEFANS" },
+			pocket_sand: { name: "KUM ATMA", effect: "KÖRLÜK" },
+			cowardly_dash: { name: "KORKAK HAMLE", effect: "+DEFANS" },
+			vampiric_bite: { name: "VAMPİR ISIRIĞI", effect: "CAN ÇALDI" },
+			bat_shriek: { name: "YARASA ÇIĞLIĞI", effect: "-20 ÖFKE" },
+			bone_shatter: { name: "KEMİK KIRAN", effect: "DEFANS 0" },
+			undead_fortitude: { name: "ÖLÜMSÜZ DİRENCİ", effect: "+DEFANS" },
+			goblin_yell: { name: "GOBLİN ÇIĞLIĞI", effect: "+ATAK" },
+			shield_wall: { name: "KALKAN DUVARI", effect: "+DEFANS" },
+			dirty_strike: { name: "KİRLİ VURUŞ", effect: "AĞIR HASAR" },
+			smoke_bomb: { name: "SİS BOMBASI", effect: "KÖRLÜK" },
+			vicious_bite: { name: "VAHŞİ ISIRIK", effect: "-30 ÖFKE" },
+			alpha_howl: { name: "ALFA ULUMASI", effect: "+ATAK" },
+			trample: { name: "EZME", effect: "SERSEM" },
+			thick_hide: { name: "KALIN DERİ", effect: "+DEFANS" },
+			mace_bash: { name: "GÜRZ DARBESİ", effect: "SERSEM" },
+			berserker_rage: { name: "HİDDET", effect: "+ATAK" },
+			cursed_blade: { name: "LANETLİ KILIÇ", effect: "LANETLENDİN" },
+			unholy_armor: { name: "KARANLIK ZIRH", effect: "+DEFANS" },
+			paralyzing_claws: { name: "FELÇ EDEN PENÇE", effect: "STUN" },
+			cannibalize: { name: "YAMYAMLIK", effect: "İYİLEŞTİ" },
+			ground_slam: { name: "YERE VURUŞ", effect: "YIKILDIN" },
+			stone_form: { name: "TAŞ FORMU", effect: "TAM DEFANS" },
+			crushing_blow: { name: "EZİCİ DARBE", effect: "KRİTİK" },
+			iron_will: { name: "DEMİR İRADE", effect: "İYİLEŞTİ" },
+			marrow_drain: { name: "İLİK SÖMÜRME", effect: "CAN ÇALDI" },
+			bone_rebuild: { name: "YENİDEN İNŞA", effect: "İYİLEŞTİ" },
+			chief_command: { name: "ŞEFİN EMRİ", effect: "KORKU" },
+			last_stand: { name: "SON DİRENİŞ", effect: "ÖLÜMSÜZ" }
+		},
 
 		combat: {
             f_block: "BLOK!",
@@ -564,6 +605,11 @@ window.LANGUAGES = {
 		node_city: "CITY",
 		hard_enemy_warning: "⚠️ YOU SENSE A POWERFUL ENEMY!",
 		normal_enemy_spotted: "ENEMY SPOTTED.",
+		desc_town: "Safe zone. You can rest and prepare here.",
+		desc_event: "Something mysterious lies ahead on the path...",
+		desc_boss: "AREA BOSS! THERE IS NO ESCAPE!",
+		log_enter_town: "🏰 Entered the village.",
+		log_leave_town: "Left the village.",
 		
 
         // NPC Dialogues
@@ -646,6 +692,42 @@ window.LANGUAGES = {
             "Kemik Golemi": "Bone Golem",
 			"İskelet": "Skeleton"
         },
+		
+		enemy_skills: {
+			spore_poison: { name: "POISONOUS SPORES", effect: "POISONED" },
+			fungal_regrow: { name: "FUNGAL REGROWTH", effect: "HEALED" },
+			web_trap: { name: "WEB TRAP", effect: "STUNNED" },
+			chitin_harden: { name: "CHITIN HARDEN", effect: "+DEFENSE" },
+			pocket_sand: { name: "POCKET SAND", effect: "BLINDED" },
+			cowardly_dash: { name: "COWARDLY DASH", effect: "+DEFENSE" },
+			vampiric_bite: { name: "VAMPIRIC BITE", effect: "LIFE STEAL" },
+			bat_shriek: { name: "BAT SHRIEK", effect: "-20 RAGE" },
+			bone_shatter: { name: "BONE SHATTER", effect: "DEFENSE 0" },
+			undead_fortitude: { name: "UNDEAD FORTITUDE", effect: "+DEFENSE" },
+			goblin_yell: { name: "GOBLIN YELL", effect: "+ATTACK" },
+			shield_wall: { name: "SHIELD WALL", effect: "+DEFENSE" },
+			dirty_strike: { name: "DIRTY STRIKE", effect: "HEAVY DAMAGE" },
+			smoke_bomb: { name: "SMOKE BOMB", effect: "BLINDED" },
+			vicious_bite: { name: "VICIOUS BITE", effect: "-30 RAGE" },
+			alpha_howl: { name: "ALPHA HOWL", effect: "+ATTACK" },
+			trample: { name: "TRAMPLE", effect: "STUNNED" },
+			thick_hide: { name: "THICK HIDE", effect: "+DEFENSE" },
+			mace_bash: { name: "MACE BASH", effect: "STUNNED" },
+			berserker_rage: { name: "BERSERKER RAGE", effect: "+ATTACK" },
+			cursed_blade: { name: "CURSED BLADE", effect: "CURSED" },
+			unholy_armor: { name: "UNHOLY ARMOR", effect: "+DEFENSE" },
+			paralyzing_claws: { name: "PARALYZING CLAWS", effect: "STUNNED" },
+			cannibalize: { name: "CANNIBALIZE", effect: "HEALED" },
+			ground_slam: { name: "GROUND SLAM", effect: "STUNNED" },
+			stone_form: { name: "STONE FORM", effect: "MAX DEFENSE" },
+			crushing_blow: { name: "CRUSHING BLOW", effect: "CRITICAL" },
+			iron_will: { name: "IRON WILL", effect: "HEALED" },
+			marrow_drain: { name: "MARROW DRAIN", effect: "LIFE STEAL" },
+			bone_rebuild: { name: "BONE REBUILD", effect: "HEALED" },
+			chief_command: { name: "CHIEF'S COMMAND", effect: "FEAR" },
+			last_stand: { name: "LAST STAND", effect: "SHIELD" }
+		},
+		
 		
 		combat: {
             f_block: "BLOCK!",

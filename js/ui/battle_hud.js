@@ -114,15 +114,31 @@ window.animateDamage = function(isHero) {
 
 window.showMonsterIntention = function(action) {
     if (!monsterIntentionOverlay) return;
+
+    // Canavar öldüyse veya aksiyon bittiyse kapat
     if (!action || !monster || monster.hp <= 0) {
         monsterIntentionOverlay.classList.remove('active');
-        setTimeout(() => { if (!monsterIntentionOverlay.classList.contains('active')) monsterIntentionOverlay.innerHTML = ''; }, 400);
         return;
     }
-    monsterIntentionOverlay.classList.remove('attack', 'defend');
-    if (action === 'attack') { monsterIntentionOverlay.innerHTML = '<i class="fas fa-dagger"></i>'; monsterIntentionOverlay.classList.add('attack'); }
-    else if (action === 'defend') { monsterIntentionOverlay.innerHTML = '<i class="fas fa-shield-alt"></i>'; monsterIntentionOverlay.classList.add('defend'); }
-    void monsterIntentionOverlay.offsetWidth;
+
+    const iconPath = "images/enemies/";
+    let finalIcon = "";
+
+    // 1. İkonu belirle
+    if (action === 'attack') {
+        finalIcon = `${iconPath}enemy_attack_intention.webp`;
+    } else if (action === 'defend') {
+        finalIcon = `${iconPath}enemy_defend_intention.webp`;
+    } else {
+        finalIcon = `${iconPath}enemy_skill_intention.webp`;
+    }
+
+    // 2. İçeriği temizle ve yeni resmi bas
+    monsterIntentionOverlay.innerHTML = `<img src="${finalIcon}" alt="intent">`;
+    
+    // 3. Klasları sıfırla ve 'active' ekle
+    monsterIntentionOverlay.classList.remove('active');
+    void monsterIntentionOverlay.offsetWidth; // Reflow hilesi: Animasyonun baştan başlamasını sağlar
     monsterIntentionOverlay.classList.add('active');
 };
 
