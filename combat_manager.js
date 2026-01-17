@@ -23,16 +23,19 @@ window.applyStatusEffect = function(newEffect) {
         // 2. Eğer varsa, değerleri güncelle
         const existing = hero.statusEffects[existingIndex];
         
-        // SÜRE MANTIĞI: Süreleri toplayalım mı yoksa en uzun olanı mı alalım?
-        // Genelde profesyonel oyunlarda en uzun olan alınır (Refresh):
-        existing.turns = Math.max(existing.turns, newEffect.turns);
-        
-        // DEĞER MANTIĞI: Eğer biri %25, diğeri %50 azaltıyorsa, güçlü olanı alalım:
-        if (newEffect.value !== undefined) {
-            existing.value = Math.max(existing.value, newEffect.value);
+        // ZEHİR İÇİN ÖZEL STACK MANTIĞI:
+        if (newEffect.id === 'poison') {
+            existing.value += newEffect.value; // Hasar birikir (3 + 3 = 6)
+            existing.turns += newEffect.turns; // Süre eklenir (2 + 2 = 4)
+            writeLog(`☣️ **Zehir** etkisi şiddetlendi! (Yeni Hasar: ${existing.value})`);
+        } else {
+            // Diğer etkiler için yenileme (Refresh) mantığı:
+            existing.turns = Math.max(existing.turns, newEffect.turns);
+            if (newEffect.value !== undefined) {
+                existing.value = Math.max(existing.value, newEffect.value);
+            }
+            writeLog(`✨ **${existing.name}** etkisi yenilendi.`);
         }
-        
-        writeLog(`✨ **${existing.name}** etkisi yenilendi.`);
     } else {
         // 3. Eğer yoksa, yeni bir etki olarak ekle
         hero.statusEffects.push(newEffect);
@@ -171,25 +174,7 @@ window.getHeroEffectiveStats = function() {
     };
 };
 
-// --- HASAR MOTORU ---
-window.calculateSkillRawDamage = function(attacker, skillData) {
-    const stats = getHeroEffectiveStats();
-    const scaling = skillData.scaling || {};
-    let atkP = (stats.atk || 0) * (scaling.atkMult || 0);
-    let statP = 0;
-    if (scaling.stats) {
-        for (const [stat, mult] of Object.entries(scaling.stats)) {
-            statP += (stats[stat] || hero[stat] || 0) * mult;
-        }
-    }
-    let elementPart = 0;
-    if (scaling.elements && hero.elementalDamage) {
-        for (const [elementName, multiplier] of Object.entries(scaling.elements)) {
-            elementPart += (hero.elementalDamage[elementName] || 0) * multiplier;
-        }
-    }
-    return Math.floor(atkP + statP + elementPart);
-};
+
 
 // --- KİLİT KONTROLÜ ---
 window.checkIfSkillBlocked = function(skillKey) {
@@ -459,7 +444,11 @@ window.handleMonsterAttack = function(attacker, defender) {
 };
 
 window.determineMonsterAction = function() {
-    window.monsterNextAction = Math.random() < 0.7 ? 'attack' : 'defend';
+    // AIManager'ı çağırıp sonucu alıyoruz
+    window.monsterNextAction = AIManager.determineAction(monster, hero, window.combatTurnCount);
+    
+    // UI İkonunu ayarla (Opsiyonel: Skill gelirse farklı ikon göster)
+    showMonsterIntention(window.monsterNextAction);
 };
 
 window.startBattle = function(enemyType) {
@@ -497,6 +486,12 @@ window.startBattle = function(enemyType) {
     window.isHeroDefending = false; window.heroDefenseBonus = 0;
     window.heroBlock = 0; window.combatTurnCount = 1; 
     window.isHeroTurn = false; 
+	
+	// DÜZELTME: Ekrandaki "TUR" yazısını ANINDA 1 yap
+    const turnDisplay = document.getElementById('turn-count-display');
+    if (turnDisplay) {
+        turnDisplay.textContent = window.combatTurnCount;
+    }
 
     hero.statusEffects.forEach(e => { if (e.waitForCombat) e.waitForCombat = false; });
     updateStats(); initializeSkillButtons();
@@ -512,82 +507,133 @@ window.startBattle = function(enemyType) {
 
 window.nextTurn = function() {
     if (checkGameOver()) return;
-	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     
     if (window.isHeroTurn) {
+        // --- 1. TUR BAŞLANGICI VE BLOK/REGEN/ZEHİR İŞLEME ---
         window.combatTurnCount++;
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
         if(turnCountDisplay) turnCountDisplay.textContent = window.combatTurnCount;
+
+        // Blok Azalması
         if (window.heroBlock > 0) {
             window.heroBlock = Math.floor(window.heroBlock * 0.5);
-            if(window.heroBlock === 0) writeLog("🧱 Kalkanın süresi doldu.");
+            if(window.heroBlock === 0) writeLog(lang.log_shield_expired);
         }
         
-        hero.statusEffects.filter(e => e.id === 'regen' && !e.waitForCombat).forEach(() => { 
-            hero.hp = Math.min(hero.maxHp, hero.hp + 10); 
-            showFloatingText(heroDisplayContainer, 10, 'heal'); 
-            writeLog(lang.log_regen);
+        // Regen İşleme
+        hero.statusEffects.filter(e => (e.id === 'regen' || e.id === 'percent_regen') && !e.waitForCombat).forEach((effect) => { 
+            let healAmount = effect.id === 'regen' ? 10 : Math.floor(hero.hp * effect.value);
+            if (healAmount < 1) healAmount = 1;
+            const oldHp = hero.hp;
+            hero.hp = Math.min(hero.maxHp, hero.hp + healAmount); 
+            showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
+            writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP`);
         });
-		hero.statusEffects.filter(e => e.id === 'percent_regen' && !e.waitForCombat).forEach((effect) => { 
-			let healAmount = Math.floor(hero.hp * effect.value); 
-			if (healAmount < 1) healAmount = 1; // En az 1 HP iyileştirsin
 
-			const oldHp = hero.hp;
-			hero.hp = Math.min(hero.maxHp, hero.hp + healAmount); 
-    
-			showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
-			writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP (${lang.log_regen})`);
-		});
+        // ZEHİR İŞLEME (Blok ve Defans Geçer)
+        hero.statusEffects.filter(e => e.id === 'poison' && !e.waitForCombat).forEach((effect) => {
+            hero.hp = Math.max(0, hero.hp - effect.value);
+            showFloatingText(heroDisplayContainer, effect.value, 'damage');
+            writeLog(`☣️ **Zehir Hasarı**: -${effect.value} HP`);
+            animateDamage(true); 
+        });
 
+        // --- 2. STUN KONTROLÜ (KRİTİK NOKTA) ---
+        const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);
+        
+        if (stunEffect) {
+            writeLog(lang.log_stun_skip);
+            showFloatingText(heroDisplayContainer, stunEffect.name, 'damage'); 
+            
+            // Süreleri azalt (Stun'ı 0 yapıp silecek)
+            hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
+            hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
+            updateStats();
+
+            // KRİTİK DÜZELTME: Sırayı devretmeden önce canavara YENİ hamle seçtiriyoruz!
+            // Böylece canavar tekrar web_trap atmak yerine yeni bir zar atar.
+            setTimeout(() => {
+                window.isHeroTurn = false; 
+                determineMonsterAction(); // Canavarın yeni niyetini (intention) belirle
+                setTimeout(nextTurn, 1000); 
+            }, 1000);
+            
+            return; // Fonksiyondan çık, butonları açma
+        }
+
+        // --- 3. NORMAL DURUM SÜRE AZALMASI ---
         hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
         hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
         updateStats(); 
 
-        if (hero.statusEffects.some(e => e.id === 'stun' && !e.waitForCombat)) { 
-            writeLog(lang.log_stun_skip);
-            showFloatingText(heroDisplayContainer, lang.f_stunned, 'damage'); 
-            window.isHeroTurn = false; 
-            setTimeout(nextTurn, 1500); 
-        } else { 
-            determineMonsterAction(); 
-            showMonsterIntention(window.monsterNextAction); 
-            toggleSkillButtons(false); 
-        }
+        // Kahraman hamlesine hazır
+        determineMonsterAction(); 
+        showMonsterIntention(window.monsterNextAction); 
+        toggleSkillButtons(false); 
+
     } else {
-        toggleSkillButtons(true); showMonsterIntention(null); 
-        if (hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat)) { 
+        // --- CANAVAR SIRASI ---
+        toggleSkillButtons(true); 
+        showMonsterIntention(null); 
+        
+        const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
+        if (monsterStun) { 
             writeLog(lang.log_stun_skip);
             showFloatingText(document.getElementById('monster-display'), lang.f_stunned, 'damage'); 
             window.isHeroTurn = true; 
-            setTimeout(nextTurn, 1000); return; 
+            setTimeout(nextTurn, 1000); 
+            return;
         }
+
         setTimeout(() => {
             if (!checkGameOver()) {
-                if (window.monsterNextAction === 'attack') {
+                const action = window.monsterNextAction;
+                if (action === 'attack') {
                     handleMonsterAttack(monster, hero); 
-                } else { 
-                    // DİL AYARLARINI ALALIM
-                    const currentLang = window.gameSettings.lang || 'tr';
-                    const combatLang = window.LANGUAGES[currentLang].combat; // .combat ekledik!
-
-                    window.isMonsterDefending = true; 
-                    
-                    // Defans bonusu hesaplama
-                    window.monsterDefenseBonus = Math.floor(Math.random() * (Math.floor(monster.maxHp * 0.1) - Math.floor(monster.attack / 2) + 1)) + Math.floor(monster.attack / 2); 
-                    
-                    // FLOATING TEXT (Artık 'combatLang' üzerinden çekiyor)
-                    showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal'); 
-                    
-                    // LOG MESAJI (Artık 'combatLang' üzerinden çekiyor)
-                    writeLog(`🛡️ **${monster.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
-                    
-                    window.isHeroTurn = true; 
-                    updateStats(); // Kalkan görselini tetikler
-                    setTimeout(nextTurn, 1000); 
+                } else if (action === 'defend') {
+                    handleMonsterDefend(monster);
+                } else {
+                    const skill = ENEMY_SKILLS_DATABASE[action];
+                    if (skill) {
+                        const sLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].enemy_skills[action];
+                        showFloatingText(document.getElementById('monster-display'), sLang.name, 'skill');
+                        skill.execute(monster, hero);
+                        animateMonsterSkill(); 
+                        updateStats();
+                        window.isHeroTurn = true; // Yetenek bitince turu kahramana ver (Stun kontrolü yukarıda yapılacak)
+                        setTimeout(nextTurn, 1000);
+                    } else {
+                        handleMonsterAttack(monster, hero);
+                    }
                 }
             }
         }, 600);
     }
+};
+
+// YARDIMCI FONKSİYONLAR:
+function handleMonsterDefend(attacker) {
+    const combatLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    window.isMonsterDefending = true;
+    window.monsterDefenseBonus = Math.floor(attacker.attack / 2) + 5;
+    showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal');
+    writeLog(`🛡️ **${attacker.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
+    window.isHeroTurn = true;
+    updateStats();
+    setTimeout(nextTurn, 1000);
+}
+
+window.animateMonsterSkill = function() {
+    // Yeşilden Mora geçiş için hue-rotate ve parlatma
+    monsterDisplayImg.style.transition = "filter 0.3s ease";
+    
+    // hue-rotate(280deg) canavarı mor/pembe tonlarına sokar
+    monsterDisplayImg.style.filter = 'brightness(2.5) saturate(1.5) hue-rotate(280deg) drop-shadow(0 0 15px #800080)';
+    
+    setTimeout(() => { 
+        monsterDisplayImg.style.filter = 'none'; 
+    }, 600);
 };
 
 window.checkGameOver = function() {
@@ -675,8 +721,3 @@ window.checkGameOver = function() {
     return false;
 };
 
-window.getHeroResistances = function() {
-    let r = { ...hero.baseResistances };
-    hero.statusEffects.forEach(e => { if (!e.waitForCombat && e.id === 'resist_fire') r.fire += e.value; });
-    return r;
-};

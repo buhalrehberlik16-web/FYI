@@ -13,7 +13,6 @@ window.GAME_MAP = {
 };
 
 // --- HARİTA ÜRETİM (GENERATOR) ---
-let enemiesByStage = {}; // Hangi stage'e hangi düşmanların atandığını tutar
 
 function pickBiomeBasedOnEnemy(enemyName) {
     const weights = window.BIOME_WEIGHTS[enemyName] || window.DEFAULT_BIOME_WEIGHTS;
@@ -418,8 +417,11 @@ function handleNodeClick(node) {
     };
     
     let desc = "";
-    if (node.isHard) desc = lang.hard_enemy_warning;
-    else if (node.type === 'encounter') desc = lang.normal_enemy_spotted;
+	if (node.isHard) desc = lang.hard_enemy_warning;
+	else if (node.type === 'encounter') desc = lang.normal_enemy_spotted;
+	else if (node.type === 'town') desc = lang.desc_town; // EKLENDİ
+	else if (node.type === 'choice') desc = lang.desc_event; // EKLENDİ
+	else if (node.type === 'boss') desc = lang.desc_boss; // EKLENDİ
     
     // DÜZELTME: "Aşama 1" yazısını dile bağla
     document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
@@ -499,53 +501,52 @@ function updateAvailableNodes() {
 
 // --- AKSİYON TETİKLEME ---
 function triggerNodeAction(node) {
-	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
             let enemy = node.enemyName;
-			if (node.type === 'encounter') StatsManager.trackMonster(node.enemyName);
-            
-            // Düşman ismini çeviriden al
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
-            
-            // DÜZELTME: "Vahşi bir ... belirdi" yazısını dile bağla
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
             document.getElementById('map-description').textContent = appearanceMsg;
-
             startBattle(enemy);
-         
 
         } else if (node.type === 'town') {
-            document.getElementById('map-description').textContent = "Güvenli bölge.";
+            // DÜZELTİLDİ:
+            document.getElementById('map-description').textContent = lang.desc_town;
             enterTown();
         
         } else if (node.type === 'choice') {
-            document.getElementById('map-description').textContent = "Karşına bir şey çıktı.";
+            // DÜZELTİLDİ:
+            document.getElementById('map-description').textContent = lang.desc_event;
             triggerRandomEvent();
+
         } else if (node.type === 'boss') {
-            document.getElementById('map-description').textContent = "BÖLÜM SONU CANAVARI!";
+            // DÜZELTİLDİ:
+            document.getElementById('map-description').textContent = lang.desc_boss;
             startBattle("Goblin Şefi");
-        } else if (node.type === 'city') {
-			writeLog("🏆 Tebriler! Büyük Eldoria şehrine ulaştın.");
-			enterCity();
-}
+        }
+        // Şehir (City) kısmı zaten log basıyor.
     }, 600);
 }
 
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
-	window.saveGame();
-	refreshMerchantStock();
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    window.saveGame();
+    refreshMerchantStock();
     switchScreen(townScreen);
-    writeLog("🏰 Köye giriş yaptın.");
+    
+    // DÜZELTİLDİ:
+    writeLog(lang.log_enter_town);
+
     if(btnLeaveTown) {
         btnLeaveTown.onclick = () => {
-            writeLog("Köyden ayrıldın.");
+            // DÜZELTİLDİ:
+            writeLog(lang.log_leave_town);
             switchScreen(mapScreen);
         };
     }
-    // ARTIK BURADA BİNALARA CLICK EVENTİ ATAMIYORUZ. HTML'DEKİ ONCLICK ÇALIŞIYOR.
 }
 function enterCity() {
     switchScreen(cityScreen);
