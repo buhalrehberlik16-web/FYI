@@ -118,7 +118,7 @@ window.restAtInn = function() {
     if (hero.gold >= cost) {
         hero.gold -= cost;
         hero.hp = hero.maxHp;
-        hero.rage = hero.maxRage;
+        //hero.rage = hero.maxRage;
         updateGoldUI();
         updateStats();
         
@@ -278,4 +278,5 @@ document.addEventListener('click', e => {
         // Diğer modalları (Han, Demirci vb.) dışarı tıklayarak kapatmaya devam edebilir
         e.target.classList.add('hidden');
     }
+
 });
