@@ -82,20 +82,20 @@ function increaseStat(statName) {
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
     if (isInBattle) { writeLog("❌ Savaş sırasında stat puanı dağıtamazsın!"); return; }
 
-    if (hero.statPoints > 0) {
+     if (hero.statPoints > 0) {
         hero.statPoints--;
+        
+        // Sadece temel statı artır, çarpanları getHeroEffectiveStats halledecek
         if (statName === 'str') hero.str++;
         else if (statName === 'dex') hero.dex++;
         else if (statName === 'int') hero.int++;
         else if (statName === 'mp_pow') hero.mp_pow++;
         else if (statName === 'vit') { 
-            hero.vit++; 
-            // VIT formülü game_data'dan gelir (1 VIT = 10 HP)
-            const hpGain = (CLASS_CONFIG && CLASS_CONFIG[hero.class]) ? CLASS_CONFIG[hero.class].vitMultiplier : 10;
-            hero.maxHp += hpGain; 
-            hero.hp += hpGain; 
+            hero.vit++;
+            
         }
-        updateStats(); 
+        
+        updateStats(); // Bu fonksiyon barları ve renkleri yeni statlara göre tazeler
     }
 }
 
@@ -282,6 +282,23 @@ window.addItemToInventory = function(item, amount = 1) {
 
 // --- INIT GAME (TAM SIFIRLAMA) ---
 function initGame() {
+	
+	window.starterCityProgress = {
+        classChosen: false,
+        skillsChosen: false
+    };
+	
+	 // UI noktalarını kırmızıya döndürmek için (Görseli de güncelle)
+    // Eğer o an Starter City ekranındaysak veya oraya gideceksek:
+    const barracksDot = document.getElementById('status-barracks');
+    const elderDot = document.getElementById('status-elder');
+    const leaveBtn = document.getElementById('btn-leave-starter-city');
+    
+    if (barracksDot) barracksDot.style.background = "#ff4d4d";
+    if (elderDot) elderDot.style.background = "#ff4d4d";
+    if (leaveBtn) leaveBtn.classList.add('hidden');
+
+	
     hero.maxHp = 100; hero.hp = hero.maxHp;
     hero.level = 1; hero.xp = 0; 
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
@@ -290,6 +307,12 @@ function initGame() {
     hero.equippedSkills = [null, null, null, null, null, null]; 
     hero.currentAct = 1;
 	CalendarManager.init();
+	
+	const stats = window.getHeroEffectiveStats();
+    hero.maxHp = stats.maxHp;
+    hero.hp = stats.maxHp; 
+    hero.maxRage = stats.maxRage;
+    hero.rage = 0;
 
     hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.elementalDamage = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
@@ -375,6 +398,12 @@ document.getElementById('btn-confirm-name').onclick = () => {
     const input = document.getElementById('player-nick-input');
     const nick = input.value.trim();
     if (!nick) return;
+	
+	 // 1. Bayrakları kesin olarak sıfırla
+    window.starterCityProgress = {
+        classChosen: false,
+        skillsChosen: false
+    };
 
     hero.playerName = nick; 
 	
@@ -388,6 +417,7 @@ document.getElementById('btn-confirm-name').onclick = () => {
         if (!confirm(msg)) return;
     }
 	
+	initGame(); 
     startCutscene(); // Önce loading/cutscene
 
 };
@@ -484,6 +514,21 @@ window.itemver = function(tier = 1) {
     } else {
         alert("Envanterin dolu!");
     }
+};
+
+// Konsoldan test etmek için: window.forceMaster('alchemist') gibi çağırabilirsin.
+window.forceMaster = function(type = 'blacksmith') {
+    // type: 'blacksmith', 'alchemist' veya 'stable'
+    window.currentTownMaster = type;
+    
+    // Eğer şu an haritadaysak, Town ekranına geçiş yap
+    if (typeof enterTown === 'function') {
+        enterTown();
+    } else {
+        switchScreen(townScreen);
+    }
+    
+    console.log(`🛠️ Debug: Bu kasaba için ${type.toUpperCase()} usta olarak atandı.`);
 };
 
 document.addEventListener('DOMContentLoaded', () => {

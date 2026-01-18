@@ -72,45 +72,31 @@ window.getHeroEffectiveStats = function() {
         mp_pow: hero.mp_pow 
     };
     
-    // Dirençleri başlangıç değerleriyle (base) hazırla
     let currentResists = { ...hero.baseResistances };
-    
-    let flatAtkBonus = 0;  // Sabit artışlar (+15 Atak gibi)
-    let flatDefBonus = 0;  // Sabit defanslar (+10 Def gibi)
-    let totalAtkMult = 1.0; // Yüzdesel çarpanlar (1.0 = %100)
+    let flatAtkBonus = 0;  
+    let flatDefBonus = 0;  
+    let totalAtkMult = 1.0; 
 
-    // 2. EKİPMANLARI TARA (Eşyalardan gelen bonusları ekle)
+    // 2. EKİPMANLARI TARA (Eşyalardan gelen bonuslar s objesine eklenir)
     for (const slotKey in hero.equipment) {
         const item = hero.equipment[slotKey];
         if (item && item.stats) {
             for (const statKey in item.stats) {
-                // Eğer bu bir ana stat ise (str, dex vb.)
-                if (s.hasOwnProperty(statKey)) {
-                    s[statKey] += item.stats[statKey];
-                }
-                // Eğer bu bir direnç ise (fire, cold vb.)
-                else if (currentResists.hasOwnProperty(statKey)) {
-                    currentResists[statKey] += item.stats[statKey];
-                }
+                if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
+                else if (currentResists.hasOwnProperty(statKey)) currentResists[statKey] += item.stats[statKey];
             }
         }
     }
 	
-			// 2.1 ÇANTADAKİ PASİF EŞYALARI (CHARMS) TARA
-			hero.inventory.forEach(item => {
-			if (item && item.type === "passive_charm" && item.stats) {
-				for (const statKey in item.stats) {
-					// Dirençleri ekle
-					if (currentResists.hasOwnProperty(statKey)) {
-						currentResists[statKey] += item.stats[statKey];
-					}
-					// Statları ekle (İleride kertenkeleler stat da verirse diye)
-					else if (s.hasOwnProperty(statKey)) {
-						s[statKey] += item.stats[statKey];
-					}
-				}
-			}
-		});
+    // 2.1 ÇANTADAKİ PASİF EŞYALARI TARA
+    hero.inventory.forEach(item => {
+        if (item && item.type === "passive_charm" && item.stats) {
+            for (const statKey in item.stats) {
+                if (currentResists.hasOwnProperty(statKey)) currentResists[statKey] += item.stats[statKey];
+                else if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
+            }
+        }
+    });
 
     // 3. STATUS EFFECT'LERİ TARA (Buff/Debuff)
     hero.statusEffects.forEach(e => {
@@ -118,58 +104,51 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'str_up') s.str += e.value;
             if (e.id === 'dex_up') s.dex += e.value;
             if (e.id === 'int_up') s.int += e.value;
-            
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
-            
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
-            
-            // Eğer bufflardan gelen direnç varsa (örn: resist_fire)
             if (e.id === 'resist_fire') currentResists.fire += e.value;
         }
     });
 
-    // 4. SINIF KURALLARINI UYGULA (Barbar Kuralları)
+    // 4. YENİ SINIF KURALLARINI UYGULA
     const rules = CLASS_CONFIG[hero.class];
     
-    // Ham Atak = (Karakterin Baz Atağı + Sabit Bufflar + Statlardan Gelen Bonus)
+    // HP: Sabit 20 + (Toplam VIT * 5)
+    const finalMaxHp = (rules.baseHp || 20) + (s.vit * (rules.vitMultiplier || 5));
+
+    // MAX RAGE: Sabit 100 + (Toplam INT * 5)
+    const finalMaxRage = 100 + (s.int * 5);
+
+    // RAGE REGEN: Toplam MP * 0.5
+    const finalRageRegen = Math.floor(s.mp_pow * 0.5);
+
+    // ATAK: (Baz 10 + Sabit Bufflar + Stat Bonusu) * Çarpan
     let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s.str * (rules.atkStats.str || 0.5));
     let finalAtk = Math.floor(rawAtk * totalAtkMult);
 
-    // Defans = (Karakterin Baz Defansı + Sabit Bufflar + Statlardan Gelen Bonus)
-    let finalDef = (hero.baseDefense || 1) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
+    // DEFANS: (Baz 0 + Sabit Bufflar + Stat Bonusu)
+    let finalDef = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
 
-    // Pervasız Vuruş (Defansı 0 yapar)
     if (hero.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat)) {
         finalDef = 0;
     }
-
-    // Blok Gücü
-    let finalBlock = Math.floor(s.dex * (rules.blockStats.dex || 0.8));
-	
-	/// 1. Eşyalardan gelen EXTRA Vitality'yi bul (Toplam Vit - Karakterin Kendi Viti)
-    const bonusVitFromItems = s.vit - hero.vit; 
-
-    // 2. Eşya Çarpanını al (item_data içindeki vitToHp: 2)
-    const itemVitMultiplier = window.ITEM_CONFIG.multipliers.vitToHp || 2;
-
-    // 3. Final Max HP = Karakterin Kendi Max HP'si + (Eşya Viti * Eşya Çarpanı)
-    const finalMaxHp = hero.maxHp + (bonusVitFromItems * itemVitMultiplier);
-
 
     // 5. SONUCU DÖNDÜR
     return { 
         atk: Math.max(0, finalAtk), 
         def: Math.max(0, finalDef), 
-        blockPower: Math.max(0, finalBlock),
+        blockPower: Math.floor(s.dex * (rules.blockStats.dex || 0.8)),
         str: s.str, 
         dex: s.dex, 
         int: s.int, 
         vit: s.vit, 
         mp_pow: s.mp_pow,
-		maxHp: finalMaxHp,
-        resists: currentResists, // UI'ın beklediği toplam direnç objesi
+        maxHp: finalMaxHp,
+        maxRage: finalMaxRage,
+        rageRegen: finalRageRegen,
+        resists: currentResists,
         atkMultiplier: totalAtkMult 
     };
 };
@@ -510,6 +489,18 @@ window.nextTurn = function() {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     
     if (window.isHeroTurn) {
+		const stats = getHeroEffectiveStats(); // Güncel çarpanları al
+    
+		// RAGE REGEN UYGULA
+		if (stats.rageRegen > 0) {
+			const oldRage = hero.rage;
+			hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
+			if (hero.rage > oldRage) {
+				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} Öfke kazanıldı.`);
+			}
+		}
+		
+		
         // --- 1. TUR BAŞLANGICI VE BLOK/REGEN/ZEHİR İŞLEME ---
         window.combatTurnCount++;
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
@@ -538,6 +529,8 @@ window.nextTurn = function() {
             writeLog(`☣️ **Zehir Hasarı**: -${effect.value} HP`);
             animateDamage(true); 
         });
+		
+		if (checkGameOver()) return; 
 
         // --- 2. STUN KONTROLÜ (KRİTİK NOKTA) ---
         const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);

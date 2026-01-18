@@ -2,7 +2,7 @@ const MAX_LEVEL = 60;
 
 const CLASS_CONFIG = {
     "Barbar": {
-        startingStats: { str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0 },
+        startingStats: { str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2 },
         // BAŞLANGIÇ DİRENÇLERİ (% olarak)
         startingResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         // BAŞLANGIÇ ELEMENT HASARLARI (Flat/Sabit puan olarak)
@@ -11,9 +11,10 @@ const CLASS_CONFIG = {
         atkStats: { "str": 0.5 },
         defStats: { "dex": 0.34 },
         blockStats: { "dex": 0.8 },
-        vitMultiplier: 10,
+        vitMultiplier: 5,
         strDivisor: 2.0,
-        dexDivisor: 3.0
+        dexDivisor: 3.0,
+		baseHp: 20
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
@@ -45,8 +46,8 @@ window.hero = {
     statPoints: 0, 
     skillPoints: 0,
     currentAct: 1,
-    str: 15, dex: 10, int: 5, vit: 10, mp_pow: 0,
-    baseAttack: 10, baseDefense: 1,
+    str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2,
+    baseAttack: 10, baseDefense: 0,
     baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
 	highestTierDefeated: 1, // Oyun başında 1 olarak başlar
@@ -75,14 +76,14 @@ const EVENT_POOL = [
                 hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true });
             }
         },
-        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+10 XP</span>", debuff: "", action: (hero) => { gainXP(10); } }
+        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+XP</span>", debuff: "", action: (hero) => { gainXP(1); } }
     },
     {
         id: "stone_skin", type: "turn_based", title: "Taşlaşma Büyüsü", desc: "Eski bir parşömen.",
         option1: {
             text: "Büyüyü Oku",
             buff: "5 Tur: <span class='buff'>+10 Defans</span>",
-            debuff: "5 Tur: <span class='debuff'>Yarı Hasar</span>",
+            debuff: "5 Tur: <span class='debuff'>-%50 Hasar</span>",
             action: (hero) => {
                 hero.statusEffects.push({ id: 'def_up', name: 'Taş Deri', turns: 5, value: 10, waitForCombat: true });
                 hero.statusEffects.push({ id: 'atk_half', name: 'Hantal', turns: 5, waitForCombat: true }); 
@@ -92,7 +93,7 @@ const EVENT_POOL = [
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
-        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+4 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(150); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
+        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+2 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(2); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
         option2: { text: "Uzaklaş", buff: "", debuff: "", action: (hero) => { } }
     },
     {
@@ -135,7 +136,7 @@ const EVENT_POOL = [
         },
         option2: { 
             text: "Antrenman Yap (+XP)", 
-            buff: "<span class='buff'>+60 XP</span>", 
+            buff: "<span class='buff'>+XP</span>", 
             debuff: "", 
             action: (hero) => { 
                 const xp = 3;

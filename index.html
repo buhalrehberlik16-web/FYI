@@ -33,6 +33,10 @@
 			</div>
 			<!-- Orta: Menü Butonları (YENİ) -->
     <div id="top-nav-menu">
+		<!-- YENİ AYARLAR BUTONU -->
+		<button id="btn-top-settings" class="nav-btn" title="Ayarlar (ESC)" onclick="openInGameSettings()">
+        <i class="fas fa-cog"></i> <span class="nav-text" data-i18n="nav_settings">AYARLAR</span>
+		</button>
         <button id="btn-open-skills" class="nav-btn" title="Yetenek Kitabı (K)">
             <i class="fas fa-book"></i> <span class="nav-text" data-i18n="nav_skill">Skill (K)</span>
         </button>
@@ -330,12 +334,35 @@
 
             <!-- 6. OLAY (EVENT) -->
             <div id="event-screen" class="screen hidden">
-                <div class="event-content">
-                    <h1 id="event-title" data-i18n="mysterious_altar">Gizemli Sunak</h1>
-                    <p id="event-desc" data-i18n="altar_desc">Eski bir sunak parlıyor.</p>
-                    <div id="event-choices-container"></div>
-                </div>
+    <div class="event-content">
+        
+        <!-- CHOICE EKRANI STAT BARI (NPC sınıflarını kullanmıyoruz, çakışmasın) -->
+        <div class="event-stats-bar">
+            <div class="e-stats-left">
+                <span class="npc-hp-stat"><i class="fas fa-heart"></i> <span class="hp-val">0/0</span></span>
+                <span class="npc-rage-stat"><i class="fas fa-fire"></i> <span class="rage-val">0/0</span></span>
             </div>
+            <div class="e-stats-right">
+                <span class="npc-gold-stat"><i class="fas fa-coins" style="color:gold;"></i> <span class="gold-val">0</span></span>
+            </div>
+        </div>
+
+        <!-- SEÇENEK ALANI -->
+        <div id="event-main-area">
+            <h1 id="event-title" class="name-title-glow" style="font-size: 1.8rem; margin-bottom: 10px;"></h1>
+            <p id="event-desc" style="margin-bottom: 20px; font-style: italic; color: #aaa;"></p>
+            <div id="event-choices-container" class="event-choices-grid"></div>
+        </div>
+
+        <!-- SONUÇ ALANI -->
+        <div id="event-result-area" class="hidden">
+            <h2 data-i18n="event_result_title" class="skill-text">SONUÇ</h2>
+            <div id="event-result-text" style="margin: 30px 0; font-size: 1.2em;"></div>
+            <button class="menu-main-btn" onclick="switchScreen(mapScreen)" style="width:250px;" data-i18n="event_continue_btn">DEVAM ET</button>
+        </div>
+
+    </div>
+</div>
 
             <!-- 7. ÖDÜL (REWARD) -->
             <div id="reward-screen" class="screen hidden">
@@ -991,7 +1018,6 @@
 
         <button onclick="closeSettings()" style="margin-top:20px; width:100%;" data-i18n="back">GERİ</button>
     </div>
-
         </div> <!-- main-screen-area KAPANIŞI -->
         <div id="fade-overlay"></div>
 			<!-- Eşya Bilgi Kutusu (Tooltip) -->
@@ -1002,6 +1028,23 @@
 		<div id="tooltip-stats" class="tooltip-stats"></div>
 			</div>
     </div> <!-- game-container KAPANIŞI -->
+	
+	<!-- OYUN İÇİ DURAKLATMA / AYARLAR MENÜSÜ (Bunu body'nin en altına ekle) -->
+<div id="in-game-menu-modal" class="npc-modal hidden">
+    <div class="stat-window" style="width: 350px; text-align: center; gap: 15px; padding: 30px;">
+        <h2 data-i18n="nav_settings" style="color: #ffd700; margin-bottom: 20px;">AYARLAR</h2>
+        
+        <button class="menu-main-btn" onclick="closeInGameSettings()" style="width: 100%; margin-left:0;" data-i18n="settings_continue">DEVAM ET</button>
+        
+        <button class="menu-secondary-btn" onclick="openSettings()" style="width: 100%; margin-top: 10px;" data-i18n="settings">DİL / ÇÖZÜNÜRLÜK</button>
+        
+        <button class="menu-secondary-btn" onclick="saveAndExitToMenu()" style="width: 100%; color: #ff9800; border-color: #ff9800;" data-i18n="settings_save_exit">KAYDET VE ÇIK</button>
+        
+        <button class="menu-secondary-btn" onclick="window.close()" style="width: 100%; color: #ff4d4d; border-color: #ff4d4d; margin-top: 20px;" data-i18n="exit">OYUNDAN ÇIKIŞ</button>
+        
+        <p style="font-size: 0.7em; color: #666; margin-top: 15px;">v.0.0.5 - Smaug RPG</p>
+    </div>
+</div>
 
     <!-- Scripts -->
 <script src="js/calendar_manager.js"></script>
@@ -1025,6 +1068,7 @@
 <script src="js/ui/battle_hud.js"></script>
 <script src="js/ui/menu_manager.js"></script>
 <script src="js/ui/interaction_ui.js"></script>
+<link rel="stylesheet" href="css/translated.css">
 <!-- 3.1 TOWN NPC KATMANI  -->
 <script src="js/alchemist/transmute_manager.js"></script>
 <script src="js/alchemist/synthesis_manager.js"></script>
