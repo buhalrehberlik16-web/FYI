@@ -92,7 +92,8 @@ function increaseStat(statName) {
         else if (statName === 'mp_pow') hero.mp_pow++;
         else if (statName === 'vit') { 
             hero.vit++;
-            
+			const stats = getHeroEffectiveStats();
+            if (hero.hp > stats.maxHp) hero.hp = stats.maxHp;
         }
         
         updateStats(); // Bu fonksiyon barları ve renkleri yeni statlara göre tazeler
@@ -115,7 +116,7 @@ function learnSkill(skillKey) {
         }
     }
 
-    const cost = skill.data.tier || 1;
+    const cost = skill.data.pointCost !== undefined ? skill.data.pointCost : (skill.data.tier || 1);
 	
 	const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];

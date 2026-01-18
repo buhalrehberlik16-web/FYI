@@ -98,8 +98,8 @@ const EVENT_POOL = [
     },
     {
         id: "adrenaline", type: "node_based", title: "Adrenalin Meyvesi", desc: "Çok nadir bir meyve.",
-        option1: { text: "Meyveyi Ye", buff: "2 Oda: <span class='buff'>+20 Max HP</span>", debuff: "Etki Bitince: <span class='debuff'>-30 Can Kaybı</span>", action: (hero) => { hero.maxHp += 20; hero.hp += 20; hero.mapEffects.push({ id: 'map_hp_boost', name: 'Adrenalin', nodesLeft: 2, val: 20 }); } },
-        option2: { text: "Sakla", buff: "<span class='buff'>+10 HP</span>", debuff: "", action: (hero) => { hero.hp = Math.min(hero.maxHp, hero.hp + 10); } }
+        option1: { text: "Meyveyi Ye", buff: "2 Oda: <span class='buff'>+20 Max HP</span>", debuff: "Etki Bitince: <span class='debuff'>-30 Can Kaybı</span>", action: (hero) => {const stats = getHeroEffectiveStats(); stats.maxHp += 20; hero.hp += 20; hero.mapEffects.push({ id: 'map_hp_boost', name: 'Adrenalin', nodesLeft: 2, val: 20 }); } },
+        option2: { text: "Sakla", buff: "<span class='buff'>+10 HP</span>", debuff: "", action: (hero) => {const stats = getHeroEffectiveStats(); hero.hp = Math.min(stats.maxHp, hero.hp + 10); } }
     },
     {
         id: "blood_pact", type: "permanent", title: "Kan Anlaşması", desc: "Kadim bir varlık fısıldıyor.",
@@ -113,7 +113,7 @@ const EVENT_POOL = [
             buff: "%50: <span class='buff'>Canı Fulle</span>", 
             debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", 
             action: (hero) => { 
-                if (Math.random() > 0.5) { hero.hp = hero.maxHp; writeLog("Şanslısın! Canın fullendi."); } 
+                if (Math.random() > 0.5) { hero.hp = stats.maxHp; writeLog("Şanslısın! Canın fullendi."); } 
                 else { hero.hp = 1; writeLog("Zehir! Canın 1'e düştü."); } 
             } 
         },
@@ -129,8 +129,9 @@ const EVENT_POOL = [
             buff: "<span class='buff'>+25 HP</span>", 
             debuff: "", 
             action: (hero) => { 
-                const heal = 25;
-                hero.hp = Math.min(hero.maxHp, hero.hp + heal); 
+                const stats = getHeroEffectiveStats(); // Güncel sınırı al
+				const heal = 25;
+				hero.hp = Math.min(stats.maxHp, hero.hp + heal); 
                 writeLog(`🔥 Ateş başında dinlendin (+${heal} HP).`);
             } 
         },

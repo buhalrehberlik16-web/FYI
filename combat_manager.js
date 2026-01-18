@@ -76,24 +76,16 @@ window.getHeroEffectiveStats = function() {
     let flatAtkBonus = 0;  
     let flatDefBonus = 0;  
     let totalAtkMult = 1.0; 
+    let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 
-    // 2. EKİPMANLARI TARA (Eşyalardan gelen bonuslar s objesine eklenir)
-    for (const slotKey in hero.equipment) {
-        const item = hero.equipment[slotKey];
+    // 2. EKİPMANLARI VE CHARMLARI TARA
+    const allItems = [...Object.values(hero.equipment), ...hero.inventory.filter(i => i && i.type === "passive_charm")];
+    
+    allItems.forEach(item => {
         if (item && item.stats) {
             for (const statKey in item.stats) {
                 if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
                 else if (currentResists.hasOwnProperty(statKey)) currentResists[statKey] += item.stats[statKey];
-            }
-        }
-    }
-	
-    // 2.1 ÇANTADAKİ PASİF EŞYALARI TARA
-    hero.inventory.forEach(item => {
-        if (item && item.type === "passive_charm" && item.stats) {
-            for (const statKey in item.stats) {
-                if (currentResists.hasOwnProperty(statKey)) currentResists[statKey] += item.stats[statKey];
-                else if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
             }
         }
     });
@@ -106,31 +98,37 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'int_up') s.int += e.value;
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
+            
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
+            
+            // ÖRÜMCEK AĞI DEBUFFI (Burada artık hata vermez)
+            if (e.id === 'debuff_webbed') {
+                totalAtkMult *= (1 - e.value); // Atak %30 azalır
+                totalDefMult *= (1 - e.value); // Defans %30 azalır
+            }
+
             if (e.id === 'resist_fire') currentResists.fire += e.value;
         }
     });
 
-    // 4. YENİ SINIF KURALLARINI UYGULA
+    // 4. HESAPLAMALARI YAP
     const rules = CLASS_CONFIG[hero.class];
     
-    // HP: Sabit 20 + (Toplam VIT * 5)
+    // HP ve RAGE Hesapları
     const finalMaxHp = (rules.baseHp || 20) + (s.vit * (rules.vitMultiplier || 5));
-
-    // MAX RAGE: Sabit 100 + (Toplam INT * 5)
     const finalMaxRage = 100 + (s.int * 5);
-
-    // RAGE REGEN: Toplam MP * 0.5
     const finalRageRegen = Math.floor(s.mp_pow * 0.5);
 
-    // ATAK: (Baz 10 + Sabit Bufflar + Stat Bonusu) * Çarpan
+    // ATAK Hesabı
     let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s.str * (rules.atkStats.str || 0.5));
     let finalAtk = Math.floor(rawAtk * totalAtkMult);
 
-    // DEFANS: (Baz 0 + Sabit Bufflar + Stat Bonusu)
-    let finalDef = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
+    // DEFANS Hesabı (Çarpan artık burada uygulanıyor)
+    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
+    let finalDef = Math.floor(baseDefCalc * totalDefMult);
 
+    // Pervasız Vuruş (Defansı 0 yapar)
     if (hero.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat)) {
         finalDef = 0;
     }
@@ -140,11 +138,7 @@ window.getHeroEffectiveStats = function() {
         atk: Math.max(0, finalAtk), 
         def: Math.max(0, finalDef), 
         blockPower: Math.floor(s.dex * (rules.blockStats.dex || 0.8)),
-        str: s.str, 
-        dex: s.dex, 
-        int: s.int, 
-        vit: s.vit, 
-        mp_pow: s.mp_pow,
+        str: s.str, dex: s.dex, int: s.int, vit: s.vit, mp_pow: s.mp_pow,
         maxHp: finalMaxHp,
         maxRage: finalMaxRage,
         rageRegen: finalRageRegen,
@@ -381,9 +375,24 @@ window.handleMonsterAttack = function(attacker, defender) {
     let attackFrames = stats.attackFrames.map(f => `images/${f}`);
     
     let rawDamage = attacker.attack;
+
+    // 1. CANAVARIN ATAĞINI KONTROL ET (Düşman güçsüzleşmiş mi?)
+    const weakAtk = hero.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
+    if (weakAtk) rawDamage = Math.floor(rawDamage * (1 - weakAtk.value));
+
     const heroStats = getHeroEffectiveStats();
+    
+    // 2. SABİT SAVUNMAYI HESAPLA
     let effectiveDef = heroStats.def + (window.isHeroDefending ? window.heroDefenseBonus : 0);
     let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
+
+    // 3. SİPER (GUARD) KONTROLÜ - Yüzdesel Azaltma Burada Devreye Girer
+    const guardEffect = hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat);
+    if (guardEffect) {
+        // Hasarı yetenekteki değer kadar (%25) düşürür
+        finalDamage = Math.floor(finalDamage * (1 - guardEffect.value));
+    }
+	
 	StatsManager.trackDamageTaken(finalDamage);
 
     let fIdx = 0;
@@ -391,6 +400,7 @@ window.handleMonsterAttack = function(attacker, defender) {
         if (fIdx < attackFrames.length) {
             monsterDisplayImg.src = attackFrames[fIdx]; 
             if (fIdx === 1) { 
+                // BLOK KONTROLÜ
                 if (window.heroBlock > 0) {
                     if (window.heroBlock >= finalDamage) { 
                         writeLog(lang.log_block_full); 
@@ -403,6 +413,7 @@ window.handleMonsterAttack = function(attacker, defender) {
                         window.heroBlock = 0; 
                     }
                 }
+                
                 if (finalDamage > 0) { 
                     defender.hp = Math.max(0, defender.hp - finalDamage); 
                     animateDamage(true); 
@@ -410,7 +421,9 @@ window.handleMonsterAttack = function(attacker, defender) {
                     writeLog(`⚠️ **${attacker.name}**: ${lang.log_monster_hit} (**${finalDamage}**)`);
                     hero.rage = Math.min(hero.maxRage, hero.rage + 5); 
                 }
-                updateStats(); if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
+                updateStats(); 
+                // Tur bitince savunma durumunu sıfırla
+                if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
             }
             fIdx++; setTimeout(frame, 150); 
         } else {
