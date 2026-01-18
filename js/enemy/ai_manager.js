@@ -1,79 +1,70 @@
-// js/ai_manager.js
+// js/enemy/ai_manager.js
 
 window.AIManager = {
     determineAction: function(monster, hero, turn) {
         const stats = ENEMY_STATS[monster.name];
         const hpPercent = monster.hp / monster.maxHp;
-        
-        // --- 1. HAVUZ SEÇİMİ (Atak, Defans, Skill) ---
+        const isAlreadyDefending = window.isMonsterDefending; // Mevcut savunma durumu
+
+        // --- 1. TEMEL HAVUZ AĞIRLIKLARI ---
         let weights = { attack: 50, defend: 30, skill: 20 };
 
-        // Özel Durum: Turn 1 kuralları (Mantar örneği gibi)
-        if (turn === 1 && stats.firstTurnAction) {
-            return stats.firstTurnAction; // Doğrudan skill döndür
-        }
+        if (turn === 1 && stats.firstTurnAction) return stats.firstTurnAction;
 
-        // Dinamik Hesaplama:
+        // --- 2. DİNAMİK HP AYARI ---
         if (hpPercent <= 0.3) {
-            // Kritik Durum: Skill %80'e fırlar
-            weights = { attack: 10, defend: 10, skill: 80 };
+            weights = { attack: 20, defend: 10, skill: 70 };
         } else {
-            // %100 - %30 Arası Doğrusal Artış:
-            // Her %10 kayıpta (0.1) skill şansını yaklaşık %10 artır
             const loss = 1.0 - hpPercent;
-            const boost = Math.floor(loss * 100); 
-            weights.skill += boost;
-            weights.attack -= (boost / 2);
-            weights.defend -= (boost / 2);
+            weights.skill += Math.floor(loss * 50);
+            weights.attack -= Math.floor(loss * 25);
+            weights.defend -= Math.floor(loss * 25);
         }
 
-        // Zarı at
+        // --- 3. AKILLI FİLTRE: Zaten savunmadaysa defans yapma ---
+        if (isAlreadyDefending) {
+            weights.attack += weights.defend; // Defans şansını atağa ekle
+            weights.defend = 0;               // Defans ihtimalini sıfırla
+        }
+
         const chosenPool = this.weightedRandom(weights);
 
-        // --- 2. SKILL SEÇİMİ (Eğer Pool 'skill' çıktıysa) ---
         if (chosenPool === 'skill') {
-            return this.determineWhichSkill(stats.skills, hpPercent);
+            return this.determineWhichSkill(monster, stats.skills, hpPercent, isAlreadyDefending);
         }
 
         return chosenPool;
     },
 
-    determineWhichSkill: function(skills, hpPercent) {
-    // GÜVENLİK KONTROLÜ: Eğer canavarın hiç skilli tanımlanmamışsa
-    if (!skills || !Array.isArray(skills) || skills.length === 0) {
-        console.warn("UYARI: Bu canavarın skilleri tanımlanmamış!");
-        return 'attack'; 
-    }
+    determineWhichSkill: function(monster, skills, hpPercent, isAlreadyDefending) {
+        if (!skills || skills.length === 0) return 'attack';
 
-    // Skilleri Utility ve Survival olarak ayırıyoruz
-    const utilitySkills = skills.filter(s => s.category === 'utility');
-    const survivalSkills = skills.filter(s => s.category === 'survival');
+        const utilitySkills = skills.filter(s => s.category === 'utility');
+        const survivalSkills = skills.filter(s => s.category === 'survival');
 
-    let skillWeights = { utility: 70, survival: 30 };
+        let skillWeights = { utility: 70, survival: 30 };
 
-    if (hpPercent <= 0.4) {
-        skillWeights = { utility: 20, survival: 80 };
-    }
+        // Can azsa survival ağırlığı artsın
+        if (hpPercent <= 0.4) skillWeights = { utility: 30, survival: 70 };
 
-    const chosenCategory = this.weightedRandom(skillWeights);
-    let finalPool = chosenCategory === 'survival' ? survivalSkills : utilitySkills;
+        // AKILLI FİLTRE: Eğer canavar zaten savunma bonusuna sahipse survival basma ihtimalini düşür
+        if (isAlreadyDefending && survivalSkills.length > 0) {
+            skillWeights.utility = 90;
+            skillWeights.survival = 10;
+        }
 
-    // Eğer seçilen kategoride (örn: survival) hiç skill yoksa, diğer havuzu kullan
-    if (finalPool.length === 0) {
-        finalPool = (chosenCategory === 'survival') ? utilitySkills : survivalSkills;
-    }
+        const chosenCategory = this.weightedRandom(skillWeights);
+        let finalPool = chosenCategory === 'survival' ? survivalSkills : utilitySkills;
 
-    // Eğer her iki havuz da boşsa (canavarda hiç skill yoksa) düz atak dön
-    if (finalPool.length === 0) return 'attack';
+        if (finalPool.length === 0) finalPool = (chosenCategory === 'survival') ? utilitySkills : survivalSkills;
+        if (finalPool.length === 0) return 'attack';
 
-    // Rastgele bir skill seç
-    const selected = finalPool[Math.floor(Math.random() * finalPool.length)];
-    return selected.id;
-},
+        return finalPool[Math.floor(Math.random() * finalPool.length)].id;
+    },
 
     weightedRandom: function(weights) {
         let total = 0;
-        for (let key in weights) total += Math.max(0, weights[key]); // Negatif olmasın
+        for (let key in weights) total += Math.max(0, weights[key]);
         let rand = Math.random() * total;
         let sum = 0;
         for (let key in weights) {

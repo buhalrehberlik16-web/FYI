@@ -116,27 +116,35 @@ window.restAtInn = function() {
     const lang = window.LANGUAGES[currentLang];
     
     if (hero.gold >= cost) {
+        // --- BAŞARI DURUMU ---
         hero.gold -= cost;
-        hero.hp = hero.maxHp;
-        //hero.rage = hero.maxRage;
+        
+        // Dinamik limitleri al ve fulle
+        const stats = getHeroEffectiveStats();
+        hero.hp = stats.maxHp;  
+
         updateGoldUI();
         updateStats();
         
         dialogue.textContent = lang.rest_success;
-        dialogue.style.color = "#43FF64"; // Yeşil
+        dialogue.style.color = "#43FF64";
+
+        // KRİTİK: Sadece para varsa gün atlar
+        window.CalendarManager.passDay(); 
+
     } else {
+        // --- BAŞARISIZLIK DURUMU ---
         dialogue.textContent = lang.rest_fail;
-        dialogue.style.color = "#ff4d4d"; // Kırmızı
+        dialogue.style.color = "#ff4d4d";
+        // Gün atlatma kodunu buraya koymadığımız için hiçbir şey değişmez.
     }
 
-    // 3 SANİYE SONRA ESKİ HALİNE DÖN
     setTimeout(() => {
         if (dialogue) {
             dialogue.textContent = lang.innkeeper_hello;
-            dialogue.style.color = ""; // Rengi normale döndür
+            dialogue.style.color = ""; 
         }
     }, 3000);
-	window.CalendarManager.passDay();
 };
 
 // 3. Han: İçecek Al

@@ -29,13 +29,19 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- ORMAN ÖRÜMCEĞİ ---
     "web_trap": {
-    execute: (monster, hero) => {
-        const lang = ENEMY_SKILLS_DATABASE.getLang();
-        const skillLang = lang.enemy_skills.web_trap;
-        // turns: 1 olması yeterlidir, nextTurn kontrolü turu atlatır.
-        applyStatusEffect({ id: 'stun', name: skillLang.effect, turns: 1, resetOnCombatEnd: true });
-        writeLog(`🕸️ **${monster.name}**: ${skillLang.name}`);
-    }
+        execute: (monster, hero) => {
+            const lang = ENEMY_SKILLS_DATABASE.getLang();
+            const skillLang = lang.enemy_skills.web_trap;
+            // Artik Stun degil, 2 tur boyunca %30 ATK ve %30 DEF azaltma (Debuff)
+            applyStatusEffect({ 
+                id: 'debuff_webbed', 
+                name: skillLang.effect, 
+                turns: 2, 
+                value: 0.30, 
+                resetOnCombatEnd: true 
+            });
+            writeLog(`🕸️ **${monster.name}**: ${skillLang.name} (Saldırı ve Savunman %30 azaldı!)`);
+        }
     },
     "chitin_harden": {
         execute: (monster, hero) => {
@@ -185,9 +191,11 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.trample;
-            applyStatusEffect({ id: 'stun', name: 'Stun', turns: 1, resetOnCombatEnd: true });
-            showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
-            writeLog(`🐗 **${monster.name}**: ${skillLang.name}`);
+            // Stun yerine yüksek hasar ve 1 tur zırh kırma
+            const dmg = 20;
+            hero.hp = Math.max(0, hero.hp - dmg);
+            applyStatusEffect({ id: 'debuff_enemy_def', name: 'Sarsıldı', turns: 1, value: 0.5, resetOnCombatEnd: true });
+            writeLog(`🐗 **${monster.name}**: ${skillLang.name} (${dmg} Hasar + Defansın düştü!)`);
         }
     },
     "thick_hide": {

@@ -454,8 +454,9 @@ window.renderSkillBookList = function() {
             ? lang.skills[key] 
             : { name: skill.data.name, desc: skill.data.menuDescription };
 
-        const canAfford = hero.skillPoints >= skill.data.tier;
-        const treeMet = checkSkillTreeRequirement(skill.data.category, skill.data.tier);
+        const actualCost = skill.data.pointCost !== undefined ? skill.data.pointCost : skill.data.tier;
+		const canAfford = hero.skillPoints >= actualCost;
+		const treeMet = checkSkillTreeRequirement(skill.data.category, skill.data.tier);
         const item = document.createElement('div');
         item.className = `skill-book-item ${isLearned ? '' : 'locked'}`;
 		
@@ -464,8 +465,10 @@ window.renderSkillBookList = function() {
         
         // Burada lang değişkeni artık tanımlı olduğu için hata vermeyecek
         let action = isLearned ? `<small style="color:#43FF64; font-weight:bold;">${lang.learned_status}</small>` : 
-             (isInBattle ? `<small style="color:orange; font-weight:bold;">${lang.battle_lock_warning}</small>` : 
-             (canAfford && treeMet ? `<button class="btn-learn-skill" onclick="learnSkill('${key}')">+</button>` : `<small style="color:#777;">${lang.missing_points}</small>`));
+         (isInBattle ? `<small style="color:orange; font-weight:bold;">${lang.battle_lock_warning}</small>` : 
+         (canAfford && treeMet ? 
+            `<button class="btn-learn-skill" onclick="learnSkill('${key}')">${actualCost} ${lang.sp_mean}</button>` : 
+            `<small style="color:#777;">${actualCost} ${lang.sp_required}</small>`)); // DÜZELTİLDİ
 
         // Metinleri skillTranslation içinden alıyoruz
         item.innerHTML = `
