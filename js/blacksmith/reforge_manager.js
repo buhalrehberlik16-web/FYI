@@ -86,9 +86,15 @@ function renderReforgeUI() {
         const fragTxt = lang.fragments_label || (currentLang === 'tr' ? "Parça" : "Fragments");
 
         costDiv.innerHTML = `
-            <div id="cost-gold">🪙 ${goldTxt}: <span style="color:${hasGold ? '#43FF64':'#ff4d4d'}">${goldReq}</span></div>
-            <div id="cost-fragments">💎 ${fragTxt}: <span style="color:${hasFrags ? '#43FF64':'#ff4d4d'}">${fragReq}</span></div>
-        `;
+    <div id="cost-gold">
+        <i class="fas fa-coins" style="color:gold;"></i> 
+        <span>${goldTxt}: <span style="color:${hasGold ? '#43FF64':'#ff4d4d'}">${goldReq}</span></span>
+    </div>
+    <div id="cost-fragments">
+        <img src="items/images/drop_items/salvage_jewelry.webp" class="inline-icon"> 
+        <span>${fragTxt}: <span style="color:${hasFrags ? '#43FF64':'#ff4d4d'}">${fragReq}</span></span>
+    </div>
+`;
         
         // Butonu sadece her şey tamamsa aç
         btnDo.disabled = !rPropertyToRemove || !hasGold || !hasFrags;

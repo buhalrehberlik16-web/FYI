@@ -175,10 +175,10 @@ window.updateNPCStatsDisplay = function() {
     const goldDisplays = document.querySelectorAll('.npc-gold-stat .gold-val');
 
     // Effective Stats'tan güncel Max HP'yi alalım
-    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp };
+    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp, maxRage: hero.maxRage };
 
     hpDisplays.forEach(el => el.textContent = `${hero.hp}/${effective.maxHp}`);
-    rageDisplays.forEach(el => el.textContent = `${hero.rage}/${hero.maxRage}`);
+    rageDisplays.forEach(el => el.textContent = `${hero.rage}/${effective.maxRage}`); // maxRage fix
     goldDisplays.forEach(el => el.textContent = hero.gold);
 };
 
@@ -195,67 +195,81 @@ window.showCampfireResult = function(title, text) {
     campfireResultTitle.textContent = title; campfireResultText.textContent = text;
 };
 
+let isEventProcessing = false; // Sayfanın en üstünde tanımlayabilirsin
+
 window.triggerRandomEvent = function() {
+    if (isEventProcessing) return; // Eğer işlem sürüyorsa fonksiyondan çık
+    
+    updateNPCStatsDisplay();
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
     
-    console.log("DEDEKTİF: Şu anki dil:", currentLang); // KONSOLDA GÖRÜRSÜN
-
     switchScreen(eventScreen);
-    eventChoicesContainer.innerHTML = ''; 
+    
+    // UI Sıfırlama
+    document.getElementById('event-main-area').classList.remove('hidden');
+    document.getElementById('event-result-area').classList.add('hidden');
+    const container = document.getElementById('event-choices-container');
+    container.innerHTML = ''; 
+    isEventProcessing = false; // Yeni event için kilidi aç
     
     const evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
     const t = lang.events[evt.id];
 
-    // Eğer çeviri bulunamazsa (Hata koruması)
-    if (!t) {
-        console.error("HATA: Çeviri dosyası bulunamadı! ID:", evt.id);
-        eventTitle.textContent = evt.title;
-        eventDesc.textContent = evt.desc;
-    } else {
-        eventTitle.textContent = t.title;
-        eventDesc.textContent = t.desc;
-    }
+    document.getElementById('event-title').textContent = t ? t.title : evt.title;
+    document.getElementById('event-desc').textContent = t ? t.desc : evt.desc;
 
     const createBtn = (opt, optKey) => {
+        if (!opt) return;
         const b = document.createElement('button');
         b.className = 'event-btn';
-        
-        // KRİTİK: Burası t[optKey] üzerinden dilden çekmeli!
         const btnText = t ? t[optKey] : opt.text;
         const bText = t ? t[optKey + "_b"] : "";
         const dText = t ? t[optKey + "_d"] : "";
 
-        b.innerHTML = `<span class="choice-title">${btnText}</span>
-                       <span class="choice-detail buff">${bText}</span>
-                       <span class="choice-detail debuff">${dText}</span>`;
+        b.innerHTML = `
+            <span class="choice-title">${btnText}</span>
+            <div class="choice-details">
+                <span class="choice-detail buff">${bText}</span>
+                <span class="choice-detail debuff">${dText}</span>
+            </div>`;
         
-        b.onclick = () => { 
+        b.onclick = () => {
+            if (isEventProcessing) return; // Çift tıklama kilidi
+            isEventProcessing = true;
+
+            // 1. BUTONLARI ANINDA SİL (Görsel ve mantıksal olarak tıklamayı bitirir)
+            container.innerHTML = '';
+            document.getElementById('event-main-area').classList.add('hidden');
+
+            // 2. Aksiyonu Uygula
             opt.action(hero); 
-            updateStats(); 
-            switchScreen(mapScreen); 
+            
+            // 3. UI'ı Güncelle
+            updateStats();
+            updateNPCStatsDisplay();
+            
+            // 4. Sonuç Ekranını Göster
+            const resultArea = document.getElementById('event-result-area');
+            const resultTextEl = document.getElementById('event-result-text');
+            
+            resultTextEl.innerHTML = `
+                <span style="color:#ffd700; font-size:1.4em;">${btnText}</span>
+                <br><br>
+                <span style="color:#fff;">${lang.event_applied_msg}</span>
+            `;
+            
+            resultArea.classList.remove('hidden');
+            
+            // Kaydet ve Kilidi bir sonraki oda için hazırla
             if(window.saveGame) window.saveGame();
+            isEventProcessing = false; 
         };
-        eventChoicesContainer.appendChild(b);
+        container.appendChild(b);
     };
 
     createBtn(evt.option1, 'opt1');
-
-    if (evt.type === 'permanent' && Math.random() < 0.30) {
-        const fleeBtn = document.createElement('button');
-        fleeBtn.className = 'event-btn';
-        fleeBtn.innerHTML = `<span class="choice-title">${lang.events.flee_option}</span>
-                             <span class="choice-detail debuff">${lang.events.flee_debuff}</span>`;
-        fleeBtn.onclick = () => { 
-            hero.hp = Math.max(1, hero.hp - 10); 
-            updateStats(); 
-            switchScreen(mapScreen); 
-            if(window.saveGame) window.saveGame();
-        };
-        eventChoicesContainer.appendChild(fleeBtn);
-    } else { 
-        createBtn(evt.option2, 'opt2'); 
-    }
+    createBtn(evt.option2, 'opt2');
 };
 
 document.addEventListener('click', e => {
@@ -278,5 +292,4 @@ document.addEventListener('click', e => {
         // Diğer modalları (Han, Demirci vb.) dışarı tıklayarak kapatmaya devam edebilir
         e.target.classList.add('hidden');
     }
-
 });

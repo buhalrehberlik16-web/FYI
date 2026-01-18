@@ -54,7 +54,7 @@ window.updateStatScreen = function() {
 
     // "Stabil" değer (İtemler var ama Skill Buffları yok)
     const stableAtk = (hero.baseAttack || 10) + itemAtkBonus + Math.floor(itemOnlyStr * (rules.atkStats.str || 0.5));
-    const stableDef = (hero.baseDefense || 1) + itemDefBonus + Math.floor(itemOnlyDex * (rules.defStats.dex || 0.34));
+    const stableDef = (hero.baseDefense || 0) + itemDefBonus + Math.floor(itemOnlyDex * (rules.defStats.dex || 0.34));
 
     // 2. Üst Bilgiler
     statName.textContent = hero.playerName; 
@@ -67,22 +67,23 @@ window.updateStatScreen = function() {
     if (statXp) statXp.textContent = `%${Math.floor(xpPercent)}`;
 
     statHp.textContent = `${hero.hp} / ${effective.maxHp}`;
-    if (statRage) statRage.textContent = `${hero.rage} / ${hero.maxRage}`;
+    if (statRage) statRage.textContent = `${hero.rage} / ${effective.maxRage}`;
 
     // 3. SAVAŞ STATLARI (ATAK VE DEFANS) - Sadece Skill/Choice etkisine duyarlı
     const applyEffectColor = (el, current, stable) => {
-        el.textContent = current;
-        if (current > stable) {
-            el.style.color = "#43FF64"; // Skill/Choice Buff varsa YEŞİL
-            el.style.textShadow = "0 0 10px rgba(67, 255, 100, 0.5)";
-        } else if (current < stable) {
-            el.style.color = "#ff4d4d"; // Skill/Choice Debuff varsa KIRMIZI
-            el.style.textShadow = "0 0 10px rgba(255, 77, 77, 0.5)";
-        } else {
-            el.style.color = ""; // Sadece item varsa veya etki yoksa NORMAL
-            el.style.textShadow = "";
-        }
-    };
+    el.textContent = current;
+    // Eğer bir "Savunma Sıfırlama" debuff'ı yoksa ve değer 0'dan büyükse kırmızı yapma
+    const hasDefPenalty = hero.statusEffects.some(e => e.id === 'defense_zero');
+
+    if (current > stable) {
+        el.style.color = "#43FF64"; // Buff varsa YEŞİL
+    } else if (current < stable || (hasDefPenalty && el === statDef)) {
+        el.style.color = "#ff4d4d"; // Gerçek bir düşüş varsa KIRMIZI
+    } else {
+        el.style.color = "#ffd700"; // Normal durum (Altın/Sarı)
+    }
+};
+
 
     applyEffectColor(statAtk, effective.atk, stableAtk);
     applyEffectColor(statDef, effective.def, stableDef);

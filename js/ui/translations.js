@@ -159,6 +159,9 @@ window.LANGUAGES = {
         resolution: "ÇÖZÜNÜRLÜK",
         res_fit: "Ekrana Uydur (Fit)",
         back: "GERİ",
+		nav_settings: "AYARLAR",
+		settings_continue: "DEVAM ET",
+		settings_save_exit: "KAYDET VE ANA MENÜYE DÖN",
 		
 		// Harita LOG
 		map_start_title: "MACERAYA BAŞLA",
@@ -355,18 +358,18 @@ window.LANGUAGES = {
                 title: "Öfke İksiri", 
                 desc: "Yerde fokurdayan kırmızı bir şişe buldun.",
                 opt1: "İç (Riskli Güç)", opt1_b: "3 Tur: +15 Saldırı", opt1_d: "3 Tur: TÜM İyileşmeler Kilitli",
-                opt2: "Dök (Güvenli)", opt2_b: "+10 XP", opt2_d: ""
+                opt2: "Dök (Güvenli)", opt2_b: "+XP", opt2_d: ""
             },
             stone_skin: { 
                 title: "Taşlaşma Büyüsü", 
                 desc: "Eski bir parşömen.",
-                opt1: "Büyüyü Oku", opt1_b: "5 Tur: +10 Defans", opt1_d: "5 Tur: Yarı Hasar",
+                opt1: "Büyüyü Oku", opt1_b: "5 Tur: +10 Defans", opt1_d: "5 Tur: -%50 Hasar",
                 opt2: "Parşömeni Yak", opt2_b: "+5 Rage", opt2_d: ""
             },
             cursed_gold: { 
                 title: "Yorgunluk Laneti", 
                 desc: "Lanetli olduğu belli olan bir altın yığını.",
-                opt1: "Altınları Al", opt1_b: "Anında: +4 XP", opt1_d: "2 Oda: %60 Hasar",
+                opt1: "Altınları Al", opt1_b: "Anında: +XP", opt1_d: "2 Oda: -%40 Hasar",
                 opt2: "Uzaklaş", opt2_b: "", opt2_d: ""
             },
             adrenaline: { 
@@ -384,18 +387,22 @@ window.LANGUAGES = {
             gambler: { 
                 title: "Kumarbazın Ruhu", 
                 desc: "Önünde iki kadeh var.",
-                opt1: "Kırmızı Kadehi İç", opt1_b: "%50: Canı Fulle", opt1_d: "%50: Canı 1'e İndir",
+                opt1: "Kırmızı Kadehi İç", opt1_b: "%50: Canı %100 Yap.", opt1_d: "%50: Canı 1'e İndir",
                 opt2: "Masadan Kalk", opt2_b: "", opt2_d: ""
             },
             random_campfire: { 
                 title: "Sönmüş Ateş", 
                 desc: "Yol kenarında korları hala sıcak olan bir kamp alanı buldun. Ne yapacaksın?",
                 opt1: "Dinlen (+HP)", opt1_b: "+25 HP", opt1_d: "",
-                opt2: "Antrenman Yap (+XP)", opt2_b: "+3 XP", opt2_d: ""
+                opt2: "Antrenman Yap (+XP)", opt2_b: "+XP", opt2_d: ""
             },
             flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
             flee_debuff: "-10 HP"
         },
+		
+		event_result_title: "SONUÇ",
+		event_continue_btn: "DEVAM ET",
+		event_applied_msg: "etkisi uygulandı.",
 
         // --- SKİLLER ---
         skills: {
@@ -591,6 +598,9 @@ window.LANGUAGES = {
         resolution: "RESOLUTION",
         res_fit: "Fit Screen",
         back: "BACK",
+		nav_settings: "SETTINGS",
+		settings_continue: "CONTINUE",
+		settings_save_exit: "SAVE AND EXIT TO MENU",
 		
 		// Map LOG
 		map_start_title: "START ADVENTURE",
@@ -785,47 +795,51 @@ window.LANGUAGES = {
                 title: "Berserk Brew", 
                 desc: "You found a bubbling red bottle on the ground.",
                 opt1: "DRINK (RISKY Power)", opt1_b: "3 Turns: +15 Attack", opt1_d: "3 Turns: ALL HEALING Locked",
-                opt2: "Pour Out (Safe)", opt2_b: "+10 XP", opt2_d: ""
+                opt2: "Pour Out (Safe)", opt2_b: "+XP", opt2_d: ""
             },
             stone_skin: { 
                 title: "Stone Skin Scroll", 
                 desc: "An ancient scroll.",
-                opt1: "Read Spell", opt1_b: "5 Turns: +10 Defense", opt1_d: "5 Turns: Half Damage",
+                opt1: "Read Spell", opt1_b: "5 Turns: +10 Defense", opt1_d: "5 Turns: -%50 Damage",
                 opt2: "Burn Scroll", opt2_b: "+5 Rage", opt2_d: ""
             },
             cursed_gold: { 
                 title: "Fatigue Curse", 
-                desc: "A PILE of gold that IS clearly cursed.",
-                opt1: "Take Gold", opt1_b: "Instant: +4 XP", opt1_d: "2 Rooms: 60% Damage",
+                desc: "A pile of gold that is clearly cursed.",
+                opt1: "Take Gold", opt1_b: "Instant: +XP", opt1_d: "2 Rooms: -40% Damage",
                 opt2: "Walk Away", opt2_b: "", opt2_d: ""
             },
             adrenaline: { 
                 title: "Adrenaline Fruit", 
-                desc: "A very rare FRUIT.",
+                desc: "A very rare fruit.",
                 opt1: "Eat FRUIT", opt1_b: "2 Rooms: +20 Max HP", opt1_d: "After Effect: -30 HP Loss",
                 opt2: "Stash It", opt2_b: "+10 HP", opt2_d: ""
             },
             blood_pact: { 
                 title: "Blood Pact", 
-                desc: "An ancIent entIty whispers.",
+                desc: "An ancient entity whispers.",
                 opt1: "Accept Pact", opt1_b: "Permanent: +5 STR", opt1_d: "Instant: Lose 50% HP",
                 opt2: "Refuse", opt2_b: "", opt2_d: ""
             },
             gambler: { 
                 title: "Gambler's Soul", 
-                desc: "Two chalIces are before you.",
-                opt1: "DrInk Red ChalIce", opt1_b: "50%: Full Heal", opt1_d: "50%: Drop HP to 1",
+                desc: "Two chalices are before you.",
+                opt1: "Drink Red Chalice", opt1_b: "50%: Full Heal", opt1_d: "50%: Drop HP to 1",
                 opt2: "Leave Table", opt2_b: "", opt2_d: ""
             },
             random_campfire: { 
                 title: "Extinguished Fire", 
                 desc: "You found a campsite with still warm embers. What will you do?",
                 opt1: "Rest (+HP)", opt1_b: "+25 HP", opt1_d: "",
-                opt2: "PractIce (+XP)", opt2_b: "+3 XP", opt2_d: ""
+                opt2: "PractIce (+XP)", opt2_b: "+XP", opt2_d: ""
             },
             flee_option: "Flee In Fear",
             flee_debuff: "-10 HP"
         },
+		
+		event_result_title: "RESULT",
+		event_continue_btn: "CONTINUE",
+		event_applied_msg: "effect applied.",
 
         // Skills
         skills: {

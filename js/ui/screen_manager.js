@@ -69,3 +69,51 @@ window.writeLog = function(message) {
     console.log("[Oyun]: " + message.replace(/<[^>]*>?/gm, ''));
 
 };
+
+// Oyun içi ayarlar menüsünü aç
+window.openInGameSettings = function() {
+    document.getElementById('in-game-menu-modal').classList.remove('hidden');
+};
+
+// Menüyü kapat (Devam Et)
+window.closeInGameSettings = function() {
+    document.getElementById('in-game-menu-modal').classList.add('hidden');
+};
+
+// Kaydet ve Ana Menüye Dön
+window.saveAndExitToMenu = function() {
+    if (window.saveGame) {
+        window.saveGame(); // Önce kaydet
+    }
+    
+    closeInGameSettings(); // Modalı kapat
+    
+    // Ana menüye dönmek için (InitGame her şeyi sıfırlıyor zaten)
+    if (typeof initGame === 'function') initGame();
+    switchScreen(window.startScreen);
+    
+    writeLog("💾 Oyun kaydedildi ve ana menüye dönüldü.");
+};
+
+// ESC Tuşuna basınca menüyü aç/kapat (Kullanım kolaylığı)
+document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") {
+        const settingsModal = document.getElementById('settings-modal');
+        const inGameMenu = document.getElementById('in-game-menu-modal');
+
+        // 1. Eğer en üstteki Ayarlar açıksa, önce onu kapat
+        if (!settingsModal.classList.contains('hidden')) {
+            closeSettings();
+            return;
+        }
+
+        // 2. Ayarlar kapalıysa ve oyun içindeysek Duraklat Menüsünü aç/kapat
+        if (!startScreen.classList.contains('active')) {
+            if (inGameMenu.classList.contains('hidden')) {
+                openInGameSettings();
+            } else {
+                closeInGameSettings();
+            }
+        }
+    }
+});

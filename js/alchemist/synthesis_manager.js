@@ -55,7 +55,11 @@ function renderSynthesisUI() {
     
     // Parça Durumu Kontrolü
     const currentFrags = selectedFragments ? selectedFragments.count : 0;
-    fragStatus.innerHTML = `${lang.items.needed_fragments}: <span style="color:${currentFrags >= req ? '#43FF64' : '#ff4d4d'}">${currentFrags} / ${req}</span>`;
+    fragStatus.innerHTML = `
+    <img src="items/images/drop_items/salvage_jewelry.webp" class="inline-icon">
+    ${lang.items.needed_fragments}: 
+    <span style="color:${currentFrags >= req ? '#43FF64' : '#ff4d4d'}">${currentFrags} / ${req}</span>
+`;
 
     // Slotları Çiz
     drawCraftSlot(fragSlot, selectedFragments, 'fragments');

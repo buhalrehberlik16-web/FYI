@@ -10,6 +10,7 @@ window.applySettings = function() {
     localStorage.setItem('game_lang', window.gameSettings.lang);
 	
     document.documentElement.lang = window.gameSettings.lang; // 'tr' veya 'en' olur
+	document.body.className = `lang-${window.gameSettings.lang}`;
     updateUITexts();
 
     // 2. Çözünürlüğü Uygula
