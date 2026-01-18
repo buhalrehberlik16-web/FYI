@@ -105,9 +105,11 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_minor_healing.webp',
             type: 'defense',
             category: 'common', 
-            tier: 2
+            tier: 2,
+			pointCost: 1
         },
         onCast: function(attacker, defender) {
+			const stats = getHeroEffectiveStats();
             const healAmount = 15 + Math.floor((hero.int || 0) * 0.5);
             const oldHp = hero.hp;
             hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
@@ -129,7 +131,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_distract.webp',
             type: 'debuff',
             category: 'common',
-            tier: 2
+            tier: 2,
+			pointCost: 1
         },
         onCast: function(attacker, defender) {
 			const currentLang = window.gameSettings.lang || 'tr';
@@ -153,6 +156,7 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common', 
             tier: 2,
+			pointCost: 1,
             scaling: { atkMult: 1.3, stats: { dex: 0.0 }, elements: { physical: 0.0 } }
         },
         onCast: function(attacker, defender) {
