@@ -68,6 +68,30 @@ body {
     letter-spacing: 1px;
 }
 
+#btn-top-settings {
+    border-color: #f0e68c;
+    color: #f0e68c;
+}
+
+#btn-top-settings:hover {
+    box-shadow: 0 0 10px rgba(240, 230, 140, 0.4);
+    background: linear-gradient(to bottom, #5d4a35, #3e3221);
+}
+
+/* Modaldaki butonların alt alta düzgün durması için */
+#in-game-menu-modal .menu-secondary-btn {
+    margin-left: 0 !important;
+    margin-bottom: 10px;
+}
+#settings-modal {
+    z-index: 7000 !important; /* Duraklat menüsü 5000'de, bu 7000'de olsun */
+}
+
+/* Eğer ayarlar penceresi açıkken arkasının çok fazla kararmasını istemiyorsan */
+#settings-modal.npc-modal {
+    background-color: rgba(0, 0, 0, 0.5); /* Daha şeffaf bir karartma */
+}
+
 /* Navigasyon butonları (Skill, Stat, Çanta) */
 .nav-text {
     font-family: 'Cinzel', serif;

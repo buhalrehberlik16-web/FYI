@@ -1,0 +1,45 @@
+/* translated.css */
+
+/* ============================================================
+   ENGLISH (EN) ÖZEL KOORDİNATLARI
+   ============================================================ */
+
+/* Alchemist yazısı çok uzun olduğu için hem yerini hem boyutunu ayarlayalım */
+body.lang-en #building-alchemist {
+    top: 36.6% !important;
+    right: 20.5% !important; /* Biraz daha sola çektik */
+}
+
+body.lang-en #building-alchemist .town-label-text {
+    font-size: 0.75rem !important; /* Yazıyı küçülttük */
+    letter-spacing: 1px !important; /* Harf arasını daralttık */
+}
+
+/* Blacksmith düzeltmesi */
+body.lang-en #building-blacksmith {
+    left: 20.63% !important; /* Daha sola yasladık */
+}
+
+body.lang-en #building-blacksmith .town-label-text {
+    transform: translate(-50%, -50%) rotate(349deg) scale(0.9) !important; /* Hafif küçülttük */
+    font-size: 0.8rem;
+}
+
+/* Stable düzeltmesi */
+body.lang-en #building-stable {
+    
+}
+
+/* Merchant düzeltmesi */
+body.lang-en #building-merchant {
+    
+}
+body.lang-en #building-merchant .town-label-text {
+    font-size: 0.66rem;
+}
+/* ============================================================
+   TÜRKÇE (TR) VEYA VARSAYILAN (Zaten düzgün dediklerin)
+   ============================================================ */
+body.lang-tr #building-merchant .town-label-text {
+    font-size: 0.94rem;
+}

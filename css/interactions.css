@@ -442,11 +442,14 @@
 
 /* Maliyet Alanı */
 .reforge-costs {
-    display: flex;
-    justify-content: space-around;
-    font-size: 0.95em;
-    font-weight: bold;
-    color: #f0e68c;
+    display: flex;          /* Yan yana getirir */
+    justify-content: center; /* Ortalar */
+    align-items: center;     /* Dikeyde (yükseklik olarak) tam ortalar */
+    gap: 30px;              /* Gold ve Fragment arasındaki boşluk */
+    margin: 20px 0;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
 }
 
 /* Slot Vurgusu */
@@ -788,7 +791,6 @@
 /*============================================================
    Alchemist Sentez Bitişi
 ============================================================ */
-
 
 @media (max-width: 768px) {
     /* Köy yazıları zaten cqw ile küçülüyor, dokunmaya gerek yok. */
