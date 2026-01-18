@@ -1,20 +1,19 @@
+// --- START OF FILE game_data.js ---
+
 const MAX_LEVEL = 60;
 
 const CLASS_CONFIG = {
     "Barbar": {
         startingStats: { str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2 },
-        // BAŞLANGIÇ DİRENÇLERİ (% olarak)
         startingResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-        // BAŞLANGIÇ ELEMENT HASARLARI (Flat/Sabit puan olarak)
         startingElementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
         atkStats: { "str": 0.5 },
         defStats: { "dex": 0.34 },
         blockStats: { "dex": 0.8 },
         vitMultiplier: 5,
-        strDivisor: 2.0,
-        dexDivisor: 3.0,
-		baseHp: 20
+        baseHp: 20
+        // strDivisor ve dexDivisor silindi (işlevsiz)
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
@@ -25,8 +24,7 @@ const CLASS_CONFIG = {
         defStats: { "dex": 0.2 },
         blockStats: { "int": 0.4 },
         vitMultiplier: 7,
-        strDivisor: 5.0,
-        dexDivisor: 4.0
+        baseHp: 15
     }
 };
 
@@ -40,8 +38,8 @@ window.hero = {
     level: 1, 
     xp: 0, 
     xpToNextLevel: 5,
-    maxHp: 100, hp: 100,
-    maxRage: 100, rage: 0,
+    hp: 40,    // maxHp silindi (dinamik hesaplanıyor)
+    rage: 0,   // maxRage silindi (dinamik hesaplanıyor)
     gold: 0,
     statPoints: 0, 
     skillPoints: 0,
@@ -50,7 +48,7 @@ window.hero = {
     baseAttack: 10, baseDefense: 0,
     baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-	highestTierDefeated: 1, // Oyun başında 1 olarak başlar
+    highestTierDefeated: 1,
     statusEffects: [],
     mapEffects: [],
     unlockedSkills: [],
@@ -58,8 +56,8 @@ window.hero = {
     inventory: new Array(8).fill(null), 
     brooches: new Array(6).fill(null), 
     equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null },
-	calendar: {startDayOfYear: 0, daysPassed: 0, isInitialized: false },
-	mountedNodesLeft: 0, 
+    calendar: {startDayOfYear: 0, daysPassed: 0, isInitialized: false },
+    mountedNodesLeft: 0, 
     scoutedNodesLeft: 0
 };
 
@@ -89,22 +87,45 @@ const EVENT_POOL = [
                 hero.statusEffects.push({ id: 'atk_half', name: 'Hantal', turns: 5, waitForCombat: true }); 
             }
         },
-        option2: { text: "Parşömeni Yak", buff: "<span class='buff'>+5 Rage</span>", debuff: "", action: (hero) => { hero.rage = Math.min(hero.maxRage, hero.rage + 5); } }
+        option2: { 
+            text: "Parşömeni Yak", 
+            buff: "<span class='buff'>+5 Rage</span>", 
+            action: (hero) => { 
+                const stats = getHeroEffectiveStats();
+                hero.rage = Math.min(stats.maxRage, hero.rage + 5); 
+            } 
+        }
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
         option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+2 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(2); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
-        option2: { text: "Uzaklaş", buff: "", debuff: "", action: (hero) => { } }
+        option2: { text: "Uzaklaş", action: (hero) => { } }
     },
     {
         id: "adrenaline", type: "node_based", title: "Adrenalin Meyvesi", desc: "Çok nadir bir meyve.",
-        option1: { text: "Meyveyi Ye", buff: "2 Oda: <span class='buff'>+20 Max HP</span>", debuff: "Etki Bitince: <span class='debuff'>-30 Can Kaybı</span>", action: (hero) => {const stats = getHeroEffectiveStats(); stats.maxHp += 20; hero.hp += 20; hero.mapEffects.push({ id: 'map_hp_boost', name: 'Adrenalin', nodesLeft: 2, val: 20 }); } },
-        option2: { text: "Sakla", buff: "<span class='buff'>+10 HP</span>", debuff: "", action: (hero) => {const stats = getHeroEffectiveStats(); hero.hp = Math.min(stats.maxHp, hero.hp + 10); } }
+        option1: { 
+            text: "Meyveyi Ye", 
+            buff: "2 Oda: <span class='buff'>+20 Max HP</span>", 
+            debuff: "Etki Bitince: <span class='debuff'>-30 Can Kaybı</span>", 
+            action: (hero) => {
+                // Not: maxHp harita etkilerinde geçici artar, hero.hp'yi de artırıyoruz
+                hero.hp += 20; 
+                hero.mapEffects.push({ id: 'map_hp_boost', name: 'Adrenalin', nodesLeft: 2, val: 20 }); 
+            } 
+        },
+        option2: { 
+            text: "Sakla", 
+            buff: "<span class='buff'>+10 HP</span>", 
+            action: (hero) => {
+                const stats = getHeroEffectiveStats();
+                hero.hp = Math.min(stats.maxHp, hero.hp + 10); 
+            } 
+        }
     },
     {
         id: "blood_pact", type: "permanent", title: "Kan Anlaşması", desc: "Kadim bir varlık fısıldıyor.",
         option1: { text: "Anlaşmayı Kabul Et", buff: "Kalıcı: <span class='buff'>+5 STR</span>", debuff: "Anında: <span class='debuff'>Canın %50'si Gider</span>", action: (hero) => { hero.str += 5; hero.hp = Math.floor(hero.hp / 2); } },
-        option2: { text: "Reddet", buff: "", debuff: "", action: (hero) => {} }
+        option2: { text: "Reddet", action: (hero) => {} }
     },
     {
         id: "gambler", type: "permanent", title: "Kumarbazın Ruhu", desc: "Önünde iki kadeh var.",
@@ -113,11 +134,18 @@ const EVENT_POOL = [
             buff: "%50: <span class='buff'>Canı Fulle</span>", 
             debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", 
             action: (hero) => { 
-                if (Math.random() > 0.5) { hero.hp = stats.maxHp; writeLog("Şanslısın! Canın fullendi."); } 
-                else { hero.hp = 1; writeLog("Zehir! Canın 1'e düştü."); } 
+                const stats = getHeroEffectiveStats(); // stats tanımlandı
+                if (Math.random() > 0.5) { 
+                    hero.hp = stats.maxHp; 
+                    writeLog("Şanslısın! Canın fullendi."); 
+                } 
+                else { 
+                    hero.hp = 1; 
+                    writeLog("Zehir! Canın 1'e düştü."); 
+                } 
             } 
         },
-        option2: { text: "Masadan Kalk", buff: "", debuff: "", action: (hero) => {} }
+        option2: { text: "Masadan Kalk", action: (hero) => {} }
     },
     {
         id: "random_campfire", 
@@ -127,22 +155,18 @@ const EVENT_POOL = [
         option1: { 
             text: "Dinlen (+HP)", 
             buff: "<span class='buff'>+25 HP</span>", 
-            debuff: "", 
             action: (hero) => { 
-                const stats = getHeroEffectiveStats(); // Güncel sınırı al
-				const heal = 25;
-				hero.hp = Math.min(stats.maxHp, hero.hp + heal); 
-                writeLog(`🔥 Ateş başında dinlendin (+${heal} HP).`);
+                const stats = getHeroEffectiveStats();
+                hero.hp = Math.min(stats.maxHp, hero.hp + 25); 
+                writeLog(`🔥 Ateş başında dinlendin (+25 HP).`);
             } 
         },
         option2: { 
             text: "Antrenman Yap (+XP)", 
             buff: "<span class='buff'>+XP</span>", 
-            debuff: "", 
             action: (hero) => { 
-                const xp = 3;
-                gainXP(xp); 
-                writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+${xp} XP).`);
+                gainXP(3); 
+                writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+3 XP).`);
             } 
         }
     }
