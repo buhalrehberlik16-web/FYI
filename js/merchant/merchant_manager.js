@@ -109,7 +109,6 @@ window.renderMerchantUI = function() {
 // 4. SLOT OLUŞTURMA
 function createTradeSlot(item, action, isBuying) {
     const slot = document.createElement('div');
-    // Artık manuel border-tier-X sınıflarına gerek yok, badge fonksiyonu halledecek
     slot.className = 'item-slot'; 
     slot.style.position = 'relative';
     
@@ -117,7 +116,7 @@ function createTradeSlot(item, action, isBuying) {
     img.src = item.icon.startsWith('items/') ? item.icon : `items/images/${item.icon}`;
     slot.appendChild(img);
 
-    // YENİ: Manuel kontrol bitti! Merkezi badge sistemi:
+    // Rozet (T1, T2 vb.)
     slot.innerHTML += window.getItemBadgeHTML(item);
 
     // Fiyat Etiketi
@@ -127,9 +126,35 @@ function createTradeSlot(item, action, isBuying) {
     priceTag.innerHTML = `${price}<i class="fas fa-coins"></i>`;
     slot.appendChild(priceTag);
 
-    slot.onclick = action;
+    // Tıklama ve Tooltip
+    slot.onclick = (e) => {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            if (lastTappedSlot === slot) {
+                window.hideItemTooltip();
+                action(); // Satın al veya Sat
+                lastTappedSlot = null;
+            } else {
+                lastTappedSlot = slot;
+                window.showItemTooltip(item, e);
+            }
+        } else {
+            window.hideItemTooltip();
+            action();
+        }
+    };
+    
+    // BURASI ÖNEMLİ: Broş bilgilerini hoverda görmek için
     slot.onmouseenter = (e) => window.showItemTooltip(item, e);
     slot.onmouseleave = () => window.hideItemTooltip();
+    slot.onmousemove = (e) => {
+        const tooltip = document.getElementById('item-tooltip');
+        if(tooltip) {
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+        }
+    };
     
     return slot;
 }
@@ -191,21 +216,40 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     const nameEl = document.getElementById('confirm-item-name');
     const statsEl = document.getElementById('confirm-item-stats');
     
+    const currentLang = window.gameSettings.lang || 'tr';
+    const itemsLang = window.LANGUAGES[currentLang].items;
     const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
     // 1. Ana mesaj
     textEl.textContent = msg;
 
-    // 2. Eşya ismi ve seviyesi (YENİ SİSTEM)
+    // 2. Eşya ismi ve seviyesi
     const levelLabel = window.getItemLevelLabel(item);
     nameEl.textContent = `${getTranslatedItemName(item)} (${levelLabel})`;
-    
-    // Eğer materyal ise tier rengi verme, takı ise ver
     nameEl.className = (rules.badgeType === "tier") ? `tier-${item.tier}` : "";
 
-    // 3. Statları listele
+    // 3. İÇERİK LİSTELEME (BROŞ DESTEĞİ EKLENDİ)
     statsEl.innerHTML = '';
-    if (item.stats && Object.keys(item.stats).length > 0) {
+
+    if (item.type === 'brooch' && item.effects) {
+        // --- BROŞ EFEKTLERİNİ GÖSTER ---
+        item.effects.forEach(eff => {
+            const effectName = itemsLang['eff_' + eff.id] || eff.id;
+            let displayVal = (eff.value < 1 && eff.value > 0) ? `%${Math.round(eff.value * 100)}` : `+${eff.value}`;
+            
+            let detail = "";
+            if(eff.targetStat) detail = ` (${eff.targetStat.toUpperCase()})`;
+            if(eff.targetElement) detail = ` (${itemsLang['res_' + eff.targetElement] || eff.targetElement})`;
+
+            statsEl.innerHTML += `<div style="color:#df9cff">${effectName}${detail}: <span>${displayVal}</span></div>`;
+        });
+        
+        // Frekans Bilgisini de ekleyelim (Yanlışlıkla hızlı broşu satmamak için)
+        const freqText = (itemsLang.brooch_freq || "Every $1 Turns").replace("$1", item.frequency);
+        statsEl.innerHTML += `<div style="color:#3498db; font-size:0.8em; margin-top:5px;">⌛ ${freqText}</div>`;
+
+    } else if (item.stats && Object.keys(item.stats).length > 0) {
+        // --- NORMAL TAKI STATLARINI GÖSTER ---
         for (const [statKey, value] of Object.entries(item.stats)) {
             const statName = window.getStatDisplayName(statKey);
             statsEl.innerHTML += `<div>${statName}: <span style="color:#43FF64">+${value}</span></div>`;

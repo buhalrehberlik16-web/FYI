@@ -10,7 +10,7 @@ window.openRewardScreen = function(rewards) {
     
     rewards.forEach((reward, index) => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'reward-item reward-gold'; // Altın sınıfı eklendi
+        itemDiv.className = 'reward-item reward-gold'; 
         
         if (reward.type === 'gold') {
             itemDiv.innerHTML = `<i class="fas fa-coins" style="color:#ffd700;"></i><span>${reward.value} ${lang.gold_text}</span>`;
@@ -22,30 +22,39 @@ window.openRewardScreen = function(rewards) {
             };
         } 
         else if (reward.type === 'item') {
-			itemDiv.className = 'reward-item reward-equipment'; // Eşya sınıfı eklendi
+            itemDiv.className = 'reward-item reward-equipment'; 
             const item = reward.value;
-            // Daha önce yazdığımız getTranslatedItemName fonksiyonunu kullanıyoruz
             const itemName = getTranslatedItemName(item);
-			
-			// --- YENİ KONTROL ---
-			const displayAmount = (reward.amount && reward.amount > 1) ? `x${reward.amount} ` : "";
-			const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
-			const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
-			// --------------------
             
-            itemDiv.innerHTML = `<img src="items/images/${item.icon}" class="reward-item-icon"><div class="reward-item-text"><span class="reward-item-name tier-${isMaterial ? '' : item.tier}">${itemName}</span><span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span></div>`;
-			itemDiv.onclick = () => {
-                // 'amount' varsa onu kullan, yoksa 1 adet ekle
+            // --- MİKTAR HESABI (DÜZELTİLDİ) ---
+            const qty = reward.amount || 1;
+            const amountHtml = `<span class="reward-item-amount">x${qty}</span>`;
+            
+            const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
+            const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
+            
+            // --- HTML İÇERİĞİ (DÜZELTİLDİ - amountHtml buraya eklendi) ---
+            itemDiv.innerHTML = `
+                <img src="items/images/${item.icon}" class="reward-item-icon">
+                <div class="reward-item-text">
+                    <div class="reward-item-header">
+                        <span class="reward-item-name tier-${isMaterial ? '' : item.tier}">${itemName}</span>
+                        ${amountHtml}
+                    </div>
+                    <span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span>
+                </div>`;
+
+            itemDiv.onclick = () => {
                 const countToAdd = reward.amount || 1;
                 const success = window.addItemToInventory(item, countToAdd);
                 
                 if (success) {
                     renderInventory();
-                    // Log mesajını adetli yazdır
                     const msg = countToAdd > 1 ? `${countToAdd}x ${itemName}` : itemName;
                     writeLog(`🎁 ${msg} ${currentLang === 'tr' ? 'çantaya eklendi.' : 'added to bag.'}`);
                     
                     itemDiv.style.opacity = '0';
+                    itemDiv.style.pointerEvents = 'none';
                     setTimeout(() => itemDiv.remove(), 200);
                 } else {
                     alert(currentLang === 'tr' ? "Envanter dolu!" : "Inventory full!");
