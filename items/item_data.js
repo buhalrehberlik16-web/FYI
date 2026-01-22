@@ -1,11 +1,32 @@
 // item_data.js
 
 window.ITEM_RULES = {
-    "jewelry": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true },
-    "material": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: false, canEquip: false },
+    "jewelry": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true, lootValue: 1.0, nextTierValue: 1.5  },
+    "material": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: false, canEquip: false, lootValue: 0.75 },
     "scroll": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Scrollar reforge'da kullanılabilir
     "resist_stone": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Taşlar reforge'da kullanılabilir
-    "charm": { badgeType: "tier", canSalvage: false, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false }
+    "charm": { badgeType: "tier", canSalvage: false, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false },
+	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 }
+};
+
+// Broş Puanlama Sistemi
+window.BROOCH_CONFIG = {
+    pointsByTier: { 1: 4, 2: 6, 3: 8, 4: 10, 5: 12 },
+    frequencies: [
+        { turns: 1, cost: 3, icon: "brooch_all.webp" },
+        { turns: 2, cost: 2, icon: "random" },
+        { turns: 3, cost: 1, icon: "random" }
+    ],
+    // Puan başı kazanımlar: [1 Puan, 2 Puan, 3 Puan]
+    effectsPool: [
+        { id: "fixed_dmg", values: [4, 8, 12] },
+        { id: "stat_scaling", values: [0.25, 0.5, 0.75], stats: ["str", "int", "mp_pow"] },
+        { id: "heal", values: [4, 8, 12] },
+        { id: "resource_regen", values: [4, 8, 12] },
+        { id: "curse_dmg", values: [0.1, 0.2, 0.3], elements: ["fire", "cold", "lightning", "poison", "curse"] },
+        { id: "curse_def", values: [0.1, 0.2, 0.3], elements: ["fire", "cold", "lightning", "poison", "curse"] },
+        { id: "static_def", values: [0.25, 0.5, 0.75] }
+    ]
 };
 
 window.ITEM_CONFIG = {
@@ -81,15 +102,15 @@ window.CRAFTING_CONFIG = {
     // Tier başına gereken Jewelry Fragment sayısı
     requiredFragments: {
         1: 5,
-        2: 15,
-        3: 30,
-        4: 60,
-        5: 120
+        2: 12,
+        3: 20,
+        4: 28,
+        5: 35
     }
 };
 
 window.REFORGE_CONFIG = {
-    goldCosts: { 1: 15, 2: 30, 3: 45, 4: 75, 5: 100 }
+    goldCosts: { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 }
 };
 
 

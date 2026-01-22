@@ -50,6 +50,7 @@ const TR_ITEMS = {
     item_stone_lightning: "Yıldırım Direnci Taşı",
     item_stone_poison: "Zehir Direnci Taşı",
     item_stone_curse: "Lanet Direnci Taşı",
+	item_brooch_custom: "Efsunlu Broş",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",
@@ -84,6 +85,15 @@ const TR_ITEMS = {
 		needed_fragments: "Gereken Parça",
 		crafting_material: "Üretim Materyali",
 		material_label: "Materyal",
+		brooch_freq: "Her $1 Turda Bir",
+		brooch_label: "Mistik Aksesuar",
+		eff_fixed_dmg: "Anlık Hasar",
+		eff_stat_scaling: "Güç Patlaması",
+		eff_heal: "İyileşme",
+		eff_resource_regen: "Öfke Yenileme",
+		eff_curse_dmg: "Elementel Hasar",
+		eff_curse_def: "Elementel Koruma",
+		eff_static_def: "Ek Savunma",
 };
 
 // İngilizce Eşyalar
@@ -135,6 +145,7 @@ const EN_ITEMS = {
     item_stone_lightning: "Lightning Resist Stone",
     item_stone_poison: "Poison Resist Stone",
     item_stone_curse: "Curse Resist Stone",
+	item_brooch_custom: "Enchanted Brooch",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",
@@ -168,6 +179,16 @@ const EN_ITEMS = {
 		needed_fragments: "Required Fragments",
 		crafting_material: "Crafting Material",
 		material_label: "Material",
+		brooch_freq: "Every $1 Turns",
+		brooch_label: "Mystic Accessory",
+		eff_fixed_dmg: "Instant Damage",
+		eff_stat_scaling: "Power Surge",
+		eff_heal: "Heal",
+		eff_resource_regen: "Rage Regen",
+		eff_curse_dmg: "Elemental Damage",
+		eff_curse_def: "Elemental Protection",
+		eff_static_def: "Extra Defense",
+	
 };
 
 // Mevcut dile bu listeleri enjekte et
