@@ -111,6 +111,15 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'resist_fire') currentResists.fire += e.value;
         }
     });
+	
+	// 3.1 HARİTA ETKİLERİNİ (MAP EFFECTS) TARA
+    hero.mapEffects.forEach(me => {
+        // Lanetli Altın / Yorgunluk Etkisi
+        if (me.id === 'map_atk_weak') {
+            // value: 0.6 olduğu için atağı %60'ına indirir (yani %40 azaltır)
+            totalAtkMult *= me.value; 
+        }
+    });
 
     // 4. HESAPLAMALARI YAP
     const rules = CLASS_CONFIG[hero.class];
@@ -443,7 +452,7 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType) {
+window.startBattle = function(enemyType, isHardFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	
 	let scaling = 1.0;
@@ -461,7 +470,7 @@ window.startBattle = function(enemyType) {
     }
 	
     switchScreen(battleScreen);
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, isBoss: stats.isBoss, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
+    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, isHard: isHardFromMap, isBoss: stats.isBoss, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
     
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
     const bonus = window.EventManager.getCombatBonus();
@@ -512,6 +521,23 @@ window.nextTurn = function() {
 				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} Öfke kazanıldı.`);
 			}
 		}
+		
+		// ---  BROŞ EFEKTLERİNİ TETİKLE (Sadece Kahraman Sırası Başında) ---
+        hero.brooches.forEach((brooch, index) => {
+            if (!brooch) return;
+
+            if (!hero.broochCooldowns) hero.broochCooldowns = {};
+            if (hero.broochCooldowns[index] === undefined) hero.broochCooldowns[index] = 0;
+
+            // Eğer bekleme süresi bittiyse (veya 0 ise) çalıştır
+            if (hero.broochCooldowns[index] <= 0) {
+                window.executeBroochEffects(brooch);
+                hero.broochCooldowns[index] = brooch.frequency; // Süreyi başa sar (1, 2 veya 3)
+            }
+            
+            // Sayacı düşür
+            hero.broochCooldowns[index]--;
+        });
 		
 		
         // --- 1. TUR BAŞLANGICI VE BLOK/REGEN/ZEHİR İŞLEME ---
@@ -642,6 +668,7 @@ window.animateMonsterSkill = function() {
     }, 600);
 };
 
+
 window.checkGameOver = function() {
     if (hero.hp <= 0) { 
         writeLog("💀 **Yenilgi**: Canın tükendi...");
@@ -673,42 +700,7 @@ window.checkGameOver = function() {
         writeLog(`🌟 **Yeni Tehdit Seviyesi**: Dükkanlar artık Tier ${hero.highestTierDefeated} ürünler getirebilir!`);
     }
         
-        // --- YENİ GANİMET MANTIĞI ---
-        let rewards = [];
-        
-        // 1. Altın Ödülü (Zaten vardı)
-        rewards.push({ type: 'gold', value: Math.floor(Math.random() * 11) + 5 });
-
-        // 2. Eşya Düşürme Şansı (%40 şansla eşya düşsün)
-        if (Math.random() < 1.0) {
-            // Canavar Tier'ına göre İtem Tier'ı belirle
-            // Tier 2 canavar %50 ihtimalle Tier 1, %50 ihtimalle Tier 2 item atar
-            let itemTier = monster.tier;
-            if (monster.tier > 1 && Math.random() < 0.5) {
-                itemTier = monster.tier - 1;
-            }
-		// 3. Jewelry Fragment Drop (%50 Şans)
-			if (Math.random() < 0.5) {
-		const fragCount = Math.floor(Math.random() * 4) + 1; 		
-        ///(const fragCount = Math.floor(Math.random() * monster.tier) + 1;)
-        const fragmentItem = { ...window.BASE_MATERIALS["jewelry_fragment"] };
-		rewards.push({ type: 'item', value: fragmentItem, amount: fragCount });
-		}
-
-		// 4. Stat Scroll Drop (%10 Şans)
-			if (Math.random() < 0.1) {
-        // Havuzdan sadece stat_scroll tipindekileri filtrele
-        const statScrollPool = window.SPECIAL_MERCH_ITEMS.filter(i => i.type === "stat_scroll");
-        const selected = statScrollPool[Math.floor(Math.random() * statScrollPool.length)];
-        
-        // Ödül listesine ekle
-        rewards.push({ type: 'item', value: { ...selected } });
-    }
-            
-            // Item Generator'ı çağır ve ödüllere ekle
-            const droppedItem = generateRandomItem(itemTier);
-            rewards.push({ type: 'item', value: droppedItem });
-        }
+        const rewards = window.LootManager.generateLoot(monster);
         // ----------------------------
 
         gainXP(3); // XP kazanımı (basitleştirildi)
@@ -725,5 +717,86 @@ window.checkGameOver = function() {
         return true;
     }
     return false;
+};
+
+window.executeBroochEffects = function(brooch) {
+    const stats = getHeroEffectiveStats();
+    const rules = CLASS_CONFIG[hero.class];
+    const display = document.getElementById('hero-display');
+    const monsterDisplay = document.getElementById('monster-display');
+
+    brooch.effects.forEach(eff => {
+        switch(eff.id) {
+            case "fixed_dmg":
+                monster.hp = Math.max(0, monster.hp - eff.value);
+                showFloatingText(monsterDisplay, eff.value, 'damage');
+                writeLog(`📿 **Broş**: ${eff.value} hasar vuruldu.`);
+                break;
+                
+            case "heal":
+                const oldHp = hero.hp;
+                hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
+                showFloatingText(display, (hero.hp - oldHp), 'heal');
+                writeLog(`📿 **Broş**: +${eff.value} HP yenilendi.`);
+                break;
+
+            case "resource_regen":
+                const oldRage = hero.rage;
+                hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
+                writeLog(`📿 **Broş**: +${eff.value} Öfke kazanıldı.`);
+                break;
+
+            case "stat_scaling":
+                // (Str, Int veya MP) * Çarpan (0.25, 0.5, 0.75)
+                let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
+                if (scaleDmg < 1) scaleDmg = 1;
+                monster.hp = Math.max(0, monster.hp - scaleDmg);
+                showFloatingText(monsterDisplay, scaleDmg, 'damage');
+                writeLog(`📿 **Broş**: ${eff.targetStat.toUpperCase()} bonusuyla ${scaleDmg} vurdun.`);
+                break;
+
+            case "curse_dmg":
+                // Element Direnci * Çarpan (0.1, 0.2, 0.3)
+                let elementRes = stats.resists[eff.targetElement] || 0;
+                let curseDmg = Math.floor(elementRes * eff.value);
+                if (curseDmg > 0) {
+                    monster.hp = Math.max(0, monster.hp - curseDmg);
+                    showFloatingText(monsterDisplay, curseDmg, 'damage');
+                    writeLog(`📿 **Broş**: ${eff.targetElement.toUpperCase()} direncin ${curseDmg} hasara dönüştü.`);
+                }
+                break;
+
+            case "curse_def":
+                // Mevcut direnci %10-30 arası geçici olarak artırır (1 Tur)
+                let resValue = stats.resists[eff.targetElement] || 0;
+                let bonusRes = Math.floor(resValue * eff.value) + 5; // En az 5 direnç versin
+                applyStatusEffect({ 
+                    id: 'resist_' + eff.targetElement, 
+                    name: 'Broş Koruması', 
+                    value: bonusRes, 
+                    turns: 1, 
+                    resetOnCombatEnd: true 
+                });
+                writeLog(`📿 **Broş**: ${eff.targetElement.toUpperCase()} direnci arttı.`);
+                break;
+
+            case "static_def":
+                // Sınıfın defans statı (Dex) * Çarpan
+                // Barbar ve Magus için ana defans statı Dex'tir (defStats.dex)
+                let defStatVal = stats.dex; 
+                let bonusDef = Math.floor(defStatVal * eff.value);
+                if (bonusDef > 0) {
+                    applyStatusEffect({ 
+                        id: 'def_up', 
+                        name: 'Broş Zırhı', 
+                        value: bonusDef, 
+                        turns: 1, 
+                        resetOnCombatEnd: true 
+                    });
+                }
+                break;
+        }
+    });
+    updateStats();
 };
 

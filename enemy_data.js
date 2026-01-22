@@ -1,7 +1,7 @@
 const ENEMY_STATS = {
     // --- TIER 1 ---
     "Zehirli Mantar": { 
-        maxHp: 30, attack: 10, defense: 6, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
+        maxHp: 30, attack: 5, defense: 2, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
         tier: 1, // YENİ EKLENDİ
         idle: 'enemies/zehirli_mantar.webp',
         attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
@@ -14,7 +14,7 @@ const ENEMY_STATS = {
         ]
     },
     "Orman Örümceği": { 
-        maxHp: 42, attack: 15, defense: 3, xp: 0, 
+        maxHp: 42, attack: 8, defense: 1, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
@@ -22,7 +22,7 @@ const ENEMY_STATS = {
 		skills: [{ id: "web_trap", category: "utility" }, { id: "chitin_harden", category: "survival" }]
     },
     "Hırsız Kobold": { 
-        maxHp: 48, attack: 20, defense: 0, xp: 0, 
+        maxHp: 48, attack: 8, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
@@ -30,7 +30,7 @@ const ENEMY_STATS = {
 		skills: [{ id: "pocket_sand", category: "utility" }, { id: "cowardly_dash", category: "survival" }]
     },
     "Kan Yarasası": { 
-        maxHp: 40, attack: 20, defense: 0, xp: 0, 
+        maxHp: 40, attack: 8, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
@@ -38,7 +38,7 @@ const ENEMY_STATS = {
 		skills: [{ id: "vampiric_bite", category: "utility" }, { id: "bat_shriek", category: "survival" }]
     },
 	"İskelet": { 
-        maxHp: 50, attack: 24, defense: 2, xp: 0, 
+        maxHp: 50, attack: 7, defense: 2, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 

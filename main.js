@@ -300,7 +300,6 @@ function initGame() {
     if (leaveBtn) leaveBtn.classList.add('hidden');
 
 	
-    hero.maxHp = 100; hero.hp = hero.maxHp;
     hero.level = 1; hero.xp = 0; 
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
     hero.statPoints = 0; hero.skillPoints = 0;
@@ -382,16 +381,6 @@ document.getElementById('btn-show-stats').onclick = () => {
         `;
     }
     document.getElementById('modal-stats').classList.remove('hidden');
-};
-
-// 2. Akış Yönetimi
-// Ana Menüden İsim Ekranına Geçiş
-startButton.onclick = () => {
-    switchScreen(window.nameEntryScreen);
-    // Ekran açıldığında otomatik olarak inputa odaklan (Kullanıcı dostu)
-    setTimeout(() => {
-        document.getElementById('player-nick-input').focus();
-    }, 100);
 };
 
 // İsim Ekranından Sınıf Seçimine Geçiş
@@ -532,9 +521,25 @@ window.forceMaster = function(type = 'blacksmith') {
     console.log(`🛠️ Debug: Bu kasaba için ${type.toUpperCase()} usta olarak atandı.`);
 };
 
+window.brosver = function(tier = 1) {
+    // 1. Rastgele broş üret (Generator'ı çağır)
+    const newBrooch = generateRandomBrooch(tier);
+    
+    // 2. Çantada boş yer ara
+    const emptySlot = hero.inventory.indexOf(null);
+    
+    if (emptySlot !== -1) {
+        // 3. Eşyayı çantaya koy ve UI'ı tazele
+        hero.inventory[emptySlot] = newBrooch;
+        renderInventory();
+        writeLog(`🛠️ Hile: Seviye ${tier} broş üretildi ve çantaya eklendi.`);
+    } else {
+        alert("Envanterin dolu! Yer açmalısın.");
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 	if(typeof applySettings === 'function') applySettings();
-	if(typeof CalendarManager !== 'undefined') CalendarManager.init();
     // 1. Oyunu ve İlk Ekranı Başlat
     if (typeof initGame === 'function') initGame(); 
     if (typeof switchScreen === 'function') switchScreen(window.startScreen); 

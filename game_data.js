@@ -13,7 +13,6 @@ const CLASS_CONFIG = {
         blockStats: { "dex": 0.8 },
         vitMultiplier: 5,
         baseHp: 20
-        // strDivisor ve dexDivisor silindi (işlevsiz)
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },

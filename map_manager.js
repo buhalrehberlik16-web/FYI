@@ -508,7 +508,7 @@ function triggerNodeAction(node) {
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
             document.getElementById('map-description').textContent = appearanceMsg;
-            startBattle(enemy);
+            startBattle(enemy, node.isHard); 
 
         } else if (node.type === 'town') {
             // DÜZELTİLDİ:
