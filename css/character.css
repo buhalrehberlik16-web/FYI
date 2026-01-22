@@ -69,6 +69,17 @@
 /* ============================================================
    STAT EKRANI (U) - DÜZELTİLMİŞ FONT VE RENK DÜZENİ
    ============================================================ */
+.stat-row.main-info {
+    display: flex !important;
+    justify-content: space-between !important; /* İsmi sola, Level'ı sağa yaslar */
+    align-items: baseline !important; /* Yazıların alt çizgisini hizalar */
+    width: 100%;
+    margin-bottom: 15px;
+    flex-wrap: nowrap !important; /* Kesinlikle alt satıra geçme kuralı */
+}
+
+
+
 .stat-window {
     width: 610px;
     max-height: 85vh;
@@ -109,10 +120,10 @@
     padding: 0 5px;
     margin-bottom: 5px;
 }
-.stat-name-group { display: flex; align-items: baseline; }
-#stat-name { font-family: 'Cinzel', serif; text-transform: uppercase; color: #ffd700; font-size: 1.3em; font-weight: bold; text-shadow: 2px 2px 4px #000; }
+.stat-name-group { display: flex; align-items: baseline; gap: 8px; overflow: hidden;}
+#stat-name { font-family: 'Cinzel', serif; text-transform: uppercase; color: #ffd700; font-size: 1.3em; font-weight: bold; text-shadow: 2px 2px 4px #000; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;}
 #stat-class { font-family: 'Cinzel', serif; text-transform: uppercase; color: #ffffff !important; font-size: 0.85em; margin-left: 5px; font-weight: normal; }
-#stat-level { font-family: 'Cinzel', serif; text-transform: uppercase; color: #ffd700; font-weight: bold; font-size: 1.2em; }
+#stat-level { font-family: 'Cinzel', serif; text-transform: uppercase; color: #ffd700; font-weight: bold; font-size: 1.2em; white-space: nowrap !important; flex-shrink: 0 !important; margin-left: 10px !important; }
 
 /* XP BARI */
 .xp-bar-container { position: relative; width: 100%; height: 24px; background-color: #111; border: 1px solid #555; border-radius: 12px; margin-top: 5px; overflow: hidden; box-shadow: inset 0 0 8px #000; }
@@ -210,9 +221,30 @@
 .brooch-overlay { position: absolute; top: 25%; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 90px; z-index: 10; }
 .brooch-slot { width: 26px !important; height: 26px !important; background-color: rgba(0, 0, 0, 0.7); border: 1px solid #6b5c3b; border-radius: 4px; }
 
-.inventory-gold-display { font-family: 'Cinzel', serif; letter-spacing: 1px;
-    margin-top: 15px; align-self: center; background: #222; border: 1px solid #6b5c3b; padding: 2% 45%; border-radius: 4px; 
-    color: #ffd700; font-weight: bold; display: flex; align-items: center; gap: 10px; box-shadow: inset 0 0 5px #000;
+.inventory-gold-display {
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+    margin: 15px auto 0 auto; /* Üstten 15px, sağ-sol otomatik (ortalar) */
+    
+    /* GENİŞLİK AYARI (Padding yerine bunu kullanıyoruz) */
+    width: 90%; 
+    max-width: 200px; /* Çok genişlemesini engeller */
+    height: 40px;
+    
+    background: #222;
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    color: #ffd700;
+    font-weight: bold;
+    
+    /* İÇERİĞİ ORTALAMA */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* İkon ve parayı yatayda tam ortalar */
+    gap: 10px;
+    
+    box-shadow: inset 0 0 5px #000;
+    padding: 0; /* Eski hatalı padding'i sıfırladık */
 }
 
 .paper-doll-right { display: flex; flex-direction: column; gap: 12px; align-items: center; }
@@ -324,8 +356,23 @@
 #skill-book-equipped-bar { display: flex; justify-content: center; gap: 12px; padding: 15px 30px; background-color: rgba(15, 15, 15, 0.95); border: 2px solid #6b5c3b; border-radius: 12px; margin-top: 5px; box-shadow: 0 5px 25px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(0,0,0,0.5); }
 #skill-book-equipped-bar .key-hint { position: absolute; top: -4px; left: -4px; background: #444; color: #fff; font-size: 0.7em; padding: 2px 5px; border-radius: 4px; border: 1px solid #777; z-index: 5; }
 
+.skill-book-item.selected-skill {
+    border: 2px solid #43FF64 !important;
+    box-shadow: 0 0 15px rgba(67, 255, 100, 0.5);
+    background: rgba(67, 255, 100, 0.1);
+    transform: scale(1.02);
+	}
 
-
+	/* Seçiliyken ikonun üzerine minik bir işaret koyabiliriz */
+	.selected-skill::after {
+    content: "READY";
+    position: absolute;
+    top: 5px;
+    right: 50px;
+    font-size: 0.6rem;
+    color: #43FF64;
+    font-weight: bold;
+	}
 
 .item-tooltip {
     position: fixed;
@@ -362,11 +409,41 @@
 
 @media (max-width: 768px) {
     /* Pencereleri ekran genişliğine zorla */
+	
+	.stat-row.main-info {
+        padding: 0 5px !important;
+    }
+    
+    #stat-name {
+        max-width: 120px; /* Mobilde ismin çok yer kaplamasını önler */
+    }
+
     .stat-window, .inventory-window {
         width: 95vw !important;
         max-height: 90vh;
         padding: 15px;
         overflow-y: auto; /* İçerik sığmazsa pencere içinde kaydır */
+    }
+
+	.item-tooltip {
+        position: fixed !important;
+        /* Ekranın ortasında veya üstünde sabit kalsın */
+        top: 20% !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 80vw !important;
+        z-index: 10000 !important;
+        pointer-events: all !important; /* Tıklayıp kapatabilmek için */
+    }
+
+    /* Tooltip açıkken herhangi bir yere dokunulursa kapansın diye 
+       görünmez bir overlay ekleyebiliriz ama şimdilik manuel kapatma için: */
+    .item-tooltip::after {
+        content: "✕";
+        position: absolute;
+        top: 5px; right: 10px;
+        color: #ff4d4d;
+        font-weight: bold;
     }
 
     /* ENVANTER (I): Karakteri ve Slotları alt alta al */

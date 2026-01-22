@@ -294,6 +294,17 @@
     min-height: 90px; /* Daha yüksek */
 }
 
+.reward-item-amount {
+    color: #ffd700; /* Altın sarısı */
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    font-style: italic;
+    text-shadow: 2px 2px 4px #000;
+    /* Çizimine sadık kalmak için hafif yukarı ve sağa asalım */
+    transform: translateY(-5px); 
+}
+
 .reward-item-icon {
     width: 64px !important;
     height: 64px !important;
@@ -304,8 +315,18 @@
 
 .reward-item-text {
     display: flex;
-    flex-direction: column; /* İsim üstte, tier altta */
+    flex-direction: column;
+    flex-grow: 1; /* Metin alanını sağa kadar yayar */
     text-align: left;
+    position: relative;
+}
+
+.reward-item-header {
+    display: flex;
+    justify-content: space-between; /* İsim sola, miktar sağa */
+    align-items: baseline;
+    width: 100%;
+    padding-right: 10px; /* Kenardan biraz boşluk */
 }
 
 .reward-item-name {
@@ -314,6 +335,8 @@
     font-weight: bold;
     color: #fff;
     text-shadow: 1px 1px 2px #000;
+	max-width: 180px; /* İsmin miktar yazısının üstüne binmesini engeller */
+    line-height: 1.2;
 }
 
 .reward-item-tier {
@@ -793,6 +816,16 @@
 ============================================================ */
 
 @media (max-width: 768px) {
+	
+	.skill-book-header h2 {
+    margin: 0;
+    color: #f0e68c;
+    font-size: 1.2em;
+    border-bottom: 2px solid #6b5c3b;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
     /* Köy yazıları zaten cqw ile küçülüyor, dokunmaya gerek yok. */
 
     .town-exit-btn {
@@ -1032,4 +1065,145 @@
         padding: 10px !important;
         font-size: 1rem !important;
     }
+	
+	/* 1. Ana Pencere Genişliği */
+    #reforge-screen .stat-window {
+        width: 95vw !important;
+        padding: 15px !important;
+    }
+
+    /* 2. Üstteki Slotlar (Eşya + Modifiye Edici) */
+    .reforge-main-area {
+        gap: 10px !important;
+        margin: 10px 0 !important;
+    }
+
+    .reforge-input {
+        width: 55px !important; /* Slotları küçülttük */
+        height: 55px !important;
+    }
+
+    /* 3. Stat Seçim Kartları */
+    .reforge-prop-card {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* 4. KRİTİK: Maliyet Alanı (Gold & Fragment) */
+    .reforge-costs {
+        flex-direction: row; /* Yan yana tutmaya çalış, sığmazsa diye gap'i kıs */
+        gap: 10px !important;
+        padding: 8px 5px !important;
+        justify-content: space-around !important;
+    }
+
+    #cost-gold, #cost-fragments {
+        font-size: 0.75rem !important; /* Yazıları küçült */
+    }
+
+    /* Mobilde 50px'lik ikon çok büyük, onu küçültüyoruz */
+    #reforge-screen .inline-icon {
+        width: 30px !important; 
+        margin-right: 4px !important;
+    }
+
+    #cost-gold i {
+        font-size: 1.2rem !important; /* Altın simgesini de küçült */
+        margin-right: 5px !important;
+    }
+
+    /* 5. Butonlar */
+    #reforge-screen .menu-main-btn, 
+    #reforge-screen .npc-btn {
+        height: 40px !important;
+        font-size: 0.8rem !important;
+        padding: 5px 10px !important;
+    }
+
+    /* 6. Alt Envanter (Çanta) */
+    #reforge-bag-grid {
+        grid-template-columns: repeat(4, 50px) !important;
+        gap: 8px !important;
+        padding: 10px !important;
+        min-width: unset !important; /* Genişlik zorlamasını kaldır */
+    }
+
+    #reforge-bag-grid .item-slot {
+        width: 50px !important;
+        height: 50px !important;
+    }
+	/* 1. Ana Kutu Genişliği ve İç Boşluklar */
+    .event-content {
+        width: 95vw !important; /* Ekranın %95'ini kaplasın */
+        padding: 15px !important;
+        gap: 12px !important;
+        min-height: auto !important;
+    }
+
+    /* 2. Stat Barı (Üst Kısım) Küçültme */
+    .event-stats-bar {
+        padding-bottom: 8px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .e-stats-left {
+        gap: 10px !important;
+    }
+
+    #event-screen .npc-hp-stat, 
+    #event-screen .npc-rage-stat, 
+    #event-screen .npc-gold-stat {
+        font-size: 0.75rem !important; /* Yazıları ve ikonları küçült */
+    }
+
+    /* 3. Başlık ve Açıklama */
+    #event-title {
+        font-size: 1.3rem !important; /* ÖFKE İKSİRİ yazısını küçült */
+        margin-bottom: 5px !important;
+    }
+
+    #event-desc {
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 4. Butonlar (Seçenekler) */
+    .event-choices-grid {
+        gap: 10px !important;
+        margin-top: 5px !important;
+    }
+
+    .event-btn {
+        padding: 12px !important;
+        border-radius: 6px !important;
+    }
+
+    .choice-title {
+        font-size: 0.85rem !important; /* İÇ (RİSKLİ GÜÇ) yazısı */
+    }
+
+    .choice-details {
+        font-size: 0.7rem !important; /* +15 SALDIRI yazısı */
+        margin-top: 3px !important;
+        padding-top: 3px !important;
+    }
+
+    /* 5. Sonuç Ekranı */
+    #event-result-area h2 {
+        font-size: 1.5rem !important;
+    }
+
+    #event-result-text {
+        font-size: 0.9rem !important;
+        margin: 15px 0 !important;
+    }
+
+    #event-result-area .menu-main-btn {
+        width: 100% !important;
+        height: 45px !important;
+        margin-top: 15px !important;
+    }
 }
+
+
