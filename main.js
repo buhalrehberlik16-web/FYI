@@ -538,6 +538,14 @@ window.brosver = function(tier = 1) {
     }
 };
 
+document.addEventListener('touchstart', (e) => {
+    // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
+    if (!e.target.closest('.item-slot')) {
+        window.hideItemTooltip();
+        lastTappedSlot = null; // Seçimi sıfırla
+    }
+}, { passive: true });
+
 document.addEventListener('DOMContentLoaded', () => {
 	if(typeof applySettings === 'function') applySettings();
     // 1. Oyunu ve İlk Ekranı Başlat
