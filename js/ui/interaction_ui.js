@@ -28,6 +28,7 @@ window.openRewardScreen = function(rewards) {
             const itemName = getTranslatedItemName(item);
 			
 			// --- YENİ KONTROL ---
+			const displayAmount = (reward.amount && reward.amount > 1) ? `x${reward.amount} ` : "";
 			const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
 			const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
 			// --------------------

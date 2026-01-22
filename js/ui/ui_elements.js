@@ -124,19 +124,21 @@ window.getItemLevelLabel = function(item) {
     
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
-    const langItems = lang.items || {};
-    
-    // Eşyanın kural setini bul
-    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
-    // 1. Durum: Eğer eşya bir materyal/craft eşyası ise (C badge alıyorsa)
+    // 1. ÖNCE BROŞ KONTROLÜ
+    if (item.type === 'brooch') {
+        // Eğer tier_label yoksa yedek olarak "SEVİYE" yaz
+        const label = lang.tier_label || (currentLang === 'tr' ? "SEVİYE" : "TIER");
+        return `${label} ${item.tier}`;
+    }
+
+    // 2. MATERYAL KONTROLÜ
+    const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
     if (rules.badgeType === "craft") {
-        return langItems.material_label || (currentLang === 'tr' ? "Materyal" : "Material");
+        return lang.items.material_label || (currentLang === 'tr' ? "MATERYAL" : "MATERIAL");
     }
     
-    // 2. Durum: Eğer eşya bir takı ise (T badge alıyorsa)
-    // "Tier" kelimesini translation.js içindeki tier_label'dan çekiyoruz
-    const label = langItems.tier_label || (currentLang === 'tr' ? "Seviye" : "Tier");
-    
+    // 3. NORMAL TAKILAR
+    const label = lang.tier_label || (currentLang === 'tr' ? "SEVİYE" : "TIER");
     return `${label} ${item.tier}`;
 };

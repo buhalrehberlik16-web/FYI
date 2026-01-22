@@ -35,13 +35,14 @@ window.StatsManager = {
     },
 
     saveToProfile: function() {
-    // Eşyaların ham isim anahtarlarını (nameKey) saklayalım
+    // filter(item => item !== null) yerine filter(item => !!item) kullanıyoruz
+    // Bu sayede hem null hem undefined olan boş slotları eliyoruz.
     this.currentRun.finalInventory = hero.inventory
-        .filter(item => item !== null)
-        .map(item => item.nameKey); // getTranslatedItemName yerine nameKey
+        .filter(item => !!item && item.nameKey) // Eşyanın varlığından ve nameKey'inden emin ol
+        .map(item => item.nameKey);
         
     localStorage.setItem("RPG_Last_Run_Stats", JSON.stringify(this.currentRun));
-	},
+},
 
     loadProfile: function() {
         const data = localStorage.getItem("RPG_Last_Run_Stats");

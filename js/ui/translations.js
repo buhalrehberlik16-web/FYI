@@ -136,6 +136,7 @@ window.LANGUAGES = {
         res_lightning: "Yıldırım",
         close_hint: "Kapatmak için 'U' veya 'X' tuşuna basın.",
 		log_skill_unequipped: "yetenek slotundan çıkarıldı.",
+		tier_label: "SEVİYE",
 
         // Köy & Şehir
         building_inn: "HAN",
@@ -577,6 +578,7 @@ window.LANGUAGES = {
 		log_skill_unequipped: "unequipped from slot.",
 		critical_success: "CRITICAL SUCCESS!",
 		qty_suffix: "Qty",
+		tier_label: "TIER",
 		
 		//BIOMES
 		biome_forest: "Forest", biome_iceland: "Iceland", biome_mountain: "Mountains", biome_cave: "Cave", biome_urban: "Urban", biome_plains: "Plains",

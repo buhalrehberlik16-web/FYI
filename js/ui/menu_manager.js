@@ -164,7 +164,6 @@ window.showItemTooltip = function(item, event) {
     const tooltip = document.getElementById('item-tooltip');
     if (!tooltip || !item) return;
 
-    // 1. DEĞİŞKENLERİ TANIMLA (Hata buradaydı)
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
     const langItems = lang.items || {};
@@ -172,42 +171,77 @@ window.showItemTooltip = function(item, event) {
     const nameEl = document.getElementById('tooltip-name');
     const tierEl = document.getElementById('tooltip-tier');
     const statsEl = document.getElementById('tooltip-stats');
+	//  İÇERİK LİSTELEME
+	statsEl.innerHTML = '';
     
-    // 2. KURAL SETİNİ AL
     const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
     nameEl.textContent = getTranslatedItemName(item);
 
-    // 3. GÖRSEL SINIFLARI AYARLA (Badge Tipine Göre)
+    // 3. GÖRSEL SINIFLARI AYARLA
     if (rules.badgeType === "craft") {
         nameEl.className = 'tooltip-name'; 
-        tierEl.className = 'tooltip-tier'; // Materyal rengi (gri/beyaz)
+        tierEl.className = 'tooltip-tier';
     } else {
         nameEl.className = `tooltip-name tier-${item.tier}`;
-        tierEl.className = `tooltip-tier tier-${item.tier}`; // Tier rengi (Yeşil, Mavi vb.)
+        tierEl.className = `tooltip-tier tier-${item.tier}`;
     }
     
-    // 4. SEVİYE YAZISINI AYARLA (Tier 1 yerine "Materyal" yazar)
-    // Bu fonksiyonun ui_elements.js içinde olduğundan emin ol!
+    // 4. SEVİYE YAZISINI AYARLA (ui_elements içindeki fonksiyonu kullanır)
     tierEl.textContent = window.getItemLevelLabel(item);
     
-    // 5. STATLARI LİSTELE
-    statsEl.innerHTML = '';
+
+    // A - Standart Statlar (Takılar için)
     if (item.stats && Object.keys(item.stats).length > 0) {
         for (const [statKey, value] of Object.entries(item.stats)) {
             const row = document.createElement('div');
             row.className = 'tooltip-stat-row';
-            
-            // getStatDisplayName fonksiyonunu kullanıyoruz
-            const statName = (typeof window.getStatDisplayName === 'function') 
-                ? window.getStatDisplayName(statKey) 
-                : statKey;
-
+            const statName = window.getStatDisplayName(statKey);
             row.innerHTML = `<span>${statName}</span> <span class="tooltip-val">+${value}</span>`;
             statsEl.appendChild(row);
         }
-    } else {
-        // Hata veren satır düzeltildi: currentLang artık tanımlı.
+    } 
+    // B - Broş Efektleri (Eğer eşya Broş ise burası çalışır)
+    else if (item.type === 'brooch' && item.effects) {
+        // Alt Başlık (Mistik Aksesuar)
+        const subLabel = document.createElement('div');
+        subLabel.style.fontSize = "0.75rem";
+        subLabel.style.color = "#aaa";
+        subLabel.style.marginBottom = "8px";
+        subLabel.textContent = langItems.brooch_label;
+        statsEl.appendChild(subLabel);
+
+        item.effects.forEach(eff => {
+            const row = document.createElement('div');
+            row.className = 'tooltip-stat-row';
+            const effectName = langItems['eff_' + eff.id] || eff.id;
+            
+            let displayVal = eff.value;
+            if (eff.value < 1 && eff.value > 0) displayVal = `%${Math.round(eff.value * 100)}`;
+            else displayVal = `+${eff.value}`;
+
+            let detail = "";
+            if(eff.targetStat) detail = ` (${eff.targetStat.toUpperCase()})`;
+            if(eff.targetElement) {
+                const elName = langItems['res_' + eff.targetElement] || eff.targetElement;
+                detail = ` (${elName})`;
+            }
+
+            row.innerHTML = `<span>${effectName}${detail}</span> <span class="tooltip-val">${displayVal}</span>`;
+            statsEl.appendChild(row);
+        });
+
+        // Frekans Bilgisi
+        const freqText = (langItems.brooch_freq || "Every $1 Turns").replace("$1", item.frequency);
+        const freqDiv = document.createElement('div');
+        freqDiv.style.color = "#3498db";
+        freqDiv.style.fontSize = "0.8rem";
+        freqDiv.style.marginTop = "10px";
+        freqDiv.innerHTML = `⌛ ${freqText}`;
+        statsEl.appendChild(freqDiv);
+    }
+    // C - Gerçekten Materyal ise "Üretim Materyali" yaz (Takı veya Broş değilse)
+    else {
         const hint = currentLang === 'tr' ? 'Üretim materyali' : 'Crafting material';
         statsEl.innerHTML = `<div style="color:#888; font-size:0.8em; font-style:italic;">${hint}</div>`;
     }
@@ -259,28 +293,57 @@ window.equipItem = function(inventoryIndex) {
     const item = hero.inventory[inventoryIndex];
     if (!item) return;
 
-    // YENİ: Merkezi kural kontrolü
-    if (!window.isItemAllowedInUI(item, 'equip')) {
-        console.log("Bu eşya kuşanılabilir bir tür değil.");
-        return; 
+    if (!window.isItemAllowedInUI(item, 'equip')) return;
+
+    // --- BROŞLAR İÇİN ÖZEL MANTIK ---
+    if (item.type === 'brooch') {
+        // İlk boş broş slotunu bul (0'dan 5'e kadar)
+        const emptyBroochSlot = hero.brooches.indexOf(null);
+        
+        if (emptyBroochSlot !== -1) {
+            hero.brooches[emptyBroochSlot] = item;
+            hero.inventory[inventoryIndex] = null; // Çantadan çıkar
+            writeLog(`🎒 ${getTranslatedItemName(item)} broş slotuna takıldı.`);
+        } else {
+            const currentLang = window.gameSettings.lang || 'tr';
+            alert(currentLang === 'tr' ? "Broş slotları dolu!" : "Brooch slots are full!");
+            return;
+        }
+    } 
+    // --- STANDART TAKILAR İÇİN MEVCUT MANTIK ---
+    else {
+        let targetSlot = null;
+        if (item.type === 'earring') targetSlot = !hero.equipment.earring1 ? 'earring1' : 'earring2';
+        else if (item.type === 'ring') targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
+        else targetSlot = item.type;
+
+        const oldItem = hero.equipment[targetSlot];
+        hero.equipment[targetSlot] = item;
+        hero.inventory[inventoryIndex] = oldItem; 
+        writeLog(`🎒 ${getTranslatedItemName(item)} kuşanıldı.`);
     }
-
-    // Hedef slotu belirleme mantığı aynı kalıyor...
-    let targetSlot = null;
-    if (item.type === 'earring') targetSlot = !hero.equipment.earring1 ? 'earring1' : 'earring2';
-    else if (item.type === 'ring') targetSlot = !hero.equipment.ring1 ? 'ring1' : 'ring2';
-    else targetSlot = item.type;
-
-    const oldItem = hero.equipment[targetSlot];
-    hero.equipment[targetSlot] = item;
-    hero.inventory[inventoryIndex] = oldItem; 
 
     renderInventory();
     updateStats();
-    
-    const currentLang = window.gameSettings.lang || 'tr';
-    const msg = currentLang === 'tr' ? 'kuşanıldı.' : 'equipped.';
-    writeLog(`🎒 ${getTranslatedItemName(item)} ${msg}`);
+};
+
+window.unequipBrooch = function(index) {
+    hideItemTooltip();
+    const item = hero.brooches[index];
+    if (!item) return;
+
+    const emptyBagSlot = hero.inventory.indexOf(null);
+    if (emptyBagSlot !== -1) {
+        hero.inventory[emptyBagSlot] = item;
+        hero.brooches[index] = null;
+        writeLog(`📤 ${getTranslatedItemName(item)} broş slotundan çıkarıldı.`);
+    } else {
+        const currentLang = window.gameSettings.lang || 'tr';
+        alert(currentLang === 'tr' ? "Çanta dolu!" : "Inventory full!");
+    }
+
+    renderInventory();
+    updateStats();
 };
 
 // --- SÜRÜKLE BIRAK (DRAG & DROP) ---
@@ -305,6 +368,15 @@ function handleDrop(e, targetType, targetId) {
 			writeLog(`🎒 ${getTranslatedItemName(item)} ${currentLang === 'tr' ? 'kuşanıldı.' : 'equipped.'}`);
         }
     }
+	if (data.source === 'bag' && targetType === 'brooch') {
+        const item = hero.inventory[data.id];
+        if (item && item.type === 'brooch') {
+            const oldBrooch = hero.brooches[targetId];
+            hero.brooches[targetId] = item;
+            hero.inventory[data.id] = oldBrooch;
+        }
+    }
+	
     // 2. Ekipmandan Çantaya Sürükleme
     else if (data.source === 'equip' && targetType === 'bag') {
         const item = hero.equipment[data.id];
@@ -385,7 +457,18 @@ window.renderInventory = function() {
 
     // 1. Broşlar
     document.querySelectorAll('.brooch-slot').forEach((slot, i) => {
-        setupSlot(slot, hero.brooches[i], 'brooch', i);
+        const item = hero.brooches[i];
+        // 'brooch' tipini ve index numarasını gönderiyoruz
+        setupSlot(slot, item, 'brooch', i);
+        
+        // Broşa tıklandığında çıkar
+        if (item) {
+            slot.onclick = () => unequipBrooch(i);
+            slot.oncontextmenu = (e) => {
+                e.preventDefault();
+                unequipBrooch(i);
+            };
+        }
     });
 
     // 2. Ekipmanlar
