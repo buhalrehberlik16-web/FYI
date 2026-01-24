@@ -47,16 +47,21 @@ window.updateStarterCityUI = function() {
 
 window.leaveStarterCity = function() {
     writeLog("Maceran başlıyor...");
-    generateMap(); 
+    if (typeof generateMap === 'function') {
+        generateMap(); 
+    }
     switchScreen(window.mapScreen);
 };
 
 function levelUp() {
     if (hero.level >= MAX_LEVEL) return; 
+	
+	const stats = getHeroEffectiveStats(); // Yeni Max HP'yi al
+    const healAmount = Math.ceil(stats.maxHp * 0.50); // %50 iyileşme (yukarı yuvarla)
     
     hero.level++;
     hero.maxHp += 5; 
-    hero.hp = Math.min(hero.maxHp, hero.hp + 20); 
+    hero.hp = Math.min(stats.maxHp, hero.hp + healAmount);
     hero.attack += 1; 
     hero.maxRage += 0;
     
@@ -73,7 +78,7 @@ function levelUp() {
     hero.xp = hero.xp - FULL_XP_REQUIREMENTS[hero.level - 1]; 
     hero.xpToNextLevel = FULL_XP_REQUIREMENTS[hero.level] || Infinity; 
     
-    writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level}) - Kazanılan SP: ${spGain}`);
+    writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level}) - Kazanılan SP: ${spGain} - %50 Can Yenilendi (+${healAmount} HP)`);
     updateStats(); 
     triggerLevelUpEffect();
 }
@@ -83,21 +88,18 @@ function increaseStat(statName) {
     if (isInBattle) { writeLog("❌ Savaş sırasında stat puanı dağıtamazsın!"); return; }
 
      if (hero.statPoints > 0) {
-        hero.statPoints--;
-        
-        // Sadece temel statı artır, çarpanları getHeroEffectiveStats halledecek
-        if (statName === 'str') hero.str++;
-        else if (statName === 'dex') hero.dex++;
-        else if (statName === 'int') hero.int++;
-        else if (statName === 'mp_pow') hero.mp_pow++;
-        else if (statName === 'vit') { 
-            hero.vit++;
+        window.syncHpWithRatio(() => {
+            hero.statPoints--;
+            if (statName === 'str') hero.str++;
+            else if (statName === 'dex') hero.dex++;
+            else if (statName === 'int') hero.int++;
+            else if (statName === 'mp_pow') hero.mp_pow++;
+            else if (statName === 'vit') hero.vit++;
 			const stats = getHeroEffectiveStats();
             if (hero.hp > stats.maxHp) hero.hp = stats.maxHp;
+        });
         }
-        
-        updateStats(); // Bu fonksiyon barları ve renkleri yeni statlara göre tazeler
-    }
+        updateStats(); // Bu fonksiyon barları ve renkleri yeni statlara göre tazeler   
 }
 
 // YETENEK ÖĞRENME
@@ -335,7 +337,6 @@ function initGame() {
 		
     isHeroDefending = false; monster = null; isHeroTurn = true; 
 
-    if (typeof generateMap === 'function') generateMap(); 
     
     // Basic Skill Görsellerini Yükle (UI Manager)
     if (typeof initializeSkillButtons === 'function') initializeSkillButtons();

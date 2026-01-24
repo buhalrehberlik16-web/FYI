@@ -1,4 +1,4 @@
-const ENEMY_STATS = {
+window.ENEMY_STATS = {
     // --- TIER 1 ---
     "Zehirli Mantar": { 
         maxHp: 30, attack: 5, defense: 2, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
@@ -106,7 +106,6 @@ const ENEMY_STATS = {
 		skills: [{ id: "ground_slam", category: "utility" }, { id: "stone_form", category: "survival" }]
     },
     
-    // --- TIER 4 ---
     "Orc Fedaisi": { 
         maxHp: 250, attack: 50, defense: 21, xp: 0, 
         tier: 4, // YENİ
@@ -116,7 +115,7 @@ const ENEMY_STATS = {
 		skills: [{ id: "crushing_blow", category: "utility" }, { id: "iron_will", category: "survival" }]
     },
 
-    // --- BOSS ---
+    // --- TIER 4 --- // --- BOSS ---
     "Goblin Şefi": { 
         maxHp: 250, attack: 35, defense: 20, xp: 0, isBoss:true,
         tier: 5, // Boss T5 olsun
@@ -127,12 +126,12 @@ const ENEMY_STATS = {
     }
 };
 // Düşman Havuzları
-const TIER_ENEMIES = {
+window.TIER_ENEMIES = {
     1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet"],
     2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "İskelet Şövalye", "Gulyabani"],
-    4: ["Kaya Golemi", "Orc Fedaisi", "Kemik Golemi"],
-    5: ["Goblin Şefi"], // Boss/Elite
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Orc Fedaisi"],
+    4: ["Goblin Şefi"], //Boss
+    5: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi"], 
     6: [], // Buradan sonrasını yeni ekleyeceğin düşmanlarla doldurabilirsin
     7: [],
     8: [],

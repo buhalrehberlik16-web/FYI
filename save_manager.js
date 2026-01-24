@@ -39,20 +39,22 @@ window.loadGame = function() {
 
         // UI'ı tazele
         setTimeout(() => {
-            if (typeof updateStats === 'function') updateStats();
-            
-            // HARİTA TAZELEME KRİTİK NOKTA
-            if (typeof renderMap === 'function') {
-                renderMap(); // Bu artık içini temizleyip çiziyor
-            }
+    if (typeof updateStats === 'function') updateStats();
+    
+    // Eğer kayıtlı bir harita varsa onu çiz (Yeni üretme!)
+    if (window.GAME_MAP && window.GAME_MAP.nodes.length > 0) {
+        if (typeof renderMap === 'function') {
+            renderMap(); 
+        }
+    }
 
-            // Oyuncuyu doğru noktaya taşı
-            if (window.GAME_MAP.currentNodeId !== null) {
-                if (typeof movePlayerMarkerToNode === 'function') {
-                    movePlayerMarkerToNode(window.GAME_MAP.currentNodeId, true);
-                }
-            }
-        }, 100);
+    // Oyuncuyu kaldığı yere taşı
+    if (window.GAME_MAP.currentNodeId !== null) {
+        if (typeof movePlayerMarkerToNode === 'function') {
+            movePlayerMarkerToNode(window.GAME_MAP.currentNodeId, true);
+        }
+    }
+}, 150);
 
         writeLog("📂 Kayıt başarıyla yüklendi.");
         return true;

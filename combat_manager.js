@@ -452,7 +452,7 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType, isHardFromMap = false) {
+window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	
 	let scaling = 1.0;
@@ -469,9 +469,34 @@ window.startBattle = function(enemyType, isHardFromMap = false) {
     }
     }
 	
+	// --- DATA-DRIVEN Tier SCALE AYARI ---
+    const SCALE_AMOUNT = 1.5; // Değiştirmesi çok kolay: Burayı 1.2 yaparsan %20 artar
+    let multiplier = isHalfTierFromMap ? SCALE_AMOUNT : 1.0;
+
+    // Yardımcı yuvarlama fonksiyonu (Statları tam sayıya çevirir)
+    const scale = (val) => Math.ceil(val * multiplier);
+	
     switchScreen(battleScreen);
-    monster = { name: enemyType, maxHp: stats.maxHp, hp: stats.maxHp, attack: stats.attack, defense: stats.defense, isHard: isHardFromMap, isBoss: stats.isBoss, xp: stats.xp, tier: stats.tier, idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames };
+    monster = { 
+	name: enemyType, 
+	maxHp: scale(stats.maxHp), 
+	hp: scale(stats.maxHp), 
+	attack: scale(stats.attack), 
+	defense: scale(stats.defense), 
+	isHard: isHardFromMap, 
+	isBoss: stats.isBoss, 
+	isHalfTier: isHalfTierFromMap,
+	xp: stats.xp, 
+	tier: stats.tier, 
+	idle: stats.idle,  dead: stats.dead,  attackFrames: stats.attackFrames,
+	skills: stats.skills,
+    firstTurnAction: stats.firstTurnAction
+	};
     
+	if (isHalfTierFromMap) {
+        writeLog(`⚠️ **Takviyeli Düşman**: Statlar %${(SCALE_AMOUNT-1)*100} arttırıldı!`);
+    }
+	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
     const bonus = window.EventManager.getCombatBonus();
     hero.rage = Math.min(hero.maxRage, hero.rage + bonus.rage);
