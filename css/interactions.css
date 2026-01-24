@@ -928,6 +928,56 @@
 	#modal-alchemist .npc-stats-header {top:37.5%;}
 	modal-alchemist .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-alchemist .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	.transmute-container {
+        min-height: 280px !important; /* Kutunun boyu eşya olsa da olmasa da sabit kalsın */
+        padding: 15px !important;
+        gap: 10px !important; /* Elemanlar arası boşluğu daralt */
+        justify-content: center !important;
+    }
+
+    /* 2. Olası Kazanç Alanı (Zıplamayı engelleyen kısım) */
+    .salvage-yield-info {
+        width: 100% !important;
+        min-height: 110px !important; /* Tablo yüksekliğini sabitledik */
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(107, 92, 59, 0.5) !important;
+        padding: 10px !important;
+        margin: 5px 0 !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* 3. Bekleme Yazısının (TAKI YERLEŞTİRİN) tabloyla aynı alanı kaplamasını sağla */
+    .salvage-yield-info span {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* 4. Çekiç İkonunu Ölçekle */
+    .transmute-arrow i.fa-hammer {
+        font-size: 1.5rem !important;
+        margin: 5px 0 !important;
+    }
+
+    /* 5. Prob-Row (Yüzdelerin yazdığı satırlar) */
+    .prob-row {
+        height: 22px !important; /* Satır yüksekliklerini sabitle */
+        margin-bottom: 2px !important;
+    }
+
+    /* 6. Çanta (I) Yazısı ve Grid Arasındaki Boşluk */
+    #salvage-screen h3 {
+        margin-top: 15px !important;
+        margin-bottom: 5px !important;
+        font-size: 0.9rem !important;
+    }
+	
+	
+	
 
     /* 5. AHIR (STABLE) MOBİL */
     #modal-stable .npc-actions-left { top: 42% !important; left: 11% !important; }
