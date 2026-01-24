@@ -38,16 +38,38 @@ function renderSalvageUIAll() {
         // Tooltip ve Tıklama (Geri verme) aynı kalıyor...
         inputSlot.onmouseenter = (e) => window.showItemTooltip(salvageItem, e);
         inputSlot.onmouseleave = () => window.hideItemTooltip();
-        inputSlot.onclick = () => {
+        inputSlot.onclick = (e) => {
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        if (lastTappedSlot === inputSlot) {
+            // İKİNCİ TIK: Çantaya geri gönder
             window.hideItemTooltip();
             const emptyBag = hero.inventory.indexOf(null);
             if (emptyBag !== -1) {
                 hero.inventory[emptyBag] = salvageItem;
                 salvageItem = null;
+                lastTappedSlot = null; 
                 renderSalvageUIAll();
                 renderInventory();
             }
-        };
+        } else {
+            // İLK TIK: Bilgi göster
+            lastTappedSlot = inputSlot;
+            window.showItemTooltip(salvageItem, e);
+        }
+    } else {
+        // PC: Doğrudan iade
+        window.hideItemTooltip();
+        const emptyBag = hero.inventory.indexOf(null);
+        if (emptyBag !== -1) {
+            hero.inventory[emptyBag] = salvageItem;
+            salvageItem = null;
+            renderSalvageUIAll();
+            renderInventory();
+        }
+    }
+};
 
         const range = getSalvageRange(salvageItem.tier);
         yieldDiv.innerHTML = `

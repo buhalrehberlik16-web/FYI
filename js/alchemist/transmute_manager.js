@@ -32,40 +32,59 @@ function renderTransmuteSlots() {
     const slots = document.querySelectorAll('.transmute-input');
     const resultSlot = document.getElementById('transmute-result-slot');
 
-    const hasAnyIngredient = transmuteIngredients.some(item => item !== null);
-    if (hasAnyIngredient && resultSlot) {
-        resultSlot.innerHTML = '';
-        resultSlot.classList.remove('critical-glow');
-        resultSlot.onmouseenter = null; 
-        resultSlot.onmouseleave = null;
-    }
-
     slots.forEach((slot, i) => {
-        const item = transmuteIngredients[i];
+        const item = transmuteIngredients[i]; // Döngüdeki o anki item
         slot.innerHTML = '';
+        
         if (item) {
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slot.appendChild(img);
-			
-            // YENİ: Merkezi badge sistemi
             slot.innerHTML += window.getItemBadgeHTML(item);
             
-            // Tooltip ve Tıklama mantığı aynı...
-            slot.onmouseenter = (e) => window.showItemTooltip(item, e);
-            slot.onmouseleave = () => window.hideItemTooltip();
-            slot.onclick = () => {
-                window.hideItemTooltip();
-                const emptyBag = hero.inventory.indexOf(null);
-                if (emptyBag !== -1) {
-                    hero.inventory[emptyBag] = item;
-                    transmuteIngredients[i] = null;
-                    renderTransmuteUIAll();
+            // --- MOBİL VE PC TIKLAMA MANTIĞI ---
+            slot.onclick = (e) => {
+                e.stopPropagation(); // Diğer tıklama olaylarını durdur
+                const isMobile = window.innerWidth <= 768;
+
+                if (isMobile) {
+                    if (window.lastTappedSlot === slot) {
+                        // İKİNCİ TIK: Eşyayı çıkar
+                        window.hideItemTooltip();
+                        const emptyBag = hero.inventory.indexOf(null);
+                        if (emptyBag !== -1) {
+                            hero.inventory[emptyBag] = item;
+                            transmuteIngredients[i] = null;
+                            window.lastTappedSlot = null; // Kilidi temizle
+                            renderTransmuteUIAll();
+                        }
+                    } else {
+                        // İLK TIK: Bilgi göster
+                        window.lastTappedSlot = slot;
+                        window.showItemTooltip(item, e);
+                    }
+                } else {
+                    // PC: Doğrudan çıkar
+                    window.hideItemTooltip();
+                    const emptyBag = hero.inventory.indexOf(null);
+                    if (emptyBag !== -1) {
+                        hero.inventory[emptyBag] = item;
+                        transmuteIngredients[i] = null;
+                        renderTransmuteUIAll();
+                    }
                 }
             };
+
+            // PC Hover
+            slot.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
+            slot.onmouseleave = () => window.hideItemTooltip();
+
+        } else {
+            slot.onclick = null;
+            slot.onmouseenter = null;
         }
 
-        // Drop (Bırakma) hedefi
+        // Drop (Bırakma) hedefi aynı kalabilir
         slot.ondragover = e => e.preventDefault();
         slot.ondrop = e => {
             const data = JSON.parse(e.dataTransfer.getData('text/plain'));
@@ -79,7 +98,7 @@ function renderTransmuteSlots() {
             }
         };
     });
-	window.updateTransmuteProbabilities();
+    window.updateTransmuteProbabilities();
 }
 
 // Transmute ekranının altındaki envanteri çizer

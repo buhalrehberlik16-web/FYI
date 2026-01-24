@@ -225,8 +225,10 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
 
     // 2. Eşya ismi ve seviyesi
     const levelLabel = window.getItemLevelLabel(item);
-    nameEl.textContent = `${getTranslatedItemName(item)} (${levelLabel})`;
-    nameEl.className = (rules.badgeType === "tier") ? `tier-${item.tier}` : "";
+    nameEl.innerHTML = `
+    <div class="confirm-name-text">${getTranslatedItemName(item)}</div>
+    <div class="confirm-tier-text ${rules.badgeType === "tier" ? 'tier-' + item.tier : ''}">${levelLabel}</div>
+`;
 
     // 3. İÇERİK LİSTELEME (BROŞ DESTEĞİ EKLENDİ)
     statsEl.innerHTML = '';

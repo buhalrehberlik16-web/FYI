@@ -115,14 +115,35 @@ function drawReforgeSlot(el, item, slotType) {
         el.appendChild(img);
         el.innerHTML += window.getItemBadgeHTML(item);
 
-        el.onclick = () => {
-            window.hideItemTooltip();
-            addItemToInventory(item, 1);
-            if (slotType === 'item') { rSelectedJewelry = null; rPropertyToRemove = null; }
-            else rSelectedModifier = null;
-            renderReforgeUI();
+        el.onclick = (e) => {
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                if (lastTappedSlot === el) {
+                    // İKİNCİ TIK: Çantaya iade
+                    window.hideItemTooltip();
+                    addItemToInventory(item, 1);
+                    if (slotType === 'item') { rSelectedJewelry = null; rPropertyToRemove = null; }
+                    else rSelectedModifier = null;
+                    lastTappedSlot = null;
+                    renderReforgeUI();
+                } else {
+                    // İLK TIK: Bilgi
+                    lastTappedSlot = el;
+                    window.showItemTooltip(item, e);
+                }
+            } else {
+                // PC: Doğrudan iade
+                window.hideItemTooltip();
+                addItemToInventory(item, 1);
+                if (slotType === 'item') { rSelectedJewelry = null; rPropertyToRemove = null; }
+                else rSelectedModifier = null;
+                renderReforgeUI();
+            }
         };
-        el.onmouseenter = (e) => window.showItemTooltip(item, e);
+        
+        // PC Hover Desteği
+        el.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
         el.onmouseleave = () => window.hideItemTooltip();
     } else {
         el.onclick = null;

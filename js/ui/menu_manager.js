@@ -1,5 +1,5 @@
 // js/ui/menu_manager.js
-let lastTappedSlot = null; 
+window.lastTappedSlot = null; 
 let selectedSkillToEquip = null; // O an seçili olan yeteneği tutar
 
 window.getTranslatedItemName = function(item) {
@@ -224,9 +224,12 @@ window.showItemTooltip = function(item, event) {
             else displayVal = `+${eff.value}`;
 
             let detail = "";
-            if(eff.targetStat) detail = ` (${eff.targetStat.toUpperCase()})`;
+            if(eff.targetStat) {
+                const statLabel = langItems['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
+                detail = ` (${statLabel})`;
+            }
             if(eff.targetElement) {
-                const elName = langItems['res_' + eff.targetElement] || eff.targetElement;
+                const elName = langItems['brores_' + eff.targetElement] || eff.targetElement;
                 detail = ` (${elName})`;
             }
 
@@ -404,91 +407,46 @@ function handleDrop(e, targetType, targetId) {
 // --- ANA RENDER FONKSİYONU ---
 window.renderInventory = function() {
     hideItemTooltip();
-    const goldText = document.getElementById('inv-gold-text');
-    if (goldText) goldText.textContent = hero.gold;
 
-    // --- YENİLENMİŞ SLOT KURULUM YARDIMCISI ---
     const setupSlot = (slotEl, item, type, identifier) => {
-    slotEl.innerHTML = '';
-    slotEl.draggable = !!item;
-    
-    if (item) {
-        const img = document.createElement('img');
-        img.src = `items/images/${item.icon}`;
-        slotEl.appendChild(img);
-        slotEl.innerHTML += window.getItemBadgeHTML(item);
-
-        if (item.count && item.count > 1) {
-            slotEl.innerHTML += `<span class="item-count-badge">${item.count}</span>`;
-        }
+        slotEl.innerHTML = '';
+        slotEl.draggable = !!item; 
         
-        // --- MOUSE İLE HOVER (PC) ---
-        slotEl.onmouseenter = (e) => {
-            if (window.innerWidth > 768) window.showItemTooltip(item, e);
-        };
-        slotEl.onmousemove = (e) => {
-            if (window.innerWidth > 768) moveTooltip(e);
-        };
-        slotEl.onmouseleave = () => window.hideItemTooltip();
-
-        // --- TIKLAMA MANTIĞI (MOBİL & PC) ---
-        slotEl.onclick = (e) => {
-            const isMobile = window.innerWidth <= 768;
-
-            if (isMobile) {
-                // MOBİL: İlk tık bilgi, ikinci tık aksiyon
-                if (lastTappedSlot === slotEl) {
-                    // İkinci tık: Aksiyonu yap ve sıfırla
-                    performSlotAction(item, type, identifier);
-                    lastTappedSlot = null;
-                    window.hideItemTooltip();
-                } else {
-                    // İlk tık: Tooltip göster ve bu slotu "işaretle"
-                    lastTappedSlot = slotEl;
-                    window.showItemTooltip(item, e);
-                }
-            } else {
-                // MASAÜSTÜ: Doğrudan aksiyon (zaten hover var)
-                performSlotAction(item, type, identifier);
-            }
-        };
-
-        // Sağ tık (PC için çıkarma)
-        slotEl.oncontextmenu = (e) => {
-            e.preventDefault();
-            if (type === 'equip') unequipItem(identifier);
-            else if (type === 'brooch') unequipBrooch(identifier);
-        };
-    } else {
-        slotEl.onclick = null;
-        slotEl.onmouseenter = null;
-    }
-};
-
-
-    // 1. Broşlar
-    document.querySelectorAll('.brooch-slot').forEach((slot, i) => {
-        const item = hero.brooches[i];
-        // 'brooch' tipini ve index numarasını gönderiyoruz
-        setupSlot(slot, item, 'brooch', i);
-        
-        // Broşa tıklandığında çıkar
         if (item) {
-            slot.onclick = () => unequipBrooch(i);
-            slot.oncontextmenu = (e) => {
+            const img = document.createElement('img');
+            img.src = `items/images/${item.icon}`;
+            slotEl.appendChild(img);
+            slotEl.innerHTML += window.getItemBadgeHTML(item);
+            if (item.count && item.count > 1) slotEl.innerHTML += `<span class="item-count-badge">${item.count}</span>`;
+            
+            slotEl.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
+            slotEl.onmousemove = (e) => { if (window.innerWidth > 768) moveTooltip(e); };
+            slotEl.onmouseleave = () => window.hideItemTooltip();
+            slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
+
+            slotEl.onclick = (e) => {
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    if (lastTappedSlot === slotEl) { performSlotAction(item, type, identifier); lastTappedSlot = null; window.hideItemTooltip(); }
+                    else { lastTappedSlot = slotEl; window.showItemTooltip(item, e); }
+                } else { performSlotAction(item, type, identifier); }
+            };
+
+            slotEl.oncontextmenu = (e) => {
                 e.preventDefault();
-                unequipBrooch(i);
+                if (type === 'equip') unequipItem(identifier);
+                else if (type === 'brooch') unequipBrooch(identifier);
             };
         }
-    });
+        slotEl.ondragover = (e) => e.preventDefault();
+        slotEl.ondrop = (e) => handleDrop(e, type, identifier);
+    };
 
-    // 2. Ekipmanlar
+    document.querySelectorAll('.brooch-slot').forEach((slot, i) => setupSlot(slot, hero.brooches[i], 'brooch', i));
     for (const slotKey in hero.equipment) {
         const slotEl = document.querySelector(`.equip-slot[data-slot="${slotKey}"]`);
         if (slotEl) setupSlot(slotEl, hero.equipment[slotKey], 'equip', slotKey);
     }
-
-    // 3. Çanta (Bag) Gridini Doldur
     const bagGrid = document.querySelector('.bag-grid');
     if (bagGrid) {
         bagGrid.innerHTML = '';
@@ -499,6 +457,7 @@ window.renderInventory = function() {
             bagGrid.appendChild(slot);
         });
     }
+    document.getElementById('inv-gold-text').textContent = hero.gold;
 };
 
 // Aksiyonları tek merkezde toplayan yardımcı fonksiyon
@@ -534,11 +493,7 @@ window.renderSkillBookList = function() {
     if (!skillBookList) return;
     skillBookList.innerHTML = '';
     const isInBattle = battleScreen.classList.contains('active');
-    
-    if (skillPointsDisplay) skillPointsDisplay.textContent = hero.skillPoints;
-
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
     const skills = Object.entries(SKILL_DATABASE)
         .filter(([_, s]) => s.data.category === currentTab)
@@ -546,13 +501,9 @@ window.renderSkillBookList = function() {
 
     skills.forEach(([key, skill]) => {
         const isLearned = hero.unlockedSkills.includes(key);
-        
         if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) return;
 
-        const skillTranslation = (lang.skills && lang.skills[key]) 
-            ? lang.skills[key] 
-            : { name: skill.data.name, desc: skill.data.menuDescription };
-
+        const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
         const actualCost = skill.data.pointCost !== undefined ? skill.data.pointCost : skill.data.tier;
         const canAfford = hero.skillPoints >= actualCost;
         const treeMet = checkSkillTreeRequirement(skill.data.category, skill.data.tier);
@@ -560,45 +511,24 @@ window.renderSkillBookList = function() {
         const item = document.createElement('div');
         const isSelected = selectedSkillToEquip === key;
         item.className = `skill-book-item ${isLearned ? '' : 'locked'} ${isSelected ? 'selected-skill' : ''}`;
-		
-        let cdHtml = skill.data.cooldown > 0 ? `<br><span style="color:#ffd700; font-size:0.85em;">⌛ ${lang.cooldown_label}: ${skill.data.cooldown} ${lang.turn_suffix}</span>` : '';
-        let cdHtml1 = skill.data.cooldown < 1 ? `<br><span style="color:#ffd700; font-size:0.85em;">${lang.same_turn_warning}</span>` : '';
         
         let action = isLearned ? `<small style="color:#43FF64; font-weight:bold;">${lang.learned_status}</small>` : 
          (isInBattle ? `<small style="color:orange; font-weight:bold;">${lang.battle_lock_warning}</small>` : 
-         (canAfford && treeMet ? 
-            `<button class="btn-learn-skill" onclick="learnSkill('${key}')">${actualCost} SP</button>` : 
-            `<small style="color:#777;">${actualCost} ${lang.sp_required}</small>`));
+         (canAfford && treeMet ? `<button class="btn-learn-skill" onclick="learnSkill('${key}')">${actualCost} SP</button>` : `<small style="color:#777;">${actualCost} ${lang.sp_required}</small>`));
 
         item.innerHTML = `
-            <div style="position:relative;">
-                <img src="images/${skill.data.icon}" class="skill-book-icon">
-                <span class="tier-badge">T${skill.data.tier}</span>
-            </div>
+            <div style="position:relative;"><img src="images/${skill.data.icon}" class="skill-book-icon"><span class="tier-badge">T${skill.data.tier}</span></div>
             <div class="skill-info" style="flex-grow:1;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="color:#f0e68c !important;">${skillTranslation.name}</h4>${action}
-                </div>
-                <p>${skillTranslation.desc}${cdHtml}${cdHtml1}</p>
+                <div style="display:flex; justify-content:space-between; align-items:center;"><h4>${skillTrans.name}</h4>${action}</div>
+                <p>${skillTrans.desc}</p>
             </div>`;
         
         if (isLearned && skill.data.type !== 'passive') {
-            // --- PC İÇİN SÜRÜKLEME DESTEĞİ ---
-            item.setAttribute('draggable', true); 
-            item.ondragstart = (e) => {
-                selectedSkillToEquip = null; // Sürükleme başladığında seçimi temizle (karışıklık olmasın)
-                e.dataTransfer.setData('text/plain', key);
-                renderSkillBookList(); // Seçim parlamasını temizlemek için
-            };
-
-            // --- MOBİL İÇİN TIKLA-SEÇ DESTEĞİ ---
+            item.setAttribute('draggable', true);
+            item.ondragstart = (e) => { selectedSkillToEquip = null; e.dataTransfer.setData('text/plain', key); };
             item.onclick = (e) => {
                 if (e.target.tagName !== 'BUTTON') {
-                    if (selectedSkillToEquip === key) {
-                        selectedSkillToEquip = null;
-                    } else {
-                        selectedSkillToEquip = key;
-                    }
+                    selectedSkillToEquip = (selectedSkillToEquip === key) ? null : key;
                     renderSkillBookList();
                 }
             };
@@ -610,35 +540,22 @@ window.renderSkillBookList = function() {
 window.renderEquippedSlotsInBook = function() {
     if (!skillBookEquippedBar) return;
     skillBookEquippedBar.innerHTML = '';
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
     for (let i = 0; i < hero.equippedSkills.length; i++) {
         const slot = document.createElement('div'); 
         slot.className = 'menu-slot' + (i < 2 ? ' basic-menu-slot' : '');
         slot.innerHTML = `<span class="key-hint">${(i === 0) ? 'A' : (i === 1) ? 'D' : (i - 1)}</span>`;
-        
         const key = hero.equippedSkills[i];
 
-        // --- MOBİL TIKLAMA ---
         slot.onclick = () => {
-            if (typeof selectedSkillToEquip !== 'undefined' && selectedSkillToEquip) {
-                hero.equippedSkills[i] = selectedSkillToEquip;
-                selectedSkillToEquip = null;
-                writeLog(`⚙️ Yetenek yerleştirildi.`);
-            } 
-            else if (hero.equippedSkills[i]) {
-                const unequippedKey = hero.equippedSkills[i];
-                const skillName = lang.skills[unequippedKey]?.name || unequippedKey;
-                hero.equippedSkills[i] = null;
-                writeLog(`📤 ${skillName} ${lang.log_skill_unequipped}`);
-            }
-            refreshBookUI(); // UI tazelemek için aşağıda tanımladık
+            if (selectedSkillToEquip) { hero.equippedSkills[i] = selectedSkillToEquip; selectedSkillToEquip = null; } 
+            else if (hero.equippedSkills[i]) hero.equippedSkills[i] = null;
+            refreshBookUI();
         };
 
-        // --- PC DROP (BIRAKMA) ---
-        slot.addEventListener('dragover', e => e.preventDefault());
-        slot.addEventListener('drop', e => {
+        slot.ondragover = e => e.preventDefault();
+        slot.ondrop = e => {
             e.preventDefault(); 
             const raw = e.dataTransfer.getData('text/plain');
             try { 
@@ -648,51 +565,27 @@ window.renderEquippedSlotsInBook = function() {
                     hero.equippedSkills[i] = hero.equippedSkills[data.index]; 
                     hero.equippedSkills[data.index] = temp; 
                 } 
-            }
-            catch(err) { 
-                // Kitaptan bara sürüklenen düz metin (key)
-                if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) {
-                    hero.equippedSkills[i] = raw; 
-                }
+            } catch(err) { 
+                if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) hero.equippedSkills[i] = raw; 
             }
             refreshBookUI();
-        });
+        };
 
         if (key && SKILL_DATABASE[key]) { 
-            const skillData = SKILL_DATABASE[key].data;
             const img = document.createElement('img');
-            img.src = `images/${skillData.icon}`;
-            img.title = skillData.name;
+            img.src = `images/${SKILL_DATABASE[key].data.icon}`;
             slot.appendChild(img);
-
-            // --- PC DRAG (SÜRÜKLEME) ---
             slot.setAttribute('draggable', true); 
-            slot.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
-            });
-
-            slot.addEventListener('dragend', e => {
-                if (e.dataTransfer.dropEffect === "none") {
-                    hero.equippedSkills[i] = null;
-                    refreshBookUI();
-                    writeLog(`📤 ${lang.log_skill_unequipped}`);
-                }
-            });
-
-            slot.oncontextmenu = e => { 
-                e.preventDefault(); 
-                hero.equippedSkills[i] = null; 
-                refreshBookUI();
-            };
+            slot.ondragstart = e => e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
+            slot.ondragend = e => { if (e.dataTransfer.dropEffect === "none") { hero.equippedSkills[i] = null; refreshBookUI(); } };
         }
         skillBookEquippedBar.appendChild(slot);
     }
 };
 
-// Kod tekrarını önlemek için küçük yardımcı fonksiyon
 function refreshBookUI() {
     renderEquippedSlotsInBook(); 
-    if (typeof renderSkillBookList === 'function') renderSkillBookList();
+    renderSkillBookList();
     if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
 }
 

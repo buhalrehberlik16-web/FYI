@@ -77,8 +77,6 @@ function drawCraftSlot(el, item, slotType) {
         const img = document.createElement('img');
         img.src = `items/images/${item.icon}`;
         el.appendChild(img);
-
-        // YENİ: Merkezi badge sistemi (C veya T otomatik basılır)
         el.innerHTML += window.getItemBadgeHTML(item);
 
         if (item.count && item.count > 1) {
@@ -87,16 +85,37 @@ function drawCraftSlot(el, item, slotType) {
 
         el.onclick = (e) => {
             e.stopPropagation();
-            window.hideItemTooltip();
-            addItemToInventory(item, item.count || 1);
-            if (slotType === 'fragments') selectedFragments = null;
-            if (slotType === 'stat') selectedStatScroll = null;
-            if (slotType === 'type') selectedTypeScroll = null;
-            renderSynthesisUI();
-            renderInventory();
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                if (lastTappedSlot === el) {
+                    // İKİNCİ TIK: Çantaya iade
+                    window.hideItemTooltip();
+                    addItemToInventory(item, item.count || 1);
+                    if (slotType === 'fragments') selectedFragments = null;
+                    if (slotType === 'stat') selectedStatScroll = null;
+                    if (slotType === 'type') selectedTypeScroll = null;
+                    lastTappedSlot = null;
+                    renderSynthesisUI();
+                    renderInventory();
+                } else {
+                    // İLK TIK: Bilgi
+                    lastTappedSlot = el;
+                    window.showItemTooltip(item, e);
+                }
+            } else {
+                // PC: Doğrudan iade
+                window.hideItemTooltip();
+                addItemToInventory(item, item.count || 1);
+                if (slotType === 'fragments') selectedFragments = null;
+                if (slotType === 'stat') selectedStatScroll = null;
+                if (slotType === 'type') selectedTypeScroll = null;
+                renderSynthesisUI();
+                renderInventory();
+            }
         };
         
-        el.onmouseenter = (e) => window.showItemTooltip(item, e);
+        el.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
         el.onmouseleave = () => window.hideItemTooltip();
     }
 }
