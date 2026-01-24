@@ -5,8 +5,8 @@ window.ITEM_RULES = {
     "material": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: false, canEquip: false, lootValue: 0.75 },
     "scroll": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Scrollar reforge'da kullanılabilir
     "resist_stone": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Taşlar reforge'da kullanılabilir
-    "charm": { badgeType: "tier", canSalvage: false, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false },
-	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 }
+    "charm": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false },
+	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 }
 };
 
 // Broş Puanlama Sistemi
@@ -34,7 +34,7 @@ window.ITEM_CONFIG = {
     multipliers: {
         stats: 1,      // 1 Puan = 1 STR/DEX vb.
         resists: 3,     // 1 Puan = 3 Fire/Ice Resist vb.
-		vitToHp: 2  // <--- YENİ: Eşyadan gelen 1 Vit artık 2 HP verecek
+		//vitToHp: 2  // <--- YENİ: Eşyadan gelen 1 Vit artık 2 HP verecek
     },
     // Havuzlar
     statsPool: ['str', 'dex', 'int', 'vit', 'mp_pow'],

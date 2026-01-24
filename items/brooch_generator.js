@@ -5,7 +5,7 @@ window.generateRandomBrooch = function(tier) {
     let brooch = {
         id: "brooch_" + Date.now(),
         type: "brooch",
-        subtype: "jewelry", // Kurallar takılarla aynı
+        subtype: "brooch", // Kurallar takılarla aynı
         tier: tier,
         frequency: 3,
         effects: [],
