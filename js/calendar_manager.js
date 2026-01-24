@@ -7,12 +7,12 @@ window.CALENDAR_CONFIG = {
         { name: "Frostfall", length: 22, eventId: "EVENT_MERCHANT_SALE" },
         { name: "Embercrest", length: 35, eventId: null },
         { name: "Stormreach", length: 18, eventId: "EVENT_STORM_FURY" },
-        { name: "Bloomheight", length: 42, eventId: null },
-        { name: "Shadowveil", length: 27, eventId: "EVENT_BLACKSMITH_LOCK" },
+        { name: "Bloomheıght", length: 42, eventId: null },
+        { name: "Shadowveıl", length: 27, eventId: "EVENT_BLACKSMITH_LOCK" },
         { name: "Ironheart", length: 31, eventId: null },
         { name: "Marchober", length: 25, eventId: "EVENT_XP_BOOST" },
         { name: "Goldleaf", length: 38, eventId: null },
-        { name: "Nightshade", length: 20, eventId: "EVENT_POISON_DANGER" },
+        { name: "Nıghtshade", length: 20, eventId: "EVENT_POISON_DANGER" },
         { name: "Sunpeak", length: 42, eventId: null }
     ]
 };

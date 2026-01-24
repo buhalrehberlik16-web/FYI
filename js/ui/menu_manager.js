@@ -271,6 +271,7 @@ function moveTooltip(e) {
 
 // Eşyayı Çıkar (Ekipmandan Çantaya)
 window.unequipItem = function(slotKey) {
+	window.syncHpWithRatio(() => {
     hideItemTooltip();
     const item = hero.equipment[slotKey];
     if (!item) return;
@@ -292,9 +293,11 @@ window.unequipItem = function(slotKey) {
     } else {
         alert(window.gameSettings.lang === 'tr' ? "Çanta dolu!" : "Bag is full!");
     }
+ });
 };
 // Eşyayı Tak (Çantadan Ekipmana)
 window.equipItem = function(inventoryIndex) {
+	window.syncHpWithRatio(() => {
     hideItemTooltip();
     const item = hero.inventory[inventoryIndex];
     if (!item) return;
@@ -331,9 +334,11 @@ window.equipItem = function(inventoryIndex) {
 
     renderInventory();
     updateStats();
+ });
 };
 
 window.unequipBrooch = function(index) {
+	window.syncHpWithRatio(() => {
     hideItemTooltip();
     const item = hero.brooches[index];
     if (!item) return;
@@ -350,6 +355,7 @@ window.unequipBrooch = function(index) {
 
     renderInventory();
     updateStats();
+});
 };
 
 // --- SÜRÜKLE BIRAK (DRAG & DROP) ---

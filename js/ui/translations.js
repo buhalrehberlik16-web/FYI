@@ -436,7 +436,7 @@ window.LANGUAGES = {
             Pommel_Bash: { name: "Kabzayla Vur", desc: "Str'nin %120'si kadar hasar. +18 Rage üretir." },
             battle_cry: { name: "Savaş Çığlığı", desc: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>." },
             restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
-			double_blade: { name: "İki Uçlu Değnek", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
+			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."   }
         }

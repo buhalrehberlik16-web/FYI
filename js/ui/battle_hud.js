@@ -162,5 +162,25 @@ window.animateHealingParticles = function() {
     }
 };
 
+window.syncHpWithRatio = function(actionCallback) {
+    // 1. İşlemden önceki efektif Max HP'yi ve mevcut oranı bul
+    const oldStats = getHeroEffectiveStats();
+    const ratio = hero.hp / oldStats.maxHp;
+
+    // 2. Asıl işlemi yap (item takma, stat verme vb.)
+    actionCallback();
+
+    // 3. İşlemden sonraki yeni efektif Max HP'yi bul
+    const newStats = getHeroEffectiveStats();
+    
+    // 4. Oranı yeni Max HP'ye uygula ve yuvarla
+    hero.hp = Math.round(newStats.maxHp * ratio);
+    
+    // Güvenlik: Can 1'in altına düşmesin (eğer çok azsa)
+    if (hero.hp <= 0 && ratio > 0) hero.hp = 1;
+
+    updateStats(); // UI'ı tazele
+};
+
 window.triggerDeathEffect = function() { if (fadeOverlay) fadeOverlay.classList.add('active-fade'); };
 window.resetDeathEffect = function() { if (fadeOverlay) fadeOverlay.classList.remove('active-fade'); };
