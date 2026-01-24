@@ -357,22 +357,12 @@
 #skill-book-equipped-bar .key-hint { position: absolute; top: -4px; left: -4px; background: #444; color: #fff; font-size: 0.7em; padding: 2px 5px; border-radius: 4px; border: 1px solid #777; z-index: 5; }
 
 .skill-book-item.selected-skill {
-    border: 2px solid #43FF64 !important;
-    box-shadow: 0 0 15px rgba(67, 255, 100, 0.5);
-    background: rgba(67, 255, 100, 0.1);
+    border: 2px solid #ffd700 !important; /* Altın sarısı çerçeve */
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 10px rgba(255, 215, 0, 0.2) !important;
+    background: linear-gradient(90deg, rgba(93, 74, 48, 0.4), rgba(26, 21, 14, 0.6)) !important;
     transform: scale(1.02);
-	}
+}
 
-	/* Seçiliyken ikonun üzerine minik bir işaret koyabiliriz */
-	.selected-skill::after {
-    content: "READY";
-    position: absolute;
-    top: 5px;
-    right: 50px;
-    font-size: 0.6rem;
-    color: #43FF64;
-    font-weight: bold;
-	}
 
 .item-tooltip {
     position: fixed;
@@ -427,14 +417,17 @@
 
 	.item-tooltip {
         position: fixed !important;
-        /* Ekranın ortasında veya üstünde sabit kalsın */
-        top: 20% !important;
+        top: 15% !important; /* Biraz daha yukarı aldık */
         left: 50% !important;
         transform: translateX(-50%) !important;
-        width: 80vw !important;
+        width: 85vw !important;
         z-index: 10000 !important;
-        pointer-events: all !important; /* Tıklayıp kapatabilmek için */
+        /* Tıklamayı geçirmeli ki oyuncu boşluğa basıp kapatabilsin */
+        pointer-events: none !important; 
+        background: rgba(15, 10, 5, 0.98) !important;
+        border: 2px solid #ffd700 !important;
     }
+
 
     /* Tooltip açıkken herhangi bir yere dokunulursa kapansın diye 
        görünmez bir overlay ekleyebiliriz ama şimdilik manuel kapatma için: */

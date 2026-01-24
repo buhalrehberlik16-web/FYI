@@ -538,6 +538,9 @@
     margin-bottom: 10px;
     font-family: 'Georgia', serif;
 }
+
+.confirm-name-text { font-size: 1.2rem; display: block; margin-bottom: 5px; }
+.confirm-tier-text { font-size: 0.9rem; opacity: 0.8; display: block; }
 /*============================================================
    Merchant Trade Bitişi
 ============================================================ */
