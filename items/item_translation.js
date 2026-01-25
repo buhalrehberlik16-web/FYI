@@ -102,8 +102,8 @@ const TR_ITEMS = {
 		eff_stat_scaling: "Güç Patlaması",
 		eff_heal: "İyileşme",
 		eff_resource_regen: "Öfke Yenileme",
-		eff_curse_dmg: "Elementel Hasar",
-		eff_curse_def: "Elementel Koruma",
+		eff_curse_dmg: "Elemental Hasar",
+		eff_curse_def: "Elemental Koruma",
 		eff_static_def: "Ek Savunma",
 };
 
