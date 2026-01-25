@@ -390,6 +390,11 @@ const BARBARIAN_SKILLS = {
             tier: 2,
             scaling: { atkMult: 1.0, stats: { mp_pow: 1.5 }, elements: { lightning: 1.0 } }
         },
+		onCast: function(attacker, defender) {
+            const dmg = SkillEngine.calculate(attacker, this.data);
+			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'light_blade', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+        }
     },
 	
     battle_cry: {
@@ -465,6 +470,7 @@ const BARBARIAN_SKILLS = {
     }
 },
 };
+
 
 
 
