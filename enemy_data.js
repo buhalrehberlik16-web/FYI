@@ -14,7 +14,7 @@ window.ENEMY_STATS = {
         ]
     },
     "Orman Örümceği": { 
-        maaxHp: 32, attack: 9, defense: 0, xp: 0, 
+        maxHp: 32, attack: 9, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
@@ -167,3 +167,4 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+
