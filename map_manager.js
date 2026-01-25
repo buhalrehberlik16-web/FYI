@@ -227,8 +227,8 @@ function renderMap() {
         const baseLeft = (node.stage / (MAP_CONFIG.totalStages - 1)) * 92 + 4;
         let baseTop = 50;
         if (node.lane === 0) baseTop = 15; 
-        if (node.lane === 1) baseTop = 50;
-        if (node.lane === 2) baseTop = 85; 
+        if (node.lane === 1) baseTop = 45;
+        if (node.lane === 2) baseTop = 75; 
 
         btn.style.left = `${baseLeft}%`;
         btn.style.top = `calc(${baseTop}% + ${node.jitterY}px)`; 
@@ -726,4 +726,5 @@ mapDisplay.addEventListener('mousemove', (e) => {
     const x = e.pageX - mapDisplay.offsetLeft;
     const walk = (x - startX) * 2; // Kaydırma hızı (2 katı)
     mapDisplay.scrollLeft = scrollLeft - walk;
+
 });
