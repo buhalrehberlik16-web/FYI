@@ -47,27 +47,6 @@ const BARBARIAN_SKILLS = {
         }
     },
     
-    reckless_strike: {
-        data: {
-            name: "Pervasız Vuruş",
-            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
-            rageCost: 20,
-            levelReq: 1,
-			cooldown: 1,
-            icon: 'skills/barbarian/brutal/brutal_reckless_strike.webp',
-            type: 'attack',
-            category: 'brutal',
-            tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 1.5 } }
-        },
-        onCast: function(attacker, defender) {
-            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
-        }
-    },
-
 
     bash: {
         data: {
@@ -214,6 +193,28 @@ const BARBARIAN_SKILLS = {
         }
     },
 	
+		
+	    reckless_strike: {
+        data: {
+            name: "Pervasız Vuruş",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.3 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
+            rageCost: 35,
+            levelReq: 1,
+			cooldown: 1,
+            icon: 'skills/barbarian/brutal/brutal_reckless_strike.webp',
+            type: 'attack',
+            category: 'chaos',
+            tier: 1,
+            scaling: { atkMult: 1.0, stats: { str: 1.3 } }
+        },
+        onCast: function(attacker, defender) {
+            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
+            const dmg = SkillEngine.calculate(attacker, this.data);
+            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+        }
+    },
+	
 	// --- CHAOS TIER 2 ---
     fiery_blade: {
         data: {
@@ -248,11 +249,12 @@ const BARBARIAN_SKILLS = {
             setTimeout(nextTurn, 1000);
         }
     },
+
 	
     hell_blade: {
         data: {
             name: "Cehennem Kılıcı",
-            menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
+            menuDescription: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 1.3 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
             rageCost: 25,
             levelReq: 2,
 			cooldown: 0,
@@ -260,7 +262,7 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'chaos', 
             tier: 2,
-            scaling: { atkMult: 1.0, stats: { int: 0.8 }, elements: { fire: 0.0 } }
+            scaling: { atkMult: 1.0, stats: { int: 1.3 }, elements: { fire: 1.0 } }
         },
         onCast: function(attacker, defender) {
             const hpCost = Math.floor(hero.hp * 0.10);
@@ -320,7 +322,7 @@ const BARBARIAN_SKILLS = {
             tier: 3
         },
         onCast: function(attacker, defender) {
-            const initialHeal = 30;
+            const initialHeal = 25;
             const oldHp = hero.hp; hero.hp = Math.min(hero.maxHp, hero.hp + initialHeal);
             if ((hero.hp - oldHp) > 0) showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
             hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
@@ -374,6 +376,21 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
+
+    light_blade: {
+        data: {
+            name: "Işığın Kılıcı",
+            menuDescription: "Cesur saldırı. 35 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
+            rageCost: 35,
+            levelReq: 2,
+			cooldown: 0,
+            icon: 'skills/barbarian/chaos/chaos_hell_blade.webp',
+            type: 'attack',
+            category: 'fervor', 
+            tier: 2,
+            scaling: { atkMult: 1.0, stats: { mp_pow: 1.5 }, elements: { lightning: 1.0 } }
+        },
+    },
 	
     battle_cry: {
         data: {
