@@ -1,0 +1,67 @@
+/* ============================================================
+   --- MOBİL Battle DÜZENLEMELER (YENİLENMİŞ) ---
+   ============================================================ */
+@media (max-width: 1024px) {
+    #action-bar { min-width: 600px; padding: 15px 25px; }
+    .skill-slot { width: 58px; height: 58px; flex: 0 0 58px !important; }
+}
+
+@media (max-width: 768px) {
+    #arena { height: 60%; }
+    .character-display img { max-height: 200px; }
+    
+    /* Mobilde Barlar ve İsimler Aşağıda */
+    .hp-overlay-container { bottom: 210px; width: 120px; }
+    #hero-name, #monster-name { font-size: 1.1em; margin-bottom: 10px; }
+    
+    /* KRİTİK: Mobilde İntention Layer Daha Aşağıda */
+    .intention-overlay { 
+        bottom: 290px !important; /* Gökyüzünden indirildi */
+        font-size: 1.6em;
+        min-width: 55px;
+        padding: 8px 12px;
+		width: 70px; 
+		height: 70px;
+    }
+
+    #battle-controls { height: 40%; padding-bottom: 10px; }
+    #action-bar { 
+        flex-direction: column; 
+        width: 95%; 
+        gap: 10px; 
+        padding: 10px; 
+        min-width: unset;
+    }
+    .separator { display: none; }
+    .basic-skills-container, 
+    #skill-bar-container { width: 100%; justify-content: center; gap: 8px; }
+	
+	#turn-counter-box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #6b5c3b;
+    border-radius: 8px;
+    padding: 2px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 25px rgba(0,0,0,1);
+}
+	#turn-count-display {
+    font-size: 1.9em;
+    font-weight: bold;
+    color: #f0e68c;
+    text-shadow: 0 0 15px orange, 2px 2px 2px #000;
+    font-family: 'Cinzel', serif;
+}
+
+}
+
+@media (max-height: 600px) {
+    .intention-overlay { bottom: 260px !important; }
+    .hp-overlay-container { bottom: 170px; }
+}

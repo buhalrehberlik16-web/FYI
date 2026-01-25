@@ -1,0 +1,138 @@
+@media (max-width: 768px) {
+    /* Pencereleri ekran genişliğine zorla */
+	
+	.stat-row.main-info {
+        padding: 0 5px !important;
+    }
+    
+    #stat-name {
+        max-width: 120px; /* Mobilde ismin çok yer kaplamasını önler */
+    }
+
+    .stat-window, .inventory-window {
+        width: 95vw !important;
+        max-height: 90vh;
+        padding: 15px;
+        overflow-y: auto; /* İçerik sığmazsa pencere içinde kaydır */
+    }
+
+	.item-tooltip {
+        position: fixed !important;
+        top: 15% !important; /* Biraz daha yukarı aldık */
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 85vw !important;
+        z-index: 10000 !important;
+        /* Tıklamayı geçirmeli ki oyuncu boşluğa basıp kapatabilsin */
+        pointer-events: none !important; 
+        background: rgba(15, 10, 5, 0.98) !important;
+        border: 2px solid #ffd700 !important;
+    }
+
+
+    /* Tooltip açıkken herhangi bir yere dokunulursa kapansın diye 
+       görünmez bir overlay ekleyebiliriz ama şimdilik manuel kapatma için: */
+    .item-tooltip::after {
+        content: "✕";
+        position: absolute;
+        top: 5px; right: 10px;
+        color: #ff4d4d;
+        font-weight: bold;
+    }
+
+    /* ENVANTER (I): Karakteri ve Slotları alt alta al */
+    .inventory-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .char-preview-box {
+        width: 200px; /* Mobilde biraz küçült */
+        height: 300px;
+        min-width: 200px;
+    }
+
+    /* Çanta Slotlarını Mobilde 4 yerine 3 veya 4 (ekrana göre) sığdır */
+    .bag-grid {
+        grid-template-columns: repeat(4, 55px);
+        padding: 10px;
+    }
+
+    /* STAT (U): Statları ve Dirençleri tek sütun yapabilirsin (isteğe bağlı) */
+    .stat-grid {
+        grid-template-columns: 1fr; /* Mobilde statlar alt alta */
+        gap: 8px;
+    }
+
+    .res-grid {
+        grid-template-columns: repeat(2, 1fr); /* Dirençler 2 sütun */
+    }
+	.skill-book-window {
+        width: 95vw !important;
+        height: 92vh !important; /* Ekranın çoğunu kaplasın ama taşmasın */
+        padding: 10px !important;
+    }
+
+    /* Tab Butonları (Fervor'un sığması için) */
+    .skill-tabs {
+        gap: 3px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .tab-btn {
+        font-size: 0.55rem !important; /* Yazıları küçült */
+        padding: 6px 2px !important;
+        letter-spacing: 0px !important; /* Harf arasını kapat */
+    }
+
+    /* Skill Kartları */
+    .skill-book-item {
+        width: 100% !important;
+        padding: 8px !important;
+        gap: 8px !important;
+        flex-direction: row; /* İkon ve metin yan yana kalsın */
+        align-items: flex-start !important;
+    }
+
+    .skill-book-icon {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    /* Yazıların birbirine girmesini engelleme */
+    .skill-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .skill-info h4 {
+        font-size: 0.8rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    /* "MISSING POINTS" veya "LEARNED" yazısı */
+    .skill-book-item small {
+        font-size: 0.6rem !important;
+        display: block;
+        margin-bottom: 4px;
+        white-space: nowrap;
+    }
+
+    .skill-info p {
+        font-size: 0.65rem !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Alttaki Kuşanılmış Skill Barı */
+    #skill-book-equipped-bar {
+        padding: 10px !important;
+        gap: 5px !important;
+        margin-top: 5px !important;
+    }
+
+    #skill-book-equipped-bar .menu-slot {
+        width: 40px !important;
+        height: 40px !important;
+    }
+}

@@ -1,0 +1,440 @@
+@media (max-width: 768px) {
+	
+	.skill-book-header h2 {
+    margin: 0;
+    color: #f0e68c;
+    font-size: 1.2em;
+    border-bottom: 2px solid #6b5c3b;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+    /* Köy yazıları zaten cqw ile küçülüyor, dokunmaya gerek yok. */
+
+    .town-exit-btn {
+    position: absolute;
+    bottom: 35.7%;
+    right: 0.2%;
+    z-index: 100;
+    background: linear-gradient(to bottom, #8b0000, #500000) !important;
+    border: 2px solid #ff4d4d !important;
+    color: white !important;
+    padding: 0.1px 0.3px !important;
+    font-size: 0.5em !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8) !important;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    }
+
+    /* NPC Pencereleri (Han, Demirci vb.) */
+	.npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	.npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	 /* 1. HAN (INN) MOBİL */
+	#modal-inn .npc-actions-left { top: 42% !important; left: 10.5% !important; } 
+    #modal-inn .npc-actions-right { top: 42% !important; right: 13% !important; }
+	#modal-inn .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-inn .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.3em !important;}
+	modal-inn .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-inn .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+
+    /* 2. DEMİRCİ (BLACKSMITH) MOBİL */
+     #modal-blacksmith .npc-actions-left {top: 41% !important; left: 9.7% !important; } 
+    #modal-blacksmith .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-blacksmith .npc-title { top: 36.2% !important; font-size: 1em !important;}
+	#modal-blacksmith .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.5em !important; }
+	#modal-blacksmith .npc-stats-left {left:18%;}
+	#modal-blacksmith .npc-stats-right {right:20%;}
+	#modal-blacksmith .npc-stats-header {top:37.5%;}
+	modal-blacksmith .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-blacksmith .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+
+    /* 3. TÜCCAR (MERCHANT) MOBİL */
+    #modal-merchant .npc-actions-left { top: 41% !important; left: 10.7% !important; }
+    #modal-merchant .npc-actions-right { top: 41% !important; right: 13% !important; }
+	#modal-merchant .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-merchant .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.46em !important; }
+	modal-merchant .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	/* Onay Butonları Konteynırı */
+#trade-confirm-modal .stat-window {
+    background: #1a150e !important;
+    border: 3px solid #6b5c3b !important;
+    box-shadow: 0 0 30px rgba(0,0,0,1);
+}
+
+/* EVET Butonu (Yeşil/Güvenli) */
+.confirm-btn-yes {
+    background: linear-gradient(to bottom, #2d5a27, #1e3d1a) !important;
+    border-color: #43ff64 !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-yes:hover {
+    background: #3a7532 !important;
+    box-shadow: 0 0 10px rgba(67, 255, 100, 0.4);
+}
+
+/* HAYIR Butonu (Kırmızı/İptal) */
+.confirm-btn-no {
+    background: linear-gradient(to bottom, #8b0000, #5a0000) !important;
+    border-color: #ff4d4d !important;
+    width: 110px !important; /* Genişliği sabitledik */
+    margin: 0 !important;
+}
+
+.confirm-btn-no:hover {
+    background: #a00000 !important;
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
+}
+
+/* Metin ayarı */
+#trade-confirm-text {
+    font-size: 1.1em;
+    color: #f0e68c;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+}
+
+    /* 4. SİMYACI (ALCHEMIST) MOBİL */
+    #modal-alchemist .npc-actions-left { top: 41% !important; left: 9.7% !important; }
+    #modal-alchemist .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-alchemist .npc-title { top: 36.2% !important; font-size: 1em !important;}
+	#modal-alchemist .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.46em !important; }
+	#modal-alchemist .npc-stats-left {left:18%;}
+	#modal-alchemist .npc-stats-right {right:20%;}
+	#modal-alchemist .npc-stats-header {top:37.5%;}
+	modal-alchemist .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-alchemist .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	.transmute-container {
+        min-height: 280px !important; /* Kutunun boyu eşya olsa da olmasa da sabit kalsın */
+        padding: 15px !important;
+        gap: 10px !important; /* Elemanlar arası boşluğu daralt */
+        justify-content: center !important;
+    }
+
+    /* 2. Olası Kazanç Alanı (Zıplamayı engelleyen kısım) */
+    .salvage-yield-info {
+        width: 100% !important;
+        min-height: 110px !important; /* Tablo yüksekliğini sabitledik */
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        background: rgba(0, 0, 0, 0.4) !important;
+        border: 1px solid rgba(107, 92, 59, 0.5) !important;
+        padding: 10px !important;
+        margin: 5px 0 !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* 3. Bekleme Yazısının (TAKI YERLEŞTİRİN) tabloyla aynı alanı kaplamasını sağla */
+    .salvage-yield-info span {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+
+    /* 4. Çekiç İkonunu Ölçekle */
+    .transmute-arrow i.fa-hammer {
+        font-size: 1.5rem !important;
+        margin: 5px 0 !important;
+    }
+
+    /* 5. Prob-Row (Yüzdelerin yazdığı satırlar) */
+    .prob-row {
+        height: 22px !important; /* Satır yüksekliklerini sabitle */
+        margin-bottom: 2px !important;
+    }
+
+    /* 6. Çanta (I) Yazısı ve Grid Arasındaki Boşluk */
+    #salvage-screen h3 {
+        margin-top: 15px !important;
+        margin-bottom: 5px !important;
+        font-size: 0.9rem !important;
+    }
+	
+	
+	
+
+    /* 5. AHIR (STABLE) MOBİL */
+    #modal-stable .npc-actions-left { top: 42% !important; left: 11% !important; }
+    #modal-stable .npc-actions-right { top: 42% !important; right: 13% !important; }
+	#modal-stable .npc-title { top: 36.9% !important; font-size: 1em !important;}
+	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
+	modal-stable .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	modal-stable .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	
+	.npc-stats-header {
+    position: absolute;
+    top: 37.5%; /* İsimlik ile aynı hizada veya biraz altında */
+    width: 100%;
+    pointer-events: none; /* Butonlara tıklamayı engellememesi için */
+    z-index: 10;
+}
+
+	.npc-stats-left {
+    position: absolute;
+    left: 18%; /* Kırmızı kutunun olduğu bölge */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+	.npc-stats-right {
+    position: absolute;
+    right: 18%; /* Lacivert kutunun olduğu bölge */
+}
+
+	/* Değerlerin Görünümü */
+	.npc-hp-stat { color: #ff4d4d; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
+	.npc-rage-stat { color: #3498db; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
+	.npc-gold-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.6em; }
+
+	.npc-stats-header i { margin-right: 5px; font-size: 0.9em; }
+	
+.reward-content { 
+    width: 100%; 
+    min-height: 70%; 
+    padding: 40px; 
+    background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%); 
+    border: 2px solid #ffd700; 
+    border-radius: 12px; 
+    box-shadow: 0 0 40px rgba(0, 0, 0, 1), 0 0 20px rgba(255, 215, 0, 0.2); 
+    text-align: center;
+    display: flex;
+    flex-direction: column; 
+    position: relative;
+}
+
+/* ZAFER YAZISI - ALTIN PARLAMA (GLOW) EFEKTİ */
+.reward-content h2 {
+    color: #ffd700;
+    font-size: 3em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 5px;
+    /* Katmanlı Parlama Efekti */
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.6),
+        0 0 20px rgba(255, 165, 0, 0.4),
+        2px 2px 4px #000;
+    animation: victoryGlow 2s infinite alternate;
+}
+
+@keyframes victoryGlow {
+    from { text-shadow: 0 0 10px rgba(255, 215, 0, 0.6), 2px 2px 4px #000; }
+    to { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 165, 0, 0.6), 2px 2px 4px #000; transform: scale(1.02); }
+}
+
+#reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
+
+
+/* ALTIN MİKTARI VE YAZISI - BEYAZ YAPILDI */
+.reward-item span { 
+    font-weight: bold; 
+    font-size: 1em; 
+    color: #ffffff !important; /* TERTEMİZ BEYAZ */
+    letter-spacing: 1px; 
+    text-shadow: 1px 1px 2px #000;
+}
+
+ /* Ödül kutularının genel genişliği */
+    .reward-item { 
+        width: 95% !important; /* %35 yerine %95 yaparak alanı ferahlattık */
+        min-height: 80px !important; /* Yüksekliği içeriğe göre esnek bıraktık */
+        margin: 0 auto 10px auto !important;
+        padding: 10px 15px !important;
+        justify-content: flex-start !important; /* İçeriği sola yasladık */
+        gap: 15px !important;
+        background: rgba(30, 30, 30, 0.9) !important;
+    }
+
+    /* Altın Ödülü Özel Ayarı */
+    .reward-gold {
+        justify-content: center !important; /* Sadece altını ortalı tutabiliriz */
+        width: 60% !important; /* Altın kutusu çok geniş olmasın */
+    }
+
+    /* İkonların boyutu ve taşmasını engelleme */
+    .reward-item-icon {
+        width: 45px !important;
+        height: 45px !important;
+        margin-right: 5px !important;
+        flex-shrink: 0; /* İkonun ezilmesini engeller */
+        object-fit: contain !important;
+    }
+
+    /* Metin alanı (İsim ve Seviye) */
+    .reward-item-text {
+        text-align: left !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden; /* Taşmayı engelle */
+    }
+
+    /* Ödül İsmi */
+    .reward-item-name {
+        font-size: 0.9rem !important; /* Mobilde fontu biraz küçülttük */
+        line-height: 1.1;
+        white-space: normal; /* Uzun isimler alt satıra geçebilsin */
+    }
+
+    /* Ödül Seviyesi (Tier/Materyal) */
+    .reward-item-tier {
+        font-size: 0.7rem !important;
+        margin-top: 2px;
+    }
+
+    /* Devam Et Butonu */
+    .reward-continue-btn {
+        width: 80% !important;
+        padding: 10px !important;
+        font-size: 1rem !important;
+    }
+	
+	/* 1. Ana Pencere Genişliği */
+    #reforge-screen .stat-window {
+        width: 95vw !important;
+        padding: 15px !important;
+    }
+
+    /* 2. Üstteki Slotlar (Eşya + Modifiye Edici) */
+    .reforge-main-area {
+        gap: 10px !important;
+        margin: 10px 0 !important;
+    }
+
+    .reforge-input {
+        width: 55px !important; /* Slotları küçülttük */
+        height: 55px !important;
+    }
+
+    /* 3. Stat Seçim Kartları */
+    .reforge-prop-card {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* 4. KRİTİK: Maliyet Alanı (Gold & Fragment) */
+    .reforge-costs {
+        flex-direction: row; /* Yan yana tutmaya çalış, sığmazsa diye gap'i kıs */
+        gap: 10px !important;
+        padding: 8px 5px !important;
+        justify-content: space-around !important;
+    }
+
+    #cost-gold, #cost-fragments {
+        font-size: 0.75rem !important; /* Yazıları küçült */
+    }
+
+    /* Mobilde 50px'lik ikon çok büyük, onu küçültüyoruz */
+    #reforge-screen .inline-icon {
+        width: 30px !important; 
+        margin-right: 4px !important;
+    }
+
+    #cost-gold i {
+        font-size: 1.2rem !important; /* Altın simgesini de küçült */
+        margin-right: 5px !important;
+    }
+
+    /* 5. Butonlar */
+    #reforge-screen .menu-main-btn, 
+    #reforge-screen .npc-btn {
+        height: 40px !important;
+        font-size: 0.8rem !important;
+        padding: 5px 10px !important;
+    }
+
+    /* 6. Alt Envanter (Çanta) */
+    #reforge-bag-grid {
+        grid-template-columns: repeat(4, 50px) !important;
+        gap: 8px !important;
+        padding: 10px !important;
+        min-width: unset !important; /* Genişlik zorlamasını kaldır */
+    }
+
+    #reforge-bag-grid .item-slot {
+        width: 50px !important;
+        height: 50px !important;
+    }
+	/* 1. Ana Kutu Genişliği ve İç Boşluklar */
+    .event-content {
+        width: 95vw !important; /* Ekranın %95'ini kaplasın */
+        padding: 15px !important;
+        gap: 12px !important;
+        min-height: auto !important;
+    }
+
+    /* 2. Stat Barı (Üst Kısım) Küçültme */
+    .event-stats-bar {
+        padding-bottom: 8px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .e-stats-left {
+        gap: 10px !important;
+    }
+
+    #event-screen .npc-hp-stat, 
+    #event-screen .npc-rage-stat, 
+    #event-screen .npc-gold-stat {
+        font-size: 0.75rem !important; /* Yazıları ve ikonları küçült */
+    }
+
+    /* 3. Başlık ve Açıklama */
+    #event-title {
+        font-size: 1.3rem !important; /* ÖFKE İKSİRİ yazısını küçült */
+        margin-bottom: 5px !important;
+    }
+
+    #event-desc {
+        font-size: 0.75rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 4. Butonlar (Seçenekler) */
+    .event-choices-grid {
+        gap: 10px !important;
+        margin-top: 5px !important;
+    }
+
+    .event-btn {
+        padding: 12px !important;
+        border-radius: 6px !important;
+    }
+
+    .choice-title {
+        font-size: 0.85rem !important; /* İÇ (RİSKLİ GÜÇ) yazısı */
+    }
+
+    .choice-details {
+        font-size: 0.7rem !important; /* +15 SALDIRI yazısı */
+        margin-top: 3px !important;
+        padding-top: 3px !important;
+    }
+
+    /* 5. Sonuç Ekranı */
+    #event-result-area h2 {
+        font-size: 1.5rem !important;
+    }
+
+    #event-result-text {
+        font-size: 0.9rem !important;
+        margin: 15px 0 !important;
+    }
+
+    #event-result-area .menu-main-btn {
+        width: 100% !important;
+        height: 45px !important;
+        margin-top: 15px !important;
+    }
+}
