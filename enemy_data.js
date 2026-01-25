@@ -1,7 +1,7 @@
 window.ENEMY_STATS = {
     // --- TIER 1 ---
     "Zehirli Mantar": { 
-        maxHp: 30, attack: 5, defense: 2, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
+        maxHp: 46, attack: 4, defense: 2, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
         tier: 1, // YENİ EKLENDİ
         idle: 'enemies/zehirli_mantar.webp',
         attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
@@ -14,7 +14,7 @@ window.ENEMY_STATS = {
         ]
     },
     "Orman Örümceği": { 
-        maxHp: 42, attack: 8, defense: 1, xp: 0, 
+        maaxHp: 32, attack: 9, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
@@ -22,7 +22,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "web_trap", category: "utility" }, { id: "chitin_harden", category: "survival" }]
     },
     "Hırsız Kobold": { 
-        maxHp: 48, attack: 8, defense: 0, xp: 0, 
+        maxHp: 48, attack: 7, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
@@ -30,7 +30,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "pocket_sand", category: "utility" }, { id: "cowardly_dash", category: "survival" }]
     },
     "Kan Yarasası": { 
-        maxHp: 40, attack: 8, defense: 0, xp: 0, 
+        maxHp: 36, attack: 8, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
@@ -38,7 +38,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "vampiric_bite", category: "utility" }, { id: "bat_shriek", category: "survival" }]
     },
 	"İskelet": { 
-        maxHp: 50, attack: 7, defense: 2, xp: 0, 
+        maxHp: 40, attack: 6, defense: 3, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
@@ -52,7 +52,7 @@ window.ENEMY_STATS = {
 
     // --- TIER 2 ---
     "Goblin Devriyesi": { 
-        maxHp: 70, attack: 30, defense: 12, xp: 0, 
+        maxHp: 70, attack: 12, defense: 6, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
@@ -60,7 +60,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "goblin_yell", category: "utility" }, { id: "shield_wall", category: "survival" }]
     },
     "Kaçak Haydut": { 
-        maxHp: 65, attack: 30, defense: 8, xp: 0, 
+        maxHp: 62, attack: 15, defense: 4, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
@@ -68,7 +68,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "dirty_strike", category: "utility" }, { id: "smoke_bomb", category: "survival" }]
     },
     "Gri Kurt": { 
-        maxHp: 60, attack: 35, defense: 4, xp: 0, 
+        maxHp: 56, attack: 16, defense: 4, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/kurt_surusu.webp',
         attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
@@ -82,7 +82,7 @@ window.ENEMY_STATS = {
 
     // --- TIER 3 ---
     "Yaban Domuzu": { 
-        maxHp: 150, attack: 45, defense: 15, xp: 0, 
+        maxHp: 120, attack: 25, defense: 12, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/yaban_domuzu.webp',
         attackFrames: ['enemies/yaban_domuzu_attack1.webp', 'enemies/yaban_domuzu_attack2.webp', 'enemies/yaban_domuzu_attack3.webp'],
@@ -90,7 +90,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "trample", category: "utility" }, { id: "thick_hide", category: "survival" }]
     },
     "Goblin Savaşçısı": { 
-        maxHp: 150, attack: 40, defense: 18, xp: 0, 
+        maxHp: 100, attack: 30, defense: 15, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
@@ -98,7 +98,7 @@ window.ENEMY_STATS = {
 		skills: [{ id: "mace_bash", category: "utility" }, { id: "berserker_rage", category: "survival" }]
     },
     "Kaya Golemi": { 
-        maxHp: 200, attack: 20, defense: 23, xp: 0, 
+        maxHp: 150, attack: 18, defense: 23, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
@@ -107,7 +107,7 @@ window.ENEMY_STATS = {
     },
     
     "Orc Fedaisi": { 
-        maxHp: 250, attack: 50, defense: 21, xp: 0, 
+        maxHp: 200, attack: 40, defense: 21, xp: 0, 
         tier: 4, // YENİ
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
@@ -117,7 +117,7 @@ window.ENEMY_STATS = {
 
     // --- TIER 4 --- // --- BOSS ---
     "Goblin Şefi": { 
-        maxHp: 250, attack: 35, defense: 20, xp: 0, isBoss:true,
+        maxHp: 250, attack: 35, defense: 20, isBoss:true,
         tier: 5, // Boss T5 olsun
         idle: 'enemies/goblin_sef.webp',
         attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],
@@ -165,4 +165,5 @@ window.BIOME_WEIGHTS = {
     "Goblin Şefi":    { urban: 0.7, plains: 0.2, mountain: 0.1, forest: 0.0, cave: 0.0, iceland: 0.0 }
 };
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
+
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
