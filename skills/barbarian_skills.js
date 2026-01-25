@@ -380,7 +380,7 @@ const BARBARIAN_SKILLS = {
     light_blade: {
         data: {
             name: "Işığın Kılıcı",
-            menuDescription: "Cesur saldırı. 35 Öfke.<br>Hasar: <b style='color:orange'>ATK + 1.5 x MP</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>.",
+            menuDescription: "Cesur saldırı. 35 Öfke.<br>Hasar: <b style='color:orange'>ATK + 1.5 x MP</b>.",
             rageCost: 35,
             levelReq: 2,
 			cooldown: 0,
@@ -470,6 +470,7 @@ const BARBARIAN_SKILLS = {
     }
 },
 };
+
 
 
 
