@@ -135,3 +135,31 @@ body {
     pointer-events: all; /* Kararınca artık hiçbir yere basılamaz */
 }
 
+/* Global Uyarı Penceresi Hiyerarşisi */
+#global-modal {
+    z-index: 10000 !important; /* Her şeyin üzerinde olması için en yüksek değer */
+}
+
+/* Modal arka planının (karartmanın) tüm ekranı kapladığından emin olalım */
+#global-modal.npc-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85); /* Arkadaki menüleri karartır */
+    display: none; /* JS ile açılacak */
+    justify-content: center;
+    align-items: center;
+}
+
+#global-modal:not(.hidden) {
+    display: flex !important;
+}
+
+/* Butonların yan yana durması için küçük bir fix */
+#g-modal-actions button {
+    margin-left: 0 !important; /* components.css'den gelen margin'i sıfırla */
+    min-width: 100px;
+}
+
