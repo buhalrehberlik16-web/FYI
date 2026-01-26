@@ -90,6 +90,18 @@ window.LANGUAGES = {
         rest_hp: "Dinlen (+HP)",
         train_xp: "Antrenman (+XP)",
         continue_btn: "Devam",
+		
+		// Uyarılar
+		warning_title: "DİKKAT",
+		confirm_title: "ONAY GEREKLİ",
+		bag_full_msg: "Envanterin dolu! Bazı eşyaları parçalamalı veya satmalısın.",
+		brooch_full_msg: "Tüm broş slotların dolu!",
+		system_locked_msg: "Gökyüzündeki hizalanma nedeniyle bu bina şu an kapalı!",
+		name_required_msg: "Kaderini belirlemek için bir isme ihtiyacın var!",
+		yes: "EVET",
+		no: "HAYIR",
+		back: "TAMAM",
+		not_enough_msg: "Yetersiz Altın",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
@@ -164,7 +176,7 @@ window.LANGUAGES = {
         back: "GERİ",
 		nav_settings: "AYARLAR",
 		settings_continue: "DEVAM ET",
-		settings_save_exit: "KAYDET VE ANA MENÜYE DÖN",
+		settings_save_exit: "ANA MENÜYE DÖN",
 		
 		// Harita LOG
 		map_start_title: "MACERAYA BAŞLA",
@@ -531,6 +543,18 @@ window.LANGUAGES = {
         rest_hp: "Rest (+HP)",
         train_xp: "Train (+XP)",
         continue_btn: "Continue",
+		
+		// ALERTS
+		warning_title: "WARNING",
+		confirm_title: "CONFIRMATION",
+		bag_full_msg: "Inventory is full! You must salvage or sell some items.",
+		brooch_full_msg: "All brooch slots are full!",
+		system_locked_msg: "This building is currently closed due to celestial alignment!",
+		name_required_msg: "You need a name to carve your destiny!",
+		yes: "YES",
+		no: "NO",
+		back: "OK",
+		not_enough_msg: "Not enough gold",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",
@@ -606,7 +630,7 @@ window.LANGUAGES = {
         back: "BACK",
 		nav_settings: "SETTINGS",
 		settings_continue: "CONTINUE",
-		settings_save_exit: "SAVE AND EXIT TO MENU",
+		settings_save_exit: "EXIT TO MENU",
 		
 		// Map LOG
 		map_start_title: "START ADVENTURE",

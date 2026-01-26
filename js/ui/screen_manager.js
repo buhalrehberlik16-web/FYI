@@ -81,18 +81,14 @@ window.closeInGameSettings = function() {
 };
 
 // Kaydet ve Ana Menüye Dön
-window.saveAndExitToMenu = function() {
-    if (window.saveGame) {
-        window.saveGame(); // Önce kaydet
-    }
-    
+window.saveAndExitToMenu = function() { 
     closeInGameSettings(); // Modalı kapat
     
     // Ana menüye dönmek için (InitGame her şeyi sıfırlıyor zaten)
     if (typeof initGame === 'function') initGame();
     switchScreen(window.startScreen);
     
-    writeLog("💾 Oyun kaydedildi ve ana menüye dönüldü.");
+    writeLog("Ana menüye dönüldü.");
 };
 
 // ESC Tuşuna basınca menüyü aç/kapat (Kullanım kolaylığı)

@@ -151,8 +151,9 @@ window.buyItemFromMerchant = function(index) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
     if (hero.gold < price) {
-        alert(window.gameSettings.lang === 'tr' ? "Yetersiz altın!" : "Not enough gold!");
-        return;
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+		window.showAlert(lang.not_enough_msg);
+		return;
     }
 
     // showTradeConfirm fonksiyonu interaction_ui.js içinde olmalı veya aşağıya eklenmeli
@@ -167,7 +168,9 @@ window.buyItemFromMerchant = function(index) {
             writeLog(`💰 ${getTranslatedItemName(item)} satın alındı.`);
             if(window.saveGame) window.saveGame();
         } else {
-            alert("Envanter dolu!");
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+			window.showAlert(lang.bag_full_msg);
+			return;
         }
     });
 };

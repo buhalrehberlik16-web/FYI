@@ -57,7 +57,9 @@ window.openRewardScreen = function(rewards) {
                     itemDiv.style.pointerEvents = 'none';
                     setTimeout(() => itemDiv.remove(), 200);
                 } else {
-                    alert(currentLang === 'tr' ? "Envanter dolu!" : "Inventory full!");
+                    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+					window.showAlert(lang.bag_full_msg);
+					return;
                 }
             };
         }
@@ -75,11 +77,12 @@ window.openBuilding = function(type) {
 	
 	 // EVENT KONTROLÜ
     if (window.EventManager.isSystemLocked(type)) {
-        const currentLang = window.gameSettings.lang || 'tr';
-        const msg = currentLang === 'tr' ? "⚠️ Bu ay burası kapalı!" : "⚠️ This place is closed this month!";
-        alert(msg);
-        return;
-    }
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
+    window.showAlert(lang.system_locked_msg, lang.warning_title); // Yeni Alert
+    return;
+	}
     
     if (modal) {
 		if (type === 'blacksmith') {

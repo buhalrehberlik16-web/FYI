@@ -75,15 +75,18 @@ window.updateStatScreen = function() {
     // 3. SAVAŞ STATLARI (ATAK VE DEFANS) - Sadece Skill/Choice etkisine duyarlı
     const applyEffectColor = (el, current, stable) => {
     el.textContent = current;
-    // Eğer bir "Savunma Sıfırlama" debuff'ı yoksa ve değer 0'dan büyükse kırmızı yapma
+    
+    // BROŞ VEYA NORMAL BUFF VAR MI KONTROL ET
+    const hasActiveBuff = hero.statusEffects.some(e => e.id === 'def_up' || e.id === 'brooch_def' || e.id === 'atk_up');
     const hasDefPenalty = hero.statusEffects.some(e => e.id === 'defense_zero');
 
-    if (current > stable) {
-        el.style.color = "#43FF64"; // Buff varsa YEŞİL
+    // Eğer o anki değer (current) baz değerden (stable) büyükse VEYA aktif bir buff varsa YEŞİL yap
+    if (current > stable || (hasActiveBuff && current >= stable)) {
+        el.style.color = "#43FF64"; // YEŞİL
     } else if (current < stable || (hasDefPenalty && el === statDef)) {
-        el.style.color = "#ff4d4d"; // Gerçek bir düşüş varsa KIRMIZI
+        el.style.color = "#ff4d4d"; // KIRMIZI
     } else {
-        el.style.color = "#ffd700"; // Normal durum (Altın/Sarı)
+        el.style.color = "#ffd700"; // NORMAL (ALTIN)
     }
 };
 
@@ -272,7 +275,7 @@ function moveTooltip(e) {
 // Eşyayı Çıkar (Ekipmandan Çantaya)
 window.unequipItem = function(slotKey) {
 	window.syncHpWithRatio(() => {
-    hideItemTooltip();
+    window.hideItemTooltip();
     const item = hero.equipment[slotKey];
     if (!item) return;
 	
@@ -291,8 +294,10 @@ window.unequipItem = function(slotKey) {
         updateStats();
         writeLog(`📤 ${getTranslatedItemName(item)} ${window.gameSettings.lang === 'tr' ? 'çıkarıldı.' : 'unequipped.'}`);
     } else {
-        alert(window.gameSettings.lang === 'tr' ? "Çanta dolu!" : "Bag is full!");
-    }
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    window.showAlert(lang.bag_full_msg);
+    return;
+		}
  });
 };
 // Eşyayı Tak (Çantadan Ekipmana)
@@ -314,10 +319,10 @@ window.equipItem = function(inventoryIndex) {
             hero.inventory[inventoryIndex] = null; // Çantadan çıkar
             writeLog(`🎒 ${getTranslatedItemName(item)} broş slotuna takıldı.`);
         } else {
-            const currentLang = window.gameSettings.lang || 'tr';
-            alert(currentLang === 'tr' ? "Broş slotları dolu!" : "Brooch slots are full!");
-            return;
-        }
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+			window.showAlert(lang.brooch_full_msg);
+			return;
+		}
     } 
     // --- STANDART TAKILAR İÇİN MEVCUT MANTIK ---
     else {
@@ -339,7 +344,7 @@ window.equipItem = function(inventoryIndex) {
 
 window.unequipBrooch = function(index) {
 	window.syncHpWithRatio(() => {
-    hideItemTooltip();
+    window.hideItemTooltip();
     const item = hero.brooches[index];
     if (!item) return;
 
@@ -349,8 +354,9 @@ window.unequipBrooch = function(index) {
         hero.brooches[index] = null;
         writeLog(`📤 ${getTranslatedItemName(item)} broş slotundan çıkarıldı.`);
     } else {
-        const currentLang = window.gameSettings.lang || 'tr';
-        alert(currentLang === 'tr' ? "Çanta dolu!" : "Inventory full!");
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+		window.showAlert(lang.bag_full_msg);
+		return;
     }
 
     renderInventory();
@@ -416,6 +422,10 @@ window.renderInventory = function() {
 
     const setupSlot = (slotEl, item, type, identifier) => {
         slotEl.innerHTML = '';
+		slotEl.onmouseenter = null;
+		slotEl.onmousemove = null;
+		slotEl.onmouseleave = null;
+		slotEl.onclick = null;
         slotEl.draggable = !!item; 
         
         if (item) {

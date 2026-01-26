@@ -28,6 +28,12 @@ window.btnOpenInventory = document.getElementById('btn-open-inventory');
 window.statNotif = document.getElementById('notif-stat');
 window.skillNotif = document.getElementById('notif-skill');
 
+// --- Alert Modal ---
+window.globalModal = document.getElementById('global-modal');
+window.gModalTitle = document.getElementById('g-modal-title');
+window.gModalText = document.getElementById('g-modal-text');
+window.gModalActions = document.getElementById('g-modal-actions');
+
 // --- SAVAŞ HUD ELEMENTLERİ ---
 window.heroNameDisplay = document.getElementById('hero-name');
 window.heroHpBar = document.getElementById('hero-hp-bar');
