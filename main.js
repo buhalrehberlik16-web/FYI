@@ -386,31 +386,33 @@ document.getElementById('btn-show-stats').onclick = () => {
 
 // İsim Ekranından Sınıf Seçimine Geçiş
 document.getElementById('btn-confirm-name').onclick = () => {
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
     const input = document.getElementById('player-nick-input');
     const nick = input.value.trim();
-    if (!nick) return;
-	
-	 // 1. Bayrakları kesin olarak sıfırla
-    window.starterCityProgress = {
-        classChosen: false,
-        skillsChosen: false
+
+    if (!nick) {
+        window.showAlert(lang.name_required_msg); 
+        return;
+    }
+
+    // Başlatma mantığını bir fonksiyona paketledik
+    const startNewGameLogic = () => {
+        window.starterCityProgress = { classChosen: false, skillsChosen: false };
+        hero.playerName = nick; 
+        if(window.deleteSave) window.deleteSave();
+        initGame(); 
+        startCutscene();
     };
 
-    hero.playerName = nick; 
-	
-	// EĞER KAYIT VARSA UYAR
+    // Kayıt varsa Onay Modalı, yoksa direkt başlat
     if (window.hasSaveGame()) {
-        const currentLang = window.gameSettings.lang;
-        const msg = currentLang === 'tr' ? 
-            "Mevcut bir maceran var! Yeni profil oluşturursan eskisi SİLİNECEK. Devam edilsin mi?" : 
-            "You have an existing journey! Creating a new profile will DELETE the old one. Proceed?";
-        
-        if (!confirm(msg)) return;
+        window.showConfirm(lang.save_warning, () => {
+            startNewGameLogic();
+        });
+    } else {
+        startNewGameLogic();
     }
-	
-	initGame(); 
-    startCutscene(); // Önce loading/cutscene
-
 };
 
 
@@ -493,6 +495,36 @@ returnToMenuButton.addEventListener('click', () => {
     switchScreen(startScreen);
 });
 
+// ALERT (Sadece Tamam butonu olan uyarılar)
+window.showAlert = function(msg, title = null) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    gModalTitle.textContent = title || (window.gameSettings.lang === 'tr' ? "UYARI" : "WARNING");
+    gModalText.textContent = msg;
+    gModalActions.innerHTML = `<button class="npc-btn" onclick="closeGlobalModal()" style="width:120px;">${lang.back || 'TAMAM'}</button>`;
+    globalModal.classList.remove('hidden');
+};
+
+// CONFIRM (Evet/Hayır seçeneği olan uyarılar)
+window.showConfirm = function(msg, onYes, onNo = null) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    gModalTitle.textContent = lang.confirm_title || (window.gameSettings.lang === 'tr' ? "ONAY" : "CONFIRM");
+    gModalText.textContent = msg;
+    
+    gModalActions.innerHTML = `
+        <button id="g-modal-yes" class="npc-btn confirm-btn-yes" style="width:120px;">${lang.yes || 'EVET'}</button>
+        <button id="g-modal-no" class="npc-btn confirm-btn-no" style="width:120px;">${lang.no || 'HAYIR'}</button>
+    `;
+
+    document.getElementById('g-modal-yes').onclick = () => { closeGlobalModal(); onYes(); };
+    document.getElementById('g-modal-no').onclick = () => { closeGlobalModal(); if(onNo) onNo(); };
+    
+    globalModal.classList.remove('hidden');
+};
+
+window.closeGlobalModal = function() {
+    globalModal.classList.add('hidden');
+};
+
 
 window.itemver = function(tier = 1) {
     const newItem = generateRandomItem(tier);
@@ -503,7 +535,9 @@ window.itemver = function(tier = 1) {
         renderInventory();
         writeLog(`🛠️ Hile: Tier ${tier} eşya üretildi.`);
     } else {
-        alert("Envanterin dolu!");
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+		window.showAlert(lang.bag_full_msg);
+		return;
     }
 };
 
@@ -535,7 +569,9 @@ window.brosver = function(tier = 1) {
         renderInventory();
         writeLog(`🛠️ Hile: Seviye ${tier} broş üretildi ve çantaya eklendi.`);
     } else {
-        alert("Envanterin dolu! Yer açmalısın.");
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+		window.showAlert(lang.bag_full_msg);
+		return;
     }
 };
 

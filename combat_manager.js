@@ -22,6 +22,12 @@ window.applyStatusEffect = function(newEffect) {
     if (existingIndex !== -1) {
         // 2. Eğer varsa, değerleri güncelle
         const existing = hero.statusEffects[existingIndex];
+		
+		// BROŞ DEFANS STACK MANTIĞI:
+        if (newEffect.id === 'brooch_def') {
+            existing.value += newEffect.value; // Değerleri topla (Örn: iki farklı broş varsa)
+            existing.turns = Math.max(existing.turns, newEffect.turns);
+        }
         
         // ZEHİR İÇİN ÖZEL STACK MANTIĞI:
         if (newEffect.id === 'poison') {
@@ -98,6 +104,8 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'int_up') s.int += e.value;
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
+			// YENİ: BROŞLARDAN GELEN EK SAVUNMAYI TOPLA (Üst üste biner)
+            if (e.id === 'brooch_def') flatDefBonus += e.value;
             
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
@@ -807,17 +815,22 @@ window.executeBroochEffects = function(brooch) {
 
             case "static_def":
                 // Sınıfın defans statı (Dex) * Çarpan
-                // Barbar ve Magus için ana defans statı Dex'tir (defStats.dex)
-                let defStatVal = stats.dex; 
-                let bonusDef = Math.floor(defStatVal * eff.value);
-                if (bonusDef > 0) {
+                let baseDefStat = stats.dex; 
+                let bonusDefValue = Math.ceil(baseDefStat * eff.value); // Yukarı yuvarla
+                
+                if (bonusDefValue > 0) {
+                    // ID'yi 'brooch_def' yaptık ki diğer bufflarla toplansın
                     applyStatusEffect({ 
-                        id: 'def_up', 
+                        id: 'brooch_def', 
                         name: 'Broş Zırhı', 
-                        value: bonusDef, 
+                        value: bonusDefValue, 
                         turns: 1, 
                         resetOnCombatEnd: true 
                     });
+                    
+                    // KARAKTERİN ÜSTÜNDE GÖSTER
+                    showFloatingText(display, `+${bonusDefValue} DEF`, 'heal');
+                    writeLog(`📿 **Broş**: Savunmaya +${bonusDefValue} puan eklendi.`);
                 }
                 break;
         }
