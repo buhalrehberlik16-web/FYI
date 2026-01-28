@@ -41,32 +41,36 @@ function pickEnemyForBiome(biome, targetTier) {
 
 // --- 2. YARDIMCI: Aşamaya ve Act'e Göre Tier Belirleyici ---
 function getTierAndDifficultyForStage(stage, act = 1) {
-    const baseTierOfAct = (act - 1) * 4 + 1; // Act 1->T1, Act 2->T5
+    const baseTierOfAct = (act - 1) * 3 + 1; // Act 1->T1, Act 2->T4
     
     // Kaç tane köyü geride bıraktık?
     const passedTowns = MAP_CONFIG.townStages.filter(t => t < stage).length;
     
-    // Boss Odası Kontrolü (Stage 24)
+    // --- BOSS KONTROLÜ (Son Oda) ---
     if (stage >= MAP_CONFIG.totalStages - 1) {
-        return { tier: act * 4, isHard: true, isHalfTier: false };
+        return { 
+            tier: "B" + act, // "B1", "B2" vb. döner
+            isHard: true, 
+            isHalfTier: false 
+        };
     }
 
-    // --- DATA-DRIVEN ZORLUK MANTIĞI ---
-    // passedTowns çift sayı ise (0, 2, 4): Stabil Bölge (T1, T2, T3...)
-    // passedTowns tek sayı ise (1, 3): Geçiş Bölgesi (T1.5 veya T2 Hard...)
-
+    // --- NORMAL VE YARIM TIER MANTIĞI ---
+    // passedTowns'a göre Act içindeki ilerlemeyi buluruz
+    // 0 köy: T1 | 1 köy: T1.5/T2H | 2 köy: T2 | 3 köy: T2.5/T3H | 4 köy: T3
+    
     let currentTier = baseTierOfAct + Math.floor(passedTowns / 2);
 
     if (passedTowns % 2 === 1) {
-        // GEÇİŞ BÖLGESİ (Örn: Town 1 ile Town 2 arası)
+        // GEÇİŞ BÖLGESİ (Köy 1 ve Köy 3 sonrası)
         const isHard = Math.random() < 0.5;
         return { 
             tier: isHard ? currentTier + 1 : currentTier, 
             isHard: isHard, 
-            isHalfTier: !isHard // Hard değilse %50 takviyeli "Half-Tier" (T1.5 gibi)
+            isHalfTier: !isHard 
         };
     } else {
-        // STABİL BÖLGE (Örn: Başlangıç veya Town 2 ile Town 3 arası)
+        // STABİL BÖLGE (Başlangıç, Köy 2 ve Köy 4 sonrası)
         return { tier: currentTier, isHard: false, isHalfTier: false };
     }
 }

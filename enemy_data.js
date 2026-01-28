@@ -130,12 +130,15 @@ window.TIER_ENEMIES = {
     1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet"],
     2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"],
-    4: ["Goblin Şefi"], //Boss
-    5: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
-    6: [], // Buradan sonrasını yeni ekleyeceğin düşmanlarla doldurabilirsin
+    "B1": ["Goblin Şefi"], //Boss
+    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
+    5: [], // Buradan sonrasını yeni ekleyeceğin düşmanlarla doldurabilirsin
+    6: [],
+	"B2": [],
     7: [],
     8: [],
-    9: [],
+	9: [],
+	"B3": [],
     10: []
 };
 
@@ -167,5 +170,4 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
-
 

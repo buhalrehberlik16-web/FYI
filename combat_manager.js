@@ -23,11 +23,6 @@ window.applyStatusEffect = function(newEffect) {
         // 2. Eğer varsa, değerleri güncelle
         const existing = hero.statusEffects[existingIndex];
 		
-		// BROŞ DEFANS STACK MANTIĞI:
-        if (newEffect.id === 'brooch_def') {
-            existing.value += newEffect.value; // Değerleri topla (Örn: iki farklı broş varsa)
-            existing.turns = Math.max(existing.turns, newEffect.turns);
-        }
         
         // ZEHİR İÇİN ÖZEL STACK MANTIĞI:
         if (newEffect.id === 'poison') {
@@ -83,6 +78,7 @@ window.getHeroEffectiveStats = function() {
     let flatDefBonus = 0;  
     let totalAtkMult = 1.0; 
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
+	
 
     // 2. EKİPMANLARI VE CHARMLARI TARA
     const allItems = [...Object.values(hero.equipment), ...hero.inventory.filter(i => i && i.type === "passive_charm")];
@@ -104,8 +100,6 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'int_up') s.int += e.value;
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
-			// YENİ: BROŞLARDAN GELEN EK SAVUNMAYI TOPLA (Üst üste biner)
-            if (e.id === 'brooch_def') flatDefBonus += e.value;
             
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
@@ -149,6 +143,9 @@ window.getHeroEffectiveStats = function() {
     if (hero.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat)) {
         finalDef = 0;
     }
+	
+	hero.maxHp = finalMaxHp; 
+    hero.maxRage = finalMaxRage;
 
     // 5. SONUCU DÖNDÜR
     return { 
@@ -462,6 +459,12 @@ window.determineMonsterAction = function() {
 
 window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
+	
+	  // Tier verisini sayıya çevir (B1 -> 4, B2 -> 8 gibi)
+    let numericTier = stats.tier;
+    if (typeof numericTier === 'string' && numericTier.startsWith('B')) {
+        numericTier = parseInt(numericTier.replace('B', '')) * 4;
+    }
 	
 	let scaling = 1.0;
     // Data-driven kontrol
@@ -813,26 +816,6 @@ window.executeBroochEffects = function(brooch) {
                 writeLog(`📿 **Broş**: ${eff.targetElement.toUpperCase()} direnci arttı.`);
                 break;
 
-            case "static_def":
-                // Sınıfın defans statı (Dex) * Çarpan
-                let baseDefStat = stats.dex; 
-                let bonusDefValue = Math.ceil(baseDefStat * eff.value); // Yukarı yuvarla
-                
-                if (bonusDefValue > 0) {
-                    // ID'yi 'brooch_def' yaptık ki diğer bufflarla toplansın
-                    applyStatusEffect({ 
-                        id: 'brooch_def', 
-                        name: 'Broş Zırhı', 
-                        value: bonusDefValue, 
-                        turns: 1, 
-                        resetOnCombatEnd: true 
-                    });
-                    
-                    // KARAKTERİN ÜSTÜNDE GÖSTER
-                    showFloatingText(display, `+${bonusDefValue} DEF`, 'heal');
-                    writeLog(`📿 **Broş**: Savunmaya +${bonusDefValue} puan eklendi.`);
-                }
-                break;
         }
     });
     updateStats();
