@@ -49,12 +49,12 @@ window.updateStatusIcons = function() {
 
 window.updateStats = function() {
 	 // 1. O anki tüm efektli/eşyalı statları al
-    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp, maxRage: hero.maxRage };
+    const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: 40, maxRage: 110 };
     const currentMaxHp = effective.maxHp;
     const currentMaxRage = effective.maxRage;
 	// --- GÜVENLİK: Can güncel Max HP'den fazlaysa aşağı çek (İtem çıkarınca canın taşmaması için) ---
-    if (hero.hp > currentMaxHp) {
-        hero.hp = currentMaxHp; }
+    if (hero.hp > currentMaxHp) { hero.hp = currentMaxHp; }
+    if (hero.rage > effective.maxRage) hero.rage = effective.maxRage;
 
     // HP Bar ve Text güncelleme (currentMaxHp kullanıyoruz)
     // HP Bar ve Text

@@ -77,7 +77,7 @@ window.updateStatScreen = function() {
     el.textContent = current;
     
     // BROŞ VEYA NORMAL BUFF VAR MI KONTROL ET
-    const hasActiveBuff = hero.statusEffects.some(e => e.id === 'def_up' || e.id === 'brooch_def' || e.id === 'atk_up');
+    const hasActiveBuff = hero.statusEffects.some(e => e.id === 'def_up' || e.id === 'atk_up');
     const hasDefPenalty = hero.statusEffects.some(e => e.id === 'defense_zero');
 
     // Eğer o anki değer (current) baz değerden (stable) büyükse VEYA aktif bir buff varsa YEŞİL yap

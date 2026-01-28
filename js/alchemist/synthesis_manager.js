@@ -180,9 +180,11 @@ window.processSynthesis = function() {
 
     const req = window.CRAFTING_CONFIG.requiredFragments[craftTier];
     if (!selectedFragments || selectedFragments.count < req) {
-        alert(window.gameSettings.lang === 'tr' ? "Yetersiz materyal!" : "Not enough materials!");
-        return;
-    }
+    const currentLang = window.gameSettings.lang || 'tr';
+    const msg = currentLang === 'tr' ? "Yetersiz materyal!" : "Not enough materials!";
+    window.showAlert(msg); 
+    return;
+}
 
     // Butonu geçici olarak kilitle (Logic bitene kadar)
     btn.disabled = true;
