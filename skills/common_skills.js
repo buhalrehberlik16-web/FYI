@@ -18,7 +18,8 @@ const COMMON_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const dmg = SkillEngine.calculate(attacker, this.data);
-            hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+			const stats = getHeroEffectiveStats(); 
+            hero.rage = Math.min(stats.maxRage, hero.rage + 10);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
             animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
@@ -59,7 +60,8 @@ const COMMON_SKILLS = {
         onCast: function(attacker, defender) {
             const dmg = SkillEngine.calculate(attacker, this.data);
             const genRage = Math.floor(Math.random() * 13);
-            hero.rage = Math.min(hero.maxRage, hero.rage + genRage);
+			const stats = getHeroEffectiveStats(); 
+            hero.rage = Math.min(stats.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
             animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }

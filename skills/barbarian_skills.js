@@ -21,7 +21,8 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const dmg = SkillEngine.calculate(attacker, this.data);
-            hero.rage = Math.min(hero.maxRage, hero.rage + 18);
+			const stats = getHeroEffectiveStats(); 
+            hero.rage = Math.min(stats.maxRage, hero.rage + 18);
             showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
             animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
@@ -174,8 +175,9 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function() {
             const hpLoss = Math.floor(hero.maxHp * 0.15);
+			const stats = getHeroEffectiveStats(); 
             hero.hp = Math.max(1, hero.hp - hpLoss);
-            hero.rage = Math.min(hero.maxRage, hero.rage + hpLoss);
+            hero.rage = Math.min(stats.maxRage, hero.rage + hpLoss);
 
             // Cooldown ekle (6 yazıyoruz ki 5 tam tur kilitli kalsın)
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_price', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
@@ -357,6 +359,7 @@ const BARBARIAN_SKILLS = {
     onCast: function(attacker, defender) {
         // Motoru kullanarak bonusu hesapla (Atak mult 0, sadece stat)
         const bonusDmg = SkillEngine.calculate(attacker, this.data);
+		const stats = getHeroEffectiveStats(); 
         
         hero.statusEffects.push({ 
             id: 'wind_up', 
@@ -367,7 +370,7 @@ const BARBARIAN_SKILLS = {
             resetOnCombatEnd: true 
         });
 
-        hero.rage = Math.min(hero.maxRage, hero.rage + 15);
+        hero.rage = Math.min(stats.maxRage, hero.rage + 15);
         hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'wind_up', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
         
         updateStats();
