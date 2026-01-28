@@ -99,12 +99,11 @@ const TR_ITEMS = {
 		brooch_freq: "Her $1 Turda Bir",
 		brooch_label: "Mistik Aksesuar",
 		eff_fixed_dmg: "Anlık Hasar",
-		eff_stat_scaling: "Güç Patlaması",
+		eff_stat_scaling: "Stat Hasarı",
 		eff_heal: "İyileşme",
 		eff_resource_regen: "Öfke Yenileme",
 		eff_curse_dmg: "Elemental Hasar",
 		eff_curse_def: "Elemental Koruma",
-		eff_static_def: "Ek Savunma",
 };
 
 // İngilizce Eşyalar
@@ -204,13 +203,11 @@ const EN_ITEMS = {
 		brooch_freq: "Every $1 Turns",
 		brooch_label: "Mystic Accessory",
 		eff_fixed_dmg: "Instant Damage",
-		eff_stat_scaling: "Power Surge",
+		eff_stat_scaling: "Stat Surge",
 		eff_heal: "Heal",
 		eff_resource_regen: "Rage Regen",
 		eff_curse_dmg: "Elemental Damage",
 		eff_curse_def: "Elemental Protection",
-		eff_static_def: "Extra Defense",
-	
 };
 
 // Mevcut dile bu listeleri enjekte et
