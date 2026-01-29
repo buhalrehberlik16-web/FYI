@@ -28,8 +28,8 @@ const COMMON_SKILLS = {
     guard: {
         data: {
             name: "Siper",
-            menuDescription: "Gelen hasarı %25 azaltır. +10 Rage.",
-            rageCost: -10,
+            menuDescription: "Gelen hasarı %25 azaltır. 0 Rage.",
+            rageCost: 0,
             levelReq: 1,
             icon: 'skills/common/icon_defend.webp',
             type: 'defense',
@@ -296,3 +296,4 @@ const COMMON_SKILLS = {
     },	
 
 };
+
