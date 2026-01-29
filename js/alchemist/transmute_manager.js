@@ -281,7 +281,7 @@ window.processTransmutation = async function() {
     };
 
     // Puan Dağıtımı (Tier kadar puan dağıtılacak)
-    let pointsToDistribute = targetTier;
+    let pointsToDistribute = Math.max (1, Math.floor (targetTier*2)-2);
 
     while (pointsToDistribute > 0) {
         let selectedStat;
@@ -469,4 +469,5 @@ window.updateTransmuteProbabilities = function() {
              </div>`;
 
     probDiv.innerHTML = html;
+
 };
