@@ -20,7 +20,7 @@ window.generateRandomItem = function(tier) {
     // Stat puanı dağıtımı (Mevcut mantığın aynı kalıyor)
     newItem.stats[mainStat] = window.ITEM_CONFIG.multipliers.stats;
 
-    let remainingPoints = tier - 1;
+    let remainingPoints = Math.max (1, Math.floor (tier*2)-1.5)-1;
 
     while (remainingPoints > 0) {
         const shouldAddNew = Math.random() < 0.4 && newItem.propertyKeys.length < 3;
@@ -49,4 +49,5 @@ window.generateRandomItem = function(tier) {
 
     // ARTIK BURADA 'rules' tanımlamaya gerek yok, sistem subtype'dan bulacak.
     return newItem;
+
 };
