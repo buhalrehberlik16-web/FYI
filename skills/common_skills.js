@@ -28,8 +28,8 @@ const COMMON_SKILLS = {
     guard: {
         data: {
             name: "Siper",
-            menuDescription: "Gelen hasarı %25 azaltır. -15 Rage.",
-            rageCost: 15,
+            menuDescription: "Gelen hasarı %25 azaltır. +10 Rage.",
+            rageCost: -10,
             levelReq: 1,
             icon: 'skills/common/icon_defend.webp',
             type: 'defense',
@@ -294,4 +294,5 @@ const COMMON_SKILLS = {
             animateCustomAttack(totalDamage, ['images/heroes/barbarian/barbarian_attack2.webp','images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },	
+
 };
