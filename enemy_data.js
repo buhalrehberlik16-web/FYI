@@ -108,7 +108,7 @@ window.ENEMY_STATS = {
     
     "Orc Fedaisi": { 
         maxHp: 200, attack: 40, defense: 21, xp: 0, 
-        tier: 4, // YENİ
+        tier: 3, // YENİ
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
@@ -118,7 +118,7 @@ window.ENEMY_STATS = {
     // --- TIER 4 --- // --- BOSS ---
     "Goblin Şefi": { 
         maxHp: 250, attack: 35, defense: 20, isBoss:true,
-        tier: 5, // Boss T5 olsun
+        tier: 4, // Boss T5 olsun
         idle: 'enemies/goblin_sef.webp',
         attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],
         dead: 'enemies/goblin_sef_dead.webp',

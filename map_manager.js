@@ -47,12 +47,17 @@ function getTierAndDifficultyForStage(stage, act = 1) {
     const passedTowns = MAP_CONFIG.townStages.filter(t => t < stage).length;
     
     // --- BOSS KONTROLÜ (Son Oda) ---
-    if (stage >= MAP_CONFIG.totalStages - 1) {
+    if (stage >= MAP_CONFIG.totalStages - 2) {
         return { 
             tier: "B" + act, // "B1", "B2" vb. döner
             isHard: true, 
             isHalfTier: false 
         };
+    }
+	
+	// Şehir Odası Kontrolü (Stage 24 - Son oda)
+    if (stage === MAP_CONFIG.totalStages - 1) {
+        return { tier: base, isHard: false, isHalfTier: false };
     }
 
     // --- NORMAL VE YARIM TIER MANTIĞI ---
@@ -459,7 +464,20 @@ function triggerNodeAction(node) {
             document.getElementById('map-description').textContent = lang.desc_boss;
             startBattle("Goblin Şefi");
         }
-        // Şehir (City) kısmı zaten log basıyor.
+          // --- KRİTİK EKLENTİ BURASI ---
+        else if (node.type === 'city') {
+            document.getElementById('map-description').textContent = lang.desc_city;
+            writeLog("🏆 " + lang.desc_city);
+            
+            // 1 saniye sonra şehir ekranına geç
+            setTimeout(() => {
+                if (typeof enterCity === 'function') {
+                    enterCity();
+                } else {
+                    switchScreen(window.cityScreen);
+                }
+            }, 1000);
+        }
     }, 600);
 }
 
@@ -482,10 +500,12 @@ function enterTown() {
         };
     }
 }
-function enterCity() {
-    switchScreen(cityScreen);
-    // Şehre özel müzik veya efekt başlatılabilir
-}
+window.enterCity = function() {
+    switchScreen(window.cityScreen);
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    window.saveGame();
+    writeLog(lang.desc_city);
+};
 
 // ... Random Event ve Campfire (UI Manager'dan çağrılır) ...
 function startCampfireEvent(node) {
