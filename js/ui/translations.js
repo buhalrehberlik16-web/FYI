@@ -102,6 +102,7 @@ window.LANGUAGES = {
 		no: "HAYIR",
 		back: "TAMAM",
 		not_enough_msg: "Yetersiz Altın",
+		desc_city: "Büyük Eldoria şehrine ulaştın! Maceranın bu perdesi burada son buluyor.",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
@@ -555,6 +556,7 @@ window.LANGUAGES = {
 		no: "NO",
 		back: "OK",
 		not_enough_msg: "Not enough gold",
+		desc_city: "You reached the Great City of Eldoria! This act of your journey ends here.",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",
@@ -861,7 +863,7 @@ window.LANGUAGES = {
                 title: "Extinguished Fire", 
                 desc: "You found a campsite with still warm embers. What will you do?",
                 opt1: "Rest (+HP)", opt1_b: "+25 HP", opt1_d: "",
-                opt2: "PractIce (+XP)", opt2_b: "+XP", opt2_d: ""
+                opt2: "Practice (+XP)", opt2_b: "+XP", opt2_d: ""
             },
             flee_option: "Flee In Fear",
             flee_debuff: "-10 HP"
