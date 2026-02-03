@@ -125,7 +125,7 @@ window.LANGUAGES = {
         tab_brutal: "VAHŞET (Brutal)",
         tab_chaos: "KAOS (Chaos)",
         tab_fervor: "COŞKU (Fervor)",
-        skill_book_hint: "Açık yetenekleri slotlara sürükleyin ya da tıklayıp yerleştirin.",
+        skill_book_hint: "Açık yetenekleri slotlara sürükleyin ya da tıklayıp yerleştirin.(Her Tier'dan bir skill alınabilir.)",
 		sp_required: "YP GEREKLİ",
 		sp_mean: "YP",
         equipped_skills_label: "KUŞANILAN YETENEKLER",
@@ -150,6 +150,9 @@ window.LANGUAGES = {
         close_hint: "Kapatmak için 'U' veya 'X' tuşuna basın.",
 		log_skill_unequipped: "yetenek slotundan çıkarıldı.",
 		tier_label: "SEVİYE",
+		skill_lock_confirm_title: "YETENEK SEÇİMİ",
+		skill_lock_confirm_msg: "Bu yeteneği açarsan aynı tier'dan farklı bir yetenek açamazsın. Bu yeteneği açmak istediğine emin misin? (Bu kural tüm oyun boyunca geçerlidir.)",
+		skill_notenough_confirm_msg: "Yetersiz Yetenek Puanı",
 
         // Köy & Şehir
         building_inn: "HAN",
@@ -579,7 +582,7 @@ window.LANGUAGES = {
         tab_brutal: "BRUTAL",
         tab_chaos: "CHAOS",
         tab_fervor: "FERVOR",
-        skill_book_hint: "Drag or click unlocked skills to slots.",
+        skill_book_hint: "Drag or click unlocked skills to slots.(You can only unlock 1 skill from every tier.)",
 		sp_required: "SP REQUIRED",
 		sp_mean: "SP",
         equipped_skills_label: "EQUIPPED SKILLS",
@@ -606,6 +609,9 @@ window.LANGUAGES = {
 		critical_success: "CRITICAL SUCCESS!",
 		qty_suffix: "Qty",
 		tier_label: "TIER",
+		skill_lock_confirm_title: "SKILL SELECTION",
+		skill_lock_confirm_msg: "If you unlock this skill, you cannot unlock another from the same tier. Are you sure? (This rule applies to the whole game.)",
+		skill_notenough_confirm_msg: "Not Enough Skill Points",
 		
 		//BIOMES
 		biome_forest: "Forest", biome_iceland: "Iceland", biome_mountain: "Mountains", biome_cave: "Cave", biome_urban: "Urban", biome_plains: "Plains",

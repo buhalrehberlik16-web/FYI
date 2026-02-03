@@ -528,7 +528,24 @@ window.renderSkillBookList = function() {
         .sort((a, b) => a[1].data.tier - b[1].data.tier);
 
     skills.forEach(([key, skill]) => {
+        // 1. Bu skilin öğrenilip öğrenilmediğini kontrol et
         const isLearned = hero.unlockedSkills.includes(key);
+
+        // 2. Mevcut tab'da (currentTab) ve mevcut tier'da (skill.data.tier) 
+        // daha önce HERHANGİ bir skill açılmış mı kontrol et
+        const isAnySkillUnlockedInThisTier = hero.unlockedSkills.some(unlockedKey => {
+            const unlockedSkill = SKILL_DATABASE[unlockedKey];
+            return unlockedSkill.data.category === currentTab && 
+                   unlockedSkill.data.tier === skill.data.tier;
+        });
+
+        // 3. EĞER bu tier'dan bir skill seçilmişse VE o seçilen skill BU DEĞİLSE:
+        // Bu skilli hiç çizme (Görünmez yap)
+        if (isAnySkillUnlockedInThisTier && !isLearned) {
+            return; // Döngünün bu adımını atla (Continue mantığı)
+        }
+        
+        // --- YENİ TIER KISITLAMA MANTIĞI BİTİŞ ---
         if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) return;
 
         const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
