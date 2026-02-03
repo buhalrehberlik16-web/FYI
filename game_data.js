@@ -58,7 +58,8 @@ window.hero = {
     equipment: { earring1: null, earring2: null, necklace: null, belt: null, ring1: null, ring2: null },
     calendar: {startDayOfYear: 0, daysPassed: 0, isInitialized: false },
     mountedNodesLeft: 0, 
-    scoutedNodesLeft: 0
+    scoutedNodesLeft: 0,
+	hasSeenSkillWarning: false,
 };
 
 // EVENT HAVUZU

@@ -101,7 +101,39 @@ function increaseStat(statName) {
         updateStats(); // Bu fonksiyon barları ve renkleri yeni statlara göre tazeler   
 }
 
-// YETENEK ÖĞRENME
+// 1. ASIL ÖĞRENME İŞLEMİ (Bu fonksiyon sadece her şey onaylandığında çalışır)
+function executeLearnSkill(skillKey) {
+    const skill = SKILL_DATABASE[skillKey];
+    const cost = skill.data.pointCost !== undefined ? skill.data.pointCost : (skill.data.tier || 1);
+
+    hero.skillPoints -= cost;
+    hero.unlockedSkills.push(skillKey);
+    
+    // Pasif kontrolü
+    if (skill.data.type === 'passive' && typeof skill.data.onAcquire === 'function') {
+        skill.data.onAcquire();
+    } else {
+        // Otomatik kuşanma
+        const emptySlotIndex = hero.equippedSkills.indexOf(null);
+        if (emptySlotIndex !== -1) {
+            hero.equippedSkills[emptySlotIndex] = skillKey;
+        }
+    }
+
+    // UI Güncellemeleri
+    if (typeof renderSkillBookList === 'function') renderSkillBookList();
+    if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+    if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+    updateStats();
+    
+    // Log yazma
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const skillName = lang.skills[skillKey]?.name || skill.data.name;
+    writeLog(`📖 ${lang.log_skill_learned} **${skillName}**`);
+}
+
+// 2. TETİKLEYİCİ FONKSİYON (Kontrolcü)
 function learnSkill(skillKey) {
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
     if (isInBattle) { writeLog("❌ Savaş sırasında yetenek öğrenemezsin!"); return; }
@@ -109,52 +141,36 @@ function learnSkill(skillKey) {
     const skill = SKILL_DATABASE[skillKey];
     if (!skill) return;
 
-    // Skill Tree Kontrolü
-    if (typeof checkSkillTreeRequirement === 'function') {
-        if (!checkSkillTreeRequirement(skill.data.category, skill.data.tier)) {
-            writeLog(`❌ Önce bu sınıfta **Tier ${skill.data.tier - 1}** bir yetenek açmalısın!`);
-            return;
-        }
-    }
+    // Önce bu kategoride/tier'da bir şey açılmış mı kontrolü
+    const isTierAlreadyTaken = hero.unlockedSkills.some(unlockedKey => {
+        const s = SKILL_DATABASE[unlockedKey];
+        return s.data.category === skill.data.category && s.data.tier === skill.data.tier;
+    });
+
+    if (isTierAlreadyTaken) return; // Zaten açılmışsa bir şey yapma
 
     const cost = skill.data.pointCost !== undefined ? skill.data.pointCost : (skill.data.tier || 1);
-	
-	const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
-    const skillName = lang.skills[skillKey]?.name || skill.data.name;
-
-
-    if (hero.skillPoints >= cost) {
-        hero.skillPoints -= cost;
-        hero.unlockedSkills.push(skillKey);
-        
-        writeLog(`📖 Yeni Yetenek Öğrenildi: **${skill.data.name}**`);
-        
-        // --- PASİF YETENEK KONTROLÜ ---
-        if (skill.data.type === 'passive') {
-            if (typeof skill.data.onAcquire === 'function') {
-                skill.data.onAcquire();
-            }
-        } 
-        else {
-            // --- AKTİF YETENEK OTOMATİK KUŞANMA ---
-            const emptySlotIndex = hero.equippedSkills.indexOf(null);
-            
-            if (emptySlotIndex !== -1) {
-                hero.equippedSkills[emptySlotIndex] = skillKey;
-                writeLog(`⚙️ **${skill.data.name}** otomatik olarak ${emptySlotIndex + 1}. slota yerleşti.`);
-                if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
-                if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
-            }
-        }
-
-        if (typeof renderSkillBookList === 'function') renderSkillBookList();
-        const spDisplay = document.getElementById('skill-points-display');
-        if(spDisplay) spDisplay.textContent = hero.skillPoints;
-		updateStats();
-        
-    } else {
+    if (hero.skillPoints < cost) {
+		window.showConfirm(lang.skill_notenough_confirm_msg,);
         writeLog("❌ Yetersiz Skill Puanı!");
+        return;
+    }
+
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+
+    // --- KRİTİK ONAY SİSTEMİ ---
+    if (!hero.hasSeenSkillWarning) {
+        // Eğer oyuncu uyarısı daha önce görmediyse: ONAY PENCERESİ AÇ
+        window.showConfirm(lang.skill_lock_confirm_msg, () => {
+            hero.hasSeenSkillWarning = true; // Bayrağı işaretle
+            executeLearnSkill(skillKey);    // İşlemi tamamla
+        }, () => {
+            // "Hayır" derse hiçbir şey yapma
+        });
+    } else {
+        // Daha önce gördüyse: HİÇ SORMA, DİREKT ÖĞREN
+        executeLearnSkill(skillKey);
     }
 }
 
