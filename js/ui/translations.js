@@ -341,7 +341,8 @@ window.LANGUAGES = {
             log_shield_expired: "🧱 Kalkanın süresi doldu.",
 			log_double_blade: "🔥 **İki Uçlu Değnek**: Gücün arttı ama bedeli ağır olacak!",
             log_cauterize: "🩹 **Dağlama**: Yaralarını ateşle temizledin.",
-            log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı."
+            log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı.",
+			log_rage_gain: "🔥 Hasardan öfke kazandın!",
         },
 		
 		status: {
@@ -429,8 +430,8 @@ window.LANGUAGES = {
             minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT)." },
             distract: { name: "Dikkat Dağıt", desc: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>" },
             tactical_strike: { name: "Taktiksel Vuruş", desc: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>" },
-            hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+2 Broş Slotu</span> kazandırır." },
-            loot_junkie: { name: "Ganimetçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Çanta Slotu</span> kazandırır." },
+            hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır." },
+            loot_junkie: { name: "Ganimetçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır." },
             fired_up: { name: "Ateşli", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır." },
             sharpen: { name: "Bileme", desc: "30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>." },
             curse: { name: "Lanet", desc: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>" },
@@ -793,6 +794,7 @@ window.LANGUAGES = {
 			log_double_blade: "🔥 **Double-Edged Sword**: Your power increased, but at a high cost!",
             log_cauterize: "🩹 **Cauterize**: You cleansed your wounds with fire.",
             log_healing_light: "✨ **Healing Light**: Holy light enveloped you.",
+			log_rage_gain: "🔥 Gained rage from damage.",
 			monster_defend_text: "DEFENSE!", 
             monster_log_defend: "took a defensive stance"
         },
@@ -882,8 +884,8 @@ window.LANGUAGES = {
             minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT)." },
             distract: { name: "Distract", desc: "<b>(Fast Action)</b><br>Enemy ATK -25% (1 Turn).<br>Enemy DEF -50% (2 Turns).<br><span style='color:cyan'>-50 Rage. No turn end.</span>" },
             tactical_strike: { name: "Tactical Strike", desc: "Deals 130% of Attack damage. Costs 15 Rage.<br><span style='color:cyan'>Ignores 10 Defense.</span>" },
-            hoarder: { name: "Hoarder", desc: "Passive Skill.<br>Increases Brooch capacity by <span style='color:gold'>+2 Slots</span>." },
-            loot_junkie: { name: "Loot Junkie", desc: "Passive Skill.<br>Increases Bag capacity by <span style='color:gold'>+1 Slot</span>." },
+            hoarder: { name: "Hoarder", desc: "Passive Skill.<br>Increases Brooch capacity by <span style='color:gold'>+1 Slots</span>." },
+            loot_junkie: { name: "Loot Junkie", desc: "Passive Skill.<br>Increases Bag capacity by <span style='color:gold'>+2 Slot</span>." },
             fired_up: { name: "Fired Up", desc: "Passive Skill.<br>Increases Skill capacity by <span style='color:gold'>+1 Slot</span>." },
             sharpen: { name: "Sharpen", desc: "Costs 30 Rage.<br><span style='color:#43FF64'>4 Turns: +25% Attack Power</span>." },
             curse: { name: "Curse", desc: "Costs 20 Rage.<br><span style='color:#b19cd9'>5 Turns: Enemy takes 20% more damage.</span>" },

@@ -457,6 +457,18 @@ window.renderInventory = function() {
         slotEl.ondragover = (e) => e.preventDefault();
         slotEl.ondrop = (e) => handleDrop(e, type, identifier);
     };
+	
+	const broochOverlay = document.querySelector('.brooch-overlay');
+	if (broochOverlay) {
+    broochOverlay.innerHTML = ''; // Önce temizle
+    hero.brooches.forEach((item, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'item-slot brooch-slot';
+        slot.dataset.broochIndex = i;
+        setupSlot(slot, item, 'brooch', i); // Mevcut setupSlot mantığını kullan
+        broochOverlay.appendChild(slot);
+		});
+	}
 
     document.querySelectorAll('.brooch-slot').forEach((slot, i) => setupSlot(slot, hero.brooches[i], 'brooch', i));
     for (const slotKey in hero.equipment) {
