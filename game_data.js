@@ -12,7 +12,8 @@ const CLASS_CONFIG = {
         defStats: { "dex": 0.34 },
         blockStats: { "dex": 0.8 },
         vitMultiplier: 5,
-        baseHp: 20
+        baseHp: 20,
+		hitRageGain: 0.25
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },

@@ -353,6 +353,17 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
             heroDisplayImg.src = skillFrames[fIdx]; 
             if (fIdx === 1 || skillFrames.length === 1) { 
                 monster.hp = Math.max(0, monster.hp - finalDmg);
+				
+				// --- YENİ BARBAR PASİFİ BAŞLANGIÇ ---
+                const classRules = CLASS_CONFIG[hero.class];
+                if (classRules && classRules.hitRageGain) {
+                    const stats = getHeroEffectiveStats(); // maxRage için
+                    const passiveGain = Math.ceil(finalDmg * classRules.hitRageGain);
+                    
+                    hero.rage = Math.min(stats.maxRage, hero.rage + passiveGain);
+					if(passiveGain > 0) showFloatingText(document.getElementById('hero-display'), `+${passiveGain} Rage`, 'heal');
+                    writeLog(`+${passiveGain} ${lang.log_rage_gain}`);
+                }
                 
                 const fury = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
                 if (fury) { 

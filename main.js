@@ -60,7 +60,6 @@ function levelUp() {
     const healAmount = Math.ceil(stats.maxHp * 0.50); // %50 iyileşme (yukarı yuvarla)
     
     hero.level++;
-    hero.maxHp += 5; 
     hero.hp = Math.min(stats.maxHp, hero.hp + healAmount);
     hero.attack += 1; 
     hero.maxRage += 0;
