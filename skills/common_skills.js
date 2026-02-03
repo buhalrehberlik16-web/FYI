@@ -175,7 +175,7 @@ const COMMON_SKILLS = {
         data: {
             name: "İstifçi",
             description: "Daha fazla takı takabilirsin.",
-            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Broş Slotu</span> kazandırır.",
+            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 2,
             icon: 'skills/common/icon_hoarder.webp',
@@ -183,8 +183,8 @@ const COMMON_SKILLS = {
             category: 'common',
             tier: 3,
             onAcquire: function() {
-                hero.brooches.push(null, null);
-                writeLog("📿 Broş kapasitesi arttı! (+2 Slot)");
+                hero.brooches.push(null);
+                writeLog("📿 Broş kapasitesi arttı! (+1 Slot)");
             }
         }
     },
@@ -193,7 +193,7 @@ const COMMON_SKILLS = {
         data: {
             name: "Ganimetçi",
             description: "Çantanda daha çok yer açar.",
-            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Çanta Slotu</span> kazandırır.",
+            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 2,
             icon: 'skills/common/icon_loot_junkie.webp',
@@ -201,8 +201,8 @@ const COMMON_SKILLS = {
             category: 'common',
             tier: 3,
             onAcquire: function() {
-                hero.inventory.push(null);
-                writeLog("🎒 Çanta kapasitesi arttı! (+1 Slot)");
+                hero.inventory.push(null, null);
+                writeLog("🎒 Çanta kapasitesi arttı! (+2 Slot)");
             }
         }
     },
