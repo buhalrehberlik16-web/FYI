@@ -7,6 +7,16 @@
     .game-title { font-size: 3.5em; letter-spacing: 4px; }
     .selection-title { font-size: 1.8em; margin-bottom: 20px; }
 	
+	.name-title-glow {
+    font-family: 'Cinzel', serif;
+    font-size: 2.25rem;
+    color: #f0e68c;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(240, 230, 140, 0.5), 2px 2px 4px #000;
+    margin: 0;
+}
+	
 	#class-selection-screen, #basic-skill-selection-screen {
         justify-content: flex-start !important; /* Yukarıdan başla */
         padding: 60px 10px 40px 10px !important; /* Üstten ve alttan pay bırak */
@@ -133,9 +143,22 @@
         height: 45px !important;
         font-size: 0.9rem !important;
     }
+	.menu-main-btn {
+    width: 300px;
+    height: 75px;
+    font-size: 1.6em !important;
+    background: linear-gradient(to bottom, #8b4513, #5d2e0a) !important;
+    border: 3px solid #f0e68c !important;
+    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
+    cursor: pointer;
+    transition: all 0.3s ease !important;
+    text-shadow: 2px 2px 4px #000;
 }
 
 @keyframes titleGlow {
     from { text-shadow: 0 0 10px rgba(240, 230, 140, 0.5), 4px 4px 0px #4a3b2a; }
     to { text-shadow: 0 0 35px rgba(240, 230, 140, 0.9), 4px 4px 0px #4a3b2a; transform: scale(1.02); }
+}
+
 }
