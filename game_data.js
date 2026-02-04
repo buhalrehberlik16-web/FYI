@@ -5,8 +5,8 @@ const MAX_LEVEL = 60;
 const CLASS_CONFIG = {
     "Barbar": {
         startingStats: { str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2 },
-        startingResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-        startingElementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
         atkStats: { "str": 0.5 },
         defStats: { "dex": 0.34 },
@@ -17,8 +17,8 @@ const CLASS_CONFIG = {
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
-        startingResistances: { physical: 0, fire: 15, cold: 15, lightning: 15, curse: 5, poison: 0 },
-        startingElementalDamage: { physical: 0, fire: 10, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingResistances: { fire: 15, cold: 15, lightning: 15, curse: 5, poison: 0 },
+        startingElementalDamage: { fire: 10, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
         atkStats: { "int": 0.8 },
         defStats: { "dex": 0.2 },
@@ -46,8 +46,8 @@ window.hero = {
     currentAct: 1,
     str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2,
     baseAttack: 10, baseDefense: 0,
-    baseResistances: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-    elementalDamage: { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+    baseResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+    elementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     highestTierDefeated: 1,
     statusEffects: [],
     mapEffects: [],

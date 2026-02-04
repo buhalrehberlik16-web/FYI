@@ -472,6 +472,33 @@ window.determineMonsterAction = function() {
 window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	
+	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
+    const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };
+    const specificData = stats.specificResists || {};
+    const elements = ['fire', 'cold', 'lightning', 'poison', 'curse'];
+    
+    // Rastgelelik çarpanı (Tier * 0.5)
+    const randomScale = (stats.tier || 1) * 0.5;
+    
+    let finalMonsterResists = {};
+
+    elements.forEach(ele => {
+        // 1. Klanın temel değeri
+        let base = tribeData[ele] || 0;
+        
+        // 2. Canavarın spesifik bonusu
+        let spec = specificData[ele] || 0;
+        
+        // 3. Rastgele Zar (0 ile 10 arası, -5 ofset ile -5 ile +5 arası gibi de yapılabilir)
+        // 0-10 arası ama weakness için - değer de alabilsin:
+        // Mantık: (Rastgele -5 ile +5 arası) * Scale
+        let randRoll = (Math.floor(Math.random() * 21) - 10); // -10 ile +10 arası zar
+        let scaledRandom = Math.round(randRoll * randomScale);
+
+        // Nihai Toplam
+        finalMonsterResists[ele] = base + spec + scaledRandom;
+    });
+	
 	  // Tier verisini sayıya çevir (B1 -> 4, B2 -> 8 gibi)
     let numericTier = stats.tier;
     if (typeof numericTier === 'string' && numericTier.startsWith('B')) {
@@ -502,6 +529,8 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     switchScreen(battleScreen);
     monster = { 
 	name: enemyType, 
+	tribe: stats.tribe,
+    resists: finalMonsterResists,
 	maxHp: scale(stats.maxHp), 
 	hp: scale(stats.maxHp), 
 	attack: scale(stats.attack), 
@@ -515,6 +544,8 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	skills: stats.skills,
     firstTurnAction: stats.firstTurnAction
 	};
+	
+	console.log(`${monster.name} Dirençleri:`, monster.resists); // Debug için
     
 	if (isHalfTierFromMap) {
         writeLog(`⚠️ **Takviyeli Düşman**: Statlar %${(SCALE_AMOUNT-1)*100} arttırıldı!`);
@@ -667,28 +698,33 @@ window.nextTurn = function() {
         }
 
         setTimeout(() => {
-            if (!checkGameOver()) {
-                const action = window.monsterNextAction;
-                if (action === 'attack') {
-                    handleMonsterAttack(monster, hero); 
-                } else if (action === 'defend') {
-                    handleMonsterDefend(monster);
-                } else {
-                    const skill = ENEMY_SKILLS_DATABASE[action];
-                    if (skill) {
-                        const sLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].enemy_skills[action];
-                        showFloatingText(document.getElementById('monster-display'), sLang.name, 'skill');
-                        skill.execute(monster, hero);
-                        animateMonsterSkill(); 
-                        updateStats();
-                        window.isHeroTurn = true; // Yetenek bitince turu kahramana ver (Stun kontrolü yukarıda yapılacak)
-                        setTimeout(nextTurn, 1000);
-                    } else {
-                        handleMonsterAttack(monster, hero);
-                    }
-                }
+    if (!checkGameOver()) {
+        const action = window.monsterNextAction;
+
+        // 1. TEMEL ATAKLAR (1 ve 2 aynı ama görsel farklı olabilir)
+        if (action === 'attack1' || action === 'attack2') {
+            handleMonsterAttack(monster, hero); 
+        } 
+        // 2. DEFANS
+        else if (action === 'defend') {
+            handleMonsterDefend(monster);
+        } 
+        // 3. SKILLER (Attack, Buff, Debuff ayrımı yapmadan ID ile çalıştırır)
+        else {
+            const skill = ENEMY_SKILLS_DATABASE[action];
+            if (skill) {
+                // Skill çalıştır (Buradaki skill.execute zaten her şeyi yapar)
+                skill.execute(monster, hero);
+                animateMonsterSkill(); 
+                updateStats();
+                window.isHeroTurn = true;
+                setTimeout(nextTurn, 1000);
+            } else {
+                handleMonsterAttack(monster, hero); // Fallback
             }
-        }, 600);
+        }
+    }
+		}, 600);
     }
 };
 

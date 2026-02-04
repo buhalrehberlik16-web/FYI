@@ -1,6 +1,20 @@
+
+window.TRIBE_BASES = {
+    "Greenskins": { fire: -5, cold: 0, lightning: 0, poison: 10, curse: 0 },
+    "Humans": { fire: 0, cold: 0, lightning: 0, poison: 0, curse: -5 },
+    //"Beasts&Monstrosities"
+	"B&M": { fire: -10, cold: 5, lightning: 0, poison: 0, curse: 0 },
+    "Plants": { fire: -20, cold: 0, lightning: 0, poison: 30, curse: 0 },
+    "Undead": { fire: 10, cold: 20, lightning: 0, poison: 80, curse: -25 },
+    "Dragonkind": { fire: 40, cold: 0, lightning: 0, poison: 0, curse: 10 },
+    "Magical Creatures": { fire: 15, cold: 15, lightning: 15, poison: 0, curse: 20 }
+};
+
 window.ENEMY_STATS = {
     // --- TIER 1 ---
     "Zehirli Mantar": { 
+		tribe: "Plants",
+        specificResists: { poison: 20 },
         maxHp: 46, attack: 4, defense: 2, xp: 0, // XP artık dinamik hesaplanacak, buradaki 0 önemsiz
         tier: 1, // YENİ EKLENDİ
         idle: 'enemies/zehirli_mantar.webp',
@@ -9,35 +23,49 @@ window.ENEMY_STATS = {
 		// AI VERİLERİ:
         firstTurnAction: "spore_poison", // İlk tur %100 zehir
         skills: [
-            { id: "spore_poison", category: "utility" },
-            { id: "fungal_regrow", category: "survival" }
+            { id: "spore_poison", category: "attack" },
+            { id: "fungal_regrow", category: "buff" }
         ]
     },
     "Orman Örümceği": { 
+		tribe: "B&M",
+        specificResists: { poison: 20 },
         maxHp: 32, attack: 9, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
         dead: 'enemies/orman_orumcegi_dead.webp',
-		skills: [{ id: "web_trap", category: "utility" }, { id: "chitin_harden", category: "survival" }]
+		skills: [
+		{ id: "web_trap", category: "debuff" },
+		{ id: "chitin_harden", category: "buff" }]
     },
-    "Hırsız Kobold": { 
+    "Hırsız Kobold": {
+		tribe: "Dragonkind",
+        specificResists: { fire: 10, curse: 10 },
         maxHp: 48, attack: 7, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
-		skills: [{ id: "pocket_sand", category: "utility" }, { id: "cowardly_dash", category: "survival" }]
+		skills: [
+		{ id: "pocket_sand", category: "debuff" },
+		{ id: "cowardly_dash", category: "buff" }]
     },
     "Kan Yarasası": { 
+		tribe: "B&M",
+        specificResists: { poison: 20 },
         maxHp: 36, attack: 8, defense: 0, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
-		skills: [{ id: "vampiric_bite", category: "utility" }, { id: "bat_shriek", category: "survival" }]
+		skills: [
+		{ id: "vampiric_bite", category: "attack" }, 
+		{ id: "bat_shriek", category: "debuff" }]
     },
 	"İskelet": { 
+		tribe: "Undead",
+        specificResists: { cold: 10 },
         maxHp: 40, attack: 6, defense: 3, xp: 0, 
         tier: 1, // YENİ
         idle: 'enemies/skeleton_idle.webp',
@@ -45,29 +73,39 @@ window.ENEMY_STATS = {
         dead: 'enemies/skeleton_dead.webp',
 		// AI VERİLERİ:
         skills: [
-            { id: "bone_shatter", category: "utility" }, // Zırh kırma
-            { id: "undead_fortitude", category: "survival" } // Defans artışı
+            { id: "bone_shatter", category: "debuff" }, // Zırh kırma
+            { id: "undead_fortitude", category: "buff" } // Defans artışı
         ]
     },
 
     // --- TIER 2 ---
     "Goblin Devriyesi": { 
+		tribe: "Greenskins",
+        specificResists: { cold: 10 },
         maxHp: 70, attack: 12, defense: 6, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
-		skills: [{ id: "goblin_yell", category: "utility" }, { id: "shield_wall", category: "survival" }]
+		skills: [
+		{ id: "goblin_yell", category: "buff" }, 
+		{ id: "shield_wall", category: "debuff" }]
     },
     "Kaçak Haydut": { 
+		tribe: "Humans",
+        specificResists: { cold: 10 },
         maxHp: 62, attack: 15, defense: 4, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
-		skills: [{ id: "dirty_strike", category: "utility" }, { id: "smoke_bomb", category: "survival" }]
+		skills: [
+		{ id: "dirty_strike", category: "attack" }, 
+		{ id: "smoke_bomb", category: "debuff" }]
     },
     "Gri Kurt": { 
+		tribe: "B&M",
+        specificResists: { cold: 20 },
         maxHp: 56, attack: 16, defense: 4, xp: 0, 
         tier: 2, // YENİ
         idle: 'enemies/kurt_surusu.webp',
@@ -75,54 +113,74 @@ window.ENEMY_STATS = {
         dead: 'enemies/kurt_surusu_dead.webp',
 		// AI VERİLERİ:
         skills: [
-            { id: "vicious_bite", category: "utility" }, // Kanama (Rage azaltma)
-            { id: "howl", category: "survival" } // Atak buff
+            { id: "vicious_bite", category: "debuff" }, // Kanama (Rage azaltma)
+            { id: "howl", category: "buff" } // Atak buff
         ]
     },
 
     // --- TIER 3 ---
     "Yaban Domuzu": { 
+		tribe: "B&M",
+        specificResists: { cold: 10 },
         maxHp: 120, attack: 25, defense: 12, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/yaban_domuzu.webp',
         attackFrames: ['enemies/yaban_domuzu_attack1.webp', 'enemies/yaban_domuzu_attack2.webp', 'enemies/yaban_domuzu_attack3.webp'],
         dead: 'enemies/yaban_domuzu_dead.webp',
-		skills: [{ id: "trample", category: "utility" }, { id: "thick_hide", category: "survival" }]
+		skills: [
+		{ id: "trample", category: "debuff" }, 
+		{ id: "thick_hide", category: "buff" }]
     },
     "Goblin Savaşçısı": { 
+		tribe: "Greenskins",
+        specificResists: { cold: 10 },
         maxHp: 100, attack: 30, defense: 15, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
-		skills: [{ id: "mace_bash", category: "utility" }, { id: "berserker_rage", category: "survival" }]
+		skills: [
+		{ id: "mace_bash", category: "debuff" },
+		{ id: "berserker_rage", category: "buff" }]
     },
     "Kaya Golemi": { 
+		tribe: "Magical Creatures",
+        specificResists: { lightning: 10 },
         maxHp: 150, attack: 18, defense: 23, xp: 0, 
         tier: 3, // YENİ
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
-		skills: [{ id: "ground_slam", category: "utility" }, { id: "stone_form", category: "survival" }]
+		skills: [
+		{ id: "ground_slam", category: "debuff" }, 
+		{ id: "stone_form", category: "buff" }]
     },
     
     "Orc Fedaisi": { 
+		tribe: "Greenskins",
+        specificResists: { cold: 10 },
         maxHp: 200, attack: 40, defense: 21, xp: 0, 
-        tier: 3, // YENİ
+        tier: 4, // YENİ
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
-		skills: [{ id: "crushing_blow", category: "utility" }, { id: "iron_will", category: "survival" }]
+		skills: [
+		{ id: "crushing_blow", category: "attack" }, 
+		{ id: "iron_will", category: "buff" }]
     },
 
     // --- TIER 4 --- // --- BOSS ---
     "Goblin Şefi": { 
+		tribe: "Greenskins",
+        specificResists: { cold: 10 },
         maxHp: 250, attack: 35, defense: 20, isBoss:true,
         tier: 4, // Boss T5 olsun
         idle: 'enemies/goblin_sef.webp',
         attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],
         dead: 'enemies/goblin_sef_dead.webp',
-		skills: [{ id: "chief_command", category: "utility" }, { id: "last_stand", category: "survival" }]
+		skills: [
+		{ id: "chief_command", category: "buff" },
+		{ id: "last_stand", category: "buff" }]
     }
 };
 // Düşman Havuzları
@@ -143,9 +201,36 @@ window.TIER_ENEMIES = {
 };
 
 Object.assign(ENEMY_STATS, {
-    "İskelet Şövalye": { maxHp: 180, attack: 25, defense: 15, tier: 3, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
-    "Gulyabani": { maxHp: 150, attack: 35, defense: 5, tier: 3, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
-    "Kemik Golemi": { maxHp: 300, attack: 28, defense: 20, tier: 4, idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] }
+    "İskelet Şövalye": { 
+	tribe: "Undead",
+	specificResists: { cold: 10 },
+	maxHp: 180, attack: 25, 
+	defense: 15, tier: 4, 
+	idle: 'enemies/kaya_golemi.webp', 
+	dead: 'enemies/kaya_golemi_dead.webp', 
+	attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
+	
+    "Gulyabani": {
+	tribe: "Undead",
+    specificResists: { cold: 10 },
+	maxHp: 150, 
+	attack: 35, 
+	defense: 5, 
+	tier: 4, 
+	idle: 'enemies/kaya_golemi.webp', 
+	dead: 'enemies/kaya_golemi_dead.webp', 
+	attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
+	
+    "Kemik Golemi": { 
+	tribe: "Magical Creatures",
+    specificResists: { cold: 10 },
+	maxHp: 300, 
+	attack: 28, 
+	defense: 20, 
+	tier: 4, 
+	idle: 'enemies/kaya_golemi.webp', 
+	dead: 'enemies/kaya_golemi_dead.webp', 
+	attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'] },
 });
 
 window.BIOME_WEIGHTS = {
