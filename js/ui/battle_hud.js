@@ -124,31 +124,39 @@ window.animateDamage = function(isHero) {
 window.showMonsterIntention = function(action) {
     if (!monsterIntentionOverlay) return;
 
-    // Canavar öldüyse veya aksiyon bittiyse kapat
+    // EĞER aksiyon null ise veya canavar öldüyse GİZLE ve ÇIK
     if (!action || !monster || monster.hp <= 0) {
         monsterIntentionOverlay.classList.remove('active');
+        monsterIntentionOverlay.style.opacity = "0";
         return;
     }
 
-    const iconPath = "images/enemies/";
-    let finalIcon = "";
+    const iconPath = "images/enemies/intentions/";
+    let iconName = "";
 
-    // 1. İkonu belirle
-    if (action === 'attack') {
-        finalIcon = `${iconPath}enemy_attack_intention.webp`;
-    } else if (action === 'defend') {
-        finalIcon = `${iconPath}enemy_defend_intention.webp`;
-    } else {
-        finalIcon = `${iconPath}enemy_skill_intention.webp`;
+    // Aksiyon tipine göre doğru dosyayı seç
+    if (action === 'attack1' || action === 'attack2') iconName = "intention_attack.webp";
+    else if (action === 'defend') iconName = "intention_defend.webp";
+    else {
+        // Skiller için kategorisine bak
+        const stats = ENEMY_STATS[monster.name];
+        const skillData = stats.skills.find(s => s.id === action);
+        if (skillData) {
+            if (skillData.category === 'buff') iconName = "intention_buff.webp";
+            else if (skillData.category === 'debuff') iconName = "intention_debuff.webp";
+            else iconName = "intention_skill_attack.webp";
+        } else {
+            iconName = "intention_attack.webp";
+        }
     }
 
-    // 2. İçeriği temizle ve yeni resmi bas
-    monsterIntentionOverlay.innerHTML = `<img src="${finalIcon}" alt="intent">`;
+    monsterIntentionOverlay.innerHTML = `<img src="${iconPath}${iconName}" alt="intent">`;
     
-    // 3. Klasları sıfırla ve 'active' ekle
+    // Animasyonu tetikle
     monsterIntentionOverlay.classList.remove('active');
-    void monsterIntentionOverlay.offsetWidth; // Reflow hilesi: Animasyonun baştan başlamasını sağlar
+    void monsterIntentionOverlay.offsetWidth; // Reflow
     monsterIntentionOverlay.classList.add('active');
+    monsterIntentionOverlay.style.opacity = "1";
 };
 
 window.animateHealingParticles = function() {

@@ -145,7 +145,7 @@ window.updateStatScreen = function() {
     }
 
     // 6. Dirençler (Aynı kalıyor)
-    const resTypes = ['physical', 'fire', 'cold', 'lightning', 'poison', 'curse'];
+    const resTypes = ['fire', 'cold', 'lightning', 'poison', 'curse'];
     resTypes.forEach(type => {
         const el = document.getElementById(`res-${type}`);
         if (el) {

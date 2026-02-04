@@ -1,76 +1,84 @@
 // js/enemy/ai_manager.js
 
 window.AIManager = {
+    lastAction: null,
+
     determineAction: function(monster, hero, turn) {
         const stats = ENEMY_STATS[monster.name];
-        const hpPercent = monster.hp / monster.maxHp;
-        const isAlreadyDefending = window.isMonsterDefending; // Mevcut savunma durumu
+        if (turn === 1 && stats.firstTurnAction) return this.saveAndReturn(stats.firstTurnAction);
 
-        // --- 1. TEMEL HAVUZ AĞIRLIKLARI ---
-        let weights = { attack: 50, defend: 30, skill: 20 };
+        let finalActionId = "";
+        let safetyCounter = 0;
 
-        if (turn === 1 && stats.firstTurnAction) return stats.firstTurnAction;
+        while (safetyCounter < 10) {
+            // 1. Ana Kategori Ağırlıkları
+            let weights = { attack: 50, defend: 20, skill: 30 };
+            if (monster.hp / monster.maxHp < 0.4) weights = { attack: 20, defend: 30, skill: 50 };
 
-        // --- 2. DİNAMİK HP AYARI ---
-        if (hpPercent <= 0.3) {
-            weights = { attack: 20, defend: 10, skill: 70 };
-        } else {
-            const loss = 1.0 - hpPercent;
-            weights.skill += Math.floor(loss * 50);
-            weights.attack -= Math.floor(loss * 25);
-            weights.defend -= Math.floor(loss * 25);
+            const mainChoice = this.weightedRandom(weights);
+            let categoryLabel = "";
+
+            // 2. Alt Kategori Seçimi
+            if (mainChoice === 'attack') {
+                const skillAttacks = stats.skills.filter(s => s.category === 'attack');
+                let pool = ['attack1', 'attack2'];
+                if (skillAttacks.length > 0) pool.push('skill_attack');
+                categoryLabel = pool[Math.floor(Math.random() * pool.length)];
+            } 
+            else if (mainChoice === 'defend') {
+                categoryLabel = 'defend';
+            } 
+            else {
+                const buffs = stats.skills.filter(s => s.category === 'buff');
+                const debuffs = stats.skills.filter(s => s.category === 'debuff');
+                let pool = [];
+                if (buffs.length > 0) pool.push('skill_buff');
+                if (debuffs.length > 0) pool.push('skill_debuff');
+                
+                if (pool.length === 0) { safetyCounter++; continue; }
+                categoryLabel = pool[Math.floor(Math.random() * pool.length)];
+            }
+
+            // --- KRİTİK DÜZELTME BURASI ---
+            // Önce ID'yi netleştiriyoruz
+            let tempId = "";
+            if (categoryLabel === 'skill_attack') tempId = this.getRandomSkill(stats, 'attack');
+            else if (categoryLabel === 'skill_buff') tempId = this.getRandomSkill(stats, 'buff');
+            else if (categoryLabel === 'skill_debuff') tempId = this.getRandomSkill(stats, 'debuff');
+            else tempId = categoryLabel; // attack1, attack2 veya defend
+
+            // Şimdi kontrol et: Seçtiğimiz ID bir öncekiyle aynı mı?
+            // Eğer canavarın toplamda SADECE 1 yeteneği varsa mecburen aynısını yapacak (safetyCounter sayesinde)
+            if (tempId !== this.lastAction || safetyCounter > 5) {
+                finalActionId = tempId;
+                break; 
+            }
+            safetyCounter++;
         }
 
-        // --- 3. AKILLI FİLTRE: Zaten savunmadaysa defans yapma ---
-        if (isAlreadyDefending) {
-            weights.attack += weights.defend; // Defans şansını atağa ekle
-            weights.defend = 0;               // Defans ihtimalini sıfırla
-        }
-
-        const chosenPool = this.weightedRandom(weights);
-
-        if (chosenPool === 'skill') {
-            return this.determineWhichSkill(monster, stats.skills, hpPercent, isAlreadyDefending);
-        }
-
-        return chosenPool;
+        return this.saveAndReturn(finalActionId);
     },
 
-    determineWhichSkill: function(monster, skills, hpPercent, isAlreadyDefending) {
-        if (!skills || skills.length === 0) return 'attack';
+    getRandomSkill: function(stats, category) {
+        const list = stats.skills.filter(s => s.category === category);
+        // İşte burası senin sorunun cevabı: 
+        // Liste içinden (örn: 2 tane debuff varsa) rastgele birini seçer.
+        return list[Math.floor(Math.random() * list.length)].id;
+    },
 
-        const utilitySkills = skills.filter(s => s.category === 'utility');
-        const survivalSkills = skills.filter(s => s.category === 'survival');
-
-        let skillWeights = { utility: 70, survival: 30 };
-
-        // Can azsa survival ağırlığı artsın
-        if (hpPercent <= 0.4) skillWeights = { utility: 30, survival: 70 };
-
-        // AKILLI FİLTRE: Eğer canavar zaten savunma bonusuna sahipse survival basma ihtimalini düşür
-        if (isAlreadyDefending && survivalSkills.length > 0) {
-            skillWeights.utility = 90;
-            skillWeights.survival = 10;
-        }
-
-        const chosenCategory = this.weightedRandom(skillWeights);
-        let finalPool = chosenCategory === 'survival' ? survivalSkills : utilitySkills;
-
-        if (finalPool.length === 0) finalPool = (chosenCategory === 'survival') ? utilitySkills : survivalSkills;
-        if (finalPool.length === 0) return 'attack';
-
-        return finalPool[Math.floor(Math.random() * finalPool.length)].id;
+    saveAndReturn: function(action) {
+        this.lastAction = action;
+        return action;
     },
 
     weightedRandom: function(weights) {
-        let total = 0;
-        for (let key in weights) total += Math.max(0, weights[key]);
+        let total = 0; for (let key in weights) total += weights[key];
         let rand = Math.random() * total;
         let sum = 0;
         for (let key in weights) {
             sum += weights[key];
             if (rand < sum) return key;
         }
-        return 'attack';
+        return 'attack1';
     }
 };
