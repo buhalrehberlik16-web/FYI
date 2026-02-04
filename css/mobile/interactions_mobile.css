@@ -234,6 +234,24 @@
 
 #reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
 
+/* Ödüllerin parlaması için animasyon */
+@keyframes rewardPulse {
+    0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); transform: scale(1); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); transform: scale(1.02); }
+    100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); transform: scale(1); }
+}
+
+.pulse-reward {
+    animation: rewardPulse 2s infinite ease-in-out;
+    border-color: #ffd700 !important;
+}
+
+/* Üzerine gelindiğinde animasyonu durdur ve parlat */
+.reward-item:hover {
+    animation: none;
+    filter: brightness(1.3);
+    border-color: #fff !important;
+}
 
 /* ALTIN MİKTARI VE YAZISI - BEYAZ YAPILDI */
 .reward-item span { 

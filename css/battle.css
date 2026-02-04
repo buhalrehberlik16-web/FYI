@@ -331,5 +331,62 @@
     50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 20px rgba(255, 77, 77, 0.8); }
     100% { transform: scale(1); opacity: 0.8; }
 }
+#skill-battle-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(40, 10, 10, 0.85); /* Hafif kırmızımsı koyu şeffaflık */
+    backdrop-filter: blur(4px); /* Arkayı bulanıklaştırır, çok profesyonel durur */
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    border: 2px solid #ff4d4d;
+}
 
+.lock-content {
+    color: #ff4d4d;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px #000;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Kilit açıkken alttaki slotlara tıklanmasın */
+#skill-battle-overlay:not(.hidden) {
+    display: flex !important;
+}
+#inventory-battle-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 1, 1, 0.5); /* Skill Book'tan biraz daha koyu kırmızı */
+    backdrop-filter: blur(0px);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid #ff4d4d;
+}
+
+#inventory-battle-overlay:not(.hidden) {
+    display: flex !important;
+}
+
+/* Slotların kilitli olduğunu belli eden ekstra görsel dokunuş */
+.locked-slot {
+    filter: grayscale(100%) brightness(0.6);
+    cursor: default !important;
+}
 
