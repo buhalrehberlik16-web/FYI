@@ -247,7 +247,8 @@ window.initializeSkillButtons = function() {
             slot.onclick = () => { if (!slot.classList.contains('disabled')) handleSkillUse(key); };
             
             // --- DRAG & DROP ÖZELLİKLERİ ---
-            slot.setAttribute('draggable', true);
+            const isCurrentlyFighting = document.getElementById('battle-screen').classList.contains('active');
+			slot.setAttribute('draggable', !isCurrentlyFighting);
             slot.ondragstart = e => {
                 e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
             };
@@ -496,7 +497,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     let multiplier = isHalfTierFromMap ? SCALE_AMOUNT : 1.0;
 
     // Yardımcı yuvarlama fonksiyonu (Statları tam sayıya çevirir)
-    const scale = (val) => Math.ceil(val * multiplier);
+    const scale = (val) => Math.ceil(val * multiplier * scaling);
 	
     switchScreen(battleScreen);
     monster = { 

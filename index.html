@@ -413,7 +413,17 @@
                         <div id="skill-book-list" class="skill-grid"></div>
                     </div>
                     <div class="equipped-area-title" data-i18n="equipped_skills_label">KUŞANILAN YETENEKLER</div>
-                    <div id="skill-book-equipped-bar"></div>
+                    <div id="equipped-area-container" style="position: relative;">
+			<div id="skill-book-equipped-bar"></div>
+    
+				<!-- YENİ: SAVAŞ KİLİDİ OVERLAY -->
+				<div id="skill-battle-overlay" class="hidden">
+					<div class="lock-content">
+						<i class="fas fa-swords"></i>
+						<span data-i18n="battle_skill_lock_msg">SAVAŞ ESNASINDA YETENEK DEĞİŞTİRİLEMEZ</span>
+					</div>
+				</div>
+			</div>					
                 </div>
             </div>
 
@@ -633,7 +643,8 @@
                         <h3 data-i18n="inventory_title">ENVANTER</h3>
                         <button id="btn-close-inventory" class="close-btn"><i class="fas fa-times"></i></button>
                     </div>
-
+				<!-- YENİ: Kapsayıcı ve Overlay -->
+				<div id="inventory-main-container" style="position: relative;">
                     <div class="inventory-content">
                         <!-- SOL TARA: Karakter ve Para -->
                         <div class="paper-doll-left">
@@ -667,7 +678,15 @@
                             </div>
                         </div>
                     </div>
-
+					
+					<!-- YENİ: ENVANTER SAVAŞ KİLİDİ OVERLAY -->
+        <div id="inventory-battle-overlay" class="hidden">
+            <div class="lock-content">
+                <i class="fas fa-shield-slash"></i>
+                <span data-i18n="battle_inventory_lock_msg">SAVAŞ ESNASINDA EKİPMAN DEĞİŞTİRİLEMEZ</span>
+            </div>
+        </div>
+    </div>
                     <hr style="border-color: #444; width: 90%; margin: 10px auto;">
 
                     <!-- ALT KISIM: Çanta -->
