@@ -103,6 +103,7 @@ window.LANGUAGES = {
 		back: "TAMAM",
 		not_enough_msg: "Yetersiz Altın",
 		desc_city: "Büyük Eldoria şehrine ulaştın! Maceranın bu perdesi burada son buluyor.",
+		loot_full_msg: "Yerde ödüllerin var! Onları almadan gitmek istediğine emin misin?",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
@@ -116,6 +117,7 @@ window.LANGUAGES = {
 		result_type_odds: "Tür Olasılığı",
 		crit_chance_label: "Kritik Şans",
 		waiting_ingredients: "Eşyalar bekleniyor...",
+		loot_all: "Hepsini topla",
 
 
         // Skill Book & Stat Screen
@@ -153,6 +155,8 @@ window.LANGUAGES = {
 		skill_lock_confirm_title: "YETENEK SEÇİMİ",
 		skill_lock_confirm_msg: "Bu yeteneği açarsan aynı tier'dan farklı bir yetenek açamazsın. Bu yeteneği açmak istediğine emin misin? (Bu kural tüm oyun boyunca geçerlidir.)",
 		skill_notenough_confirm_msg: "Yetersiz Yetenek Puanı",
+		battle_skill_lock_msg: "Savaş esnasında yetenek değiştirilemez.",
+		battle_inventory_lock_msg: "SAVAŞ ESNASINDA EKİPMAN DEĞİŞTİRİLEMEZ",
 
         // Köy & Şehir
         building_inn: "HAN",
@@ -537,6 +541,8 @@ window.LANGUAGES = {
         turn_suffix: "Turns",
         same_turn_warning: "Cannot be used in the same turn.",
 		stat_battle_warning: "⚠️ CANNOT DISTRIBUTE STATS IN BATTLE",
+		battle_skill_lock_msg: "SKILLS CANNOT BE CHANGED DURING BATTLE",
+		battle_inventory_lock_msg: "EQUIPMENT CANNOT BE CHANGED DURING BATTLE",
 
         // Map & Battle
         map_loading: "Loading Map...",
@@ -561,6 +567,7 @@ window.LANGUAGES = {
 		back: "OK",
 		not_enough_msg: "Not enough gold",
 		desc_city: "You reached the Great City of Eldoria! This act of your journey ends here.",
+		loot_full_msg:"There are rewards left on the ground! Are you sure you want to leave without them?",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",
@@ -574,6 +581,7 @@ window.LANGUAGES = {
 		result_type_odds: "Type Odds",
 		crit_chance_label: "Crit Chance",
 		waiting_ingredients: "Waiting for items...",
+		loot_all: "Loot All",
 
         // Skill Book & Stat Screen
         skill_book_title: "📖 Skill Book",

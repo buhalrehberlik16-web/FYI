@@ -420,42 +420,73 @@ function handleDrop(e, targetType, targetId) {
 window.renderInventory = function() {
     hideItemTooltip();
 
+    // 1. Savaş Durumu Kontrolü
+    const isInBattle = document.getElementById('battle-screen').classList.contains('active');
+    const invOverlay = document.getElementById('inventory-battle-overlay');
+    
+    if (invOverlay) {
+        if (isInBattle) invOverlay.classList.remove('hidden');
+        else invOverlay.classList.add('hidden');
+    }
+
     const setupSlot = (slotEl, item, type, identifier) => {
         slotEl.innerHTML = '';
-		slotEl.onmouseenter = null;
-		slotEl.onmousemove = null;
-		slotEl.onmouseleave = null;
-		slotEl.onclick = null;
-        slotEl.draggable = !!item; 
+        slotEl.onmouseenter = null;
+        slotEl.onmousemove = null;
+        slotEl.onmouseleave = null;
+        slotEl.onclick = null;
+        slotEl.oncontextmenu = null; // Sağ tıkı temizle
+
+        // Savaşta isek slotu görsel olarak işaretle (Sadece takılı olanlar için)
+        if (isInBattle && (type === 'equip' || type === 'brooch')) {
+            slotEl.classList.add('locked-slot');
+        } else {
+            slotEl.classList.remove('locked-slot');
+        }
+
+        slotEl.draggable = !!item && !isInBattle; // Savaşta sürüklemeyi kapat
         
         if (item) {
             const img = document.createElement('img');
             img.src = `items/images/${item.icon}`;
             slotEl.appendChild(img);
             slotEl.innerHTML += window.getItemBadgeHTML(item);
-            if (item.count && item.count > 1) slotEl.innerHTML += `<span class="item-count-badge">${item.count}</span>`;
             
+            // Tooltip her zaman çalışsın (Bakmak serbest)
             slotEl.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
             slotEl.onmousemove = (e) => { if (window.innerWidth > 768) moveTooltip(e); };
             slotEl.onmouseleave = () => window.hideItemTooltip();
-            slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
+            
+            // SADECE SAVAŞTA DEĞİLSEK AKSİYONLAR ÇALIŞSIN
+            if (!isInBattle) {
+                slotEl.ondragstart = (e) => handleDragStart(e, type, identifier);
+                
+                slotEl.onclick = (e) => {
+                    const isMobile = window.innerWidth <= 768;
+                    if (isMobile) {
+                        if (lastTappedSlot === slotEl) { performSlotAction(item, type, identifier); lastTappedSlot = null; window.hideItemTooltip(); }
+                        else { lastTappedSlot = slotEl; window.showItemTooltip(item, e); }
+                    } else { performSlotAction(item, type, identifier); }
+                };
 
-            slotEl.onclick = (e) => {
-                const isMobile = window.innerWidth <= 768;
-                if (isMobile) {
-                    if (lastTappedSlot === slotEl) { performSlotAction(item, type, identifier); lastTappedSlot = null; window.hideItemTooltip(); }
-                    else { lastTappedSlot = slotEl; window.showItemTooltip(item, e); }
-                } else { performSlotAction(item, type, identifier); }
-            };
-
-            slotEl.oncontextmenu = (e) => {
-                e.preventDefault();
-                if (type === 'equip') unequipItem(identifier);
-                else if (type === 'brooch') unequipBrooch(identifier);
-            };
+                slotEl.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    if (type === 'equip') unequipItem(identifier);
+                    else if (type === 'brooch') unequipBrooch(identifier);
+                };
+            } else {
+                // Savaşta isek sadece tooltip için tek tıklama (Mobil)
+                slotEl.onclick = (e) => {
+                    if (window.innerWidth <= 768) window.showItemTooltip(item, e);
+                };
+            }
         }
-        slotEl.ondragover = (e) => e.preventDefault();
-        slotEl.ondrop = (e) => handleDrop(e, type, identifier);
+        
+        // Savaşta isek üzerine bir şey bırakılmasın (Drop engelleme)
+        if (!isInBattle) {
+            slotEl.ondragover = (e) => e.preventDefault();
+            slotEl.ondrop = (e) => handleDrop(e, type, identifier);
+        }
     };
 	
 	const broochOverlay = document.querySelector('.brooch-overlay');
@@ -586,6 +617,16 @@ window.renderEquippedSlotsInBook = function() {
     if (!skillBookEquippedBar) return;
     skillBookEquippedBar.innerHTML = '';
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    
+    // --- SAVAŞ KONTROLÜ ---
+    const isInBattle = document.getElementById('battle-screen').classList.contains('active');
+    const overlay = document.getElementById('skill-battle-overlay');
+    
+    if (overlay) {
+        if (isInBattle) overlay.classList.remove('hidden');
+        else overlay.classList.add('hidden');
+    }
+    // ----------------------
 
     for (let i = 0; i < hero.equippedSkills.length; i++) {
         const slot = document.createElement('div'); 
@@ -593,36 +634,56 @@ window.renderEquippedSlotsInBook = function() {
         slot.innerHTML = `<span class="key-hint">${(i === 0) ? 'A' : (i === 1) ? 'D' : (i - 1)}</span>`;
         const key = hero.equippedSkills[i];
 
-        slot.onclick = () => {
-            if (selectedSkillToEquip) { hero.equippedSkills[i] = selectedSkillToEquip; selectedSkillToEquip = null; } 
-            else if (hero.equippedSkills[i]) hero.equippedSkills[i] = null;
-            refreshBookUI();
-        };
-
-        slot.ondragover = e => e.preventDefault();
-        slot.ondrop = e => {
-            e.preventDefault(); 
-            const raw = e.dataTransfer.getData('text/plain');
-            try { 
-                const data = JSON.parse(raw); 
-                if (data.type === 'move_skill') { 
-                    const temp = hero.equippedSkills[i]; 
-                    hero.equippedSkills[i] = hero.equippedSkills[data.index]; 
-                    hero.equippedSkills[data.index] = temp; 
+        // SADECE SAVAŞTA DEĞİLSEK TIKLAMA ÇALIŞSIN
+        if (!isInBattle) {
+            slot.onclick = () => {
+                if (selectedSkillToEquip) { 
+                    hero.equippedSkills[i] = selectedSkillToEquip; 
+                    selectedSkillToEquip = null; 
                 } 
-            } catch(err) { 
-                if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) hero.equippedSkills[i] = raw; 
-            }
-            refreshBookUI();
-        };
+                else if (hero.equippedSkills[i]) {
+                    hero.equippedSkills[i] = null;
+                }
+                refreshBookUI();
+            };
+
+            slot.ondragover = e => e.preventDefault();
+            slot.ondrop = e => {
+                e.preventDefault(); 
+                const raw = e.dataTransfer.getData('text/plain');
+                try { 
+                    const data = JSON.parse(raw); 
+                    if (data.type === 'move_skill') { 
+                        const temp = hero.equippedSkills[i]; 
+                        hero.equippedSkills[i] = hero.equippedSkills[data.index]; 
+                        hero.equippedSkills[data.index] = temp; 
+                    } 
+                } catch(err) { 
+                    if (SKILL_DATABASE[raw] && hero.unlockedSkills.includes(raw)) hero.equippedSkills[i] = raw; 
+                }
+                refreshBookUI();
+            };
+        }
 
         if (key && SKILL_DATABASE[key]) { 
             const img = document.createElement('img');
             img.src = `images/${SKILL_DATABASE[key].data.icon}`;
             slot.appendChild(img);
-            slot.setAttribute('draggable', true); 
-            slot.ondragstart = e => e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
-            slot.ondragend = e => { if (e.dataTransfer.dropEffect === "none") { hero.equippedSkills[i] = null; refreshBookUI(); } };
+
+            // SADECE SAVAŞTA DEĞİLSEK SÜRÜKLENSİN
+            if (!isInBattle) {
+                slot.setAttribute('draggable', true); 
+                slot.ondragstart = e => e.dataTransfer.setData('text/plain', JSON.stringify({ type: 'move_skill', index: i }));
+                slot.ondragend = e => { 
+                    if (e.dataTransfer.dropEffect === "none") { 
+                        hero.equippedSkills[i] = null; 
+                        refreshBookUI(); 
+                    } 
+                };
+            } else {
+                slot.setAttribute('draggable', false);
+                slot.style.cursor = 'default';
+            }
         }
         skillBookEquippedBar.appendChild(slot);
     }

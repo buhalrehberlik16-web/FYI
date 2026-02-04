@@ -24,12 +24,12 @@ window.EventManager = {
     const days = hero.calendar.daysPassed;
 
     if (days > gracePeriod) {
-        // 18 Günden SONRA: Her gün için +%5 Güçlenme
+        // 25 Günden SONRA: Her gün için +%5 Güçlenme
         const penaltyDays = days - gracePeriod;
         return 1.0 + (penaltyDays * 0.05); 
     } 
     else if (days < gracePeriod) {
-        // 18 Günden ÖNCE: Her gün için -%2.5 Zayıflama
+        // 25 Günden ÖNCE: Her gün için -%2.5 Zayıflama
         const bonusDays = gracePeriod - days;
         const reduction = bonusDays * 0.025;
         // Güvenlik: Boss'un gücü en fazla %50 düşebilir (0.5 floor)

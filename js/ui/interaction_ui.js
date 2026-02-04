@@ -6,67 +6,111 @@ window.openRewardScreen = function(rewards) {
     switchScreen(rewardScreen);
     const list = document.getElementById('reward-list');
     const btnContinue = document.getElementById('btn-reward-continue');
-    list.innerHTML = '';
     
-    rewards.forEach((reward, index) => {
+    // --- 1. BUTON VE GÖRSEL AYARLAR ---
+    btnContinue.style.opacity = "0.5";
+    btnContinue.classList.remove('pulse-reward');
+    
+    let btnTakeAll = document.getElementById('btn-take-all-rewards');
+    if (!btnTakeAll) {
+        btnTakeAll = document.createElement('button');
+        btnTakeAll.id = 'btn-take-all-rewards';
+        btnTakeAll.className = 'menu-secondary-btn';
+        // ORTALAMA İÇİN KRİTİK STİLLER:
+        btnTakeAll.style.display = "block";
+        btnTakeAll.style.margin = "0 auto 20px auto"; 
+        btnTakeAll.style.width = "250px";
+        btnTakeAll.style.color = "#43FF64";
+        btnTakeAll.style.borderColor = "#43FF64";
+        list.parentNode.insertBefore(btnTakeAll, list);
+    }
+    btnTakeAll.textContent = lang.loot_all;
+    btnTakeAll.classList.remove('hidden');
+
+    list.innerHTML = '';
+
+    const updateContinueButtonState = () => {
+        const remainingItems = list.querySelectorAll('.reward-item').length;
+        if (remainingItems === 0) {
+            btnContinue.style.opacity = "1";
+            btnContinue.classList.add('pulse-reward');
+            btnTakeAll.classList.add('hidden');
+        } else {
+            btnContinue.style.opacity = "0.5";
+            btnContinue.classList.remove('pulse-reward');
+            btnTakeAll.classList.remove('hidden');
+        }
+    };
+
+    // --- 2. ÖDÜL ÇİZİMİ (TIKLAMA MANTIĞI) ---
+    rewards.forEach((reward) => {
         const itemDiv = document.createElement('div');
-        itemDiv.className = 'reward-item reward-gold'; 
+        itemDiv.className = 'reward-item pulse-reward';
         
         if (reward.type === 'gold') {
+            itemDiv.classList.add('reward-gold');
             itemDiv.innerHTML = `<i class="fas fa-coins" style="color:#ffd700;"></i><span>${reward.value} ${lang.gold_text}</span>`;
             itemDiv.onclick = () => {
                 hero.gold += reward.value;
                 updateGoldUI();
-                itemDiv.style.opacity = '0';
-                setTimeout(() => itemDiv.remove(), 200);
+                itemDiv.remove();
+                updateContinueButtonState();
             };
         } 
         else if (reward.type === 'item') {
-            itemDiv.className = 'reward-item reward-equipment'; 
+            itemDiv.classList.add('reward-equipment');
             const item = reward.value;
             const itemName = getTranslatedItemName(item);
-            
-            // --- MİKTAR HESABI (DÜZELTİLDİ) ---
             const qty = reward.amount || 1;
-            const amountHtml = `<span class="reward-item-amount">x${qty}</span>`;
-            
             const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
             const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
-            
-            // --- HTML İÇERİĞİ (DÜZELTİLDİ - amountHtml buraya eklendi) ---
+
             itemDiv.innerHTML = `
                 <img src="items/images/${item.icon}" class="reward-item-icon">
                 <div class="reward-item-text">
                     <div class="reward-item-header">
                         <span class="reward-item-name tier-${isMaterial ? '' : item.tier}">${itemName}</span>
-                        ${amountHtml}
+                        <span class="reward-item-amount">x${qty}</span>
                     </div>
                     <span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span>
                 </div>`;
 
             itemDiv.onclick = () => {
-                const countToAdd = reward.amount || 1;
-                const success = window.addItemToInventory(item, countToAdd);
-                
+                const success = window.addItemToInventory(item, qty);
                 if (success) {
                     renderInventory();
-                    const msg = countToAdd > 1 ? `${countToAdd}x ${itemName}` : itemName;
-                    writeLog(`🎁 ${msg} ${currentLang === 'tr' ? 'çantaya eklendi.' : 'added to bag.'}`);
-                    
-                    itemDiv.style.opacity = '0';
-                    itemDiv.style.pointerEvents = 'none';
-                    setTimeout(() => itemDiv.remove(), 200);
+                    itemDiv.remove();
+                    updateContinueButtonState();
                 } else {
-                    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-					window.showAlert(lang.bag_full_msg);
-					return;
+                    window.showAlert(lang.bag_full_msg);
                 }
             };
         }
         list.appendChild(itemDiv);
     });
 
-    btnContinue.onclick = () => { switchScreen(mapScreen); };
+    // --- 3. FAILSAFE VE AKSİYONLAR ---
+    
+    // HEPSİNİ TOPLA SADECE BU BUTONLA ÇALIŞIR
+    btnTakeAll.onclick = () => {
+        const allRewards = Array.from(list.querySelectorAll('.reward-item'));
+        allRewards.forEach(el => el.click());
+    };
+
+    // YOLA DEVAM ET: OTOMATİK TOPLAMA SİLİNDİ
+    btnContinue.onclick = () => {
+        const remainingItems = list.querySelectorAll('.reward-item');
+        
+        if (remainingItems.length > 0) {
+            // Ödül varken basılırsa sadece UYARI verir, toplama yapmaz
+            window.showConfirm(lang.loot_full_msg, () => {
+                switchScreen(mapScreen);
+            });
+        } else {
+            // Ödül yoksa direkt geçer
+            switchScreen(mapScreen);
+        }
+    };
 };
 
 window.openBuilding = function(type) {
