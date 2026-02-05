@@ -55,6 +55,7 @@ window.openRewardScreen = function(rewards) {
                 updateGoldUI();
                 itemDiv.remove();
                 updateContinueButtonState();
+				if(window.saveGame) window.saveGame();
             };
         } 
         else if (reward.type === 'item') {
@@ -81,6 +82,7 @@ window.openRewardScreen = function(rewards) {
                     renderInventory();
                     itemDiv.remove();
                     updateContinueButtonState();
+					if(window.saveGame) window.saveGame();
                 } else {
                     window.showAlert(lang.bag_full_msg);
                 }
@@ -190,9 +192,10 @@ window.restAtInn = function() {
         window.CalendarManager.passDay(); 
 
     } else {
+        window.showAlert(lang.rest_fail);
         // --- BAŞARISIZLIK DURUMU ---
-        dialogue.textContent = lang.rest_fail;
-        dialogue.style.color = "#ff4d4d";
+        //dialogue.textContent = lang.rest_fail;
+        //dialogue.style.color = "#ff4d4d";
         // Gün atlatma kodunu buraya koymadığımız için hiçbir şey değişmez.
     }
 
@@ -220,8 +223,9 @@ window.buyDrink = function() {
          dialogue.textContent = lang.drink_success;
          dialogue.style.color = "#3498db"; // Mavi
      } else {
-         dialogue.textContent = lang.drink_fail;
-         dialogue.style.color = "#ff4d4d"; // Kırmızı
+		 window.showAlert(lang.drink_fail);
+         //dialogue.textContent = lang.drink_fail;
+         //dialogue.style.color = "#ff4d4d"; // Kırmızı
      }
 
      // 3 SANİYE SONRA ESKİ HALİNE DÖN

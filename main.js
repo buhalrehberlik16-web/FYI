@@ -730,9 +730,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     continueBtn.onclick = () => {
-        if (window.loadGame()) {
-            switchScreen(window.mapScreen); // Kayıt yüklendiyse direkt haritaya at
-            writeLog("Macera kaldığı yerden devam ediyor...");
+    // 1. Önce kayıt verisini ham olarak oku (Konum bilgisini kontrol etmek için)
+    const rawData = localStorage.getItem("RPG_Adventure_SaveGame"); // SAVE_KEY string hali
+    if (!rawData) return;
+    const saveData = JSON.parse(rawData);
+
+    // 2. Oyunu yükle (Değişkenleri doldur)
+    if (window.loadGame()) {
+        // 3. Konum kontrolü yap
+        if (saveData.isInsideTown) {
+            // Eğer köydeyse: Usta bilgisini geri yükle ve köye sok
+            window.currentTownMaster = saveData.currentTownMaster;
+            if (typeof enterTown === 'function') {
+                enterTown(); 
+            } else {
+                switchScreen(window.townScreen);
+            }
+            writeLog("🏰 Köyde dinlenmeye devam ediyorsun...");
+        } else {
+            // Eğer köyde değilse: Normal harita ekranına git
+            switchScreen(window.mapScreen);
+            writeLog("📂 Macera kaldığı yerden devam ediyor...");
         }
-    };
+    }
+};
 });

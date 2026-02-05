@@ -6,6 +6,11 @@ window.StableManager = {
         const cost = 40;
         const currentLang = window.gameSettings.lang || 'tr';
         const lang = window.LANGUAGES[currentLang];
+		
+		if (hero.gold < cost) {
+        window.showAlert(lang.not_enough_msg);
+        return;
+		}
 
         if (hero.gold >= cost) {
             hero.gold -= cost;
@@ -25,6 +30,11 @@ window.StableManager = {
         const cost = 20;
         const currentLang = window.gameSettings.lang || 'tr';
         const lang = window.LANGUAGES[currentLang];
+		
+		if (hero.gold < cost) {
+        window.showAlert(lang.not_enough_msg);
+        return;
+		}
 
         if (hero.gold >= cost) {
             hero.gold -= cost;

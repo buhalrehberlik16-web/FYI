@@ -5,12 +5,18 @@ const SAVE_KEY = "RPG_Adventure_SaveGame";
 window.saveGame = function() {
 	window.StatsManager.saveToProfile();
     try {
+		
+		const townEl = document.getElementById('town-screen');
+        const isTownVisible = townEl && (townEl.classList.contains('active') || townEl.style.display === 'flex');
+		
         const saveData = {
 			
             hero: window.hero,
             GAME_MAP: window.GAME_MAP,
             saveDate: new Date().toISOString(),
-            version: "0.0.5" // Oyun versiyonun
+            version: "0.0.5", // Oyun versiyonun
+			isInsideTown: isTownVisible, // Artık daha garantili
+            currentTownMaster: window.currentTownMaster 
         };
         
         // Objesini yazıya (string) çevir ve tarayıcıya çivile

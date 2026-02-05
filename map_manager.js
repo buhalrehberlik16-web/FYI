@@ -194,6 +194,16 @@ function createMapConnections() {
 
 function renderMap() {
     const mapContent = document.getElementById('map-content');
+	
+	// --- KRİTİK TEMİZLİK: Eski node'ları sil ki üst üste binmesinler! ---
+    const existingNodes = document.querySelectorAll('.map-node');
+    existingNodes.forEach(n => n.remove());
+    
+    // Varsa eski çizgileri (trails) de temizle
+    clearTrails(); 
+    // -----------------------------------------------------------------
+
+	
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     
     document.getElementById('current-node-name').textContent = lang.map_start_title;
@@ -485,9 +495,9 @@ function triggerNodeAction(node) {
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-    window.saveGame();
     refreshMerchantStock();
     switchScreen(townScreen);
+	if(window.saveGame) window.saveGame();
     
     // DÜZELTİLDİ:
     writeLog(lang.log_enter_town);
@@ -497,13 +507,14 @@ function enterTown() {
             // DÜZELTİLDİ:
             writeLog(lang.log_leave_town);
             switchScreen(mapScreen);
+			if(window.saveGame) window.saveGame();
         };
     }
 }
 window.enterCity = function() {
     switchScreen(window.cityScreen);
+	if(window.saveGame) window.saveGame();
 	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-    window.saveGame();
     writeLog(lang.desc_city);
 };
 

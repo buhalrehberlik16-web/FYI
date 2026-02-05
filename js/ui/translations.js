@@ -127,7 +127,7 @@ window.LANGUAGES = {
         tab_brutal: "VAHŞET (Brutal)",
         tab_chaos: "KAOS (Chaos)",
         tab_fervor: "COŞKU (Fervor)",
-        skill_book_hint: "Açık yetenekleri slotlara sürükleyin ya da tıklayıp yerleştirin.(Her Tier'dan bir skill alınabilir.)",
+        skill_book_hint: "Açık yetenekleri slotlara sürükleyin ya da tıklayıp yerleştirin.(Her Tier'dan bir yetenek alınabilir.)",
 		sp_required: "YP GEREKLİ",
 		sp_mean: "YP",
         equipped_skills_label: "KUŞANILAN YETENEKLER",

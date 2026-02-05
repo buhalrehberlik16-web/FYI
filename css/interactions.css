@@ -218,6 +218,7 @@
     display: flex;
     flex-direction: column; 
     position: relative;
+	overflow: hidden;
 }
 
 /* ZAFER YAZISI - ALTIN PARLAMA (GLOW) EFEKTİ */
@@ -243,7 +244,22 @@
     to { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 165, 0, 0.6), 2px 2px 4px #000; transform: scale(1.02); }
 }
 
-#reward-list { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; margin-bottom: 20px; }
+#reward-list {
+    flex-grow: 1; /* Mevcut boşluğun tamamını kaplar */
+    overflow-y: auto; /* İçerik taşarsa kaydırma açılır */
+    margin: 15px 0;
+    padding: 10px;
+    
+    /* --- GİZLİ SCROLLBAR MANTIĞI --- */
+    -ms-overflow-style: none;  /* Internet Explorer ve Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+/* Chrome, Safari ve Opera için scrollbar gizleme */
+#reward-list::-webkit-scrollbar {
+    display: none;
+}
+
 
 /* --- ORTAK ÖDÜL ÖZELLİKLERİ --- */
 .reward-item { 

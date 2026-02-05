@@ -451,6 +451,9 @@ window.renderInventory = function() {
             img.src = `items/images/${item.icon}`;
             slotEl.appendChild(img);
             slotEl.innerHTML += window.getItemBadgeHTML(item);
+			if (item.count && item.count > 1) {
+			slotEl.innerHTML += `<span class="item-count-badge">${item.count}</span>`;
+			}
             
             // Tooltip her zaman çalışsın (Bakmak serbest)
             slotEl.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
