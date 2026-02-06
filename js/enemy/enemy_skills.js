@@ -11,6 +11,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.spore_poison;
+            // Zehir hasarı sabit 5, dirençler SkillEngine içinde hesaplandığı için burası direkt etki ekler
             applyStatusEffect({ id: 'poison', name: 'Zehir', turns: 3, value: 5, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`🍄 **${monster.name}**: ${skillLang.name} (3 Tur Zehir)`);
@@ -20,6 +21,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.fungal_regrow;
+            // %20 can yenileme (Math.floor ile tam sayıya yuvarlandı)
             const heal = Math.floor(monster.maxHp * 0.2);
             monster.hp = Math.min(monster.maxHp, monster.hp + heal);
             showFloatingText(document.getElementById('monster-display'), heal, 'heal');
@@ -47,6 +49,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.chitin_harden;
+            // Sabit defans artışı
             monster.defense += 8;
             showFloatingText(document.getElementById('monster-display'), skillLang.effect, 'heal');
             writeLog(`🛡️ **${monster.name}**: ${skillLang.name} (+8 Defans)`);
@@ -58,6 +61,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.pocket_sand;
+            // Atak yarıya düşer
             applyStatusEffect({ id: 'atk_half', name: 'Blind', turns: 2, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`⏳ **${monster.name}**: ${skillLang.name}! Hasarın azaldı.`);
@@ -67,6 +71,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.cowardly_dash;
+            // Savunma moduna geçer ve geçici bonus alır
             window.isMonsterDefending = true;
             window.monsterDefenseBonus = 15;
             showFloatingText(document.getElementById('monster-display'), skillLang.effect, 'heal');
@@ -76,15 +81,17 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- KAN YARASASI ---
     "vampiric_bite": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.vampiric_bite;
-            const dmg = monster.attack;
-            hero.hp = Math.max(0, hero.hp - dmg);
-            monster.hp = Math.min(monster.maxHp, monster.hp + dmg);
-            showFloatingText(document.getElementById('hero-display'), dmg, 'damage');
-            showFloatingText(document.getElementById('monster-display'), dmg, 'heal');
-            writeLog(`🦇 **${monster.name}**: ${skillLang.name} (${dmg} Can Çaldı)`);
+            
+            // dmgPack (SkillEngine'den gelen paket) kullanılarak can çalma hesaplanır
+            if (dmgPack) {
+                const heal = Math.floor(dmgPack.total * 0.5); // Vurulan toplam hasarın yarısı kadar iyileş
+                monster.hp = Math.min(monster.maxHp, monster.hp + heal);
+                showFloatingText(document.getElementById('monster-display'), heal, 'heal');
+                writeLog(`🦇 **${monster.name}**: ${skillLang.name} (${heal} Can Çaldı)`);
+            }
         }
     },
     "bat_shriek": {
@@ -92,6 +99,7 @@ window.ENEMY_SKILLS_DATABASE = {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.bat_shriek;
             const amount = 20;
+            // Öfke çalma
             hero.rage = Math.max(0, hero.rage - amount);
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`🦇 **${monster.name}**: ${skillLang.name} (-20 Öfke)`);
@@ -103,6 +111,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.bone_shatter;
+            // Savunmayı 0'a indirir
             applyStatusEffect({ id: 'defense_zero', name: 'Broken', turns: 2, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`💀 **${monster.name}**: ${skillLang.name}! (2 Tur Defans 0)`);
@@ -126,6 +135,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.goblin_yell;
+            // Kalıcı atak artışı
             monster.attack += 10;
             showFloatingText(document.getElementById('monster-display'), skillLang.effect, 'heal');
             writeLog(`📢 **${monster.name}**: ${skillLang.name} (+10 Atak)`);
@@ -144,13 +154,13 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- KAÇAK HAYDUT ---
     "dirty_strike": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.dirty_strike;
-            const dmg = Math.floor(monster.attack * 1.5);
-            hero.hp = Math.max(0, hero.hp - dmg);
-            showFloatingText(document.getElementById('hero-display'), dmg, 'damage');
-            writeLog(`🔪 **${monster.name}**: ${skillLang.name} (${dmg} Hasar)`);
+            // Hasar processMonsterDamage tarafından uygulanır, burada sadece loglama yapılır
+            if (dmgPack) {
+                writeLog(`🔪 **${monster.name}**: ${skillLang.name} (${dmgPack.total} Ağır Hasar!)`);
+            }
         }
     },
     "smoke_bomb": {
@@ -188,14 +198,12 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- YABAN DOMUZU ---
     "trample": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.trample;
-            // Stun yerine yüksek hasar ve 1 tur zırh kırma
-            const dmg = 20;
-            hero.hp = Math.max(0, hero.hp - dmg);
+            // 1 tur boyunca heronun defansını zayıflatır
             applyStatusEffect({ id: 'debuff_enemy_def', name: 'Sarsıldı', turns: 1, value: 0.5, resetOnCombatEnd: true });
-            writeLog(`🐗 **${monster.name}**: ${skillLang.name} (${dmg} Hasar + Defansın düştü!)`);
+            writeLog(`🐗 **${monster.name}**: ${skillLang.name} (${dmgPack ? dmgPack.total : 0} Hasar + Defansın düştü!)`);
         }
     },
     "thick_hide": {
@@ -210,9 +218,10 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- GOBLIN SAVAŞÇISI ---
     "mace_bash": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.mace_bash;
+            // Hasar verir ve sersemletir
             applyStatusEffect({ id: 'stun', name: 'Stun', turns: 1, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`🔨 **${monster.name}**: ${skillLang.name}`);
@@ -223,7 +232,7 @@ window.ENEMY_SKILLS_DATABASE = {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.berserker_rage;
             monster.attack += 20;
-            monster.defense -= 10;
+            monster.defense = Math.max(0, monster.defense - 10);
             showFloatingText(document.getElementById('monster-display'), skillLang.effect, 'heal');
             writeLog(`🔥 **${monster.name}**: ${skillLang.name}! Atak arttı, Defans düştü.`);
         }
@@ -231,9 +240,10 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- İSKELET ŞÖVALYE ---
     "cursed_blade": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.cursed_blade;
+            // Hasar ve Lanet (Gelecek hasarları artırır)
             applyStatusEffect({ id: 'curse_damage', name: 'Curse', turns: 3, value: 0.2, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
             writeLog(`💀 **${monster.name}**: ${skillLang.name}`);
@@ -252,7 +262,7 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- GULYABANİ ---
     "paralyzing_claws": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.paralyzing_claws;
             applyStatusEffect({ id: 'stun', name: 'Paralyzed', turns: 1, resetOnCombatEnd: true });
@@ -267,7 +277,7 @@ window.ENEMY_SKILLS_DATABASE = {
             const heal = 50;
             monster.hp = Math.min(monster.maxHp, monster.hp + heal);
             showFloatingText(document.getElementById('monster-display'), heal, 'heal');
-            writeLog(`🧟 **${monster.name}**: ${skillLang.name}`);
+            writeLog(`🧟 **${monster.name}**: ${skillLang.name} (+${heal} HP)`);
         }
     },
 
@@ -275,7 +285,7 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- KAYA GOLEMİ ---
     "ground_slam": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.ground_slam;
             applyStatusEffect({ id: 'stun', name: 'Stun', turns: 1, resetOnCombatEnd: true });
@@ -295,13 +305,11 @@ window.ENEMY_SKILLS_DATABASE = {
 
     // --- ORC FEDAİSİ ---
     "crushing_blow": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.crushing_blow;
-            const dmg = Math.floor(monster.attack * 2);
-            hero.hp = Math.max(0, hero.hp - dmg);
-            showFloatingText(document.getElementById('hero-display'), dmg, 'damage');
-            writeLog(`🪓 **${monster.name}**: ${skillLang.name} (${dmg} Hasar)`);
+            // Crushing blow yüksek hasarını SkillEngine'in damageSplit çarpanından alacak
+            writeLog(`🪓 **${monster.name}**: ${skillLang.name} (${dmgPack ? dmgPack.total : 0} Hasar!)`);
         }
     },
     "iron_will": {
@@ -312,21 +320,21 @@ window.ENEMY_SKILLS_DATABASE = {
             monster.hp = Math.min(monster.maxHp, monster.hp + heal);
             monster.attack += 10;
             showFloatingText(document.getElementById('monster-display'), heal, 'heal');
-            writeLog(`💪 **${monster.name}**: ${skillLang.name}`);
+            writeLog(`💪 **${monster.name}**: ${skillLang.name} (+${heal} HP ve +10 Atak)`);
         }
     },
 
     // --- KEMİK GOLEMİ ---
     "marrow_drain": {
-        execute: (monster, hero) => {
+        execute: (monster, hero, dmgPack) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.marrow_drain;
-            const dmg = 40;
-            hero.hp = Math.max(0, hero.hp - dmg);
-            monster.hp = Math.min(monster.maxHp, monster.hp + dmg);
-            showFloatingText(document.getElementById('hero-display'), dmg, 'damage');
-            showFloatingText(document.getElementById('monster-display'), dmg, 'heal');
-            writeLog(`💀 **${monster.name}**: ${skillLang.name}`);
+            if (dmgPack) {
+                const heal = Math.floor(dmgPack.total * 0.7); // Vurduğunun %70'ini iyileşir
+                monster.hp = Math.min(monster.maxHp, monster.hp + heal);
+                showFloatingText(document.getElementById('monster-display'), heal, 'heal');
+                writeLog(`💀 **${monster.name}**: ${skillLang.name} (${heal} İlik Sömürdü)`);
+            }
         }
     },
     "bone_rebuild": {
@@ -354,6 +362,7 @@ window.ENEMY_SKILLS_DATABASE = {
         execute: (monster, hero) => {
             const lang = ENEMY_SKILLS_DATABASE.getLang();
             const skillLang = lang.enemy_skills.last_stand;
+            // Boss savunma moduna girer
             window.isMonsterDefending = true;
             window.monsterDefenseBonus = 60;
             showFloatingText(document.getElementById('monster-display'), skillLang.effect, 'heal');
