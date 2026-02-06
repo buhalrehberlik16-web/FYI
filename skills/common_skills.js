@@ -1,3 +1,5 @@
+// common_skills.js - Elemental & Physical Scaling Entegre Edilmiş Güncel Sürüm
+
 const COMMON_SKILLS = {
 // ======================================================
     // TAB: COMMON (GENEL)
@@ -14,14 +16,22 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common',
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 0.0 }, elements: { physical: 0.0 } }
+            // YENİ SİSTEM: Physical ve Elemental ayrımı
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
-			const stats = getHeroEffectiveStats(); 
+            // SkillEngine artık {total, phys, elem} paketi döner
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
+            const stats = getHeroEffectiveStats(); 
             hero.rage = Math.min(stats.maxRage, hero.rage + 10);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            
+            // Animasyona artık sayı değil, paket gönderiyoruz
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -37,6 +47,7 @@ const COMMON_SKILLS = {
             tier: 1
         },
         onCast: function(attacker, defender) {
+            // Guard_active etkisi SkillEngine içinde %25 (0.25) sönümleme yapar
             hero.statusEffects.push({ id: 'guard_active', name: 'Koruma', value: 0.25, turns: 1, waitForCombat: false, resetOnCombatEnd: true });
             isHeroDefending = true;
             updateStats();
@@ -55,15 +66,20 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common',
             tier: 1,
-            scaling: { atkMult: 1.18, stats: { str: 0.0 }, elements: { physical: 1.0 } }
+            scaling: { 
+                physical: { atkMult: 1.15, stat: "str", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            const genRage = Math.floor(Math.random() * 13);
-			const stats = getHeroEffectiveStats(); 
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
+            const genRage = Math.floor(Math.random() * 10);
+            const stats = getHeroEffectiveStats(); 
             hero.rage = Math.min(stats.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -108,13 +124,13 @@ const COMMON_SKILLS = {
             type: 'defense',
             category: 'common', 
             tier: 2,
-			pointCost: 1
+            pointCost: 1
         },
         onCast: function(attacker, defender) {
-			const stats = getHeroEffectiveStats();
+            const stats = getHeroEffectiveStats();
             const healAmount = 15 + Math.floor((hero.int || 0) * 0.5);
             const oldHp = hero.hp;
-            hero.hp = Math.min(hero.maxHp, hero.hp + healAmount);
+            hero.hp = Math.min(stats.maxHp, hero.hp + healAmount);
             updateStats(); 
             showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
             animateHealingParticles();
@@ -129,16 +145,16 @@ const COMMON_SKILLS = {
             menuDescription: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>",
             rageCost: 50,
             levelReq: 1,
-			cooldown: 1,
+            cooldown: 1,
             icon: 'skills/common/icon_distract.webp',
             type: 'debuff',
             category: 'common',
             tier: 2,
-			pointCost: 1
+            pointCost: 1
         },
         onCast: function(attacker, defender) {
-			const currentLang = window.gameSettings.lang || 'tr';
-			const lang = window.LANGUAGES[currentLang];
+            const currentLang = window.gameSettings.lang || 'tr';
+            const lang = window.LANGUAGES[currentLang];
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'distract', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             applyStatusEffect({  id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
@@ -148,7 +164,7 @@ const COMMON_SKILLS = {
         }
     },
 	
-	tactical_strike: {
+    tactical_strike: {
         data: {
             name: "Taktiksel Vuruş",
             menuDescription: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
@@ -158,15 +174,26 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common', 
             tier: 2,
-			pointCost: 1,
-            scaling: { atkMult: 1.3, stats: { dex: 0.0 }, elements: { physical: 0.0 } }
+            pointCost: 1,
+            scaling: { 
+                physical: { atkMult: 1.3, stat: "dex", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            let currentMonsterDef = monster.defense + (isMonsterDefending ? monsterDefenseBonus : 0);
-            const ignoredAmount = Math.min(currentMonsterDef, 10);
+            // Önce normal paketimizi hesaplayalım
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
-            animateCustomAttack(dmg + ignoredAmount, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            // "10 Defansı Yok Sayar" mantığı: 
+            // Eğer fiziksel hasar defansa takıldıysa (physRaw < def), aradaki kaybın 10 puanını geri verelim.
+            let monsterDef = defender.defense + (window.isMonsterDefending ? (window.monsterDefenseBonus || 0) : 0);
+            const ignoredAmount = Math.min(monsterDef, 10);
+            
+            // Paketi el yordamıyla güncelleyelim (Sadece bu skile özel)
+            dmgPack.total += ignoredAmount;
+            dmgPack.phys += ignoredAmount;
+            
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -234,7 +261,7 @@ const COMMON_SKILLS = {
             menuDescription: "30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.",
             rageCost: 30,
             levelReq: 6, 
-			cooldown: 5,
+            cooldown: 5,
             icon: 'skills/common/icon_sharpen.webp',
             type: 'buff',
             category: 'common',
@@ -255,7 +282,7 @@ const COMMON_SKILLS = {
             menuDescription: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>",
             rageCost: 20,
             levelReq: 6,
-			cooldown: 9,
+            cooldown: 9,
             icon: 'skills/common/icon_curseskill.webp',
             type: 'debuff',
             category: 'common',
@@ -270,31 +297,39 @@ const COMMON_SKILLS = {
         }
     },
 
-	// --- TIER 5 ---
-	willful_strike: {
+    // --- TIER 5 ---
+    willful_strike: {
         data: {
             name: "İradeli Vuruş",
-            menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%).",
+            menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: Paket x (1 + Harcanan Öfke%).",
             rageCost: 0, 
             levelReq: 8, 
             icon: 'skills/common/icon_willful_strike.webp',
             type: 'attack',
             category: 'common',
             tier: 5,
-            scaling: { atkMult: 1.0, elements: { physical: 0.0 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
             const spentRage = hero.rage;
             const multiplier = 1 + (spentRage / 100);
+            
+            // Önce ham paketi hesapla
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
+            // Tüm paketi öfke çarpanıyla güncelle
+            dmgPack.total = Math.floor(dmgPack.total * multiplier);
+            dmgPack.phys = Math.floor(dmgPack.phys * multiplier);
+            dmgPack.elem = Math.floor(dmgPack.elem * multiplier);
+
             hero.rage = 0; 
             updateStats();
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            const totalDamage = Math.floor(dmg * multiplier);
+            
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'willful_strike', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
-            animateCustomAttack(totalDamage, ['images/heroes/barbarian/barbarian_attack2.webp','images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp','images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },	
-
 };
-
-

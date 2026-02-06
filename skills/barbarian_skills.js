@@ -1,4 +1,4 @@
-
+// barbarian_skills.js - Elemental & Physical Scaling Entegre Edilmiş Güncel Sürüm
 
 const BARBARIAN_SKILLS = {
 
@@ -17,14 +17,22 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal',
             tier: 1,
-            scaling: { atkMult: 0, stats: { str: 1.2 }, elements: { physical: 1.0 } }
+            // YENİ SİSTEM: Physical ve Elemental ayrımı
+            scaling: { 
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.2 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            // SkillEngine artık {total, phys, elem} paketi döner
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
 			const stats = getHeroEffectiveStats(); 
             hero.rage = Math.min(stats.maxRage, hero.rage + 18);
             showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            
+            // Animasyona artık sayı değil, paket gönderiyoruz
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 	
@@ -39,12 +47,15 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal', 
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 0.6 }, elements: { physical: 0.0 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.6 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'slash', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
     
@@ -60,13 +71,16 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal',
             tier: 2,
-            scaling: { atkMult: 1.0, stats: { str: 0.8 }, elements: { physical: 0.0 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.8 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -81,15 +95,25 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal',
             tier: 2,
-            scaling: { atkMult: 1.5, stats: { str: 0.8 }, elements: { physical: 0.0 } }
+            scaling: { 
+                physical: { atkMult: 1.5, stat: "str", statMult: 0.8 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            // "Defansın %50'sini Yok Sayar" özel bir durumdur, dmgPack hesaplandıktan sonra müdahale edelim
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            let monsterDef = monster.defense;
-            if(typeof isMonsterDefending !== 'undefined' && isMonsterDefending) monsterDef += monsterDefenseBonus;
+            
+            let monsterDef = defender.defense + (window.isMonsterDefending ? (window.monsterDefenseBonus || 0) : 0);
             const ignoredDef = Math.floor(monsterDef * 0.50);
-            animateCustomAttack(dmg + ignoredDef, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            
+            // Defansın yarısını fiziksel hasara iade et
+            dmgPack.total += ignoredDef;
+            dmgPack.phys += ignoredDef;
+
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -104,15 +128,19 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal',
             tier: 2,
-            scaling: { atkMult: 2.0 }
+            scaling: { 
+                physical: { atkMult: 2.0, stat: "str", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
 			const currentLang = window.gameSettings.lang || 'tr';
 			const lang = window.LANGUAGES[currentLang];
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
             applyStatusEffect({ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 
@@ -127,13 +155,18 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal', 
             tier: 3,
-            scaling: { atkMult: 1.0, stats: { str: 0.5 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.5 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'armor_break', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            
+            // ignore_def aktif olduğu için SkillEngine targetDef'i 0 görecektir
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 
@@ -207,13 +240,16 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'chaos',
             tier: 1,
-            scaling: { atkMult: 1.0, stats: { str: 1.3 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 1.3 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
 	
@@ -264,14 +300,17 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'chaos', 
             tier: 2,
-            scaling: { atkMult: 1.0, stats: { int: 1.3 }, elements: { fire: 1.0 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "int", statMult: 1.3 },
+                elemental: { fire: 1.0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
         },
         onCast: function(attacker, defender) {
             const hpCost = Math.floor(hero.hp * 0.10);
             hero.hp = Math.max(1, hero.hp - hpCost);
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
-            const dmg = SkillEngine.calculate(attacker, this.data);
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
         }
     },
 
@@ -292,9 +331,9 @@ const BARBARIAN_SKILLS = {
             // Mevcut hasar motorumuzdaki atk_up_percent çarpanını kullanıyoruz
             hero.statusEffects.push({ 
                 id: 'atk_up_percent', 
-                name: 'Alevli Kılıç', 
+                name: 'Hücum!', 
                 value: 0.50, 
-                turns: 4, // Bu tur + 3 tam tur
+                turns: 4, 
                 waitForCombat: false, 
                 resetOnCombatEnd: true 
             });
@@ -303,8 +342,7 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'double_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
 
             updateStats();
-            showFloatingText(document.getElementById('hero-display'), "ALEVLENDİ!", 'heal');
-            writeLog(`🔥 **Alevli Kılıç**: Silahın alev aldı! 3 tur boyunca %50 ekstra hasar vereceksin.`);
+            showFloatingText(document.getElementById('hero-display'), "ÖFKELENDİ!", 'heal');
             
             setTimeout(nextTurn, 1000);
         }
@@ -354,17 +392,20 @@ const BARBARIAN_SKILLS = {
         tier: 1,
         // Bu bir buff olduğu için hasar motoruna direkt girmez ama 
         // bonusu belirlemek için scaling verisini burada tutabiliriz.
-        scaling: { stats: { str: 1.0 } } 
+        scaling: { 
+            physical: { atkMult: 0, stat: "str", statMult: 1.0 },
+            elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+        } 
     },
     onCast: function(attacker, defender) {
-        // Motoru kullanarak bonusu hesapla (Atak mult 0, sadece stat)
-        const bonusDmg = SkillEngine.calculate(attacker, this.data);
+        // Motoru kullanarak bonusu hesapla
+        const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 		const stats = getHeroEffectiveStats(); 
         
         hero.statusEffects.push({ 
             id: 'wind_up', 
             name: 'Güç Toplandı', 
-            value: bonusDmg, 
+            value: dmgPack.total, 
             turns: 5, 
             waitForCombat: false, 
             resetOnCombatEnd: true 
@@ -375,7 +416,7 @@ const BARBARIAN_SKILLS = {
         
         updateStats();
         showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
-        writeLog(`💨 **${this.data.name}**: Bir sonraki vuruşa +${bonusDmg} güç eklendi.`);
+        writeLog(`💨 **${this.data.name}**: Bir sonraki vuruşa +${dmgPack.total} güç eklendi.`);
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
@@ -391,12 +432,15 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'fervor', 
             tier: 2,
-            scaling: { atkMult: 1.0, stats: { mp_pow: 1.5 }, elements: { lightning: 1.0 } }
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "mp_pow", statMult: 1.5 },
+                elemental: { fire: 0, cold: 0, lightning: 1.0, poison: 0, curse: 0 }
+            }
         },
 		onCast: function(attacker, defender) {
-            const dmg = SkillEngine.calculate(attacker, this.data);
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'light_blade', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
-            animateCustomAttack(dmg, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
 	
@@ -473,8 +517,3 @@ const BARBARIAN_SKILLS = {
     }
 },
 };
-
-
-
-
-

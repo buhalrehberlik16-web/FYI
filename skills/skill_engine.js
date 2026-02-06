@@ -1,43 +1,82 @@
 const SkillEngine = {
-    // Hasar Hesaplama Motoru (Mutfak Robotu)
-    calculate: function(attacker, skillData) {
-        // U ekranında görünen o anki EN GÜÇLÜ halini alıyoruz
-        const stats = getHeroEffectiveStats(); 
-        const scaling = skillData.scaling || {};
+    calculate: function(attacker, skillData, target) {
+        // --- 1. TEMEL VERİLERİ HAZIRLA ---
+        const isAttackerHero = (attacker === hero);
+        const attackerStats = isAttackerHero ? getHeroEffectiveStats() : { atk: attacker.attack };
+        const targetStats = (target === hero) ? getHeroEffectiveStats() : { def: target.defense, resists: target.resists };
         
-        // 1. ATAK BİLEŞENİ (Artık içinde stat bonusları ve atk_up buffları var!)
-        let atkPart = (stats.atk || 0) * (scaling.atkMult || 0);
+        let rawAtk = attackerStats.atk;
+        let targetDef = targetStats.def;
+        const targetResists = targetStats.resists || { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
 
-        // 2. EXTRA STAT BİLEŞENİ (Skille özel çarpan: örn %60 STR bonusu)
-        let statPart = 0;
-        if (scaling.stats) {
-            for (const [statName, multiplier] of Object.entries(scaling.stats)) {
-                // Bufflı stat değerini kullan (Str_up varsa onu da kapsar)
-                const statVal = stats[statName] || 0;
-                statPart += statVal * multiplier;
-            }
+        // --- 2. SALDIRI GÜCÜNÜ ETKİLEYEN DURUMLAR (weakAtk / atk_up) ---
+        // Canavarın atağını kontrol et (Düşman güçsüzleşmiş mi?)
+        const weakAtk = (isAttackerHero ? hero.statusEffects : hero.statusEffects).find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
+        if (!isAttackerHero && weakAtk) {
+            rawAtk = Math.floor(rawAtk * (1 - weakAtk.value));
         }
 
-        // 3. ELEMENTEL BİLEŞEN (İleride itemlerden gelecek)
-        let elementPart = 0;
-        if (scaling.elements && hero.elementalDamage) {
-            for (const [elementName, multiplier] of Object.entries(scaling.elements)) {
-                elementPart += (hero.elementalDamage[elementName] || 0) * multiplier;
-            }
+        // --- 3. SAVUNMA GÜCÜNÜ ETKİLEYEN DURUMLAR (Guard / Defense Bonus) ---
+        let effectiveDef = targetDef;
+        if (target === hero && window.isHeroDefending) {
+            effectiveDef += (window.heroDefenseBonus || 0);
+        } else if (target !== hero && window.isMonsterDefending) {
+            effectiveDef += (window.monsterDefenseBonus || 0);
         }
 
-        return Math.floor(atkPart + statPart + elementPart);
-    },
+        // --- 4. FİZİKSEL HASAR HESABI ---
+        const sc = isAttackerHero ? skillData.scaling : (skillData.damageSplit || { physical: 1.0 });
+        let physRaw = 0;
+        if (isAttackerHero) {
+            const p = sc.physical;
+            const bonusStatVal = attackerStats[p.stat] || 0;
+            physRaw = Math.floor((rawAtk * p.atkMult) + (bonusStatVal * p.statMult));
+        } else {
+            physRaw = Math.floor(rawAtk * (sc.physical || 0));
+        }
 
-    // Dosyaları birleştiren fonksiyon
-    init: function() {
-        window.SKILL_DATABASE = {
-            ...COMMON_SKILLS,
-            ...BARBARIAN_SKILLS,
-            ...(typeof MAGUS_SKILLS !== 'undefined' ? MAGUS_SKILLS : {}),
-            ...(typeof TRICKSTER_SKILLS !== 'undefined' ? TRICKSTER_SKILLS : {})
+        let physNet = Math.max(0, physRaw - effectiveDef);
+        let remDef = (physRaw < effectiveDef) ? (effectiveDef - physRaw) : 0;
+
+        // --- 5. ELEMENTAL HASAR HESABI (Flat Resist) ---
+        let totalElemAfterResist = 0;
+        const elementTypes = ['fire', 'cold', 'lightning', 'poison', 'curse'];
+
+        elementTypes.forEach(type => {
+            let elemRaw = 0;
+            if (isAttackerHero) {
+                const itemElemBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
+                const skillMult = (sc.elemental && sc.elemental[type]) ? sc.elemental[type] : 0;
+                elemRaw = Math.floor(itemElemBonus + (rawAtk * skillMult));
+            } else {
+                elemRaw = Math.floor(rawAtk * (sc[type] || 0));
+            }
+
+            if (elemRaw > 0) {
+                let resValue = targetResists[type] || 0;
+                totalElemAfterResist += Math.max(0, elemRaw - resValue);
+            }
+        });
+
+        // Elemental Sönümleme (Kalan Defans / 2)
+        let elemNet = Math.max(0, totalElemAfterResist - Math.floor(remDef / 2));
+
+        // --- 6. YÜZDESEL AZALTMALAR (Guard Active %25 Azaltma) ---
+        let totalHasar = physNet + elemNet;
+        const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
+        if (guardEffect) {
+            totalHasar = Math.floor(totalHasar * (1 - guardEffect.value));
+        }
+
+        return {
+            total: Math.floor(totalHasar),
+            phys: Math.floor(physNet),
+            elem: Math.floor(elemNet)
         };
-        console.log("Skill Engine: Tüm yetenekler başarıyla birleştirildi.");
+    },
+    init: function() {
+        window.SKILL_DATABASE = { ...COMMON_SKILLS, ...BARBARIAN_SKILLS };
+		console.log("Skill Engine:(Flat Resistance Mode) Aktif.");
     }
 };
 
