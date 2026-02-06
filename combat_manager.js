@@ -304,49 +304,41 @@ window.toggleSkillButtons = function(forceDisable) {
 // --- SKILL KULLANIMI ---
 window.handleSkillUse = function(skillKey) {
     if (window.isHeroTurn !== true) return; 
-
     const skillObj = SKILL_DATABASE[skillKey];
-    if (!skillObj) return;
-    const data = skillObj.data || skillObj;
+    if (!skillObj || checkIfSkillBlocked(skillKey)) return;
 
-    // Engel Kontrolü (Log fonksiyonun içinde basılıyor)
-    if (checkIfSkillBlocked(skillKey)) return;
-
-    if (hero.rage < (data.rageCost || 0)) { 
-        writeLog(`❌ **Öfke Yetersiz**: ${data.name} için ${data.rageCost} Öfke gerekiyor.`);
-        return; 
+    if (hero.rage < (skillObj.data.rageCost || 0)) { 
+        writeLog(`❌ Yetersiz Öfke!`); return; 
     }
 
     window.isHeroTurn = false; 
     toggleSkillButtons(true); 
 
-    if(data.rageCost > 0) hero.rage -= data.rageCost;
+    if(skillObj.data.rageCost > 0) hero.rage -= skillObj.data.rageCost;
     updateStats(); 
-    if (skillObj.onCast) skillObj.onCast(hero, monster);
+
+    // --- KRİTİK DÜZELTME BAŞLANGIÇ ---
+    let dmgPack = null;
+    // Sadece scaling verisi olan (hasar vuran) yetenekler için hesaplama yap
+    if (skillObj.data.scaling) {
+        dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
+    }
+    // --------------------------------
+
+    if (skillObj.onCast) skillObj.onCast(hero, monster, dmgPack);
 };
 
 // --- ANİMASYONLAR VE HASAR ---
-window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
-    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat; // Savaş çevirilerini al
+window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    let finalDmg = dmgPack.total;
 
+    // Wind Up (Kurulma) Kontrolü (Hala çalışmalı!)
     const windUpIdx = hero.statusEffects.findIndex(e => e.id === 'wind_up' && !e.waitForCombat);
     if (windUpIdx !== -1) { 
-        rawDamage += hero.statusEffects[windUpIdx].value; 
+        finalDmg += hero.statusEffects[windUpIdx].value; 
         hero.statusEffects.splice(windUpIdx, 1); 
-        writeLog(lang.log_windup); // Çeviri kullanıldı
     }
-
-    let def = monster.defense + (window.isMonsterDefending ? window.monsterDefenseBonus : 0);
-    if(hero.statusEffects.some(e => e.id === 'ignore_def' && !e.waitForCombat)) {
-        def = 0;
-        writeLog(lang.log_ignore_def); // Çeviri kullanıldı
-    }
-
-    const weakDef = hero.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
-    if (weakDef) def = Math.floor(def * (1 - weakDef.value));
-
-    let finalDmg = Math.max(1, Math.floor(rawDamage - def));
-	StatsManager.trackDamageDealt(finalDmg);
 
     let fIdx = 0;
     function frame() {
@@ -354,35 +346,34 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
             heroDisplayImg.src = skillFrames[fIdx]; 
             if (fIdx === 1 || skillFrames.length === 1) { 
                 monster.hp = Math.max(0, monster.hp - finalDmg);
-				
-				// --- YENİ BARBAR PASİFİ BAŞLANGIÇ ---
+                StatsManager.trackDamageDealt(finalDmg);
+
+                // --- ÖFKE KAZANIMLARI ---
+                // 1. Barbar Pasifi (%25 hasar öfkeye döner)
                 const classRules = CLASS_CONFIG[hero.class];
                 if (classRules && classRules.hitRageGain) {
-                    const stats = getHeroEffectiveStats(); // maxRage için
+                    const stats = getHeroEffectiveStats();
                     const passiveGain = Math.ceil(finalDmg * classRules.hitRageGain);
-                    
                     hero.rage = Math.min(stats.maxRage, hero.rage + passiveGain);
-					if(passiveGain > 0) showFloatingText(document.getElementById('hero-display'), `+${passiveGain} Rage`, 'heal');
-                    writeLog(`+${passiveGain} ${lang.log_rage_gain}`);
+                    if(passiveGain > 0) showFloatingText(heroDisplayContainer, `+${passiveGain} Rage`, 'heal');
                 }
                 
+                // 2. Fury Active Skilli (Ekstra rage kazanımı)
                 const fury = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
                 if (fury) { 
                     const gain = Math.floor(finalDmg * fury.value);
                     hero.rage = Math.min(hero.maxRage, hero.rage + gain); 
-                    writeLog(lang.log_fury_gain); // Çeviri kullanıldı
+                    writeLog(lang.log_fury_gain); 
                 }
 
                 animateDamage(false); 
                 showFloatingText(document.getElementById('monster-display'), finalDmg, 'damage');
+                writeLog(`⚔️ **${skillName}**: ${finalDmg} hasar! (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
                 
-                // Dinamik Log: "⚔️ Slash: 15 damage dealt to Goblin"
-                writeLog(`⚔️ **${skillName}**: ${monster.name} ${lang.log_hit_monster} **${finalDmg}**.`);
-
+                // Kalkan kırma (Shield Break)
                 if (window.isMonsterDefending) { 
                     window.isMonsterDefending = false; 
                     window.monsterDefenseBonus = 0; 
-                    writeLog(`🛡️ ${monster.name} ${lang.log_shield_break}`); // Çeviri kullanıldı
                 }
                 updateStats();
             }
@@ -395,71 +386,57 @@ window.animateCustomAttack = function(rawDamage, skillFrames, skillName) {
     frame();
 };
 
+
 window.handleMonsterAttack = function(attacker, defender) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
-    const stats = ENEMY_STATS[attacker.name];
-    let attackFrames = stats.attackFrames.map(f => `images/${f}`);
+    // Temel saldırıyı SkillEngine'e "Sadece Fiziksel" olarak gönderiyoruz
+    const basicAttackData = { damageSplit: { physical: 1.0 } };
+    const dmgPack = SkillEngine.calculate(attacker, basicAttackData, defender);
     
-    let rawDamage = attacker.attack;
+    processMonsterDamage(attacker, dmgPack, stats.attackFrames.map(f => `images/${f}`));
+};
 
-    // 1. CANAVARIN ATAĞINI KONTROL ET (Düşman güçsüzleşmiş mi?)
-    const weakAtk = hero.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
-    if (weakAtk) rawDamage = Math.floor(rawDamage * (1 - weakAtk.value));
-
-    const heroStats = getHeroEffectiveStats();
-    
-    // 2. SABİT SAVUNMAYI HESAPLA
-    let effectiveDef = heroStats.def + (window.isHeroDefending ? window.heroDefenseBonus : 0);
-    let finalDamage = Math.max(1, Math.floor(rawDamage - effectiveDef));
-
-    // 3. SİPER (GUARD) KONTROLÜ - Yüzdesel Azaltma Burada Devreye Girer
-    const guardEffect = hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat);
-    if (guardEffect) {
-        // Hasarı yetenekteki değer kadar (%25) düşürür
-        finalDamage = Math.floor(finalDamage * (1 - guardEffect.value));
-    }
-	
-	StatsManager.trackDamageTaken(finalDamage);
+// Canavar hasarını uygulayan merkezi fonksiyon (Bunu nextTurn içinde kullanacaksın)
+function processMonsterDamage(attacker, dmgPack, attackFrames) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    let finalDamage = dmgPack.total;
 
     let fIdx = 0;
     function frame() {
         if (fIdx < attackFrames.length) {
             monsterDisplayImg.src = attackFrames[fIdx]; 
             if (fIdx === 1) { 
-                // BLOK KONTROLÜ
+                // BLOK SİSTEMİ
                 if (window.heroBlock > 0) {
                     if (window.heroBlock >= finalDamage) { 
-                        writeLog(lang.log_block_full); 
-                        window.heroBlock -= finalDamage; 
-                        finalDamage = 0; 
+                        window.heroBlock -= finalDamage; finalDamage = 0; 
                         showFloatingText(heroDisplayContainer, lang.f_block, 'heal'); 
                     } else { 
-                        writeLog(`${lang.log_block_partial} ${finalDamage - window.heroBlock}`);
-                        finalDamage -= window.heroBlock; 
-                        window.heroBlock = 0; 
+                        finalDamage -= window.heroBlock; window.heroBlock = 0; 
                     }
                 }
                 
                 if (finalDamage > 0) { 
-                    defender.hp = Math.max(0, defender.hp - finalDamage); 
+                    hero.hp = Math.max(0, hero.hp - finalDamage); 
+                    StatsManager.trackDamageTaken(finalDamage);
                     animateDamage(true); 
                     showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-                    writeLog(`⚠️ **${attacker.name}**: ${lang.log_monster_hit} (**${finalDamage}**)`);
+                    writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu. (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+                    // Hasar yiyince öfke kazanma (5 sabit)
                     hero.rage = Math.min(hero.maxRage, hero.rage + 5); 
                 }
                 updateStats(); 
-                // Tur bitince savunma durumunu sıfırla
                 if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
             }
             fIdx++; setTimeout(frame, 150); 
         } else {
-            monsterDisplayImg.src = `images/${stats.idle}`; 
+            monsterDisplayImg.src = `images/${ENEMY_STATS[attacker.name].idle}`; 
             window.isHeroTurn = true; 
             if (!checkGameOver()) nextTurn(); 
         }
     }
     frame();
-};
+}
 
 window.determineMonsterAction = function() {
     // AIManager'ı çağırıp sonucu alıyoruz
@@ -686,45 +663,67 @@ window.nextTurn = function() {
     } else {
         // --- CANAVAR SIRASI ---
         toggleSkillButtons(true); 
-        showMonsterIntention(null); 
+        showMonsterIntention(null); // Hamle başladığı an simgeyi gizle
         
         const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
         if (monsterStun) { 
-            writeLog(lang.log_stun_skip);
-            showFloatingText(document.getElementById('monster-display'), lang.f_stunned, 'damage'); 
+            const stunLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+            writeLog(stunLang.log_stun_skip);
+            showFloatingText(document.getElementById('monster-display'), stunLang.f_stunned, 'damage'); 
             window.isHeroTurn = true; 
             setTimeout(nextTurn, 1000); 
             return;
         }
 
         setTimeout(() => {
-    if (!checkGameOver()) {
-        const action = window.monsterNextAction;
+            if (!checkGameOver()) {
+                const action = window.monsterNextAction;
+                const stats = ENEMY_STATS[monster.name];
 
-        // 1. TEMEL ATAKLAR (1 ve 2 aynı ama görsel farklı olabilir)
-        if (action === 'attack1' || action === 'attack2') {
-            handleMonsterAttack(monster, hero); 
-        } 
-        // 2. DEFANS
-        else if (action === 'defend') {
-            handleMonsterDefend(monster);
-        } 
-        // 3. SKILLER (Attack, Buff, Debuff ayrımı yapmadan ID ile çalıştırır)
-        else {
-            const skill = ENEMY_SKILLS_DATABASE[action];
-            if (skill) {
-                // Skill çalıştır (Buradaki skill.execute zaten her şeyi yapar)
-                skill.execute(monster, hero);
-                animateMonsterSkill(); 
-                updateStats();
-                window.isHeroTurn = true;
-                setTimeout(nextTurn, 1000);
-            } else {
-                handleMonsterAttack(monster, hero); // Fallback
+                // 1. TEMEL ATAKLAR (Attack1 veya Attack2)
+                if (action === 'attack1' || action === 'attack2') {
+                    // Temel saldırı verisi (Sadece %100 Fiziksel)
+                    const basicData = { damageSplit: { physical: 1.0 } };
+                    const dmgPack = SkillEngine.calculate(monster, basicData, hero);
+                    
+                    // Görseller: stats.attackFrames içinden
+                    const frames = stats.attackFrames.map(f => `images/${f}`);
+                    processMonsterDamage(monster, dmgPack, frames); 
+                } 
+                // 2. SAVUNMA HAMLESİ
+                else if (action === 'defend') {
+                    handleMonsterDefend(monster);
+                } 
+                // 3. YETENEK HAMLESİ (SkillAttack, Buff veya Debuff)
+                else {
+                    const skill = ENEMY_SKILLS_DATABASE[action];
+                    const skillData = stats.skills.find(s => s.id === action);
+
+                    if (skill) {
+                        // Eğer bu bir hasar yeteneğiyse (SkillAttack), dmgPack hesapla
+                        if (skillData.category === 'attack') {
+                            const dmgPack = SkillEngine.calculate(monster, skillData, hero);
+                            const frames = stats.attackFrames.map(f => `images/${f}`);
+                            
+                            // Hem hasarı vur hem de yeteneğin içindeki özel kodu (örn: can çalma) çalıştır
+                            skill.execute(monster, hero, dmgPack); 
+                            processMonsterDamage(monster, dmgPack, frames);
+                        } 
+                        else {
+                            // Buff veya Debuff ise sadece yeteneği çalıştır
+                            skill.execute(monster, hero);
+                            animateMonsterSkill(); // Mor parlama efekti
+                            updateStats();
+                            window.isHeroTurn = true;
+                            setTimeout(nextTurn, 1000);
+                        }
+                    } else {
+                        // Fallback: Bir sorun çıkarsa düz atak yap
+                        handleMonsterAttack(monster, hero);
+                    }
+                }
             }
-        }
-    }
-		}, 600);
+        }, 600);
     }
 };
 
