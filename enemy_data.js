@@ -132,7 +132,7 @@ window.ENEMY_STATS = {
         // AI VERİLERİ:
         skills: [
             { id: "vicious_bite", category: "debuff" }, 
-            { id: "howl", category: "buff" } 
+            { id: "alpha_howl", category: "buff" } 
         ]
     },
 
@@ -288,4 +288,5 @@ window.BIOME_WEIGHTS = {
 };
 
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
+
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
