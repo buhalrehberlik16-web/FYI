@@ -19,8 +19,8 @@ const BARBARIAN_SKILLS = {
             tier: 1,
             // YENİ SİSTEM: Physical ve Elemental ayrımı
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.2 },
-                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+                physical: { atkMult: 0.0 },
+                elemental: { fire: 0, cold: (stat: "str", statMult: 1.2), lightning: 0, poison: 0, curse: 0 }
             }
         },
         onCast: function(attacker, defender) {
@@ -516,4 +516,5 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
+
 };
