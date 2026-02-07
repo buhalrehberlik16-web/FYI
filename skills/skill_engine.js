@@ -47,7 +47,7 @@ const SkillEngine = {
             if (isAttackerHero) {
                 const itemElemBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
                 const skillMult = (sc.elemental && sc.elemental[type]) ? sc.elemental[type] : 0;
-               elemRaw = Math.floor(itemElemBonus + (skillMult));
+               elemRaw = Math.floor(itemElemBonus + (rawAtk * skillMult));
 				
             } else {
                 elemRaw = Math.floor(rawAtk * (sc[type] || 0));
@@ -86,5 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     SkillEngine.init();
 
 });
+
 
 
