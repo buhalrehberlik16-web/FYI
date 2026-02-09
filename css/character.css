@@ -396,4 +396,21 @@
     background-color: rgba(67, 255, 100, 0.1) !important;
     box-shadow: 0 0 15px #43FF64;
 }
+.item-tooltip .brooch-specialty-text {
+    display: block;
+    color: #ffd700 !important;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 12px;
+    padding: 6px;
+    background: rgba(255, 215, 0, 0.05);
+    border-radius: 4px;
+    font-family: 'Cinzel', serif;
+    
+    /* BURADAN BOYUTU AYARLAYABİLİRSİN */
+    font-size: 10px !important; 
+    line-height: 1.4 !important;
+    letter-spacing: 0.5px !important;
+    /* ------------------------------ */
+}
 
