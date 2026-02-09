@@ -359,6 +359,11 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 // Hasarı uygula ve istatistikleri işle
                 monster.hp = Math.max(0, monster.hp - finalDmg);
                 StatsManager.trackDamageDealt(finalDmg);
+				
+				// --- YENİ: ZIRH DELME LOGU ---
+				if (hero.statusEffects.some(e => e.id === 'ignore_def' && !e.waitForCombat)) {
+				writeLog(`🔨 **Zırh Delme**: Düşmanın savunması yok sayıldı!`);
+				}
 
                 // --- ÖFKE BİRLEŞTİRME VE HESAPLAMA (MERKEZİ) ---
                 const stats = getHeroEffectiveStats();

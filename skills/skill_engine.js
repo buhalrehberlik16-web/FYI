@@ -28,6 +28,17 @@ const SkillEngine = {
         } else if (target !== hero && window.isMonsterDefending) {
             effectiveDef += (window.monsterDefenseBonus || 0);
         }
+		
+		// --- YENİ: ZIRH DELME VE KIRIK ZIRH KONTROLÜ ---
+        // A. Saldıranın "Zırh Delme" (ignore_def) buff'ı var mı?
+        const hasIgnoreDef = (isAttackerHero ? hero.statusEffects : []).some(e => e.id === 'ignore_def' && !e.waitForCombat);
+        
+        // B. Hedefin "Savunmasız" (defense_zero) debuff'ı var mı? (Reckless Strike veya Bone Shatter'dan gelir)
+        const isTargetVulnerable = (target === hero ? hero.statusEffects : []).some(e => e.id === 'defense_zero' && !e.waitForCombat);
+
+        if (hasIgnoreDef || isTargetVulnerable) {
+            effectiveDef = 0; // Defans tamamen devre dışı!
+        }
 
         // --- 2. FİZİKSEL HASAR HESABI ---
         let physRaw = 0;

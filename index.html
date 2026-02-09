@@ -1032,6 +1032,14 @@
                 <option value="1600x900">1600 x 900</option>
             </select>
         </div>
+		
+		<div class="setting-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+			<label data-i18n="setting_show_notifs">BİLDİRİMLER</label>
+			<label class="switch">
+				<input type="checkbox" id="setting-notif-toggle" onchange="window.setNotificationToggle(this.checked)">
+				<span class="slider round"></span>
+			</label>
+		</div>
 
         <button onclick="closeSettings()" style="margin-top:20px; width:100%;" data-i18n="back">GERİ</button>
     </div>
