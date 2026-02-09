@@ -102,13 +102,42 @@ window.updateStats = function() {
 	}
 };
 
+// Biriktirme için global değişkenler
+window.rageBuffer = 0;
+window.isBufferingRage = false;
+
 window.showFloatingText = function(targetContainer, amount, type) {
+    // --- BARBAR ÖZEL: GÖRSEL BİRLEŞTİRME KONTROLÜ ---
+    if (window.isBufferingRage && hero.class === 'Barbar') {
+        const textStr = String(amount);
+        if (textStr.toLowerCase().includes('rage')) {
+            // Metnin içindeki rakamı ayıkla (+10 Rage -> 10)
+            const num = parseInt(textStr.replace(/[^0-9]/g, '')) || 0;
+            window.rageBuffer += num;
+            return; // Ekrana basmadan çık (Susturma)
+        }
+    }
+    // -----------------------------------------------
+
     const textEl = document.createElement('div');
     textEl.textContent = (typeof amount === 'number' && amount > 0 && type === 'heal') ? `+${amount}` : amount;
     textEl.className = `floating-text ${type}-text`;
+    
+    // Skill text stili kontrolü (Düşman skilleri için mor parlama)
+    if (type === 'skill') textEl.classList.add('skill-text');
+    
     targetContainer.appendChild(textEl);
     setTimeout(() => textEl.remove(), 1500);
 };
+
+
+//window.showFloatingText = function(targetContainer, amount, type) {
+//    const textEl = document.createElement('div');
+//    textEl.textContent = (typeof amount === 'number' && amount > 0 && type === 'heal') ? `+${amount}` : amount;
+//    textEl.className = `floating-text ${type}-text`;
+//    targetContainer.appendChild(textEl);
+//    setTimeout(() => textEl.remove(), 1500);
+//};
 
 window.animateDamage = function(isHero) {
     const display = isHero ? heroDisplayImg : monsterDisplayImg;
