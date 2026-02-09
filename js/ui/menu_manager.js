@@ -209,54 +209,44 @@ window.showItemTooltip = function(item, event) {
     } 
     // B - Broş Efektleri (Eğer eşya Broş ise burası çalışır)
     else if (item.type === 'brooch' && item.effects) {
-        const currentLang = window.gameSettings.lang || 'tr';
+    const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
     const tribeName = lang.enemy_names[item.specialtyTribe] || item.specialtyTribe;
 
+    // Sadece 'fixed_dmg' varsa ipucunu göster
+    const hasFixedDmg = item.effects.some(e => e.id === 'fixed_dmg');
+    if (hasFixedDmg) {
+        const hintDiv = document.createElement('div');
+        hintDiv.className = 'brooch-specialty-text'; // Daha spesifik bir sınıf ismi
+        hintDiv.textContent = lang.items.brooch_specialty_hint;
+        statsEl.appendChild(hintDiv);
+    }
+
     // Alt Başlık (Mistik Aksesuar)
     const subLabel = document.createElement('div');
-    subLabel.style.fontSize = "0.75rem";
-    subLabel.style.color = "#aaa";
-    subLabel.style.marginBottom = "8px";
+    subLabel.className = 'brooch-sub-label'; // CSS kontrolü için sınıf ekledim
     subLabel.textContent = lang.items.brooch_label;
     statsEl.appendChild(subLabel);
 
+    // Efektleri Listeleme (Daha önceki yaptığımız uzmanlık parantezi dahil)
     item.effects.forEach(eff => {
         const row = document.createElement('div');
         row.className = 'tooltip-stat-row';
         
-        // 1. Efekt İsmi
         let effectName = lang.items['eff_' + eff.id] || eff.id;
-        
-        // --- Sadece Fixed_Dmg için klan ismini ekle ---
         if (eff.id === "fixed_dmg") {
             effectName += ` (${tribeName})`;
         }
 
-        // 2. Değer Formatı
-        let displayVal = eff.value;
-        if (eff.value < 1 && eff.value > 0) displayVal = `%${Math.round(eff.value * 100)}`;
-        else displayVal = `+${eff.value}`;
+        let displayVal = (eff.value < 1 && eff.value > 0) 
+            ? `%${Math.round(eff.value * 100)}` 
+            : `+${eff.value}`;
 
-        // 3. Stat Detayı (Stat Scaling için parantezli gösterim)
-        let detail = "";
-        if(eff.targetStat) {
-            const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
-            detail = ` (${statLabel})`; // Stat ismi burada parantez içinde
-        }
+        let detail = eff.targetStat ? ` (${lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase()})` : "";
 
         row.innerHTML = `<span>${effectName}${detail}</span> <span class="tooltip-val">${displayVal}</span>`;
         statsEl.appendChild(row);
     });
-	
-	const hintDiv = document.createElement('div');
-		hintDiv.style.color = "#ffd700";
-		hintDiv.style.fontSize = "0.6rem";
-		hintDiv.style.marginTop = "8px";
-		hintDiv.style.fontStyle = "italic";
-		hintDiv.style.opacity = "0.8";
-		hintDiv.innerHTML = `<i class="fas fa-info-circle"></i> ${lang.items.brooch_specialty_hint}`;
-		statsEl.appendChild(hintDiv);
 
         // Frekans Bilgisi
         const freqText = (langItems.brooch_freq || "Every $1 Turns").replace("$1", item.frequency);

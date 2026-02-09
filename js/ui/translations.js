@@ -104,6 +104,7 @@ window.LANGUAGES = {
 		not_enough_msg: "Yetersiz Altın",
 		desc_city: "Büyük Eldoria şehrine ulaştın! Maceranın bu perdesi burada son buluyor.",
 		loot_full_msg: "Yerde ödüllerin var! Onları almadan gitmek istediğine emin misin?",
+		setting_show_notifs: "PUAN BİLDİRİMLERİ",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
@@ -577,6 +578,7 @@ window.LANGUAGES = {
 		not_enough_msg: "Not enough gold",
 		desc_city: "You reached the Great City of Eldoria! This act of your journey ends here.",
 		loot_full_msg:"There are rewards left on the ground! Are you sure you want to leave without them?",
+		setting_show_notifs: "POINT NOTIFICATIONS",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",

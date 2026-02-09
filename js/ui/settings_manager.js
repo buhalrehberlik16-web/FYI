@@ -2,21 +2,21 @@
 
 window.gameSettings = {
     lang: localStorage.getItem('game_lang') || 'tr',
-    resolution: localStorage.getItem('game_res') || 'fit'
+    resolution: localStorage.getItem('game_res') || 'fit',
+    // Varsayılan olarak true (açık) kabul et
+    showNotifs: localStorage.getItem('game_notifs') !== 'false' 
 };
 
 window.applySettings = function() {
     // 1. Dili Uygula
     localStorage.setItem('game_lang', window.gameSettings.lang);
-	
-    document.documentElement.lang = window.gameSettings.lang; // 'tr' veya 'en' olur
-	document.body.className = `lang-${window.gameSettings.lang}`;
+    document.documentElement.lang = window.gameSettings.lang;
+    document.body.className = `lang-${window.gameSettings.lang}`;
     updateUITexts();
 
     // 2. Çözünürlüğü Uygula
     const container = document.getElementById('game-container');
     localStorage.setItem('game_res', window.gameSettings.resolution);
-
     if (window.gameSettings.resolution === 'fit') {
         container.style.width = '95%';
         container.style.height = '90vh';
@@ -27,6 +27,22 @@ window.applySettings = function() {
         container.style.height = h + 'px';
         container.style.maxWidth = 'none';
     }
+
+    // 3. Toggle Durumunu UI'da Güncelle (Checkbox'ı işaretle/kaldır)
+    const notifToggle = document.getElementById('setting-notif-toggle');
+    if (notifToggle) {
+        notifToggle.checked = window.gameSettings.showNotifs;
+    }
+
+    // Değişiklikten sonra bildirimleri hemen güncelle
+    if (typeof updateStats === 'function') updateStats();
+};
+
+window.setNotificationToggle = function(val) {
+    window.gameSettings.showNotifs = val;
+    localStorage.setItem('game_notifs', val);
+    // Hemen etkisini göster
+    updateStats();
 };
 
 window.setLanguage = function(langCode) {

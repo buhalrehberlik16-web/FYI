@@ -1,4 +1,5 @@
 // js/ui/battle_hud.js
+window.monster = null; // Canavar değişkenini en başta 'boş' olarak tanımla
 window.updateStatusIcons = function() {
     if (!heroStatusContainer) return;
     heroStatusContainer.innerHTML = ''; 
@@ -48,41 +49,46 @@ window.updateStatusIcons = function() {
 };
 
 window.updateStats = function() {
-	 // 1. O anki tüm efektli/eşyalı statları al
+    // 1. Karakter statlarını al
     const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: 40, maxRage: 110 };
     const currentMaxHp = effective.maxHp;
     const currentMaxRage = effective.maxRage;
-	// --- GÜVENLİK: Can güncel Max HP'den fazlaysa aşağı çek (İtem çıkarınca canın taşmaması için) ---
+
     if (hero.hp > currentMaxHp) { hero.hp = currentMaxHp; }
     if (hero.rage > effective.maxRage) hero.rage = effective.maxRage;
 
-    // HP Bar ve Text güncelleme (currentMaxHp kullanıyoruz)
-    // HP Bar ve Text
+    // HP ve Rage Barlarını Güncelle
     if(heroHpBar) heroHpBar.style.width = (hero.hp / currentMaxHp) * 100 + '%';
     if(heroHpText) heroHpText.textContent = `${hero.hp} / ${currentMaxHp}`;
-
-    // RAGE Bar ve Text (Burada artık currentMaxRage kullanıyoruz)
     if(heroRageBar) heroRageBar.style.width = (hero.rage / currentMaxRage) * 100 + '%';
     if(heroRageText) heroRageText.textContent = `${hero.rage} / ${currentMaxRage}`;
 	
     if(heroNameDisplay) heroNameDisplay.innerHTML = `${hero.playerName} <span style="color:#ffffff; font-size:0.8em; opacity:0.8;">(${hero.class})</span>`;
     
-    if (monster) {
+    // --- KRİTİK GÜVENLİK: Sadece Canavar Varsa Güncelle ---
+    if (window.monster) { 
         if(monsterHpBar) monsterHpBar.style.width = (monster.hp / monster.maxHp) * 100 + '%';
         if(monsterHpText) monsterHpText.textContent = `${monster.hp} / ${monster.maxHp}`;
         if (monsterNameDisplay) {
-		const currentLang = window.gameSettings.lang;
-		const translatedName = window.LANGUAGES[currentLang].enemy_names[monster.name] || monster.name;
-		monsterNameDisplay.textContent = translatedName;
-}
-    }
+            const currentLang = window.gameSettings.lang || 'tr';
+            const translatedName = window.LANGUAGES[currentLang].enemy_names[monster.name] || monster.name;
+            monsterNameDisplay.textContent = translatedName;
+        }
 
-    const monBlockInd = document.getElementById('monster-block-indicator');
-    if (monBlockInd) {
-        monBlockInd.classList.toggle('hidden', !isMonsterDefending);
-        monBlockInd.classList.toggle('active-shield', isMonsterDefending);
+        // Canavar blok göstergesi
+        const monBlockInd = document.getElementById('monster-block-indicator');
+        if (monBlockInd) {
+            monBlockInd.classList.toggle('hidden', !window.isMonsterDefending);
+            monBlockInd.classList.toggle('active-shield', window.isMonsterDefending);
+        }
+    } else {
+        // Canavar yoksa blok göstergesini gizle
+        const monBlockInd = document.getElementById('monster-block-indicator');
+        if (monBlockInd) monBlockInd.classList.add('hidden');
     }
-    
+    // -----------------------------------------------------
+
+    // Karakter (Hero) Blok Göstergesi
     const blockDisplay = document.getElementById('hero-block-indicator');
     const blockText = document.getElementById('hero-block-text');
     if (blockDisplay && blockText) {
@@ -90,16 +96,23 @@ window.updateStats = function() {
         if (heroBlock > 0) blockText.textContent = heroBlock;
     }
 
-    updateStatusIcons(); updateGoldUI();
+    // --- BİLDİRİM KONTROLÜ (Settings Toggle) ---
+    const isAllowedBySettings = window.gameSettings.showNotifs;
+    if (statNotif) {
+        statNotif.classList.toggle('hidden', !isAllowedBySettings || !(hero.statPoints > 0));
+    }
+    if (skillNotif) {
+        skillNotif.classList.toggle('hidden', !isAllowedBySettings || !(hero.skillPoints > 0));
+    }
+    // -------------------------------------------
+
+    updateStatusIcons(); 
+    updateGoldUI();
     if (statScreen && !statScreen.classList.contains('hidden')) updateStatScreen();
-	
-    if (statNotif) statNotif.classList.toggle('hidden', !(hero.statPoints > 0));
-    if (skillNotif) skillNotif.classList.toggle('hidden', !(hero.skillPoints > 0));
-	if(typeof updateNPCStatsDisplay === 'function') updateNPCStatsDisplay();
+	if (typeof updateNPCStatsDisplay === 'function') updateNPCStatsDisplay();
+    
 	const spDisplay = document.getElementById('skill-points-display');
-	if (spDisplay) {
-    spDisplay.textContent = hero.skillPoints;
-	}
+	if (spDisplay) spDisplay.textContent = hero.skillPoints;
 };
 
 // Biriktirme için global değişkenler
