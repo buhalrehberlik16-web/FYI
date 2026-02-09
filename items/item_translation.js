@@ -71,7 +71,7 @@ const TR_ITEMS = {
 	brostat_int: "Int",
 	brostat_vit: "Vit",
 	brostat_mp_pow: "MP",
-	brooch_specialty_hint: "Parantez içindeki türlere x2 hasar verir.",
+	brooch_specialty_hint: "Türde yazan kabileye x2 hasar verir.",
     
     tier_label: "Seviye",
 	likely_stat: "Baskın Özellik",
