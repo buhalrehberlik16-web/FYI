@@ -307,6 +307,7 @@ window.handleSkillUse = function(skillKey) {
     const skillObj = SKILL_DATABASE[skillKey];
     if (!skillObj || checkIfSkillBlocked(skillKey)) return;
 
+    // 1. Maliyet kontrolü
     if (hero.rage < (skillObj.data.rageCost || 0)) { 
         writeLog(`❌ Yetersiz Öfke!`); return; 
     }
@@ -314,26 +315,36 @@ window.handleSkillUse = function(skillKey) {
     window.isHeroTurn = false; 
     toggleSkillButtons(true); 
 
+    // 2. Maliyeti düş
     if(skillObj.data.rageCost > 0) hero.rage -= skillObj.data.rageCost;
     updateStats(); 
 
-    // --- KRİTİK DÜZELTME BAŞLANGIÇ ---
+    // --- ARADIĞIN KODU TAM BURAYA YAZIYORUZ ---
+    // Sadece Barbar ise ve yeteneğin bir scaling verisi (hasar potansiyeli) varsa buffer aç
+    if (hero.class === 'Barbar' && skillObj.data.scaling) {
+        window.rageBuffer = 0;
+        window.isBufferingRage = true;
+    } else {
+        window.isBufferingRage = false; // Diğer durumlarda veya diğer sınıflarda kapalı tut
+    }
+    // ------------------------------------------
+
     let dmgPack = null;
-    // Sadece scaling verisi olan (hasar vuran) yetenekler için hesaplama yap
     if (skillObj.data.scaling) {
         dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
     }
-    // --------------------------------
 
+    // 3. Yeteneği çalıştır (Buffer açık olduğu için buradaki floating textler yutulacak)
     if (skillObj.onCast) skillObj.onCast(hero, monster, dmgPack);
 };
 
 // --- ANİMASYONLAR VE HASAR ---
 window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     let finalDmg = dmgPack.total;
 
-    // Wind Up (Kurulma) Kontrolü (Hala çalışmalı!)
+    // 1. Wind Up (Kurulma) Kontrolü
     const windUpIdx = hero.statusEffects.findIndex(e => e.id === 'wind_up' && !e.waitForCombat);
     if (windUpIdx !== -1) { 
         finalDmg += hero.statusEffects[windUpIdx].value; 
@@ -345,32 +356,54 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
         if (fIdx < skillFrames.length) {
             heroDisplayImg.src = skillFrames[fIdx]; 
             if (fIdx === 1 || skillFrames.length === 1) { 
+                // Hasarı uygula ve istatistikleri işle
                 monster.hp = Math.max(0, monster.hp - finalDmg);
                 StatsManager.trackDamageDealt(finalDmg);
 
-                // --- ÖFKE KAZANIMLARI ---
-                // 1. Barbar Pasifi (%25 hasar öfkeye döner)
+                // --- ÖFKE BİRLEŞTİRME VE HESAPLAMA (MERKEZİ) ---
+                const stats = getHeroEffectiveStats();
                 const classRules = CLASS_CONFIG[hero.class];
+                let totalRageToGain = 0;
+
+                // A. Yetenek Dosyasından Gelen (Buffer'da bekleyen: örn +10 Rage)
+                totalRageToGain += window.rageBuffer;
+
+                // B. Sınıf Pasifi (Barbar vurduğu hasarın %25'ini alır)
                 if (classRules && classRules.hitRageGain) {
-                    const stats = getHeroEffectiveStats();
                     const passiveGain = Math.ceil(finalDmg * classRules.hitRageGain);
-                    hero.rage = Math.min(stats.maxRage, hero.rage + passiveGain);
-                    if(passiveGain > 0) showFloatingText(heroDisplayContainer, `+${passiveGain} Rage`, 'heal');
-                }
-                
-                // 2. Fury Active Skilli (Ekstra rage kazanımı)
-                const fury = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
-                if (fury) { 
-                    const gain = Math.floor(finalDmg * fury.value);
-                    hero.rage = Math.min(hero.maxRage, hero.rage + gain); 
-                    writeLog(lang.log_fury_gain); 
+                    totalRageToGain += passiveGain;
                 }
 
+                // C. Fury Active (Hiddet Yeteneği) Ekstrası
+                const fury = hero.statusEffects.find(e => e.id === 'fury_active' && !e.waitForCombat);
+                if (fury) { 
+                    const furyGain = Math.floor(finalDmg * fury.value);
+                    totalRageToGain += furyGain;
+                    writeLog(lang.log_fury_gain); 
+                }
+                
+                // !!! KRİTİK DÜZELTME BURASI !!!
+                // Yazıyı ekrana basmadan hemen ÖNCE tamponu kapatıyoruz.
+                // Böylece showFloatingText bu son yazıyı yutmayacak, ekrana basacak.
+                window.isBufferingRage = false; 
+
+                // Nihai Öfke Kazanımını Uygula ve Tek Floating Text Bas
+                if (totalRageToGain > 0) {
+                    hero.rage = Math.min(stats.maxRage, hero.rage + totalRageToGain);
+                    showFloatingText(heroDisplayContainer, `+${totalRageToGain} Rage`, 'heal');
+                    writeLog(`🔥 +${totalRageToGain} ${lang.log_rage_gain}`);
+                }
+
+                // Buffer'ı temizle
+                window.rageBuffer = 0;
+                // ----------------------------------------------
+
+                // Görsel Efektler ve Loglama
                 animateDamage(false); 
                 showFloatingText(document.getElementById('monster-display'), finalDmg, 'damage');
-                writeLog(`⚔️ **${skillName}**: ${finalDmg} hasar! (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+                writeLog(`⚔️ **${skillName}**: ${finalDmg} ${lang.log_hit_monster} (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
                 
-                // Kalkan kırma (Shield Break)
+                // Düşman Kalkan Kırma
                 if (window.isMonsterDefending) { 
                     window.isMonsterDefending = false; 
                     window.monsterDefenseBonus = 0; 
@@ -380,6 +413,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
             fIdx++; setTimeout(frame, 150); 
         } else {
             heroDisplayImg.src = HERO_IDLE_SRC; 
+            window.isBufferingRage = false; // Güvenlik kilidi (animasyon biterken)
             if (!checkGameOver()) nextTurn(); 
         }
     }
