@@ -19,14 +19,14 @@ window.BROOCH_CONFIG = {
     ],
     // Puan başı kazanımlar: [1 Puan, 2 Puan, 3 Puan]
     effectsPool: [
-        { id: "fixed_dmg", values: [4, 6, 8] },
+        { id: "fixed_dmg", values: [2, 3, 4] },
         { id: "stat_scaling", values: [0.25, 0.5, 0.75], stats: ["str", "int", "mp_pow"] },
         { id: "heal", values: [4, 6, 8] },
         { id: "resource_regen", values: [4, 8, 12] },
-        { id: "curse_dmg", values: [0.1, 0.2, 0.3], elements: ["fire", "cold", "lightning", "poison", "curse"] },
-        { id: "curse_def", values: [0.1, 0.2, 0.3], elements: ["fire", "cold", "lightning", "poison", "curse"] },
     ]
 };
+
+window.BROOCH_TRIBES = ["Greenskins", "Humans", "B&M", "Plants", "Undead", "Dragonkind", "Magical Creatures"];
 
 window.ITEM_CONFIG = {
     // 1 Puanın kaç stat/resist edeceği (Dengeleme merkezi)

@@ -71,6 +71,7 @@ const TR_ITEMS = {
 	brostat_int: "Int",
 	brostat_vit: "Vit",
 	brostat_mp_pow: "MP",
+	brooch_specialty_hint: "Parantez içindeki türlere x2 hasar verir.",
     
     tier_label: "Seviye",
 	likely_stat: "Baskın Özellik",
@@ -171,6 +172,7 @@ const EN_ITEMS = {
 	brostat_int: "Int",
 	brostat_vit: "Vit",
 	brostat_mp_pow: "MP",
+	brooch_specialty_hint: "Deals x2 damage against the tribe.",
     
     tier_label: "TIER",
 	likely_stat: "Likely Attribute",

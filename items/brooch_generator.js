@@ -5,11 +5,11 @@ window.generateRandomBrooch = function(tier) {
     let brooch = {
         id: "brooch_" + Date.now(),
         type: "brooch",
-        subtype: "brooch", // Kurallar takılarla aynı
+        subtype: "brooch",
         tier: tier,
         frequency: 3,
         effects: [],
-        nameKey: "item_brooch_custom", // Çeviriye eklenecek
+        nameKey: "item_brooch_custom",
         icon: ""
     };
 
@@ -28,43 +28,44 @@ window.generateRandomBrooch = function(tier) {
     }
 
     // 2. Efekt Dağıtımı
-     while (budget > 0) {
+    while (budget > 0) {
         const effectBase = window.BROOCH_CONFIG.effectsPool[Math.floor(Math.random() * window.BROOCH_CONFIG.effectsPool.length)];
         
         // Kaç puan harcayalım?
         const spend = Math.min(budget, Math.floor(Math.random() * 3) + 1);
 
-        // Hedefleri belirle (Stat veya Element)
-        const targetStat = effectBase.stats ? effectBase.stats[Math.floor(Math.random() * effectBase.stats.length)] : undefined;
-        const targetElement = effectBase.elements ? effectBase.elements[Math.floor(Math.random() * effectBase.elements.length)] : undefined;
+        // Hedef Stat (Elemental kısımları sildiğimiz için sadece targetStat kaldı)
+        const targetStat = (effectBase.stats && effectBase.stats.length > 0) 
+            ? effectBase.stats[Math.floor(Math.random() * effectBase.stats.length)] 
+            : undefined;
 
         // --- MERGE LOGIC (BİRLEŞTİRME) ---
-        // Eğer aynı ID ve aynı hedefe (örn: STR veya FIRE) sahip efekt varsa üzerine ekle
+        // Artık targetElement kontrolüne gerek yok (sildiğimiz için)
         let existing = brooch.effects.find(e => 
             e.id === effectBase.id && 
-            e.targetStat === targetStat && 
-            e.targetElement === targetElement
+            e.targetStat === targetStat
         );
 
         if (existing) {
-            // Puanları topla (Max 3 puan kuralına göre sınırla)
             const newTotalPoints = Math.min(3, existing.pointsSpent + spend);
             existing.pointsSpent = newTotalPoints;
-            // Değeri konfigürasyondaki tabloya göre güncelle (1 p: 4, 2 p: 8, 3 p: 12 gibi)
             existing.value = effectBase.values[newTotalPoints - 1];
         } else {
-            // Eğer yoksa yeni bir node olarak ekle
             brooch.effects.push({
                 id: effectBase.id,
                 value: effectBase.values[spend - 1],
                 pointsSpent: spend,
-                targetStat: targetStat,
-                targetElement: targetElement
+                targetStat: targetStat
             });
         }
 
         budget -= spend;
     }
-
+	
+	// --- UZMANLIK ALANI ATAMA (FAILSAFE EKLENDİ) ---
+    // Eğer window.BROOCH_TRIBES bulunamazsa oyunun çökmemesi için boş dizi kontrolü yapıyoruz
+    const tribes = window.BROOCH_TRIBES || ["Greenskins"]; 
+    brooch.specialtyTribe = tribes[Math.floor(Math.random() * tribes.length)];
+	
     return brooch;
 };
