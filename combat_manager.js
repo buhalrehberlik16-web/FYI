@@ -837,19 +837,48 @@ window.checkGameOver = function() {
 };
 
 window.executeBroochEffects = function(brooch) {
+    // 1. GEREKLİ VERİLERİ VE DİL PAKETİNİ HAZIRLA
     const stats = getHeroEffectiveStats();
-    const rules = CLASS_CONFIG[hero.class];
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
     const display = document.getElementById('hero-display');
     const monsterDisplay = document.getElementById('monster-display');
+    
+    // 2. UZMANLIK VE TRİBE KONTROLLERİ
+    const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
+    const isSpecialist = (monster && monster.tribe === brooch.specialtyTribe);
+    const damageMult = isSpecialist ? 2 : 1;
 
     brooch.effects.forEach(eff => {
         switch(eff.id) {
             case "fixed_dmg":
-                monster.hp = Math.max(0, monster.hp - eff.value);
-                showFloatingText(monsterDisplay, eff.value, 'damage');
-                writeLog(`📿 **Broş**: ${eff.value} hasar vuruldu.`);
+                let finalFixed = eff.value * damageMult; 
+                monster.hp = Math.max(0, monster.hp - finalFixed);
+                
+                if (isSpecialist) {
+                    // Sadece fixed_dmg için: [Hasar] + [UZMAN! (translations'tan)]
+                    const specialistTag = lang.combat.f_specialist;
+                    showFloatingText(monsterDisplay, `${finalFixed} ${specialistTag}`, 'skill');
+                } else {
+                    showFloatingText(monsterDisplay, finalFixed, 'damage');
+                }
+                
+                const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
+                writeLog(`📿 **Broş**: ${lang.items.eff_fixed_dmg} (${tribeName}) -> ${finalFixed} vurdu.`);
                 break;
                 
+            case "stat_scaling":
+                // Stat hasarı (Str, Int, Mp) uzmanlıktan etkilenir
+                let scaleDmg = Math.floor((stats[eff.targetStat] * eff.value) * damageMult);
+                if (scaleDmg < 1) scaleDmg = 1;
+                monster.hp = Math.max(0, monster.hp - scaleDmg);
+                showFloatingText(monsterDisplay, scaleDmg, 'damage');
+                
+                const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
+                writeLog(`📿 **Broş**: ${statLabel} bonusuyla ${scaleDmg} vurdun.`);
+                break;
+
             case "heal":
                 const oldHp = hero.hp;
                 hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
@@ -860,43 +889,15 @@ window.executeBroochEffects = function(brooch) {
             case "resource_regen":
                 const oldRage = hero.rage;
                 hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
+                
+                // KRİTİK: Barbar buffer'ına girmemesi için isBufferingRage'i geçici kapatıp basıyoruz
+                const wasBuffering = window.isBufferingRage;
+                window.isBufferingRage = false;
+                showFloatingText(display, `+${eff.value} Rage`, 'heal');
+                window.isBufferingRage = wasBuffering;
+                
                 writeLog(`📿 **Broş**: +${eff.value} Öfke kazanıldı.`);
                 break;
-
-            case "stat_scaling":
-                // (Str, Int veya MP) * Çarpan (0.25, 0.5, 0.75)
-                let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
-                if (scaleDmg < 1) scaleDmg = 1;
-                monster.hp = Math.max(0, monster.hp - scaleDmg);
-                showFloatingText(monsterDisplay, scaleDmg, 'damage');
-                writeLog(`📿 **Broş**: ${eff.targetStat.toUpperCase()} bonusuyla ${scaleDmg} vurdun.`);
-                break;
-
-            case "curse_dmg":
-                // Element Direnci * Çarpan (0.1, 0.2, 0.3)
-                let elementRes = stats.resists[eff.targetElement] || 0;
-                let curseDmg = Math.floor(elementRes * eff.value);
-                if (curseDmg > 0) {
-                    monster.hp = Math.max(0, monster.hp - curseDmg);
-                    showFloatingText(monsterDisplay, curseDmg, 'damage');
-                    writeLog(`📿 **Broş**: ${eff.targetElement.toUpperCase()} direncin ${curseDmg} hasara dönüştü.`);
-                }
-                break;
-
-            case "curse_def":
-                // Mevcut direnci %10-30 arası geçici olarak artırır (1 Tur)
-                let resValue = stats.resists[eff.targetElement] || 0;
-                let bonusRes = Math.floor(resValue * eff.value) + 5; // En az 5 direnç versin
-                applyStatusEffect({ 
-                    id: 'resist_' + eff.targetElement, 
-                    name: 'Broş Koruması', 
-                    value: bonusRes, 
-                    turns: 1, 
-                    resetOnCombatEnd: true 
-                });
-                writeLog(`📿 **Broş**: ${eff.targetElement.toUpperCase()} direnci arttı.`);
-                break;
-
         }
     });
     updateStats();
