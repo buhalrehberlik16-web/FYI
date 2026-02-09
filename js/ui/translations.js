@@ -271,6 +271,15 @@ window.LANGUAGES = {
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
         enemy_names: {
+			//Tribes
+				"Greenskins": "Yeşil Deriler",
+				"Humans": "İnsanlar",
+				"B&M": "Canavarlar",
+				"Plants": "Bitkiler",
+				"Undead": "Ölümsüzler",
+				"Dragonkind": "Ejder Soyu",
+				"Magical Creatures": "Mistik Varlıklar",
+				
             "Zehirli Mantar": "Zehirli Mantar",
             "Orman Örümceği": "Orman Örümceği",
             "Hırsız Kobold": "Hırsız Kobold",
@@ -332,6 +341,7 @@ window.LANGUAGES = {
             f_crit: "KRİTİK!",
             f_fury: "HİDDET!",
 			monster_defend_text: "SAVUNMA!",
+			f_specialist: "UZMAN!",
 			
 			monster_log_defend: "Savunma pozisyonu aldı",
             log_windup: "✨ **Kurulma**: Biriktirilen güç saldırıya eklendi!",
@@ -730,6 +740,15 @@ window.LANGUAGES = {
 
         // Enemy Names
         enemy_names: {
+			//Tribes
+				"Greenskins": "Greenskins",
+				"Humans": "Humans",
+				"B&M": "Beasts",
+				"Plants": "Plants",
+				"Undead": "Undead",
+				"Dragonkind": "Dragonkind",
+				"Magical Creatures": "Magic Creatures",
+				
             "Zehirli Mantar": "Poisonous Mushroom",
             "Orman Örümceği": "Forest Spider",
             "Hırsız Kobold": "Thief Kobold",
@@ -791,6 +810,7 @@ window.LANGUAGES = {
             f_armor_pierce: "ARMOR PIERCE!",
             f_crit: "CRITICAL!",
             f_fury: "FURY!",
+			f_specialist: "SPECIALIST!",
             
             log_windup: "✨ **Wind Up**: Stored power added to attack!",
             log_ignore_def: "🔨 **Armor Pierce**: Enemy defense ignored!",
