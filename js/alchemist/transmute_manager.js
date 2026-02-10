@@ -329,7 +329,7 @@ window.processTransmutation = async function() {
 
     // --- 6. GÖRSEL SONUÇ VE EFEKTLER ---
     resultSlot.innerHTML = '';
-    resultSlot.classList.remove('critical-glow');
+    resultSlot.classList.remove('critical-glow'); // Önceki kalıntıları temizle
     resultSlot.classList.add('result-flash');
 
     const img = document.createElement('img');
@@ -337,16 +337,18 @@ window.processTransmutation = async function() {
     resultSlot.appendChild(img);
 
     const badge = document.createElement('span');
-	badge.className = `item-tier-badge badge-${newItem.tier}`; // Renkli badge
-	badge.textContent = `T${newItem.tier}`;
+    badge.className = `item-tier-badge badge-${newItem.tier}`;
+    badge.textContent = `T${newItem.tier}`;
     resultSlot.appendChild(badge);
 
+    // Eğer Kritik Başarı ise efekti ekle
     if (isCritical) {
         resultSlot.classList.add('critical-glow');
         showFloatingText(resultSlot, lang.critical_success, 'heal');
         writeLog(`✨ **${lang.critical_success}**`);
     }
 
+    // Geçici olarak sonuç slotuna tooltip ekle (oyuncu ne aldığını görebilsin)
     resultSlot.onmouseenter = (e) => window.showItemTooltip(newItem, e);
     resultSlot.onmouseleave = () => window.hideItemTooltip();
 
@@ -357,16 +359,30 @@ window.processTransmutation = async function() {
 
     writeLog(`${lang.log_transmute_success} ${getTranslatedItemName(newItem)} (T${newItem.tier})`);
     window.CalendarManager.passDay();
-	
+
+    // --- KRİTİK GÜNCELLEME: 3 SANİYE SONRA TAM SIFIRLAMA ---
     setTimeout(() => {
+        // 1. Görsel sınıfları temizle
         resultSlot.classList.remove('result-flash');
+        resultSlot.classList.remove('critical-glow'); 
+        
+        // 2. Slotun içeriğini ve olaylarını (tooltip) temizle
+        resultSlot.innerHTML = '';
+        resultSlot.onmouseenter = null;
+        resultSlot.onmouseleave = null;
+        window.hideItemTooltip();
+
+        // 3. Elektrik efektlerini ve butonu sıfırla
         document.querySelectorAll('.elec-path').forEach(p => p.classList.remove('active'));
         btn.disabled = false;
         btn.style.opacity = "1";
+
+        // 4. UI ve Kayıt tazele
         renderTransmuteUIAll();
         renderInventory();
         if(window.saveGame) window.saveGame();
-    }, 800);
+        
+    }, 3000); // 3 saniye bekle
 };
 
 window.updateTransmuteProbabilities = function() {
