@@ -2,6 +2,20 @@
 
 let transmuteIngredients = [null, null, null];
 
+let investedTransmuteGold = 0;
+
+// 1. Altın Yatırım Fonksiyonu
+window.changeTransmuteGold = function(amount) {
+    const nextVal = investedTransmuteGold + amount;
+    // En az 0, en fazla hero.gold kadar yatırım yapılabilir (veya max %99 şans sınırı koyabilirsin)
+    if (nextVal >= 0 && nextVal <= hero.gold && nextVal < 51) {
+        investedTransmuteGold = nextVal;
+        const display = document.getElementById('transmute-gold-invested');
+        if(display) display.textContent = investedTransmuteGold;
+        window.updateTransmuteProbabilities(); // Olasılık tablosunu anında tazele
+    }
+};
+
 window.openTransmuteUI = function() {
     document.getElementById('transmute-screen').classList.remove('hidden');
     transmuteIngredients = [null, null, null];
@@ -174,6 +188,19 @@ window.processTransmutation = async function() {
 
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+	
+	// --- YENİ: ALTIN ÖDEME VE KRİTİK HESABI ---
+    // Eğer oyuncu yatırım yapmışsa altını düş
+    if (investedTransmuteGold > 0) {
+        hero.gold -= investedTransmuteGold;
+        updateGoldUI();
+    }
+
+    // Kritik Şans: %1 (Baz) + Yatırılan Altın (%)
+    const critChance = (1 + investedTransmuteGold) / 100;
+    // BURADA TANIMLANDI:
+    let isCritical = Math.random() < critChance; 
+    // ------------------------------------------
 
     btn.disabled = true;
     btn.style.opacity = "0.5";
@@ -204,7 +231,7 @@ window.processTransmutation = async function() {
     }
     await new Promise(r => setTimeout(r, 400));
 
-    // --- 3. YENİ TIER HESAPLAMA MANTIĞI (OLASILIKLI) ---
+    // --- 3. TIER HESAPLAMA MANTIĞI ---
     let sumTiers = transmuteIngredients.reduce((sum, item) => sum + item.tier, 0);
     let avg = sumTiers / 3;
     let targetTier = 1;
@@ -212,27 +239,21 @@ window.processTransmutation = async function() {
     const allSame = transmuteIngredients.every(i => i.tier === transmuteIngredients[0].tier);
 
     if (allSame) {
-        // Hepsi aynıysa direkt +1 (Örn: 3 tane T1 -> Kesin T2)
         targetTier = transmuteIngredients[0].tier + 1;
     } else {
-        // Küsürat şansına göre zar atma (Örn: 2.33 -> %33 ihtimalle T3, %67 ihtimalle T2)
         let roll = Math.random(); 
-        let chanceNext = avg % 1; // Küsürat kısmını al (0.33)
-        
-        if (roll < chanceNext) {
-            targetTier = Math.ceil(avg); // Üste tamamla
-        } else {
-            targetTier = Math.floor(avg); // Alta tamamla
-        }
+        let chanceNext = avg % 1; 
+        if (roll < chanceNext) targetTier = Math.ceil(avg);
+        else targetTier = Math.floor(avg);
     }
 
-    // %1 KRİTİK ŞANS (+1 Seviye Daha)
-    let isCritical = false;
-    if (Math.random() < 0.01) {
+    // --- DÜZELTME: ÜSTTE HESAPLANAN KRİTİĞİ UYGULA ---
+    // Eğer isCritical true ise (yani altın yatırımı veya %1 şans tuttuysa) Tier'ı 1 artır.
+    if (isCritical) {
         targetTier++;
-        isCritical = true;
     }
-    targetTier = Math.max(1, Math.min(5, targetTier)); // T1-T5 arası sınırla
+    targetTier = Math.max(1, Math.min(5, targetTier)); 
+    // ------------------------------------------------
 
     // --- 4. AĞIRLIKLI OLASILIK TABLOSU OLUŞTURMA ---
     const statWeights = {};
@@ -247,18 +268,16 @@ window.processTransmutation = async function() {
         }
     });
 
-    // Rastgele bir stat seçen yardımcı fonksiyon (Ağırlığa göre)
     const pickWeightedStat = () => {
         let roll = Math.random() * totalStatWeight;
         for (const [sKey, w] of Object.entries(statWeights)) {
             if (roll < w) return sKey;
             roll -= w;
         }
-        return window.ITEM_CONFIG.statsPool[0]; // Fallback
+        return window.ITEM_CONFIG.statsPool[0];
     };
 
-    // --- 5. ÜRETİM (ADIM ADIM PUAN DAĞITIMI) ---
-    // Önce türü belirle (Tür şansını kullanıyoruz)
+    // --- 5. ÜRETİM ---
     const typeCounts = {};
     transmuteIngredients.forEach(item => typeCounts[item.type] = (typeCounts[item.type] || 0) + 1);
     const majorityType = Object.keys(typeCounts).find(key => typeCounts[key] >= 2);
@@ -267,43 +286,31 @@ window.processTransmutation = async function() {
         resultType = transmuteIngredients[Math.floor(Math.random()*3)].type; 
     }
 
-    // Ana Stat'ı ağırlığa göre seç
     const finalMainStat = pickWeightedStat();
 
-    // Yeni item objesini hazırla (Ama stats içini biz dolduracağız)
     const newItem = {
         id: "item_" + Date.now(),
-        subtype: "jewelry", // <--- BU SATIRI EKLE (Dönüşüm sonucu her zaman takıdır)
+        subtype: "jewelry", 
         type: resultType,
         tier: targetTier,
         stats: {},
         propertyKeys: []
     };
 
-    // Puan Dağıtımı (Tier kadar puan dağıtılacak)
-    let pointsToDistribute = Math.max (1, Math.floor (targetTier*2)-2);
+    let pointsToDistribute = Math.max(1, Math.floor(targetTier * 2) - 2);
 
     while (pointsToDistribute > 0) {
         let selectedStat;
-        
-        // İlk puan her zaman 'finalMainStat'a gider (Eşya kimliği için)
         if (newItem.propertyKeys.length === 0) {
             selectedStat = finalMainStat;
         } else {
-            // Sonraki puanlar için: 
-            // %70 ihtimalle ağırlıklı tablodan seç (Inputlar önemli), 
-            // %30 ihtimalle tamamen rastgele (Sürpriz faktörü)
-            if (Math.random() < 0.7) {
-                selectedStat = pickWeightedStat();
-            } else {
+            if (Math.random() < 0.7) selectedStat = pickWeightedStat();
+            else {
                 const allOptions = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
                 selectedStat = allOptions[Math.floor(Math.random() * allOptions.length)];
             }
         }
 
-        // 3 Slot Sınırı Kontrolü: 
-        // Eğer seçilen stat yeni bir stat ise ve zaten 3 stat varsa, 
-        // mevcut statlardan birini rastgele seçip ona ver.
         if (!newItem.propertyKeys.includes(selectedStat) && newItem.propertyKeys.length >= 3) {
             selectedStat = newItem.propertyKeys[Math.floor(Math.random() * newItem.propertyKeys.length)];
         }
@@ -312,7 +319,6 @@ window.processTransmutation = async function() {
             newItem.propertyKeys.push(selectedStat);
         }
 
-        // Puanı değere çevir (Resist ise x3, Stat ise x1)
         const isResist = window.ITEM_CONFIG.resistsPool.includes(selectedStat);
         const mult = isResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
         
@@ -320,16 +326,13 @@ window.processTransmutation = async function() {
         pointsToDistribute--;
     }
 
-    // İsim ve İkon Ataması (Ana stat neyse ona göre takı ismini belirle)
-    // Eğer o kombinasyon (örn: Belt of Fire Resist) BASE_ITEMS'ta yoksa, 
-    // en yakın stat eşleşmesini veya varsayılanı kullanır.
     const template = window.BASE_ITEMS[newItem.type][finalMainStat] || window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
     newItem.nameKey = template.nameKey;
     newItem.icon = template.icon;
 
     // --- 6. GÖRSEL SONUÇ VE EFEKTLER ---
     resultSlot.innerHTML = '';
-    resultSlot.classList.remove('critical-glow'); // Önceki kalıntıları temizle
+    resultSlot.classList.remove('critical-glow'); 
     resultSlot.classList.add('result-flash');
 
     const img = document.createElement('img');
@@ -341,14 +344,12 @@ window.processTransmutation = async function() {
     badge.textContent = `T${newItem.tier}`;
     resultSlot.appendChild(badge);
 
-    // Eğer Kritik Başarı ise efekti ekle
     if (isCritical) {
         resultSlot.classList.add('critical-glow');
         showFloatingText(resultSlot, lang.critical_success, 'heal');
         writeLog(`✨ **${lang.critical_success}**`);
     }
 
-    // Geçici olarak sonuç slotuna tooltip ekle (oyuncu ne aldığını görebilsin)
     resultSlot.onmouseenter = (e) => window.showItemTooltip(newItem, e);
     resultSlot.onmouseleave = () => window.hideItemTooltip();
 
@@ -356,33 +357,31 @@ window.processTransmutation = async function() {
     transmuteIngredients = [null, null, null];
     const bagSlot = hero.inventory.indexOf(null);
     if (bagSlot !== -1) hero.inventory[bagSlot] = newItem;
+	
+    // KRİTİK: YATIRIMI SIFIRLA
+    investedTransmuteGold = 0;
+    const goldDisplay = document.getElementById('transmute-gold-invested');
+    if (goldDisplay) goldDisplay.textContent = "0";
 
     writeLog(`${lang.log_transmute_success} ${getTranslatedItemName(newItem)} (T${newItem.tier})`);
     window.CalendarManager.passDay();
 
-    // --- KRİTİK GÜNCELLEME: 3 SANİYE SONRA TAM SIFIRLAMA ---
     setTimeout(() => {
-        // 1. Görsel sınıfları temizle
         resultSlot.classList.remove('result-flash');
         resultSlot.classList.remove('critical-glow'); 
-        
-        // 2. Slotun içeriğini ve olaylarını (tooltip) temizle
         resultSlot.innerHTML = '';
         resultSlot.onmouseenter = null;
         resultSlot.onmouseleave = null;
         window.hideItemTooltip();
 
-        // 3. Elektrik efektlerini ve butonu sıfırla
         document.querySelectorAll('.elec-path').forEach(p => p.classList.remove('active'));
         btn.disabled = false;
         btn.style.opacity = "1";
 
-        // 4. UI ve Kayıt tazele
         renderTransmuteUIAll();
         renderInventory();
         if(window.saveGame) window.saveGame();
-        
-    }, 3000); // 3 saniye bekle
+    }, 3000); 
 };
 
 window.updateTransmuteProbabilities = function() {
@@ -464,26 +463,34 @@ window.updateTransmuteProbabilities = function() {
     const majorityType = Object.keys(typeCounts).find(key => typeCounts[key] >= 2);
 
     html += `<div style="color:#888; font-size:0.8em; margin:10px 0 5px 0; text-align:left;">${langItems.result_type_odds}:</div>`;
+    
     types.forEach(tKey => {
         let percent = 0;
         if (typeCounts[tKey] === 3) percent = 100;
         else if (majorityType) {
             if (tKey === majorityType) percent = 70; else percent = 10;
         } else {
-            if (typeCounts[tKey] === 1) percent = 30; else percent = 10;
+            if (typeCounts[tKey] === 1) percent = 33; 
         }
+
+        // KRİTİK DÜZELTME: Eğer bu tip %100 değilse ve başka bir tip %100 ise bunu hiç yazma
+        const hasAnyFullType = Object.values(typeCounts).some(c => c === 3);
+        
         if (percent > 0) {
-            const localizedTypeName = langItems['type_' + tKey] || tKey;
-            html += `<div class="prob-row"><span class="prob-label">${localizedTypeName}:</span><span class="prob-value">%${percent}</span></div>`;
+            // Eğer bir tür 100 ise sadece onu göster, değilse hepsini göster
+            if (!hasAnyFullType || percent === 100) {
+                const localizedTypeName = langItems['type_' + tKey] || tKey;
+                html += `<div class="prob-row"><span class="prob-label">${localizedTypeName}:</span><span class="prob-value">%${percent}</span></div>`;
+            }
         }
     });
 
-    // --- 4. KRİTİK ŞANS ---
+    // --- 4. KRİTİK ŞANS (Yatırıma göre güncellenir) ---
+    const totalCritChance = 1 + investedTransmuteGold;
     html += `<div class="prob-row" style="margin-top:5px; border-top:1px solid #444; padding-top:5px;">
                 <span class="prob-label">${langItems.crit_chance_label}:</span>
-                <span class="prob-value prob-critical">%1</span>
+                <span class="prob-value prob-critical">%${totalCritChance}</span>
              </div>`;
 
     probDiv.innerHTML = html;
-
 };
