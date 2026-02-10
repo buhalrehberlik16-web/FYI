@@ -977,6 +977,24 @@
     <div class="stat-window" style="width: 500px; text-align: center; max-height: 90vh; overflow-y: auto;">
         <h2 data-i18n="transmute_title">Dönüşüm</h2>
         <p style="font-size: 0.8em; color: #888; margin-bottom: 10px;" data-i18n="transmute_desc">3 eşya ver, 1 üst tier al.</p>
+		
+					<!-- Transmute Altın Yatırım Alanı -->
+		<div class="transmute-gold-investment">
+			<p class="investment-hint" data-i18n="invest_gold_hint">Kritik Şansı Artır (%1 = 1 Altın)</p>
+    
+			<div class="gold-controls-wrapper">
+				<button class="investment-btn" onclick="window.changeTransmuteGold(-5)">-5</button>
+				<button class="investment-btn" onclick="window.changeTransmuteGold(-1)">-</button>
+        
+				<div class="invested-amount-display">
+					<i class="fas fa-coins"></i>
+					<span id="transmute-gold-invested">0</span>
+				</div>
+        
+				<button class="investment-btn" onclick="window.changeTransmuteGold(1)">+</button>
+				<button class="investment-btn" onclick="window.changeTransmuteGold(5)">+5</button>
+			</div>
+		</div>
         
         <!-- ÖNEMLİ: Bu kapsayıcının class'ı transmute-container olmalı -->
         <div class="transmute-container" id="transmute-main-box">
