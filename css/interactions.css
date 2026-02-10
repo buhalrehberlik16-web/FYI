@@ -660,6 +660,86 @@
 .transmute-result {
     position: relative;
 }
+
+.transmute-gold-investment {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Yatayda ortalar */
+    gap: 10px;
+}
+
+.investment-hint {
+    font-size: 0.75rem;
+    color: #888;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.gold-controls-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Butonları ve sayıyı merkeze toplar */
+    gap: 12px;
+}
+
+/* Sayı Gösterge Kutusu */
+.invested-amount-display {
+    background: #111;
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    padding: 5px 15px;
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.invested-amount-display i {
+    color: gold;
+    font-size: 0.9rem;
+}
+
+#transmute-gold-invested {
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Yatırım Butonları */
+.investment-btn {
+    width: 40px !important;
+    height: 35px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: linear-gradient(to bottom, #4a3b2a, #2b2218) !important;
+    border: 1px solid #7c6843 !important;
+    color: #f0e68c !important;
+    font-size: 0.8rem !important;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.investment-btn:hover {
+    background: #5d4a35 !important;
+    border-color: #f0e68c !important;
+    box-shadow: 0 0 10px rgba(240, 230, 140, 0.3);
+}
+
+.investment-btn:active {
+    transform: translateY(2px);
+}
 /*============================================================
    Alchemist Transmute İhtimaller
 ============================================================ */
