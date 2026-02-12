@@ -20,6 +20,11 @@ window.openTransmuteUI = function() {
     document.getElementById('transmute-screen').classList.remove('hidden');
     transmuteIngredients = [null, null, null];
     document.getElementById('transmute-result-slot').innerHTML = ''; // Eski sonucu temizle
+	// --- YENİ: AÇILIŞTA SIFIRLA ---
+    investedTransmuteGold = 0;
+    const goldDisplay = document.getElementById('transmute-gold-invested');
+    if (goldDisplay) goldDisplay.textContent = "0";
+    // ------------------------------
     renderTransmuteUIAll();
 };
 
@@ -32,6 +37,13 @@ window.closeTransmuteUI = function() {
         }
     });
     transmuteIngredients = [null, null, null];
+	
+	 // --- KRİTİK GÜNCELLEME: ÇIKIŞTA YATIRIMI SİL ---
+    investedTransmuteGold = 0; 
+    const goldDisplay = document.getElementById('transmute-gold-invested');
+    if (goldDisplay) goldDisplay.textContent = "0";
+    // ----------------------------------------------
+	
     document.getElementById('transmute-screen').classList.add('hidden');
     renderInventory(); // Ana envanteri tazele
 };
@@ -188,6 +200,18 @@ window.processTransmutation = async function() {
 
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+	
+	// --- SON GÜVENLİK KONTROLÜ: PARA HALA VAR MI? ---
+    if (hero.gold < investedTransmuteGold) {
+        // Eğer oyuncu dışarıda harcadıysa yatırımı iptal et ve uyar
+        investedTransmuteGold = 0;
+        const goldDisplay = document.getElementById('transmute-gold-invested');
+        if (goldDisplay) goldDisplay.textContent = "0";
+        window.updateTransmuteProbabilities();
+        window.showAlert(lang.not_enough_msg); 
+        return;
+    }
+    // ------------------------------------------------
 	
 	// --- YENİ: ALTIN ÖDEME VE KRİTİK HESABI ---
     // Eğer oyuncu yatırım yapmışsa altını düş
