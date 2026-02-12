@@ -267,7 +267,7 @@ window.showCampfireResult = function(title, text) {
 let isEventProcessing = false; // Sayfanın en üstünde tanımlayabilirsin
 
 window.triggerRandomEvent = function() {
-    if (isEventProcessing) return; // Eğer işlem sürüyorsa fonksiyondan çık
+    if (isEventProcessing) return;
     
     updateNPCStatsDisplay();
     const currentLang = window.gameSettings.lang || 'tr';
@@ -280,11 +280,23 @@ window.triggerRandomEvent = function() {
     document.getElementById('event-result-area').classList.add('hidden');
     const container = document.getElementById('event-choices-container');
     container.innerHTML = ''; 
-    isEventProcessing = false; // Yeni event için kilidi aç
-    
-    const evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-    const t = lang.events[evt.id];
 
+    // --- KRİTİK DEĞİŞİKLİK: ÖNCEDEN ATANMIŞ EVENT VAR MI? ---
+    const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+    let evt;
+
+    if (currentNode && currentNode.eventId) {
+        // Scout tarafından belirlenmiş olayı çek
+        evt = EVENT_POOL.find(e => e.id === currentNode.eventId);
+    } 
+    
+    // Eğer Scout belirlenmemişse (Scout tutulmadıysa) rastgele seç
+    if (!evt) {
+        evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+    }
+    // ------------------------------------------------------
+
+    const t = lang.events[evt.id];
     document.getElementById('event-title').textContent = t ? t.title : evt.title;
     document.getElementById('event-desc').textContent = t ? t.desc : evt.desc;
 
