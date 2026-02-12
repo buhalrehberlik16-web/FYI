@@ -442,7 +442,7 @@ window.LANGUAGES = {
         // --- SKİLLER ---
         skills: {
             cut: { name: "Kes", desc: "Atağın kadar hasar. +10 Rage üretir." },
-            guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır. -15 Rage." },
+            guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır. 0 Rage." },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar. +0-9 Rage üretir." },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage." },
             minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT)." },
@@ -455,7 +455,7 @@ window.LANGUAGES = {
             curse: { name: "Lanet", desc: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>" },
             willful_strike: { name: "İradeli Vuruş", desc: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: ATK x (1 + Harcanan Öfke%)." },
             slash: { name: "Kesik", desc: "Saldırı gücü + %60 Str bonusu. 20 Öfke harcar." },
-            reckless_strike: { name: "Pervasız Vuruş", desc: "Hasar: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>" },
+            reckless_strike: { name: "Pervasız Vuruş", desc: "Hasar: <b style='color:orange'> ATK değerinin %200'u kadar hasar. 35 Öfke Harcar </b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>" },
             wind_up: { name: "Kurulma", desc: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur. +15 Rage kazandırır." },
             bash: { name: "Balyoz", desc: "Hasar: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>" },
             pierce_through: { name: "Delip Geç", desc: "Hasar: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>" },
@@ -464,11 +464,11 @@ window.LANGUAGES = {
             fury: { name: "Hiddet", desc: "50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span>" },
             blood_price: { name: "Kan Bedeli", desc: "Maksimum Canın %15'ini feda et, o kadar Öfke kazan. <br><span style='color:cyan'>(Hızlı Aksiyon)</span>" },
             fiery_blade: { name: "Alevli Kılıç", desc: "3 Tur boyunca tüm saldırıların %50 daha fazla vurur (Ateş Hasarı)." },
-            hell_blade: { name: "Cehennem Kılıcı", desc: "Kanlı saldırı. 25 Öfke.<br>Hasar: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can</span>." },
+            hell_blade: { name: "Cehennem Kılıcı", desc: "Kanlı saldırı. <br>Hasar: <b style='color:orange'>ATK + 1,3 x INT</b>.<br><span style='color:#ff4d4d'>Bedel: %10 Can </span>+ 25 Öfke." },
             Pommel_Bash: { name: "Kabzayla Vur", desc: "Str'nin %120'si kadar hasar. +18 Rage üretir." },
             battle_cry: { name: "Savaş Çığlığı", desc: "Motive ol. 20 Öfke harcar.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>." },
             restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme. 50 Öfke harcar.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
-			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır. 3 tur boyunca %50 ekstra hasar verirsin." },
+			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır. Düşmana verdiğin hasarın %25'i kadar HP kaybedersin. 15 Öfke. Nasipse. Yazılacak." },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."   }
         }
@@ -914,7 +914,7 @@ window.LANGUAGES = {
         // Skills
         skills: {
             cut: { name: "Cut", desc: "Damage equal to Attack. Generates +10 Rage." },
-            guard: { name: "Guard", desc: "Reduces incoming damage by 25%. -15 Rage." },
+            guard: { name: "Guard", desc: "Reduces incoming damage by 25%. 0 Rage." },
             strike: { name: "Strike", desc: "115% Attack damage. Generates +0-9 Rage." },
             block: { name: "Block", desc: "Gain block equal to 80% of Dex. Block decays 50% at turn end. -10 Rage." },
             minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT)." },
@@ -927,7 +927,7 @@ window.LANGUAGES = {
             curse: { name: "Curse", desc: "Costs 20 Rage.<br><span style='color:#b19cd9'>5 Turns: Enemy takes 20% more damage.</span>" },
             willful_strike: { name: "Willful Strike", desc: "Consumes <b>ALL CURRENT RAGE</b>.<br>Damage: ATK x (1 + Consumed Rage%)." },
             slash: { name: "Slash", desc: "Attack Power + 60% Str bonus. Costs 20 Rage." },
-            reckless_strike: { name: "Reckless Strike", desc: "Damage: <b style='color:orange'>ATK + 1.5 x STR</b>.<br><span style='color:#ff4d4d'>2 Turns: Your Defense becomes 0.</span>" },
+            reckless_strike: { name: "Reckless Strike", desc: "Damage: <b style='color:orange'>2xATK</b>.<br><span style='color:#ff4d4d'>2 Turns: Your Defense becomes 0.</span>" },
             wind_up: { name: "Wind Up", desc: "Next attack deals <b style='color:orange'>+1 x STR</b> extra. Gain +15 Rage." },
             bash: { name: "Bash", desc: "Damage: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>30% Chance to Stun (1 Turn).</span>" },
             pierce_through: { name: "Pierce Through", desc: "Damage: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Ignores 50% of Enemy Defense.</span>" },
@@ -936,13 +936,14 @@ window.LANGUAGES = {
             fury: { name: "Fury", desc: "Costs 50 Rage.<br><span style='color:#43FF64'>4 Turns: Gain Rage equal to 25% of damage dealt.</span>" },
             blood_price: { name: "Blood Price", desc: "Sacrifice 15% of Max HP to gain equal amount of Rage. <br><span style='color:cyan'>(Fast Action)</span>" },
             fiery_blade: { name: "Fiery Blade", desc: "All attacks deal 50% more damage for 3 turns (Fire Damage)." },
-            hell_blade: { name: "Hell Blade", desc: "Bloody attack. 25 Rage.<br>Damage: <b style='color:orange'>ATK + 0.8 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP</span>." },
+            hell_blade: { name: "Hell Blade", desc: "Bloody attack. <br>Damage: <b style='color:orange'>ATK + 1.3 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP </span> + 25 Rage." },
             Pommel_Bash: { name: "Pommel Bash", desc: "Deals 120% of Strength as damage. Generates +18 Rage." },
             battle_cry: { name: "Battle Cry", desc: "Get motivated. Costs 20 Rage.<br><span style='color:#43FF64'>3 Turns: 40% Strength Increase</span>." },
             restore_healing: { name: "Restoration", desc: "Strong healing. Costs 50 Rage.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
-			double_blade: { name: "Double-Edged Axe", desc: "Attack the enemy without regard for yourself. Deal 50% extra damage for 3 turns." },
+			double_blade: { name: "Double-Edged Blade", desc: "Attack the enemy without regard for yourself. You take 25% of the Damage you deal. 15 Rage. Hopefully. TBW." },
             Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
             Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." }
         }
     }
+
 };
