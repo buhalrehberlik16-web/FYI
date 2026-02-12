@@ -231,28 +231,23 @@ window.processTransmutation = async function() {
     }
     await new Promise(r => setTimeout(r, 400));
 
-    // --- 3. TIER HESAPLAMA MANTIĞI ---
-    let sumTiers = transmuteIngredients.reduce((sum, item) => sum + item.tier, 0);
-    let avg = sumTiers / 3;
-    let targetTier = 1;
+    // --- 3. TIER HESAPLAMA MANTIĞI (GÜNCELLENDİ) ---
+	let sumTiers = transmuteIngredients.reduce((sum, item) => sum + item.tier, 0);
+	let avg = (sumTiers / 3) + 1; // Formül: Ortalamanın 1 fazlası
 
-    const allSame = transmuteIngredients.every(i => i.tier === transmuteIngredients[0].tier);
+	let baseTier = Math.floor(avg); // Alt sınır (Örn: 2.67 ise 2)
+	let chanceNext = avg % 1;       // Üst sınır şansı (Örn: 0.67)
 
-    if (allSame) {
-        targetTier = transmuteIngredients[0].tier + 1;
-    } else {
-        let roll = Math.random(); 
-        let chanceNext = avg % 1; 
-        if (roll < chanceNext) targetTier = Math.ceil(avg);
-        else targetTier = Math.floor(avg);
-    }
+	// Zar at ve ana Tier'ı belirle
+	let targetTier = (Math.random() < chanceNext) ? baseTier + 1 : baseTier;
 
-    // --- DÜZELTME: ÜSTTE HESAPLANAN KRİTİĞİ UYGULA ---
-    // Eğer isCritical true ise (yani altın yatırımı veya %1 şans tuttuysa) Tier'ı 1 artır.
-    if (isCritical) {
-        targetTier++;
-    }
-    targetTier = Math.max(1, Math.min(5, targetTier)); 
+	// Altın yatırımı veya %1 baz şans tuttuysa Tier'ı 1 kademe daha artır
+	if (isCritical) {
+    targetTier++;
+	}
+
+	// Oyun sınırlarını koru (T1 - T5)
+	targetTier = Math.max(1, Math.min(5, targetTier)); 
     // ------------------------------------------------
 
     // --- 4. AĞIRLIKLI OLASILIK TABLOSU OLUŞTURMA ---
@@ -399,29 +394,25 @@ window.updateTransmuteProbabilities = function() {
 
     let html = "";
 
-    // --- 1. TIER OLASILIĞI (Küsüratlı Mantık) ---
-    let sumTiers = ingredients.reduce((sum, item) => sum + item.tier, 0);
-    let avg = sumTiers / 3;
-    let tierOdds = [];
-    const allSame = ingredients.every(i => i.tier === ingredients[0].tier);
-    
-    if (allSame) {
-        tierOdds.push({ tier: Math.min(5, ingredients[0].tier + 1), chance: 100 });
-    } else {
-        let baseTier = Math.floor(avg);
-        let nextTier = Math.min(5, baseTier + 1);
-        let nextChance = Math.round((avg % 1) * 100);
-        let baseChance = 100 - nextChance;
-        if (baseChance > 0) tierOdds.push({ tier: baseTier, chance: baseChance });
-        if (nextChance > 0 && nextTier !== baseTier) tierOdds.push({ tier: nextTier, chance: nextChance });
-    }
+    // --- 1. TIER OLASILIĞI (+1 Shift Mantığı) ---
+	let sumTiers = ingredients.reduce((sum, item) => sum + item.tier, 0);
+	let avg = (sumTiers / 3) + 1; // Motorla aynı +1 mantığı
 
-    html += `<div class="prob-row" style="border-bottom: 1px solid #444; margin-bottom: 8px; padding-bottom: 5px;">
-            <span class="prob-label">${langItems.tier_odds}:</span>
-            <span class="prob-value">
-                ${tierOdds.map(o => `<span class="tier-${o.tier}">T${o.tier} (%${o.chance})</span>`).join(" / ")}
-            </span>
-         </div>`;
+	let baseTier = Math.floor(avg);
+	let nextTier = Math.min(5, baseTier + 1);
+	let nextChance = Math.round((avg % 1) * 100); // Üst seviye ihtimali
+	let baseChance = 100 - nextChance;            // Alt seviye ihtimali
+
+	let tierOdds = [];
+	if (baseChance > 0) tierOdds.push({ tier: Math.min(5, baseTier), chance: baseChance });
+	if (nextChance > 0 && nextTier !== baseTier) tierOdds.push({ tier: nextTier, chance: nextChance });
+
+	html += `<div class="prob-row" style="border-bottom: 1px solid #444; margin-bottom: 8px; padding-bottom: 5px;">
+			<span class="prob-label">${langItems.tier_odds}:</span>
+			<span class="prob-value">
+            ${tierOdds.map(o => `<span class="tier-${o.tier}">T${o.tier} (%${o.chance})</span>`).join(" / ")}
+			</span>
+		</div>`;
 
     // --- 2. STAT/RESIST DAĞILIM OLASILIĞI (Ağırlıklı Hesaplama) ---
     const weights = {};
