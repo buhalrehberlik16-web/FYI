@@ -1,14 +1,14 @@
 // --- START OF FILE enemy_data.js ---
 
 window.TRIBE_BASES = {
-    "Greenskins": { fire: -5, cold: 0, lightning: 0, poison: 10, curse: 0 },
+    "Greenskins": { fire: 2, cold: 2, lightning: 6, poison: 8, curse: 4 },
     "Humans": { fire: 0, cold: 0, lightning: 0, poison: 0, curse: -5 },
     //"Beasts&Monstrosities"
-    "B&M": { fire: -10, cold: 5, lightning: 0, poison: 0, curse: 0 },
-    "Plants": { fire: -20, cold: 0, lightning: 0, poison: 30, curse: 0 },
-    "Undead": { fire: 10, cold: 20, lightning: 0, poison: 80, curse: -25 },
-    "Dragonkind": { fire: 40, cold: 0, lightning: 0, poison: 0, curse: 10 },
-    "Magical Creatures": { fire: 15, cold: 15, lightning: 15, poison: 0, curse: 20 }
+    "B&M": { fire: -4, cold: 6, lightning: 0, poison: 0, curse: 0 },
+    "Plants": { fire: -15, cold: 0, lightning: 0, poison: 30, curse: 0 },
+    "Undead": { fire: -10, cold: 20, lightning: 0, poison: 80, curse: 0 },
+    "Dragonkind": { fire: 40, cold: 0, lightning: 0, poison: 20, curse: 10 },
+    "Magical Creatures": { fire: 15, cold: 15, lightning: 15, poison: 0, curse: -10 }
 };
 
 window.ENEMY_STATS = {
@@ -232,19 +232,19 @@ Object.assign(ENEMY_STATS, {
     "İskelet Şövalye": { 
         tribe: "Undead",
         specificResists: { cold: 10 },
-        maxHp: 180, attack: 25, 
-        defense: 15, tier: 4, 
-        idle: 'enemies/kaya_golemi.webp', 
-        dead: 'enemies/kaya_golemi_dead.webp', 
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'],
+        maxHp: 230, attack: 30, 
+        defense: 25, tier: 4, 
+        idle: 'enemies/skeleton_idle.webp', 
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/skeleton_dead.webp',
         skills: [{ id: "cursed_blade", category: "attack", damageSplit: { physical: 0.8, curse: 0.5 } }] 
     },
     
     "Gulyabani": {
         tribe: "Undead",
         specificResists: { cold: 10 },
-        maxHp: 150, 
-        attack: 35, 
+        maxHp: 350, 
+        attack: 20, 
         defense: 5, 
         tier: 4, 
         idle: 'enemies/kaya_golemi.webp', 
@@ -290,3 +290,4 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+
