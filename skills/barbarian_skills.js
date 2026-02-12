@@ -232,7 +232,7 @@ const BARBARIAN_SKILLS = {
 	    reckless_strike: {
         data: {
             name: "Pervasız Vuruş",
-            menuDescription: "Hasar: <b style='color:orange'>ATK + 1.3 x STR</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>2xATK</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
             rageCost: 35,
             levelReq: 1,
 			cooldown: 1,
@@ -241,7 +241,7 @@ const BARBARIAN_SKILLS = {
             category: 'chaos',
             tier: 1,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "str", statMult: 1.3 },
+                physical: { atkMult: 2.0, stat: "str", statMult: 0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -301,8 +301,8 @@ const BARBARIAN_SKILLS = {
             category: 'chaos', 
             tier: 2,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "int", statMult: 1.3 },
-                elemental: { fire: 1.0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+                physical: { atkMult: 1.0, stat: "int", statMult: 0 },
+                elemental: { fire: {stat: "int", statMult: 1.3 }, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
         onCast: function(attacker, defender) {
@@ -371,7 +371,7 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     },
-
+	// Hellfire (Deal ?xInt dmg to both the Enemy and the Player)
 	// Ulti 1 (Lose all HP, deal as much Dmg) 
 	// Path_of_Pain (Cost: All Rage - Deal ?xInt based damage, gain HP equal to Rage Spent)
 
@@ -433,8 +433,8 @@ const BARBARIAN_SKILLS = {
             category: 'fervor', 
             tier: 2,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "mp_pow", statMult: 1.5 },
-                elemental: { fire: 0, cold: 0, lightning: 1.0, poison: 0, curse: 0 }
+                physical: { atkMult: 1.0, stat: "mp_pow", statMult: 0 },
+                elemental: { fire: 0, cold: 0, lightning: {stat: "mp_pow", statMult: 1.5}, poison: 0, curse: 0 }
             }
         },
 		onCast: function(attacker, defender) {
@@ -518,4 +518,5 @@ const BARBARIAN_SKILLS = {
 },
 
 };
+
 
