@@ -267,6 +267,9 @@ window.ENEMY_SKILLS_DATABASE = {
             const skillLang = lang.enemy_skills.paralyzing_claws;
             applyStatusEffect({ id: 'stun', name: 'Paralyzed', turns: 1, resetOnCombatEnd: true });
             showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
+            applyStatusEffect({ id: 'poison', name: 'Zehir', turns: 3, value: 5, resetOnCombatEnd: true });
+            showFloatingText(document.getElementById('hero-display'), skillLang.effect, 'damage');
+            writeLog(`🍄 **${monster.name}**: ${skillLang.name} (3 Tur Zehir)`);
             writeLog(`🧟 **${monster.name}**: ${skillLang.name}`);
         }
     },
@@ -369,4 +372,5 @@ window.ENEMY_SKILLS_DATABASE = {
             writeLog(`🛡️ **${monster.name}**: ${skillLang.name} (+60 Defans)`);
         }
     }
+
 };
