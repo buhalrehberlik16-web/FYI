@@ -55,46 +55,61 @@ window.StableManager = {
 
     // 3. RAPOR OLUŞTURUCU
     generateScoutReport: function() {
-        const currentLang = window.gameSettings.lang || 'tr';
-        const lang = window.LANGUAGES[currentLang];
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    
+    const currentStage = (window.GAME_MAP && window.GAME_MAP.currentNodeId !== null) 
+        ? window.GAME_MAP.nodes.find(n => n.id === window.GAME_MAP.currentNodeId).stage 
+        : -1;
+
+    let report = `<div style="text-align: left; font-family: 'Cinzel', serif;">`;
+
+    for (let i = 1; i <= 3; i++) {
+        const targetStage = currentStage + i;
+        const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === targetStage);
         
-        const currentStage = (window.GAME_MAP && window.GAME_MAP.currentNodeId !== null) 
-            ? window.GAME_MAP.nodes.find(n => n.id === window.GAME_MAP.currentNodeId).stage 
-            : -1;
-
-        let report = `<div style="text-align: left; font-family: 'Cinzel', serif;">`;
-
-        for (let i = 1; i <= 3; i++) {
-            const targetStage = currentStage + i;
-            const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === targetStage);
+        if (nodesInStage.length > 0) {
+            report += `<div style="margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
+                        <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
             
-            if (nodesInStage.length > 0) {
-                report += `<div style="margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
-                            <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
-                
-                 nodesInStage.forEach(node => {
-        let typeName = lang[`node_${node.type}`] || node.type;
-        let biomeInfo = "";
-        
-        // Eğer biyom varsa raporun yanına ekle
-        if (node.biome) {
-            // "Biyom: Orman" gibi
-            const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
-            biomeInfo = ` <span style="color: #43FF64; font-size: 0.9em;">(${biomeLabel})</span>`;
-        }
-                    let detail = "";
-                    if (node.type === 'encounter') {
-                        const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
-                        detail = ` - <span style="color: #ff4d4d;">${enemyName}</span>`;
+            nodesInStage.forEach(node => {
+                let displayTitle = lang[`node_${node.type}`] || node.type;
+                let color = "#bbb";
+
+                // --- EVENT ÖN-TANIMLAMA MANTIĞI ---
+                if (node.type === 'choice') {
+                    // Eğer bu odaya henüz bir event atanmamışsa, şimdi ata (Scout keşfetti!)
+                    if (!node.eventId) {
+                        const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+                        node.eventId = randomEvt.id;
                     }
-                    report += `<span style="font-size: 0.85em; margin-left: 10px; color: #bbb;">• ${typeName}${detail}</span><br>`;
-                });
-                report += `</div>`;
-            }
+                    // Çeviriden event başlığını al
+                    const eventData = lang.events[node.eventId];
+                    displayTitle = eventData ? eventData.title : node.eventId;
+                    color = "#3498db"; // Olaylar mavi görünsün
+                }
+                // ----------------------------------
+
+                if (node.type === 'encounter') {
+                    const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
+                    displayTitle = enemyName;
+                    color = "#ff4d4d"; // Düşmanlar kırmızı
+                }
+
+                let biomeInfo = "";
+                if (node.biome) {
+                    const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+                    biomeInfo = ` <span style="color: #43FF64; font-size: 0.8em;">(${biomeLabel})</span>`;
+                }
+
+                report += `<span style="font-size: 0.85em; margin-left: 10px; color: ${color};">• ${displayTitle}${biomeInfo}</span><br>`;
+            });
+            report += `</div>`;
         }
-        report += `</div>`;
-        return report;
-    },
+    }
+    report += `</div>`;
+    return report;
+},
 
     // 4. POP-UP GÖSTERİCİ
     showInfoPopup: function(title, content, color) {
