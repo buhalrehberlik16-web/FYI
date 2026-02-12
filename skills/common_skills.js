@@ -312,7 +312,7 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_willful_strike.webp',
             type: 'attack',
             category: 'common',
-            tier: 5,,
+            tier: 5,
 			pointCost: 4,
             scaling: { 
                 physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
@@ -340,3 +340,4 @@ const COMMON_SKILLS = {
     },	
 
 };
+
