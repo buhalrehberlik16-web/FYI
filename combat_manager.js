@@ -406,7 +406,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 // Görsel Efektler ve Loglama
                 animateDamage(false); 
                 showFloatingText(document.getElementById('monster-display'), finalDmg, 'damage');
-                writeLog(`⚔️ **${skillName}**: ${finalDmg} ${lang.log_hit_monster} (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+                writeLog(`⚔️ **${skillName}**: ${monster.name} ${lang.log_hit_monster} **${finalDmg}** (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
                 
                 // Düşman Kalkan Kırma
                 if (window.isMonsterDefending) { 
@@ -825,7 +825,9 @@ window.checkGameOver = function() {
         const rewards = window.LootManager.generateLoot(monster);
         // ----------------------------
 
-        gainXP(3); // XP kazanımı (basitleştirildi)
+        // Bosslar ve Hard (Turuncu çerçeveli) odalar 5 XP, normal odalar 4 XP verir
+        const xpGainAmount = (monster.isHard || monster.isBoss) ? 5 : 4;
+        gainXP(xpGainAmount);
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd); 
         window.heroBlock = 0; 
         updateStats();

@@ -67,15 +67,20 @@ function levelUp() {
     hero.statPoints += 4; // Stat puanı sabit 3 kalsın (veya değiştirebilirsin)
     
     // --- YENİ SKILL PUANI MANTIĞI ---
-    // Tabloda bu level için özel bir ödül var mı?
-    // Varsa onu ver, yoksa 0 (veya 1) ver.
-    const spGain = LEVEL_SKILL_REWARDS[hero.level] || 0; // Tabloda yoksa 0 verir
+    let spGain = 0;
+    if (hero.level > 20) {
+        // 20. seviyeden sonra her level 1 puan
+        spGain = 1;
+    } else {
+        // 20. seviyeye kadar tablodaki değerler (yoksa 0)
+        spGain = LEVEL_SKILL_REWARDS[hero.level] || 0;
+    }
     
     hero.skillPoints += spGain;
     // --------------------------------
     
-    hero.xp = hero.xp - FULL_XP_REQUIREMENTS[hero.level - 1]; 
-    hero.xpToNextLevel = FULL_XP_REQUIREMENTS[hero.level] || Infinity; 
+    hero.xp = hero.xp - 10; // Gereken XP artık sabit 10
+    hero.xpToNextLevel = 10;
     
     writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level}) - Kazanılan SP: ${spGain} - %50 Can Yenilendi (+${healAmount} HP)`);
     updateStats(); 

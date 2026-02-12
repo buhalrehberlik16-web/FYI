@@ -28,8 +28,8 @@ const CLASS_CONFIG = {
     }
 };
 
-const LEVEL_SKILL_REWARDS = { 2: 2, 4: 4, 6: 4, 8: 6, 10: 8, 12: 10 };
-const FULL_XP_REQUIREMENTS = Array.from({length: MAX_LEVEL + 1}, () => 5);
+const LEVEL_SKILL_REWARDS = { 2: 2, 5: 2, 8: 3, 12: 4, 16: 4, 20: 5 };
+const FULL_XP_REQUIREMENTS = Array.from({length: MAX_LEVEL + 1}, () => 10);
 
 window.hero = {
     name: "Barbar",
@@ -37,7 +37,7 @@ window.hero = {
     class: "Barbar",
     level: 1, 
     xp: 0, 
-    xpToNextLevel: 5,
+    xpToNextLevel: 10,
     hp: 40,    // maxHp silindi (dinamik hesaplanıyor)
     rage: 0,   // maxRage silindi (dinamik hesaplanıyor)
     gold: 0,
