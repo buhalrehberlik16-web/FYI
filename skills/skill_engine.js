@@ -23,6 +23,11 @@ const SkillEngine = {
 
         // Savunma bonuslarını ekle (Siper/Blok değil, saf defans değeri)
         let effectiveDef = targetStats.def || 0;
+		const defUpEffect = target.statusEffects.find(e => e.id === 'def_up' && !e.waitForCombat);
+		if (defUpEffect) {
+			// Eğer varsa (örn: +8 veya +25), bunu baz defansa ekle
+			effectiveDef += defUpEffect.value; 
+		}
         if (target === hero && window.isHeroDefending) {
             effectiveDef += (window.heroDefenseBonus || 0);
         } else if (target !== hero && window.isMonsterDefending) {
