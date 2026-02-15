@@ -1,17 +1,18 @@
 // js/ui/battle_hud.js
 window.monster = null; // Canavar değişkenini en başta 'boş' olarak tanımla
-window.updateStatusIcons = function() {
-    if (!heroStatusContainer) return;
-    heroStatusContainer.innerHTML = ''; 
-	const currentLang = window.gameSettings.lang || 'tr';
+window.updateStatusIcons = function(char, container) {
+    if (!container) return;
+    container.innerHTML = ''; 
+    const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
 	
-    hero.statusEffects.forEach(effect => {
+    char.statusEffects.forEach(effect => {
         const icon = document.createElement('div'); 
         icon.className = 'status-icon';
         const buffIds = ['atk_up', 'def_up', 'regen', 'str_up', 'atk_up_percent', 'ignore_def', 'guard_active', 'fury_active', 'insta_kill', 'wind_up'];
-        const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero'];
+        const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero', 'debuff_webbed', 'debuff_enemy_atk', 'debuff_enemy_def'];
 
+        // İkon Belirleme (Mevcut ikon mantığın korunuyor)
         if (effect.id === 'atk_up' || effect.id === 'atk_up_percent') icon.innerHTML = '⚔️';
         else if (effect.id === 'def_up' || effect.id === 'guard_active') icon.innerHTML = '🛡️';
         else if (effect.id === 'str_up') icon.innerHTML = '💪';
@@ -23,13 +24,14 @@ window.updateStatusIcons = function() {
         else if (effect.id === 'curse_damage') icon.innerHTML = '💀';
         else if (effect.id === 'atk_half') icon.innerHTML = '👎';
         else if (effect.id === 'defense_zero') icon.innerHTML = '💔';
+        else if (effect.id === 'debuff_webbed') icon.innerHTML = '🕸️';
         else icon.innerHTML = '✨';
 
         if (buffIds.includes(effect.id)) icon.classList.add('status-buff');
-        else if (debuffIds.includes(effect.id) || effect.id.startsWith('debuff_')) icon.classList.add('status-debuff');
+        else if (debuffIds.includes(effect.id)) icon.classList.add('status-debuff');
 		
-		const statusName = lang.status[effect.id] || effect.name; // Dilden ismi al
-        const turnText = lang.turn_suffix; // "Tur" veya "Turns"
+        const statusName = lang.status[effect.id] || effect.name;
+        const turnText = lang.turn_suffix;
 
         if (effect.waitForCombat) { 
             icon.classList.add('status-waiting');
@@ -37,14 +39,7 @@ window.updateStatusIcons = function() {
         } else { 
             icon.title = `${statusName} (${effect.turns} ${turnText})`; 
         }
-        heroStatusContainer.appendChild(icon);
-    });
-
-    hero.mapEffects.forEach(effect => {
-        const icon = document.createElement('div'); icon.className = 'status-icon';
-        icon.style.borderColor = '#00ccff'; icon.style.color = '#00ccff'; 
-        icon.innerHTML = (effect.id === 'map_hp_boost') ? '💉' : '😓';
-        heroStatusContainer.appendChild(icon);
+        container.appendChild(icon);
     });
 };
 
@@ -73,6 +68,7 @@ window.updateStats = function() {
             const currentLang = window.gameSettings.lang || 'tr';
             const translatedName = window.LANGUAGES[currentLang].enemy_names[monster.name] || monster.name;
             monsterNameDisplay.textContent = translatedName;
+			updateStatusIcons(monster, monsterStatusContainer); // Monster ikonları
         }
 
         // Canavar blok göstergesi
@@ -106,7 +102,7 @@ window.updateStats = function() {
     }
     // -------------------------------------------
 
-    updateStatusIcons(); 
+    updateStatusIcons(hero, heroStatusContainer); // Hero ikonları
     updateGoldUI();
     if (statScreen && !statScreen.classList.contains('hidden')) updateStatScreen();
 	if (typeof updateNPCStatsDisplay === 'function') updateNPCStatsDisplay();

@@ -48,6 +48,7 @@ window.heroStatusContainer = document.getElementById('hero-status-container');
 window.heroDisplayContainer = document.getElementById('hero-display');
 window.heroDisplayImg = document.querySelector('#hero-display img');
 window.monsterDisplayImg = document.querySelector('#monster-display img');
+window.monsterStatusContainer = document.getElementById('monster-status-container');
 window.btnBasicAttack = document.getElementById('btn-basic-attack');
 window.btnBasicDefend = document.getElementById('btn-basic-defend');
 window.turnCountDisplay = document.getElementById('turn-count-display');

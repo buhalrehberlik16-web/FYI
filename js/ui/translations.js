@@ -300,6 +300,36 @@ window.LANGUAGES = {
 			"İskelet": "İskelet"
         },
 		
+		enemy_effects: {
+			shriek: "-$1 ÖFKE!",
+            poison_hit: "ZEHİRLENDİN!",
+            regrow: "İYİLEŞTİ!",
+            webbed: "YAVAŞLADIN!",
+            harden: "+DEFANS!",
+            blinded: "KÖR OLDUN!",
+            dash: "KAÇINDI!",
+            life_drain: "CAN ÇALDI!",           
+            broken: "ZIRH KIRILDI!",
+            fortitude: "+DİRENÇ!",
+            yell: "+ATAK!",
+            dirty: "AĞIR HASAR!",
+            smoke: "GÖRÜŞ KAYBI!",
+            vicious: "KANAMA!",
+            howl: "ULUMA!",
+            trampled: "EZİLDİN!",
+            hide: "+DERİ!",
+            stunned: "SERSEMLEDİN!",
+            berserk: "HİDDET!",
+            slammed: "YIKILDIN!",
+            stone: "TAŞ FORM!",
+            crushing: "EZİCİ DARBE!",
+            will: "DEMİR İRADE!",
+            marrow: "İLİK SÖMÜRDÜ!",
+            command: "ŞEFİN EMRİ!",
+            last_stand: "ÖLÜMSÜZ!",
+            cursed: "LANETLENDİN!"
+        },
+		
 		enemy_skills: {
 			spore_poison: { name: "ZEHİRLİ SPORLAR", effect: "ZEHİRLENDİN" },
 			fungal_regrow: { name: "MANTAR YENİLENMESİ", effect: "İYİLEŞTİ" },
@@ -384,7 +414,12 @@ window.LANGUAGES = {
             currently_unavailable: "şu an kullanılamaz!",
 			turn_suffix:"Tur",
 			debuff_enemy_atk: "Düşman Güçsüz",
-            debuff_enemy_def: "Düşman Savunmasız"
+            debuff_enemy_def: "Düşman Savunmasız",
+			poison: "Zehir",
+			fire: "Yanma",
+			cold: "Donma",
+			lightning: "Şok",
+			curse: "Lanet Hasarı"
         },
 		
         // --- OLAYLAR (EVENTS) ---
@@ -771,6 +806,36 @@ window.LANGUAGES = {
 			"İskelet": "Skeleton"
         },
 		
+		enemy_effects: {
+			shriek: "-$1 RAGE!",
+            poison_hit: "POISONED!",
+            regrow: "HEALED!",
+            webbed: "SLOWED!",
+            harden: "+DEFENSE!",
+            blinded: "BLINDED!",
+            dash: "DASHED!",
+            life_drain: "LIFE DRAIN!",
+            broken: "ARMOR BROKEN!",
+            fortitude: "+RESIST!",
+            yell: "+ATTACK!",
+            dirty: "HEAVY DAMAGE!",
+            smoke: "SMOKE BOMB!",
+            vicious: "BLEEDING!",
+            howl: "HOWL!",
+            trampled: "TRAMPLED!",
+            hide: "+HIDE!",
+            stunned: "STUNNED!",
+            berserk: "BERSERK!",
+            slammed: "SLAMMED!",
+            stone: "STONE FORM!",
+            crushing: "CRUSHING!",
+            will: "IRON WILL!",
+            marrow: "MARROW DRAIN!",
+            command: "CHIEF ORDER!",
+            last_stand: "IMMORTAL!",
+            cursed: "CURSED!"
+        },
+		
 		enemy_skills: {
 			spore_poison: { name: "POISONOUS SPORES", effect: "POISONED" },
 			fungal_regrow: { name: "FUNGAL REGROWTH", effect: "HEALED" },
@@ -856,7 +921,12 @@ window.LANGUAGES = {
             currently_unavailable: "is currently unavailable!",
 			turn_suffix:"Turns",
 			debuff_enemy_atk: "Enemy Weakened",
-            debuff_enemy_def: "Enemy Vulnerable"
+            debuff_enemy_def: "Enemy Vulnerable",
+			poison: "Poison",
+			fire: "Fire",
+			cold: "Cold",
+			lightning: "Lightning",
+			curse: "Curse"
         },
 
         // Events
