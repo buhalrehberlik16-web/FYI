@@ -14,34 +14,28 @@ window.combatTurnCount = 1;
 window.heroBlock = 0; 
 window.isHeroTurn = false; 
 
-window.applyStatusEffect = function(newEffect) {
-    // 1. Aynı ID'ye sahip mevcut bir etki var mı bak (Örn: debuff_enemy_atk)
-    // Not: block_skill (cooldown) etkilerini birleştirmemeli, onları hariç tutuyoruz.
-    const existingIndex = hero.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
+window.applyStatusEffect = function(target, newEffect) {
+    const isTargetHero = (target === hero);
+    const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
 
     if (existingIndex !== -1) {
-        // 2. Eğer varsa, değerleri güncelle
-        const existing = hero.statusEffects[existingIndex];
-		
+        const existing = target.statusEffects[existingIndex];
         
-        // ZEHİR İÇİN ÖZEL STACK MANTIĞI:
         if (newEffect.id === 'poison') {
-            existing.value += newEffect.value; // Hasar birikir (3 + 3 = 6)
-            existing.turns += newEffect.turns; // Süre eklenir (2 + 2 = 4)
-            writeLog(`☣️ **Zehir** etkisi şiddetlendi! (Yeni Hasar: ${existing.value})`);
+            existing.value += newEffect.value;
+            existing.turns += newEffect.turns;
+            writeLog(`☣️ **${isTargetHero ? 'Zehir' : 'Düşman Zehiri'}** etkisi şiddetlendi! (Hasar: ${existing.value})`);
         } else {
-            // Diğer etkiler için yenileme (Refresh) mantığı:
             existing.turns = Math.max(existing.turns, newEffect.turns);
             if (newEffect.value !== undefined) {
                 existing.value = Math.max(existing.value, newEffect.value);
             }
-            writeLog(`✨ **${existing.name}** etkisi yenilendi.`);
+            writeLog(`✨ **${isTargetHero ? '' : target.name + ': '}** **${existing.name}** etkisi yenilendi.`);
         }
     } else {
-        // 3. Eğer yoksa, yeni bir etki olarak ekle
-        hero.statusEffects.push(newEffect);
+        target.statusEffects.push(newEffect);
+        // Yeni eklenen etkiler için log (isteğe bağlı, zaten genel log yetenekten geliyor)
     }
-    
     updateStats();
 };
 
@@ -558,7 +552,8 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	tier: stats.tier, 
 	idle: stats.idle,  dead: stats.dead,  attackFrames: stats.attackFrames,
 	skills: stats.skills,
-    firstTurnAction: stats.firstTurnAction
+    firstTurnAction: stats.firstTurnAction,
+	statusEffects: [], // CANAVARIN KENDİ EFEKT DİZİSİ
 	};
 	
 	console.log(`${monster.name} Dirençleri:`, monster.resists); // Debug için
@@ -656,13 +651,25 @@ window.nextTurn = function() {
             writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP`);
         });
 
-        // ZEHİR İŞLEME (Blok ve Defans Geçer)
-        hero.statusEffects.filter(e => e.id === 'poison' && !e.waitForCombat).forEach((effect) => {
+        // --- BURAYA YAZIYORUZ: ZAMANLA HASAR (DoT) İŞLEME SİSTEMİ ---
+        // Not: Eski 'poison' bloğunu silip yerine bunu koyuyoruz
+        const dotTypes = ['poison', 'fire', 'cold', 'lightning', 'curse'];
+        
+        hero.statusEffects.filter(e => dotTypes.includes(e.id) && !e.waitForCombat).forEach((effect) => {
+            // 1. Hasarı Uygula
             hero.hp = Math.max(0, hero.hp - effect.value);
+            
+            // 2. Görsel Efekt (Her zaman kırmızı 'damage' tipi fırlatırız ama logda ismini yazarız)
             showFloatingText(heroDisplayContainer, effect.value, 'damage');
-            writeLog(`☣️ **Zehir Hasarı**: -${effect.value} HP`);
+            
+            // 3. Loglama (Örn: Yanma: -5 HP)
+            writeLog(`${effect.name}: -${effect.value} HP`);
+            
+            // 4. Sarsılma Efekti
             animateDamage(true); 
         });
+        // ----------------------------------------------------------
+
 		
 		if (checkGameOver()) return; 
 
@@ -702,13 +709,25 @@ window.nextTurn = function() {
     } else {
         // --- CANAVAR SIRASI ---
         toggleSkillButtons(true); 
-        showMonsterIntention(null); // Hamle başladığı an simgeyi gizle
+        showMonsterIntention(null); 
+		
+		// --- KRİTİK EKLEME: CANAVAR EFEKT SÜRELERİNİ AZALT ---
+        if (monster.statusEffects && monster.statusEffects.length > 0) {
+            monster.statusEffects.forEach(e => {
+                if (!e.waitForCombat) e.turns--;
+            });
+            // Süresi biten (0 olan) etkileri sil
+            monster.statusEffects = monster.statusEffects.filter(e => e.turns > 0);
+            updateStats(); // İkonları ve süreleri tazele
+        }
+        // ---------------------------------------------------
+
         
         const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
         if (monsterStun) { 
-            const stunLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
-            writeLog(stunLang.log_stun_skip);
-            showFloatingText(document.getElementById('monster-display'), stunLang.f_stunned, 'damage'); 
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            writeLog(lang.combat.log_stun_skip);
+            showFloatingText(document.getElementById('monster-display'), lang.combat.f_stunned, 'damage'); 
             window.isHeroTurn = true; 
             setTimeout(nextTurn, 1000); 
             return;
@@ -718,53 +737,90 @@ window.nextTurn = function() {
             if (!checkGameOver()) {
                 const action = window.monsterNextAction;
                 const stats = ENEMY_STATS[monster.name];
+                const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
-                // 1. TEMEL ATAKLAR (Attack1 veya Attack2)
+                // A. TEMEL ATAKLAR (Attack1 / Attack2)
                 if (action === 'attack1' || action === 'attack2') {
-                    // Temel saldırı verisi (Sadece %100 Fiziksel)
                     const basicData = { damageSplit: { physical: 1.0 } };
                     const dmgPack = SkillEngine.calculate(monster, basicData, hero);
-                    
-                    // Görseller: stats.attackFrames içinden
-                    const frames = stats.attackFrames.map(f => `images/${f}`);
-                    processMonsterDamage(monster, dmgPack, frames); 
+                    processMonsterDamage(monster, dmgPack, stats.attackFrames.map(f => `images/${f}`)); 
                 } 
-                // 2. SAVUNMA HAMLESİ
+                // B. DEFANS
                 else if (action === 'defend') {
                     handleMonsterDefend(monster);
                 } 
-                // 3. YETENEK HAMLESİ (SkillAttack, Buff veya Debuff)
+                // C. YENİ ŞABLON SİSTEMİ (Skill Paketini Çöz ve Uygula)
                 else {
-                    const skill = ENEMY_SKILLS_DATABASE[action];
-                    const skillData = stats.skills.find(s => s.id === action);
+                    const packet = EnemySkillEngine.resolve(monster, action);
+                    
+                    if (packet) {
+                        const skillName = lang.enemy_skills[packet.id]?.name || packet.id;
+                        let effectLabel = lang.enemy_effects[packet.text] || "";
 
-                    if (skill) {
-                        // Eğer bu bir hasar yeteneğiyse (SkillAttack), dmgPack hesapla
-                        if (skillData.category === 'attack') {
-                            const dmgPack = SkillEngine.calculate(monster, skillData, hero);
+                        // 1. Dinamik Yazı Değişimi ($1 yerine değer basma)
+                        if (effectLabel.includes("$1") && packet.value) {
+                            effectLabel = effectLabel.replace("$1", packet.value);
+                        }
+
+                        // 2. Yetenek İsmini Göster ve Log Yaz
+                        writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                        showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
+
+                        // 3. Hedefe Göre Metin ve İkon Yerini Belirle
+                        // Buff ise canavara (heal rengi), Debuff ise heroya (damage rengi)
+                        const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
+                        const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
+
+                        if (effectLabel) {
+                            setTimeout(() => {
+                                showFloatingText(floatingTarget, effectLabel, floatingType);
+                            }, 500);
+                        }
+
+                        // 4. Anlık Öfke Azaltma (Step 5'teki kod - korundu)
+                        if (packet.rageReduction) {
+                            hero.rage = Math.max(0, hero.rage - packet.rageReduction);
+                            updateStats();
+                        }
+
+                        // 5. İyileşme Varsa Uygula
+                        if (packet.healing > 0) {
+                            monster.hp = Math.min(monster.maxHp, monster.hp + packet.healing);
+                            showFloatingText(document.getElementById('monster-display'), packet.healing, 'heal');
+                        }
+
+                        // 6. Statü Etkilerini Kime Uygulayacağına Karar Ver
+                        if (packet.statusEffects) {
+                            packet.statusEffects.forEach(eff => {
+                                // Buff kategorisindeki etkiler MONSTER'a, diğerleri HERO'ya
+                                const targetChar = (packet.category === 'buff') ? monster : hero;
+                                applyStatusEffect(targetChar, {
+                                    id: eff.id,
+                                    name: lang.status[eff.id] || eff.id,
+                                    value: eff.value,
+                                    turns: eff.turns,
+                                    resetOnCombatEnd: true
+                                });
+                            });
+                        }
+                        
+                        // 7. Saf Buff/Debuff (Hasarsız) ise turu bitir
+                        if (packet.damage && packet.damage.total > 0) {
                             const frames = stats.attackFrames.map(f => `images/${f}`);
-                            
-                            // Hem hasarı vur hem de yeteneğin içindeki özel kodu (örn: can çalma) çalıştır
-                            skill.execute(monster, hero, dmgPack); 
-                            processMonsterDamage(monster, dmgPack, frames);
-                        } 
-                        else {
-                            // Buff veya Debuff ise sadece yeteneği çalıştır
-                            skill.execute(monster, hero);
-                            animateMonsterSkill(); // Mor parlama efekti
+                            processMonsterDamage(monster, packet.damage, frames);
+                        } else {
+                            animateMonsterSkill();
                             updateStats();
                             window.isHeroTurn = true;
                             setTimeout(nextTurn, 1000);
                         }
-                    } else {
-                        // Fallback: Bir sorun çıkarsa düz atak yap
-                        handleMonsterAttack(monster, hero);
                     }
                 }
             }
         }, 600);
     }
 };
+
 
 // YARDIMCI FONKSİYONLAR:
 function handleMonsterDefend(attacker) {
