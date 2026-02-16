@@ -12,19 +12,15 @@ window.LootManager = {
         }
 
         // 2. LOOT TIER HESAPLAMA (Tier / 2 ve Zar Atma)
-        // Örn: T3 / 2 = 1.5 -> %50 T1, %50 T2
-        // Örn: T6 / 2 = 3.0 -> %100 T3
         let calcTierBase = monsterTier / 2;
         let finalLootTier = 1;
 
         if (calcTierBase % 1 === 0) {
-            // Tam sayı ise (3.0, 4.0 gibi)
             finalLootTier = calcTierBase;
         } else {
-            // Küsüratlı ise zar at (0.5 ihtimalle üste, 0.5 alta)
             finalLootTier = Math.random() < 0.5 ? Math.floor(calcTierBase) : Math.ceil(calcTierBase);
         }
-        finalLootTier = Math.max(1, finalLootTier); // En az T1 item düşsün
+        finalLootTier = Math.max(1, finalLootTier); 
 
         // 3. BÜTÇE BELİRLEME
         let lpBudget = (monster.isHard || monster.isBoss) 
@@ -38,17 +34,21 @@ window.LootManager = {
         while (lpBudget >= 1.0) {
             let possibleChoices = [];
             
-            // Seçenek A: Hesaplanan Loot Tier (Maliyet 1.0)
+            // Seçenek A: Standart Takı (Maliyet 1.0)
             possibleChoices.push({ tier: finalLootTier, cost: 1.0, type: 'jewelry' });
             
-            // Seçenek B: Broş (Maliyet 2.0)
+            // Seçenek B: Tılsım (Charm1) (Maliyet 1.5) --- YENİ EKLENDİ ---
+            if (lpBudget >= 1.5) {
+                possibleChoices.push({ tier: finalLootTier, cost: 1.5, type: 'charm1' });
+            }
+
+            // Seçenek C: Broş (Maliyet 2.0)
             if (lpBudget >= 2.0) {
                 possibleChoices.push({ tier: finalLootTier, cost: 2.0, type: 'brooch' });
             }
 
-            // Seçenek C: Üst Seviye Şansı (Sadece Hard/Boss ise)
+            // Seçenek D: Üst Seviye Şansı (Sadece Hard/Boss ise ve yeterli bütçe varsa)
             if ((monster.isHard || monster.isBoss) && lpBudget >= 1.5) {
-                // Hesaplanan Tier'ın bir üstünü düşürebilir
                 possibleChoices.push({ tier: finalLootTier + 1, cost: 1.5, type: 'jewelry' });
             }
 
@@ -58,9 +58,16 @@ window.LootManager = {
             let chosen = affordable[Math.floor(Math.random() * affordable.length)];
             lpBudget -= chosen.cost;
 
-            let item = (chosen.type === 'brooch') 
-                ? generateRandomBrooch(chosen.tier) 
-                : generateRandomItem(chosen.tier);
+            // İlgili jeneratörü çağır
+            let item;
+            if (chosen.type === 'brooch') {
+                item = generateRandomBrooch(chosen.tier);
+            } else if (chosen.type === 'charm1') {
+                // Yeni Tılsım Jeneratörü
+                item = generateRandomCharm(chosen.tier);
+            } else {
+                item = generateRandomItem(chosen.tier);
+            }
 
             rewards.push({ type: 'item', value: item });
             writeLog(`🎁 Düşen: ${getTranslatedItemName(item)} (T${chosen.tier})`);
@@ -68,7 +75,6 @@ window.LootManager = {
 
         // 5. KALAN PUANI (REMAINDER) FRAGMENT'A ÇEVİR
         if (lpBudget > 0) {
-            // Küsürat * Canavarın Gerçek Tier'ı (Daha zor canavar daha çok fragment verir)
             let rawFragCount = lpBudget * monsterTier;
             let finalFragCount = Math.round(rawFragCount); 
 

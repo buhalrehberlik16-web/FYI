@@ -6,7 +6,38 @@ window.ITEM_RULES = {
     "scroll": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Scrollar reforge'da kullanılabilir
     "resist_stone": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Taşlar reforge'da kullanılabilir
     "charm": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false },
-	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 }
+	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 },
+	"charm1": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 1.5, nextTierValue: 2.0 }
+};
+
+window.CHARM_CONFIG = {
+    pointsByTier: { 1: 1, 2: 3, 3: 5, 4: 7, 5: 9 },
+    
+    // TRIBE (KLAN) TABANLI ÖZELLİKLER
+    tribes: {
+        pool: ["B&M", "Plants", "Undead", "Humans", "Magical Creatures", "Greenskins", "Dragonkind"],
+        costs: {
+            1: { skillDmg: 4, defense: 2 },
+            2: { skillDmg: 6, defense: 3 },
+            3: { skillDmg: 8, defense: 4 }
+        }
+    },
+
+    // ELEMENTAL TABANLI ÖZELLİKLER
+    elementals: {
+        pool: ["fire", "cold", "lightning", "poison", "curse"],
+        costs: {
+            1: { elemDmg: 3, resist: 2 },
+            2: { elemDmg: 6, resist: 4 },
+            3: { elemDmg: 8, resist: 6 }
+        }
+    },
+
+    // SAF ATAK (Sadece T2 ve T4)
+    attack: {
+        2: { cost: 3, atk: 2, def: 1 },
+        4: { cost: 7, atk: 4, def: 2 }
+    }
 };
 
 // Broş Puanlama Sistemi
