@@ -57,18 +57,15 @@ const SkillEngine = {
             physRaw = Math.floor(rawAtk * (sc.physical || 0));
         }
 
-        let physNet = Math.max(0, physRaw - effectiveDef);
-        let remDef = (physRaw < effectiveDef) ? (effectiveDef - physRaw) : 0;
-
         // --- 3. ELEMENTAL HASAR HESABI (YENİ HİBRİT YAPI) ---
-        let totalElemAfterResist = 0;
+        let totalElemAfterResist = 0; // --- ERROR FIX: ÖNCE TANIMLADIK ---
         const elementTypes = ['fire', 'cold', 'lightning', 'poison', 'curse'];
-
+		
         elementTypes.forEach(type => {
             let elemRaw = 0;
             if (isAttackerHero) {
-                // Karakterin itemlarından gelen sabit elemental hasar
-                const itemElemBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
+                // Tılsım (Charm1) bonusları artık attackerStats.elementalDamage içinde hazır geliyor!
+                const itemPlusCharmBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
                 
                 // Skilin o element için konfigürasyonu
                 const elemConf = (sc.elemental && sc.elemental[type]) ? sc.elemental[type] : 0;
@@ -84,23 +81,45 @@ const SkillEngine = {
                     skillElemValue = Math.floor(rawAtk * elemConf);
                 }
                 
-                elemRaw = Math.floor(itemElemBonus + skillElemValue);
+                elemRaw = Math.floor(itemPlusCharmBonus + skillElemValue);
             } else {
-                // Canavar: Sadece Atak * Çarpan (Canavarların karmaşık statları yok)
+                // Canavar: Sadece Atak * Çarpan
                 elemRaw = Math.floor(rawAtk * (sc[type] || 0));
             }
 
-            // Direnç Uygulama (Flat Resistance)
+            // Direnç Uygulama (Flat Resistance - Sabit Azalma)
             if (elemRaw > 0) {
                 let resValue = targetResists[type] || 0;
                 totalElemAfterResist += Math.max(0, elemRaw - resValue);
             }
         });
 
+        // Fiziksel Net ve Kalan Defans Hesaplama
+        let physNet = Math.max(0, physRaw - effectiveDef);
+        let remDef = (physRaw < effectiveDef) ? (effectiveDef - physRaw) : 0;
+        
         // Elemental Sönümleme (Kalan Defans / 2)
         let elemNet = Math.max(0, totalElemAfterResist - Math.floor(remDef / 2));
+		
+		// --- 4. CHARM1 TRIBE HASAR/DEFANS BONUSU ---
+		let charmTribeDmg = 0;
+		hero.brooches.forEach(c => {
+			if (c && c.type === "charm1" && c.targetTribe === target.tribe) {
+				const b = c.bonuses.find(x => x.type === 'tribe_mod');
+				if (b) {
+					charmTribeDmg += b.skillDmg;
+				}
+			}
+		});
 
-        // --- 4. YÜZDESEL KORUMALAR (Guard Active vb.) ---
+		// KURAL: Fiziksel mi ağır Elemental mi? (İstediğin Mantık)
+		if (physNet >= elemNet) {
+			physNet += charmTribeDmg;
+		} else {
+			elemNet += charmTribeDmg;
+		}
+
+        // --- 5. YÜZDESEL KORUMALAR (Guard Active vb.) ---
         let totalHasar = physNet + elemNet;
         const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
         if (guardEffect) {
@@ -121,12 +140,6 @@ const SkillEngine = {
     }
 };
 
-// Sayfa yüklenince motoru ateşle
 document.addEventListener('DOMContentLoaded', () => {
     SkillEngine.init();
-
 });
-
-
-
-
