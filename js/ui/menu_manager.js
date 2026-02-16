@@ -149,11 +149,15 @@ window.updateStatScreen = function() {
     resTypes.forEach(type => {
         const el = document.getElementById(`res-${type}`);
         if (el) {
-            const baseRes = hero.baseResistances[type] || 0;
-            const totalRes = effective.resists ? (effective.resists[type] || 0) : baseRes;
-            const resBonus = totalRes - baseRes;
-            if (resBonus > 0) el.innerHTML = `${baseRes} <span style="color:#43FF64; font-size:0.8em;">(+${resBonus})</span>`;
-            else el.textContent = baseRes;
+            // 1. O elementin toplam DİRENCİNİ al (Mavi renk olacak)
+            const totalRes = effective.resists ? (effective.resists[type] || 0) : 0;
+            
+            // 2. O elementin toplam HASARINI al (Altın/Kırmızı renk olacak)
+            const totalDmg = effective.elementalDamage ? (effective.elementalDamage[type] || 0) : 0;
+
+            // 3. Ekrana bas: Hasar (Altın) | Direnç (Mavi)
+            // Renkleri U ekranındaki Atak (#ffd700) ve Defans (#3498db) ile eşitledik
+            el.innerHTML = `<span style="color:#ffd700">${totalDmg}</span> <span style="color:#666">|</span> <span style="color:#3498db">${totalRes}</span>`;
         }
     });
 };
@@ -195,58 +199,49 @@ window.showItemTooltip = function(item, event) {
     
     // 4. SEVİYE YAZISINI AYARLA (ui_elements içindeki fonksiyonu kullanır)
     tierEl.textContent = window.getItemLevelLabel(item);
-    
 
-    // A - Standart Statlar (Takılar için)
-    if (item.stats && Object.keys(item.stats).length > 0) {
-        for (const [statKey, value] of Object.entries(item.stats)) {
+    // --- KRİTİK SIRALAMA: ÖNCE ÖZEL TİPLERİ KONTROL ET ---
+
+    // A - Broş Efektleri (Eğer eşya Broş ise burası çalışır)
+    if (item.type === 'brooch' && item.effects) {
+        const currentLang = window.gameSettings.lang || 'tr';
+        const lang = window.LANGUAGES[currentLang];
+        const tribeName = lang.enemy_names[item.specialtyTribe] || item.specialtyTribe;
+
+        // Sadece 'fixed_dmg' varsa ipucunu göster
+        const hasFixedDmg = item.effects.some(e => e.id === 'fixed_dmg');
+        if (hasFixedDmg) {
+            const hintDiv = document.createElement('div');
+            hintDiv.className = 'brooch-specialty-text'; // Daha spesifik bir sınıf ismi
+            hintDiv.textContent = lang.items.brooch_specialty_hint;
+            statsEl.appendChild(hintDiv);
+        }
+
+        // Alt Başlık (Mistik Aksesuar)
+        const subLabel = document.createElement('div');
+        subLabel.className = 'brooch-sub-label'; // CSS kontrolü için sınıf ekledim
+        subLabel.textContent = lang.items.brooch_label;
+        statsEl.appendChild(subLabel);
+
+        // Efektleri Listeleme (Daha önceki yaptığımız uzmanlık parantezi dahil)
+        item.effects.forEach(eff => {
             const row = document.createElement('div');
             row.className = 'tooltip-stat-row';
-            const statName = window.getStatDisplayName(statKey);
-            row.innerHTML = `<span>${statName}</span> <span class="tooltip-val">+${value}</span>`;
+            
+            let effectName = lang.items['eff_' + eff.id] || eff.id;
+            if (eff.id === "fixed_dmg") {
+                effectName += ` (${tribeName})`;
+            }
+
+            let displayVal = (eff.value < 1 && eff.value > 0) 
+                ? `%${Math.round(eff.value * 100)}` 
+                : `+${eff.value}`;
+
+            let detail = eff.targetStat ? ` (${lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase()})` : "";
+
+            row.innerHTML = `<span>${effectName}${detail}</span> <span class="tooltip-val">${displayVal}</span>`;
             statsEl.appendChild(row);
-        }
-    } 
-    // B - Broş Efektleri (Eğer eşya Broş ise burası çalışır)
-    else if (item.type === 'brooch' && item.effects) {
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
-    const tribeName = lang.enemy_names[item.specialtyTribe] || item.specialtyTribe;
-
-    // Sadece 'fixed_dmg' varsa ipucunu göster
-    const hasFixedDmg = item.effects.some(e => e.id === 'fixed_dmg');
-    if (hasFixedDmg) {
-        const hintDiv = document.createElement('div');
-        hintDiv.className = 'brooch-specialty-text'; // Daha spesifik bir sınıf ismi
-        hintDiv.textContent = lang.items.brooch_specialty_hint;
-        statsEl.appendChild(hintDiv);
-    }
-
-    // Alt Başlık (Mistik Aksesuar)
-    const subLabel = document.createElement('div');
-    subLabel.className = 'brooch-sub-label'; // CSS kontrolü için sınıf ekledim
-    subLabel.textContent = lang.items.brooch_label;
-    statsEl.appendChild(subLabel);
-
-    // Efektleri Listeleme (Daha önceki yaptığımız uzmanlık parantezi dahil)
-    item.effects.forEach(eff => {
-        const row = document.createElement('div');
-        row.className = 'tooltip-stat-row';
-        
-        let effectName = lang.items['eff_' + eff.id] || eff.id;
-        if (eff.id === "fixed_dmg") {
-            effectName += ` (${tribeName})`;
-        }
-
-        let displayVal = (eff.value < 1 && eff.value > 0) 
-            ? `%${Math.round(eff.value * 100)}` 
-            : `+${eff.value}`;
-
-        let detail = eff.targetStat ? ` (${lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase()})` : "";
-
-        row.innerHTML = `<span>${effectName}${detail}</span> <span class="tooltip-val">${displayVal}</span>`;
-        statsEl.appendChild(row);
-    });
+        });
 
         // Frekans Bilgisi
         const freqText = (langItems.brooch_freq || "Every $1 Turns").replace("$1", item.frequency);
@@ -256,11 +251,56 @@ window.showItemTooltip = function(item, event) {
         freqDiv.style.marginTop = "10px";
         freqDiv.innerHTML = `⌛ ${freqText}`;
         statsEl.appendChild(freqDiv);
+    } 
+    // B - TILSIM (CHARM1) TİPİ
+    else if (item.type === 'charm1') {
+        // 1. Temel Statlar (Atak, Defans veya Dirençler)
+        if (item.stats) {
+            for (const [key, val] of Object.entries(item.stats)) {
+                if (val > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'tooltip-stat-row';
+                    // Renkleri ellemiyoruz, sistemin kendi tooltip-val rengini kullanıyor
+                    row.innerHTML = `<span>${window.getStatDisplayName(key)}</span> <span class="tooltip-val">+${val}</span>`;
+                    statsEl.appendChild(row);
+                }
+            }
+        }
+        // 2. Savaş Bonuşları (Elemental Hasar veya Tribe Hasar/Defans)
+        if (item.bonuses) {
+            item.bonuses.forEach(b => {
+                if (b.type === 'elemDmg') {
+                    const row = document.createElement('div');
+                    row.className = 'tooltip-stat-row';
+                    row.innerHTML = `<span>${langItems.eff_elemDmg}</span> <span class="tooltip-val">+${b.value}</span>`;
+                    statsEl.appendChild(row);
+                } else if (b.type === 'tribe_mod') {
+                    const dmgRow = document.createElement('div');
+                    dmgRow.className = 'tooltip-stat-row';
+                    dmgRow.innerHTML = `<span>${langItems.eff_skill_dmg}</span> <span class="tooltip-val">+${b.skillDmg}</span>`;
+                    statsEl.appendChild(dmgRow);
+                    const defRow = document.createElement('div');
+                    defRow.className = 'tooltip-stat-row';
+                    defRow.innerHTML = `<span>${langItems.eff_tribe_def}</span> <span class="tooltip-val">+${b.defense}</span>`;
+                    statsEl.appendChild(defRow);
+                }
+            });
+        }
     }
-    // C - Gerçekten Materyal ise "Üretim Materyali" yaz (Takı veya Broş değilse)
+    // C - Standart Statlar (Takılar için)
+    else if (item.stats && Object.keys(item.stats).length > 0) {
+        for (const [statKey, value] of Object.entries(item.stats)) {
+            const row = document.createElement('div');
+            row.className = 'tooltip-stat-row';
+            const statName = window.getStatDisplayName(statKey);
+            row.innerHTML = `<span>${statName}</span> <span class="tooltip-val">+${value}</span>`;
+            statsEl.appendChild(row);
+        }
+    } 
+    // D - Gerçekten Materyal ise (Dilden çeker)
     else {
-        const hint = currentLang === 'tr' ? 'Üretim materyali' : 'Crafting material';
-        statsEl.innerHTML = `<div style="color:#888; font-size:0.8em; font-style:italic;">${hint}</div>`;
+        const materialHint = langItems.crafting_material || (currentLang === 'tr' ? 'Üretim materyali' : 'Crafting material');
+        statsEl.innerHTML = `<div style="color:#888; font-size:0.8em; font-style:italic;">${materialHint}</div>`;
     }
 
     tooltip.classList.remove('hidden');
@@ -318,7 +358,7 @@ window.equipItem = function(inventoryIndex) {
     if (!window.isItemAllowedInUI(item, 'equip')) return;
 
     // --- BROŞLAR İÇİN ÖZEL MANTIK ---
-    if (item.type === 'brooch') {
+     if (item.type === 'brooch' || item.type === 'charm1') {
         // İlk boş broş slotunu bul (0'dan 5'e kadar)
         const emptyBroochSlot = hero.brooches.indexOf(null);
         
@@ -396,7 +436,7 @@ function handleDrop(e, targetType, targetId) {
     }
 	if (data.source === 'bag' && targetType === 'brooch') {
         const item = hero.inventory[data.id];
-        if (item && item.type === 'brooch') {
+        if (item && (item.type === 'brooch' || item.type === 'charm1')) {
             const oldBrooch = hero.brooches[targetId];
             hero.brooches[targetId] = item;
             hero.inventory[data.id] = oldBrooch;

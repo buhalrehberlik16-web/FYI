@@ -71,7 +71,7 @@ function renderSalvageUIAll() {
     }
 };
 
-        const range = getSalvageRange(salvageItem.tier);
+        const range = getSalvageRange(salvageItem);
         yieldDiv.innerHTML = `
             <div style="margin-bottom:5px; border-bottom:1px solid #444">${lang.items.salvage_yield}:</div>
             <div class="prob-row"><span>${range.min} ${qtyText}:</span> <span style="color:#43FF64">%60</span></div>
@@ -82,15 +82,27 @@ function renderSalvageUIAll() {
     renderSalvageInventory();
 }
 
-function getSalvageRange(tier) {
-    // T1 ise: (1-1)*3 + 1 = 1 | T1 max: 1*3 = 3 -> [1, 2, 3]
-    // T2 ise: (2-1)*3 + 1 = 4 | T2 max: 2*3 = 6 -> [4, 5, 6]
-    // T3 ise: (3-1)*3 + 1 = 7 | T3 max: 3*3 = 9 -> [7, 8, 9]
-    // Formül: min = (Tier-1) * 3 + 1, max = Tier * 3
-    
+function getSalvageRange(item) {
+    if (!item) return { min: 0, mid: 0, max: 0 };
+
+    // Eğer parçalanan şey bir Tılsım (charm1) ise özel değerleri kullan
+    if (item.type === "charm1") {
+        const ranges = {
+            1: { min: 3, max: 5 },
+            2: { min: 5, max: 7 },
+            3: { min: 7, max: 9 },
+            4: { min: 9, max: 11 },
+            5: { min: 11, max: 13 }
+        };
+        const r = ranges[item.tier] || { min: 1, max: 3 };
+        return { min: r.min, mid: r.min + 1, max: r.max };
+    }
+	
+    // Normal Takılar (Jewelry) için standart formül
+    const tier = item.tier;
     const min = (tier - 1) * 3 + 1;
     const max = tier * 3;
-    const mid = min + 1; // Tam ortadaki rakam (Örn: 1, 2, 3 içindeki 2)
+    const mid = min + 1; 
     
     return { min, mid, max };
 }
@@ -147,7 +159,7 @@ window.processSalvage = function() {
 
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
-    const range = getSalvageRange(salvageItem.tier);
+    const range = getSalvageRange(salvageItem);
     
     // ORAN HESAPLAMA (60/30/10)
     let roll = Math.random();
@@ -169,7 +181,8 @@ window.processSalvage = function() {
         renderInventory(); // Ana çantayı da güncelle
         if(window.saveGame) window.saveGame();
     } else {
-        alert(currentLang === 'tr' ? "Envanter dolu!" : "Inventory full!");
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+        window.showAlert(lang.bag_full_msg);
     }
 	window.CalendarManager.passDay();
 };
