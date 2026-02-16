@@ -68,6 +68,7 @@ window.getHeroEffectiveStats = function() {
     };
     
     let currentResists = { ...hero.baseResistances };
+	let currentElemDmg = { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
     let flatAtkBonus = 0;  
     let flatDefBonus = 0;  
     let totalAtkMult = 1.0; 
@@ -75,14 +76,29 @@ window.getHeroEffectiveStats = function() {
 	
 
     // 2. EKİPMANLARI VE CHARMLARI TARA
-    const allItems = [...Object.values(hero.equipment), ...hero.inventory.filter(i => i && i.type === "passive_charm")];
+     const allItems = [
+        ...Object.values(hero.equipment), 
+        ...hero.inventory.filter(i => i && i.type === "passive_charm"),
+        ...hero.brooches.filter(i => i !== null) // KRİTİK: Tılsımlar buraya eklendi
+    ];
     
     allItems.forEach(item => {
         if (item && item.stats) {
             for (const statKey in item.stats) {
-                if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
+                // Tılsımdan gelen direkt ATK ve DEF'i yakala
+                if (statKey === 'atk') flatAtkBonus += item.stats[statKey];
+                else if (statKey === 'def') flatDefBonus += item.stats[statKey];
+                // Diğer statları topla (str, dex, int vb.)
+                else if (s.hasOwnProperty(statKey)) s[statKey] += item.stats[statKey];
+                // Dirençleri topla
                 else if (currentResists.hasOwnProperty(statKey)) currentResists[statKey] += item.stats[statKey];
             }
+        }
+		// --- KRİTİK: TILSIMLARDAN GELEN ELEMENTAL HASAR BONUSUNU TOPLA ---
+        if (item && item.type === "charm1" && item.bonuses) {
+            item.bonuses.forEach(b => {
+                if (b.type === 'elemDmg') currentElemDmg[b.element] += b.value;
+            });
         }
     });
 
@@ -151,6 +167,7 @@ window.getHeroEffectiveStats = function() {
         maxRage: finalMaxRage,
         rageRegen: finalRageRegen,
         resists: currentResists,
+		elementalDamage: currentElemDmg,
         atkMultiplier: totalAtkMult 
     };
 };
@@ -900,6 +917,10 @@ window.checkGameOver = function() {
 };
 
 window.executeBroochEffects = function(brooch) {
+	 // --- GÜVENLİK KONTROLÜ: Sadece Broşları İşle ---
+    // Tılsımlar (charm1) pasif olduğu için burada bir 'effects' listesi barındırmazlar.
+    if (!brooch || brooch.type !== "brooch" || !brooch.effects) return;
+    // ----------------------------------------------
     // 1. GEREKLİ VERİLERİ VE DİL PAKETİNİ HAZIRLA
     const stats = getHeroEffectiveStats();
     const currentLang = window.gameSettings.lang || 'tr';
