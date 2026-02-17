@@ -161,8 +161,25 @@ function createTradeSlot(item, action, isBuying) {
 
 window.calculateItemPrice = function(item, isBuying) {
     if (!item) return 0;
-    const basePrice = window.MERCHANT_CONFIG?.sellPrices[item.tier] || 3;
-    return isBuying ? basePrice * (window.MERCHANT_CONFIG?.buyMultiplier || 4) : basePrice;
+
+    // 1. BİRİM FİYAT BELİRLEME
+    let unitPrice = window.MERCHANT_CONFIG?.sellPrices[item.tier] || 1;
+
+    // ÖZEL DURUM: Takı parçaları (materyaller) her zaman 1 Gold olsun (Senin isteğin)
+    if (item.subtype === 'material') {
+        unitPrice = 1; 
+    }
+
+    // 2. ALIŞ/SATIŞ ÇARPANI
+    // Dükkan satarken (isBuying: true) daha pahalıya satar
+    let finalPrice = isBuying ? unitPrice * (window.MERCHANT_CONFIG?.buyMultiplier || 4) : unitPrice;
+
+    // 3. MİKTAR ÇARPANI (KRİTİK DÜZELTME)
+    // Eğer eşya bir yığın (stack) ise, birim fiyatı adetle çarp
+    const count = item.count || 1;
+    finalPrice = Math.floor(finalPrice * count);
+
+    return finalPrice;
 };
 
 // 5. SATIN ALMA VE SATMA (Onaylı)
@@ -197,18 +214,30 @@ window.sellItemToMerchant = function(index) {
     const item = hero.inventory[index];
     if (!item) return;
 
-    const price = calculateItemPrice(item, false);
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
-    showTradeConfirm(lang.confirm_sell, item, () => {
-        hero.gold += price;
-        hero.inventory[index] = null;
+    // showTradeConfirm'e miktar seçiminden sonra ne yapacağını söylüyoruz
+    window.showTradeConfirm(lang.confirm_sell, item, (chosenQty) => {
+        const unitPrice = (item.subtype === 'material') ? 1 : (window.MERCHANT_CONFIG?.sellPrices[item.tier] || 1);
+        const totalGoldEarned = unitPrice * chosenQty;
+
+        hero.gold += totalGoldGoldEarned;
+
+        // Eşya miktarını düş veya tamamen sil
+        if (item.count && item.count > chosenQty) {
+            item.count -= chosenQty; // Sadece satılan kadar eksilt
+        } else {
+            hero.inventory[index] = null; // Hepsi satıldıysa slotu boşalt
+        }
+
         updateGoldUI();
         renderMerchantUI();
-        writeLog(`💰 ${getTranslatedItemName(item)} ${price} altına satıldı.`);
+        writeLog(`💰 ${chosenQty}x ${getTranslatedItemName(item)} ${totalGoldEarned} altına satıldı.`);
         if(window.saveGame) window.saveGame();
     });
 };
+
+let currentSellAmount = 1;
 
 window.showTradeConfirm = function(msg, item, onConfirm) {
     const modal = document.getElementById('trade-confirm-modal');
@@ -217,51 +246,74 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     const statsEl = document.getElementById('confirm-item-stats');
     
     const currentLang = window.gameSettings.lang || 'tr';
-    const itemsLang = window.LANGUAGES[currentLang].items;
+    const lang = window.LANGUAGES[currentLang];
     const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
-    // 1. Ana mesaj
-    textEl.textContent = msg;
+    // 1. Başlangıç Miktarı
+    currentSellAmount = (item.count && item.count > 1) ? item.count : 1;
 
-    // 2. Eşya ismi ve seviyesi
-    const levelLabel = window.getItemLevelLabel(item);
-    nameEl.innerHTML = `
-    <div class="confirm-name-text">${getTranslatedItemName(item)}</div>
-    <div class="confirm-tier-text ${rules.badgeType === "tier" ? 'tier-' + item.tier : ''}">${levelLabel}</div>
-`;
-
-    // 3. İÇERİK LİSTELEME (BROŞ DESTEĞİ EKLENDİ)
-    statsEl.innerHTML = '';
-
-    if (item.type === 'brooch' && item.effects) {
-        // --- BROŞ EFEKTLERİNİ GÖSTER ---
-        item.effects.forEach(eff => {
-            const effectName = itemsLang['eff_' + eff.id] || eff.id;
-            let displayVal = (eff.value < 1 && eff.value > 0) ? `%${Math.round(eff.value * 100)}` : `+${eff.value}`;
-            
-            let detail = "";
-            if(eff.targetStat) detail = ` (${eff.targetStat.toUpperCase()})`;
-            if(eff.targetElement) detail = ` (${itemsLang['res_' + eff.targetElement] || eff.targetElement})`;
-
-            statsEl.innerHTML += `<div style="color:#df9cff">${effectName}${detail}: <span>${displayVal}</span></div>`;
-        });
+    // 2. Fiyat Güncelleme (Canlı)
+    const updateModalDisplay = () => {
+        const unitPrice = (item.subtype === 'material') ? 1 : (window.MERCHANT_CONFIG?.sellPrices[item.tier] || 1);
+        const totalPrice = unitPrice * currentSellAmount;
         
-        // Frekans Bilgisini de ekleyelim (Yanlışlıkla hızlı broşu satmamak için)
-        const freqText = (itemsLang.brooch_freq || "Every $1 Turns").replace("$1", item.frequency);
-        statsEl.innerHTML += `<div style="color:#3498db; font-size:0.8em; margin-top:5px;">⌛ ${freqText}</div>`;
+        // Üst mesaj ve Toplam Fiyat
+        textEl.innerHTML = `${msg} <br> <span style="color:gold; font-size:1.3rem; font-weight:bold;">${totalPrice} <i class="fas fa-coins"></i></span>`;
+        
+        // Miktar Yazısı
+        const qtyText = document.getElementById('modal-qty-value');
+        if (qtyText) qtyText.textContent = `x${currentSellAmount}`;
+    };
 
-    } else if (item.stats && Object.keys(item.stats).length > 0) {
-        // --- NORMAL TAKI STATLARINI GÖSTER ---
+    // 3. Arayüzü İnşa Et
+    const levelLabel = window.getItemLevelLabel(item);
+    const isStackable = item.count && item.count > 1;
+
+    nameEl.innerHTML = `
+        <div class="confirm-name-text">${getTranslatedItemName(item)}</div>
+        <div class="confirm-tier-text ${rules.badgeType === "tier" ? 'tier-' + item.tier : ''}">${levelLabel}</div>
+        
+        ${isStackable ? `
+            <div class="quantity-selector-container">
+                <button id="qty-minus" class="qty-btn">-</button>
+                <div id="modal-qty-value" class="qty-display">x${currentSellAmount}</div>
+                <button id="qty-plus" class="qty-btn">+</button>
+            </div>
+        ` : ""}
+    `;
+
+    // 4. Buton Olaylarını Bağla (Sadece yığınlanabilirse)
+    if (isStackable) {
+        document.getElementById('qty-minus').onclick = () => {
+            if (currentSellAmount > 1) {
+                currentSellAmount--;
+                updateModalDisplay();
+            }
+        };
+        document.getElementById('qty-plus').onclick = () => {
+            if (currentSellAmount < item.count) {
+                currentSellAmount++;
+                updateModalDisplay();
+            }
+        };
+    }
+
+    updateModalDisplay();
+
+    // 5. Statlar (Materyal değilse göster)
+    statsEl.innerHTML = '';
+    if (item.stats && item.subtype !== 'material') {
         for (const [statKey, value] of Object.entries(item.stats)) {
             const statName = window.getStatDisplayName(statKey);
-            statsEl.innerHTML += `<div>${statName}: <span style="color:#43FF64">+${value}</span></div>`;
+            statsEl.innerHTML += `<div>${statName}: <span class="tooltip-val">+${value}</span></div>`;
         }
     }
 
     modal.classList.remove('hidden');
     
+    // EVET / HAYIR
     document.getElementById('trade-confirm-yes').onclick = () => {
-        onConfirm();
+        onConfirm(currentSellAmount);
         modal.classList.add('hidden');
     };
     document.getElementById('trade-confirm-no').onclick = () => {
