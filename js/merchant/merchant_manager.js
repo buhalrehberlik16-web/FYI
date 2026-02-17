@@ -221,7 +221,7 @@ window.sellItemToMerchant = function(index) {
         const unitPrice = (item.subtype === 'material') ? 1 : (window.MERCHANT_CONFIG?.sellPrices[item.tier] || 1);
         const totalGoldEarned = unitPrice * chosenQty;
 
-        hero.gold += totalGoldGoldEarned;
+        hero.gold += totalGoldEarned;
 
         // Eşya miktarını düş veya tamamen sil
         if (item.count && item.count > chosenQty) {
@@ -319,4 +319,5 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     document.getElementById('trade-confirm-no').onclick = () => {
         modal.classList.add('hidden');
     };
+
 };
