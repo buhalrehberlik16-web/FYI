@@ -17,9 +17,9 @@ window.CHARM_CONFIG = {
     tribes: {
         pool: ["B&M", "Plants", "Undead", "Humans", "Magical Creatures", "Greenskins", "Dragonkind"],
         costs: {
-            1: { skillDmg: 4, defense: 2 },
-            2: { skillDmg: 6, defense: 3 },
-            3: { skillDmg: 8, defense: 4 }
+            1: { skillDmg: 3, defense: 1 },
+            2: { skillDmg: 6, defense: 2 },
+            3: { skillDmg: 9, defense: 3 }
         }
     },
 
@@ -27,9 +27,9 @@ window.CHARM_CONFIG = {
     elementals: {
         pool: ["fire", "cold", "lightning", "poison", "curse"],
         costs: {
-            1: { elemDmg: 3, resist: 2 },
-            2: { elemDmg: 6, resist: 4 },
-            3: { elemDmg: 8, resist: 6 }
+            1: { elemDmg: 2, resist: 2 },
+            2: { elemDmg: 4, resist: 4 },
+            3: { elemDmg: 6, resist: 6 }
         }
     },
 
@@ -172,4 +172,5 @@ window.SPECIAL_MERCH_ITEMS = [
     { id: "stone_lightning", nameKey: "item_stone_lightning", icon: "merch_items/lightning_resist_stone.webp", type: "resist_stone", target: "lightning", price: 40, tier: 1, stats: {}, subtype: "resist_stone", isStack: true, },
     { id: "stone_poison", nameKey: "item_stone_poison", icon: "merch_items/poison_resist_stone.webp", type: "resist_stone", target: "poison", price: 40, tier: 1, stats: {}, subtype: "resist_stone", isStack: true, },
     { id: "stone_curse", nameKey: "item_stone_curse", icon: "merch_items/curse_resist_stone.webp", type: "resist_stone", target: "curse", price: 40, tier: 1, stats: {}, subtype: "resist_stone", isStack: true, }
+
 ];
