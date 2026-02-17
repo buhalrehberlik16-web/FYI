@@ -57,14 +57,24 @@ window.setResolution = function(resString) {
 
 function updateUITexts() {
     const lang = window.LANGUAGES[window.gameSettings.lang];
-	const nickInput = document.getElementById('player-nick-input');
-	if(nickInput) nickInput.placeholder = lang.profile_placeholder;
+    if (!lang) return; // Dil verisi henüz yüklenmediyse çık
+
+    // Input placeholder'ı güncelle
+    const nickInput = document.getElementById('player-nick-input');
+    if(nickInput) nickInput.placeholder = lang.profile_placeholder;
     
-    // HTML'de data-i18n niteliği olan her şeyi bul ve güncelle
+    // HTML'deki tüm data-i18n niteliklerini tara ve değiştir
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
+        
+        // Eğer anahtar düz bir anahtarsa (örn: invest_gold_hint)
         if (lang[key]) {
             el.textContent = lang[key];
+        } 
+        // Eğer anahtar items içindeyse (Opsiyonel: data-i18n="items.name" yaparsan)
+        else if (key.includes('.') && lang.items) {
+             const subKey = key.split('.')[1];
+             if(lang.items[subKey]) el.textContent = lang.items[subKey];
         }
     });
 }
