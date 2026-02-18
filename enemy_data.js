@@ -155,7 +155,7 @@ window.ENEMY_STATS = {
                 value: 4, 
                 duration: 2, 
                 textKey: "fortitude" 
-            } 
+            }, 
 			{
 				id: "death_gaze",
 				template: "special_attack",
@@ -485,4 +485,5 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+
 
