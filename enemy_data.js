@@ -4,11 +4,11 @@ window.TRIBE_BASES = {
     "Greenskins": { fire: 2, cold: 2, lightning: 6, poison: 8, curse: 4 },
     "Humans": { fire: 0, cold: 0, lightning: 0, poison: 0, curse: -5 },
     //"Beasts&Monstrosities"
-    "B&M": { fire: -4, cold: 6, lightning: 0, poison: 0, curse: 0 },
-    "Plants": { fire: -15, cold: 0, lightning: 0, poison: 30, curse: 0 },
-    "Undead": { fire: -10, cold: 20, lightning: 0, poison: 80, curse: 0 },
-    "Dragonkind": { fire: 40, cold: 0, lightning: 0, poison: 20, curse: 10 },
-    "Magical Creatures": { fire: 15, cold: 15, lightning: 15, poison: 0, curse: -10 }
+    "B&M": { fire: -1, cold: 6, lightning: 1, poison: 0, curse: 0 },
+    "Plants": { fire: -3, cold: 0, lightning: 0, poison: 5, curse: 0 },
+    "Undead": { fire: -2, cold: 2, lightning: 0, poison: 10, curse: 0 },
+    "Dragonkind": { fire: 4, cold: 4, lightning: 4, poison: 3, curse: 3 },
+    "Magical Creatures": { fire: 5, cold: 5, lightning: 5, poison: 0, curse: -5 }
 };
 
 window.ENEMY_STATS = {
@@ -27,10 +27,10 @@ window.ENEMY_STATS = {
 				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
 				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
 				subtype: "poison",       // EnemySkillEngine'e bunun bir zehir olduğunu söyler
-				damageSplit: { physical: 0, poison: 1.2 }, // Fiziksel hasar 0, elemental güç 1.2x Atak
+				damageSplit: { physical: 0, poison: 1.5 }, // Fiziksel hasar 0, elemental güç 1.2x Atak
 				dotType: "poison", 
 				duration: 3,
-				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler
+				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
 				textKey: "poison_hit"  
             },
             { 
@@ -46,7 +46,7 @@ window.ENEMY_STATS = {
     "Orman Örümceği": { 
         tribe: "B&M",
         specificResists: { poison: 20 },
-        maxHp: 32, attack: 9, defense: 0, xp: 0, tier: 1, 
+        maxHp: 38, attack: 9, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
         dead: 'enemies/orman_orumcegi_dead.webp',
@@ -56,7 +56,7 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 subtype: "debuff_webbed", 
-                value: 0.30, 
+                value: 0.40, 
                 duration: 2, 
                 textKey: "webbed" 
             },
@@ -65,10 +65,17 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 8, 
+                value: 5, 
                 duration: 3, 
                 textKey: "harden" 
-            }
+            },
+            { 
+                id: "poison_bite", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 0.5, poison: 1.2 }, 
+                textKey: "poison_bite" 
+            }, 
         ]
     },
     "Hırsız Kobold": {
@@ -92,7 +99,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 15, 
+                value: 6, 
                 duration: 1, 
                 textKey: "dash" 
             }
@@ -145,10 +152,17 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 20, 
+                value: 4, 
                 duration: 2, 
                 textKey: "fortitude" 
             } 
+			{
+				id: "death_gaze",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {curse: 0.8},
+				textKey: "gaze"
+			}
         ]
     },
 
@@ -166,7 +180,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "atk_up", 
-                value: 10, 
+                value: 7, 
                 duration: 3, 
                 textKey: "yell" 
             }, 
@@ -175,7 +189,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 25, 
+                value: 10, 
                 duration: 2, 
                 textKey: "shield_wall" 
             }
@@ -203,7 +217,14 @@ window.ENEMY_STATS = {
                 subtype: "atk_half", 
                 duration: 2, 
                 textKey: "smoke" 
-            }
+            },
+			{ 
+                id: "fire_bomb", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.25 }, 
+                textKey: "bomb" 
+			}
         ]
     },
     "Gri Kurt": { 
@@ -230,7 +251,14 @@ window.ENEMY_STATS = {
                 value: 12, 
                 duration: 3, 
                 textKey: "howl" 
-            } 
+            },
+            { 
+                id: "miasma_bite", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { curse: 1.2 }, 
+                textKey: "miasma" 
+            },  
         ]
     },
 
@@ -257,7 +285,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 15, 
+                value: 12, 
                 duration: 3, 
                 textKey: "hide" 
             }
@@ -276,7 +304,7 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 subtype: "stun", 
-                duration: 1, 
+                duration: 2, 
                 textKey: "stunned" 
             },
             { 
@@ -284,7 +312,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "atk_up", 
-                value: 20, 
+                value: 15, 
                 duration: 3, 
                 textKey: "berserk" 
             }
@@ -303,7 +331,7 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 subtype: "stun", 
-                duration: 1, 
+                duration: 2, 
                 textKey: "slammed" 
             }, 
             { 
@@ -311,7 +339,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 25, 
+                value: 15, 
                 duration: 2, 
                 textKey: "stone" 
             }
@@ -357,7 +385,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "atk_up", 
-                value: 25, 
+                value: 18, 
                 duration: 5, 
                 textKey: "command" 
             },
@@ -366,7 +394,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 60, 
+                value: 25, 
                 duration: 3, 
                 textKey: "last_stand" 
             }
@@ -399,7 +427,22 @@ Object.assign(ENEMY_STATS, {
         idle: 'enemies/skeleton_idle.webp', 
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
-        skills: [{ id: "cursed_blade", template: "special_attack", category: "attack", damageSplit: { physical: 0.8, curse: 0.5 }, textKey: "cursed" }] 
+        skills: [
+			{ 
+				id: "cursed_blade", 
+				template: "special_attack", 
+				category: "attack", 
+				damageSplit: { physical: 0.8, curse: 0.5 }, 
+				textKey: "cursed" 
+			},
+			{
+				id: "death_gaze",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {curse: 1.2},
+				textKey: "gaze"
+			}
+			] 
     },
     "Gulyabani": {
         tribe: "Undead",
@@ -421,22 +464,22 @@ Object.assign(ENEMY_STATS, {
 
 window.BIOME_WEIGHTS = {
     // Düşman İsmi: { biyom_adi: ihtimal_orani }
-    "Zehirli Mantar": { forest: 0.6, plains: 0.2, cave: 0.1, iceland: 0.05, mountain: 0.05, urban: 0.0 },
-    "Orman Örümceği": { forest: 0.5, cave: 0.3, plains: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.0 },
-    "Hırsız Kobold":  { plains: 0.4, forest: 0.3, urban: 0.2, mountain: 0.1, cave: 0.0, iceland: 0.0 },
-    "Kan Yarasası":   { cave: 0.5, urban: 0.2, forest: 0.1, mountain: 0.1, plains: 0.05, iceland: 0.05 },
-    "İskelet":        { urban: 0.4, cave: 0.3, forest: 0.1, plains: 0.1, mountain: 0.1, iceland: 0.0 },
-    "Goblin Devriyesi": { plains: 0.4, forest: 0.4, mountain: 0.1, urban: 0.1, cave: 0.0, iceland: 0.0 },
-    "Kaçak Haydut":   { urban: 0.5, plains: 0.3, forest: 0.1, mountain: 0.1, cave: 0.0, iceland: 0.0 },
-    "Gri Kurt":       { iceland: 0.4, forest: 0.3, plains: 0.2, mountain: 0.1, cave: 0.0, urban: 0.0 },
-    "Yaban Domuzu":   { forest: 0.4, plains: 0.4, mountain: 0.1, iceland: 0.1, cave: 0.0, urban: 0.0 },
-    "Goblin Savaşçısı": { plains: 0.3, urban: 0.3, forest: 0.2, cave: 0.1, mountain: 0.1, iceland: 0.0 },
-    "Kaya Golemi":    { mountain: 0.6, cave: 0.3, plains: 0.1, iceland: 0.0, forest: 0.0, urban: 0.0 },
-    "İskelet Şövalye": { urban: 0.6, cave: 0.2, mountain: 0.1, forest: 0.1, plains: 0.0, iceland: 0.0 },
-    "Gulyabani":      { cave: 0.4, urban: 0.4, forest: 0.1, mountain: 0.1, plains: 0.0, iceland: 0.0 },
-    "Orc Fedaisi":    { mountain: 0.4, urban: 0.3, plains: 0.2, forest: 0.1, cave: 0.0, iceland: 0.0 },
-    "Kemik Golemi":   { urban: 0.4, cave: 0.4, mountain: 0.2, forest: 0.0, plains: 0.0, iceland: 0.0 },
-    "Goblin Şefi":    { urban: 0.7, plains: 0.2, mountain: 0.1, forest: 0.0, cave: 0.0, iceland: 0.0 }
+    "Zehirli Mantar": { forest: 0.6, plains: 0.1, cave: 0.15, iceland: 0, mountain: 0.15, urban: 0.0 },
+    "Orman Örümceği": { forest: 0.5, plains: 0.1, cave: 0.3, iceland: 0, mountain: 0.1, urban: 0.0 },
+    "Hırsız Kobold":  { forest: 0.2, plains: 0.5, cave: 0.0, iceland: 0, mountain: 0.1, urban: 0.2 },
+    "Kan Yarasası":   { forest: 0.1, plains: 0.05,cave: 0.5, iceland: 0.05, mountain: 0.1, urban: 0.2,  },
+    "İskelet":        { forest: 0.1, plains: 0.1, cave: 0.3, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+    "Goblin Devriyesi": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
+    "Kaçak Haydut":   { forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
+    "Gri Kurt":       { forest: 0.3, plains: 0.2, cave: 0.0, iceland: 0.4,  mountain: 0.1,  urban: 0.0 },
+    "Yaban Domuzu":   { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.1, mountain: 0.1, urban: 0.0 },
+    "Goblin Savaşçısı": { forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
+    "Kaya Golemi":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
+    "İskelet Şövalye": { forest: 0.1, plains: 0.0, cave: 0.2, iceland: 0.0,  mountain: 0.1, urban: 0.6 },
+    "Gulyabani":      { forest: 0.1,  plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+    "Orc Fedaisi":    { forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
+    "Kemik Golemi":   { forest: 0.0, plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.2, urban: 0.4 },
+    "Goblin Şefi":    { forest: 0.0, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.7 }
 };
 
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
