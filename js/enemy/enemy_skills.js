@@ -29,6 +29,15 @@ window.EnemySkillEngine = {
     },
 
     templates: {
+		"basic_attack": (monster, config) => {
+            const dmgPack = SkillEngine.calculate(monster, { damageSplit: { physical: 1.0 } }, hero);
+            return {
+                id: config.id, // attack1 veya attack2
+                category: "attack",
+                damage: dmgPack,
+                text: "basic_hit" // translation -> Vurdu!
+            };
+        },
         "special_attack": (monster, config) => {
             const dmgPack = SkillEngine.calculate(monster, config, hero);
             let packet = {
@@ -95,10 +104,18 @@ window.EnemySkillEngine = {
 
     resolve: function(monster, skillId) {
         const stats = ENEMY_STATS[monster.name];
-        const config = stats.skills.find(s => s.id === skillId);
+        
+        // 1. Canavarın kendi 'skills' listesinde bu ID var mı bak (attack1 veya attack2 de olabilir artık)
+        let config = stats.skills.find(s => s.id === skillId);
+
+        // 2. EĞER YOKSA ve bu bir attack1/2 ise: Sanal bir 'basic_attack' konfigürasyonu oluştur
+        if (!config && (skillId === 'attack1' || skillId === 'attack2')) {
+            config = { id: skillId, template: "basic_attack" };
+        }
+
         if (!config) return null;
-        const templateKey = (config.template === "damage_and_dot") ? "special_attack" : config.template;
-        const templateFunc = this.templates[templateKey];
+
+        const templateFunc = this.templates[config.template];
         return templateFunc ? templateFunc(monster, config) : null;
     }
 };
