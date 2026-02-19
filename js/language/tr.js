@@ -301,6 +301,7 @@ window.LANG_TR = {
 		enemy_effects: {
 			shriek: "-$1 ÖFKE!",
             poison_hit: "ZEHİRLENDİN!",
+			poison_bite: "ZEHİR",
             regrow: "İYİLEŞTİ!",
             webbed: "YAVAŞLADIN!",
             harden: "+DEFANS!",
@@ -325,7 +326,11 @@ window.LANG_TR = {
             marrow: "İLİK SÖMÜRDÜ!",
             command: "ŞEFİN EMRİ!",
             last_stand: "ÖLÜMSÜZ!",
-            cursed: "LANETLENDİN!"
+            cursed: "LANETLENDİN!",
+			basic_hit: "",
+			gaze: "ÖLÜMCÜL BAKIŞ!",
+			f_bomb: "ATEŞ BOMBASI",
+			miasma: "İLLET",
         },
 		
 		enemy_skills: {
@@ -333,6 +338,7 @@ window.LANG_TR = {
 			fungal_regrow: { name: "MANTAR YENİLENMESİ", effect: "İYİLEŞTİ" },
 			web_trap: { name: "AĞ TUZAĞI", effect: "YAVAŞLADIN" },
 			chitin_harden: { name: "KABUK SERTLEŞTİRME", effect: "+DEFANS" },
+			poison_bite: { name: "ZEHİRLI ISIRIK", effect: "ZEHİR!" },
 			pocket_sand: { name: "KUM ATMA", effect: "KÖRLÜK" },
 			cowardly_dash: { name: "KORKAK HAMLE", effect: "+DEFANS" },
 			vampiric_bite: { name: "VAMPİR ISIRIĞI", effect: "CAN ÇALDI" },
@@ -343,8 +349,10 @@ window.LANG_TR = {
 			shield_wall: { name: "KALKAN DUVARI", effect: "+DEFANS" },
 			dirty_strike: { name: "KİRLİ VURUŞ", effect: "AĞIR HASAR" },
 			smoke_bomb: { name: "SİS BOMBASI", effect: "KÖRLÜK" },
+			fire_bomb: { name: "ATEŞ BOMBASI", effect: "ATEŞ BOMBASI" },
 			vicious_bite: { name: "VAHŞİ ISIRIK", effect: "-30 ÖFKE" },
 			alpha_howl: { name: "ALFA ULUMASI", effect: "+ATAK" },
+			miasma_bite: { name: "İLLET ISIRIĞI", effect: "İLLET"},
 			trample: { name: "EZME", effect: "EZİLDİN" },
 			thick_hide: { name: "KALIN DERİ", effect: "+DEFANS" },
 			mace_bash: { name: "GÜRZ DARBESİ", effect: "SERSEM" },
