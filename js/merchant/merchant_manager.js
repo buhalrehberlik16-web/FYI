@@ -5,39 +5,57 @@ window.currentTradeMode = 'buy';
 
 // 1. STOK YENİLEME
 window.refreshMerchantStock = function() {
+    console.log("🛒 Tüccar stokları yenileniyor (4 Takı, 2 Parşömen, 2 Rastgele)...");
     window.merchantStock = [];
-    const progress = hero.highestTierDefeated || 1;
-    let targetTier = 1;
+    const progress = (window.hero && window.hero.highestTierDefeated) ? window.hero.highestTierDefeated : 1;
 
-    for (let i = 0; i < window.MERCHANT_CONFIG.stockCount; i++) {
-        // Tier belirleme mantığı aynı kalıyor...
-        if (progress === 1) targetTier = 1;
-        else if (progress === 2) targetTier = Math.random() < 0.5 ? 1 : 2;
-        else if (progress === 3) targetTier = 2;
-        else if (progress === 4) targetTier = Math.random() < 0.5 ? 2 : 3;
-        else targetTier = Math.floor(progress * 0.7) || 1;
+    // Yardımcı: İlerlemeye göre Tier belirleme
+    const getTargetTier = () => {
+        if (progress === 1) return 1;
+        if (progress === 2) return Math.random() < 0.5 ? 1 : 2;
+        if (progress === 3) return 2;
+        if (progress === 4) return Math.random() < 0.5 ? 2 : 3;
+        return Math.max(1, Math.floor(progress * 0.7));
+    };
 
-        if (Math.random() < 0.5) { 
-            // %50 Normal Takı
-            window.merchantStock.push(generateRandomItem(targetTier));
+    // --- 1. KESİN 4 TAKI (JEWELRY) ---
+    for (let i = 0; i < 4; i++) {
+        window.merchantStock.push(generateRandomItem(getTargetTier()));
+    }
+
+    // --- 2. KESİN 2 PARŞÖMEN (SCROLL) ---
+    // SPECIAL_MERCH_ITEMS içinden sadece subtype'ı 'scroll' olanları filtrele
+    const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
+    for (let i = 0; i < 2; i++) {
+        const randomScroll = { ...scrollPool[Math.floor(Math.random() * scrollPool.length)] };
+        window.merchantStock.push(randomScroll);
+    }
+
+    // --- 3. KESİN 2 RASTGELE (WILD CARD) ---
+    // Bu slotlar Takı, Kertenkele Gözü (Charm) veya Direnç Taşı olabilir.
+    for (let i = 0; i < 2; i++) {
+        const t = getTargetTier();
+        
+        if (Math.random() < 0.2) {
+            // %20 ihtimalle bir takı daha
+            window.merchantStock.push(generateRandomItem(t));
         } else {
-            // %50 Özel Eşya (Lizard veya Scroll)
-            const randomBase = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
-            
-            // Kopyasını oluştur
-            const newItem = { ...randomBase };
+            // %80 ihtimalle SPECIAL_MERCH_ITEMS içinden tamamen rastgele biri
+            const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
+            const newItem = { ...baseItem };
 
             // Eğer bu bir pasif charm (Lizard) ise, Tier'a göre stat ver
             if (newItem.type === "passive_charm") {
-                newItem.tier = targetTier;
+                newItem.tier = t;
                 newItem.stats = {};
-                const resistValue = targetTier * (window.ITEM_CONFIG.multipliers.resists || 3);
+                const resistValue = t * (window.ITEM_CONFIG?.multipliers?.resists || 3);
                 newItem.stats[newItem.resistType] = resistValue;
             }
-
             window.merchantStock.push(newItem);
         }
     }
+
+    console.log("✅ Yeni stok hazır:", window.merchantStock);
 };
 
 // 2. TİCARET EKRANINI AÇ
