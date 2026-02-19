@@ -941,8 +941,8 @@ window.executeBroochEffects = function(brooch) {
                 break;
                 
             case "stat_scaling":
-                // Stat hasarı (Str, Int, Mp) uzmanlıktan etkilenir
-                let scaleDmg = Math.floor((stats[eff.targetStat] * eff.value) * damageMult);
+                // Stat hasarı (Str, Int, Mp) uzmanlıktan etkilenmez.
+                let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
                 if (scaleDmg < 1) scaleDmg = 1;
                 monster.hp = Math.max(0, monster.hp - scaleDmg);
                 showFloatingText(monsterDisplay, scaleDmg, 'damage');
