@@ -9,7 +9,7 @@ const BARBARIAN_SKILLS = {
 	Pommel_Bash: { 
         data: {
             name: "Kabzayla Vur",
-            menuDescription: "Str'nin %120'si kadar hasar. +18 Rage üretir.",
+            menuDescription: "Str'nin %100'ü kadar hasar. +18 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
 			cooldown: 0,
@@ -19,7 +19,7 @@ const BARBARIAN_SKILLS = {
             tier: 1,
             // YENİ SİSTEM: Physical ve Elemental ayrımı
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.2},
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.0},
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -28,8 +28,8 @@ const BARBARIAN_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
 			const stats = getHeroEffectiveStats(); 
-            hero.rage = Math.min(stats.maxRage, hero.rage + 18);
-            showFloatingText(document.getElementById('hero-display'), "+18 Rage", 'heal');
+            hero.rage = Math.min(stats.maxRage, hero.rage + 12);
+            showFloatingText(document.getElementById('hero-display'), "+12 Rage", 'heal');
             
             // Animasyona artık sayı değil, paket gönderiyoruz
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
@@ -39,7 +39,7 @@ const BARBARIAN_SKILLS = {
     slash: {
         data: {
             name: "Kesik",
-            menuDescription: "Saldırı gücü + %60 Str bonusu. 20 Öfke harcar.",
+            menuDescription: "Saldırı gücü + %25 Str bonusu. 20 Öfke harcar.",
             rageCost: 20,
             levelReq: 1,
 			cooldown: 0,
@@ -48,7 +48,7 @@ const BARBARIAN_SKILLS = {
             category: 'brutal', 
             tier: 1,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "str", statMult: 0.6 },
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.25 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -63,7 +63,7 @@ const BARBARIAN_SKILLS = {
     bash: {
         data: {
             name: "Balyoz",
-            menuDescription: "Hasar: <b style='color:orange'>ATK + 0.8 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:cyan'>%30 Şansla Sersemletir (1 Tur).</span>",
             rageCost: 30,
             levelReq: 3,
 			cooldown: 2,
@@ -72,7 +72,7 @@ const BARBARIAN_SKILLS = {
             category: 'brutal',
             tier: 2,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "str", statMult: 0.8 },
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.4 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -96,7 +96,7 @@ const BARBARIAN_SKILLS = {
             category: 'brutal',
             tier: 2,
             scaling: { 
-                physical: { atkMult: 1.5, stat: "str", statMult: 0.8 },
+                physical: { atkMult: 1.25, stat: "str", statMult: 0.4 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -122,12 +122,12 @@ const BARBARIAN_SKILLS = {
             name: "Afallat",
             menuDescription: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span>",
             rageCost: 25,
-            levelReq: 3,
+            levelReq: 6,
 			cooldown: 2,
             icon: 'skills/barbarian/brutal/brutal_daze.webp',
             type: 'attack',
             category: 'brutal',
-            tier: 2,
+            tier: 3,
             scaling: { 
                 physical: { atkMult: 2.0, stat: "str", statMult: 0.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
@@ -149,14 +149,14 @@ const BARBARIAN_SKILLS = {
             name: "Zırh Kıran",
             menuDescription: "Zırhı parçalar. 30 Öfke harcar.<br><span style='color:cyan'>2 Tur: Düşman Defansı 0</span>.",
             rageCost: 30,
-            levelReq: 3,
+            levelReq: 10,
 			cooldown: 2,
             icon: 'skills/barbarian/brutal/brutal_armor_break.webp',
             type: 'attack',
             category: 'brutal', 
-            tier: 3,
+            tier: 4,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "str", statMult: 0.5 },
+                physical: { atkMult: 1.0, stat: "str", statMult: 1.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -175,7 +175,7 @@ const BARBARIAN_SKILLS = {
             name: "Hiddet",
             menuDescription: "50 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span>",
             rageCost: 50,
-            levelReq: 6,
+            levelReq: 10,
 			cooldown: 5,
             icon: 'skills/barbarian/brutal/brutal_fury.webp',
             type: 'buff',
@@ -241,7 +241,7 @@ const BARBARIAN_SKILLS = {
             category: 'chaos',
             tier: 1,
             scaling: { 
-                physical: { atkMult: 2.0, stat: "str", statMult: 0 },
+                physical: { atkMult: 1.5, stat: "str", statMult: 0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -434,7 +434,7 @@ const BARBARIAN_SKILLS = {
             tier: 2,
             scaling: { 
                 physical: { atkMult: 1.0, stat: "mp_pow", statMult: 0 },
-                elemental: { fire: 0, cold: 0, lightning: {stat: "mp_pow", statMult: 1.5}, poison: 0, curse: 0 }
+                elemental: { fire: 0, cold: 0, lightning: {stat: "mp_pow", statMult: 1.0}, poison: 0, curse: 0 }
             }
         },
 		onCast: function(attacker, defender) {
@@ -518,5 +518,6 @@ const BARBARIAN_SKILLS = {
 },
 
 };
+
 
 
