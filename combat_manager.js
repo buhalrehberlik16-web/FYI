@@ -553,9 +553,13 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     }
     }
 	
-	// --- DATA-DRIVEN Tier SCALE AYARI ---
-    const SCALE_AMOUNT = 1.5; // Değiştirmesi çok kolay: Burayı 1.2 yaparsan %20 artar
-    let multiplier = isHalfTierFromMap ? SCALE_AMOUNT : 1.0;
+	// --- DATA-DRIVEN TIER & HARD SCALE AYARI ---
+    const HALF_TIER_SCALE = 1.5; // Yarım Tier (Elite) çarpanı
+    const HARD_SCALE = 1.25;      // isHard (Strong) çarpanı
+    
+    let multiplier = 1.0;
+    if (isHalfTierFromMap) multiplier *= HALF_TIER_SCALE; // x1.50
+    if (isHardFromMap) multiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
 
     // Yardımcı yuvarlama fonksiyonu (Statları tam sayıya çevirir)
     const scale = (val) => Math.ceil(val * multiplier * scaling);
@@ -582,8 +586,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	
 	console.log(`${monster.name} Dirençleri:`, monster.resists); // Debug için
     
+	// --- LOGLAMA ---
 	if (isHalfTierFromMap) {
-        writeLog(`⚠️ **Takviyeli Düşman**: Statlar %${(SCALE_AMOUNT-1)*100} arttırıldı!`);
+        writeLog(`⚠️ **Takviyeli Düşman**: Statlar %50 arttırıldı!`);
+    }
+    if (isHardFromMap && !isHalfTierFromMap) {
+        writeLog(`⚔️ **Güçlü Düşman**: ${monster.name} %25 daha dayanıklı ve sert vuruyor!`);
     }
 	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
