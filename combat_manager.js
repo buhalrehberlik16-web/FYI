@@ -16,6 +16,13 @@ window.isHeroTurn = false;
 
 window.applyStatusEffect = function(target, newEffect) {
     const isTargetHero = (target === hero);
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr']; // Dili al
+    
+    // --- KRİTİK FİX: İsim eksikse dil dosyasından tamamla ---
+    if (!newEffect.name) {
+        newEffect.name = lang.status[newEffect.id] || newEffect.id;
+    }
+    // -------------------------------------------------------
     const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
 
     if (existingIndex !== -1) {
@@ -756,76 +763,57 @@ window.nextTurn = function() {
                 const stats = ENEMY_STATS[monster.name];
                 const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
-                // A. TEMEL ATAKLAR (Attack1 / Attack2)
-                if (action === 'attack1' || action === 'attack2') {
-                    const basicData = { damageSplit: { physical: 1.0 } };
-                    const dmgPack = SkillEngine.calculate(monster, basicData, hero);
-                    processMonsterDamage(monster, dmgPack, stats.attackFrames.map(f => `images/${f}`)); 
-                } 
-                // B. DEFANS
-                else if (action === 'defend') {
+                // A. DEFANS (Hala özel bir durum olduğu için ayrı tutuyoruz)
+                if (action === 'defend') {
                     handleMonsterDefend(monster);
                 } 
-                // C. YENİ ŞABLON SİSTEMİ (Skill Paketini Çöz ve Uygula)
+                // B. TÜM ATAKLAR VE SKİLLER (Artık hepsi paket üzerinden dönüyor)
                 else {
                     const packet = EnemySkillEngine.resolve(monster, action);
                     
                     if (packet) {
-                        const skillName = lang.enemy_skills[packet.id]?.name || packet.id;
-                        let effectLabel = lang.enemy_effects[packet.text] || "";
+                        // Yetenek ismini translations'dan çek (attack1/2 için translation yoksa boş döner)
+                        const skillName = lang.enemy_skills[packet.id]?.name;
+                        
+                        // Eğer bu özel bir skill ise ismini yazdır, değilse sessizce vur
+                        if (skillName) {
+                            writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                            showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
+                        }
 
-                        // 1. Dinamik Yazı Değişimi ($1 yerine değer basma)
+                        // Etki Yazısı ($1 desteği ile)
+                        let effectLabel = lang.enemy_effects[packet.text] || "";
                         if (effectLabel.includes("$1") && packet.value) {
                             effectLabel = effectLabel.replace("$1", packet.value);
                         }
 
-                        // 2. Yetenek İsmini Göster ve Log Yaz
-                        writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
-                        showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
-
-                        // 3. Hedefe Göre Metin ve İkon Yerini Belirle
-                        // Buff ise canavara (heal rengi), Debuff ise heroya (damage rengi)
-                        const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
-                        const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
-
                         if (effectLabel) {
-                            setTimeout(() => {
-                                showFloatingText(floatingTarget, effectLabel, floatingType);
-                            }, 500);
+                            const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
+                            const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
+                            setTimeout(() => { showFloatingText(floatingTarget, effectLabel, floatingType); }, 500);
                         }
 
-                        // 4. Anlık Öfke Azaltma (Step 5'teki kod - korundu)
-                        if (packet.rageReduction) {
-                            hero.rage = Math.max(0, hero.rage - packet.rageReduction);
-                            updateStats();
-                        }
-
-                        // 5. İyileşme Varsa Uygula
+                        // Öfke Azaltma ve İyileşme (Mevcut paket mantığın)
+                        if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
                         if (packet.healing > 0) {
                             monster.hp = Math.min(monster.maxHp, monster.hp + packet.healing);
                             showFloatingText(document.getElementById('monster-display'), packet.healing, 'heal');
                         }
 
-                        // 6. Statü Etkilerini Kime Uygulayacağına Karar Ver
+                        // Statü Etkileri Uygulama (Mevcut paket mantığın)
                         if (packet.statusEffects) {
                             packet.statusEffects.forEach(eff => {
-                                // Buff kategorisindeki etkiler MONSTER'a, diğerleri HERO'ya
                                 const targetChar = (packet.category === 'buff') ? monster : hero;
-                                applyStatusEffect(targetChar, {
-                                    id: eff.id,
-                                    name: lang.status[eff.id] || eff.id,
-                                    value: eff.value,
-                                    turns: eff.turns,
-                                    resetOnCombatEnd: true
-                                });
+                                applyStatusEffect(targetChar, { id: eff.id, name: eff.name, value: eff.value, turns: eff.turns, resetOnCombatEnd: true });
                             });
                         }
-                        
-                        // 7. Saf Buff/Debuff (Hasarsız) ise turu bitir
+
+                        // GÖRSEL VE HASAR UYGULAMA
                         if (packet.damage && packet.damage.total > 0) {
-                            const frames = stats.attackFrames.map(f => `images/${f}`);
-                            processMonsterDamage(monster, packet.damage, frames);
+                            // Canavarın attackFrames'lerini kullanarak hasarı vur
+                            processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
                         } else {
+                            // Hasarsız yetenekse sadece parlat
                             animateMonsterSkill();
                             updateStats();
                             window.isHeroTurn = true;
