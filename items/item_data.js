@@ -1,13 +1,13 @@
 // item_data.js
 
 window.ITEM_RULES = {
-    "jewelry": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true, lootValue: 1.0, nextTierValue: 1.5  },
+    "jewelry": { badgeType: "tier", canSalvage: true, canTransmute: true, canSynthesize: false, canReforge: true, canEquip: true, lootValue: 1.0, nextTierValue: 1.4  },
     "material": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: false, canEquip: false, lootValue: 0.75 },
     "scroll": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Scrollar reforge'da kullanılabilir
     "resist_stone": { badgeType: "craft", canSalvage: false, canTransmute: false, canSynthesize: true, canReforge: true, canEquip: false }, // Taşlar reforge'da kullanılabilir
     "charm": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: false },
-	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 2.0, nextTierValue: 2.5 },
-	"charm1": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 1.5, nextTierValue: 2.0 }
+	"brooch": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 1.9, nextTierValue: 2.6 },
+	"charm1": { badgeType: "tier", canSalvage: true, canTransmute: false, canSynthesize: false, canReforge: false, canEquip: true, lootValue: 1.7, nextTierValue: 2.4 }
 };
 
 window.CHARM_CONFIG = {

@@ -4,14 +4,18 @@ window.LootManager = {
     generateLoot: function(monster) {
         let rewards = [];
         
-        // 1. TIER SAYISALLAŞTIRMA (B1 -> 4, B2 -> 8 gibi)
+        // 1. ELITE KONTROLÜ: Üst seviye (T+1) takı düşürme izni
+        // Bosslar ve isHard (Turuncu çerçeveli) düşmanlar 'Elite' kabul edilir.
+        const isElite = (monster.isHard || monster.isBoss);
+        
+        // 2. TIER SAYISALLAŞTIRMA (B1 -> 4, B2 -> 8 gibi)
         let monsterTier = monster.tier;
         if (typeof monsterTier === 'string' && monsterTier.startsWith('B')) {
             let actNum = parseInt(monsterTier.replace('B', ''));
             monsterTier = actNum * 4; 
         }
 
-        // 2. LOOT TIER HESAPLAMA (Tier / 2 ve Zar Atma)
+        // 3. LOOT TIER HESAPLAMA (Tier / 2 ve Zar Atma)
         let calcTierBase = monsterTier / 2;
         let finalLootTier = 1;
 
@@ -22,74 +26,95 @@ window.LootManager = {
         }
         finalLootTier = Math.max(1, finalLootTier); 
 
-        // 3. BÜTÇE BELİRLEME
-        let lpBudget = (monster.isHard || monster.isBoss) 
-            ? (Math.random() * 2.5) + 1.75 
-            : (Math.random() * 2.5) + 0.75;
+        // --- 4. DİNAMİK BÜTÇE HESAPLAMA (TAM İSTEDİĞİN FORMÜL) ---
+        let minBudget = 0.8;
+        let maxBudget = 2.7;
 
-        writeLog(`💰 **Ganimet**: ${monster.name} (T${monsterTier}) -> Hedef Loot: T${finalLootTier}`);
-        writeLog(`📊 Bütçe: **${lpBudget.toFixed(2)} LP**`);
+        // Bonusu hem alta hem üste ekle (isHard ve isBoss ayrık kontrol edilir)
+        if (monster.isHard) {
+            minBudget += 0.7; // 0.8 -> 1.5
+            maxBudget += 0.7; // 2.7 -> 3.4
+        } else if (monster.isBoss) {
+            minBudget += 1.4; // 0.8 -> 2.2
+            maxBudget += 1.4; // 2.7 -> 4.1
+        }
 
-        // 4. HARCAMA DÖNGÜSÜ
-        while (lpBudget >= 1.0) {
+        // Rastgele bütçe üretimi
+        let lpBudget = (Math.random() * (maxBudget - minBudget)) + minBudget;
+
+        // Başlangıç Logu
+        writeLog(`💰 **GANİMET SİSTEMİ**: ${monster.name} (T${monsterTier})`);
+        writeLog(`📊 Toplam Bütçe: **${lpBudget.toFixed(2)} LP** (Aralık: ${minBudget.toFixed(1)}-${maxBudget.toFixed(1)})`);
+        // -------------------------------------------------------
+
+        // 5. HARCAMA DÖNGÜSÜ
+        while (lpBudget >= 0.75) {
             let possibleChoices = [];
-            
-            // Seçenek A: Standart Takı (Maliyet 1.0)
-            possibleChoices.push({ tier: finalLootTier, cost: 1.0, type: 'jewelry' });
-            
-            // Seçenek B: Tılsım (Charm1) (Maliyet 1.5) --- YENİ EKLENDİ ---
-            if (lpBudget >= 1.5) {
-                possibleChoices.push({ tier: finalLootTier, cost: 1.5, type: 'charm1' });
-            }
+            const lootableTypes = ['jewelry', 'charm1', 'brooch'];
 
-            // Seçenek C: Broş (Maliyet 2.0)
-            if (lpBudget >= 2.0) {
-                possibleChoices.push({ tier: finalLootTier, cost: 2.0, type: 'brooch' });
-            }
+            lootableTypes.forEach(type => {
+                const rules = window.ITEM_RULES[type];
+                if (!rules) return;
 
-            // Seçenek D: Üst Seviye Şansı (Sadece Hard/Boss ise ve yeterli bütçe varsa)
-            if ((monster.isHard || monster.isBoss) && lpBudget >= 1.5) {
-                possibleChoices.push({ tier: finalLootTier + 1, cost: 1.5, type: 'jewelry' });
-            }
+                // A. STANDART VERSİYON (lootValue) - Her zaman açık
+                if (lpBudget >= rules.lootValue) {
+                    possibleChoices.push({ 
+                        tier: finalLootTier, 
+                        cost: rules.lootValue, 
+                        type: type 
+                    });
+                }
+
+                // B. ÜST SEVİYE VERSİYON (nextTierValue) - Sadece Elite ise açık
+                if (isElite && lpBudget >= rules.nextTierValue) {
+                    possibleChoices.push({ 
+                        tier: finalLootTier + 1, 
+                        cost: rules.nextTierValue, 
+                        type: type 
+                    });
+                }
+            });
 
             let affordable = possibleChoices.filter(c => lpBudget >= c.cost);
             if (affordable.length === 0) break;
 
             let chosen = affordable[Math.floor(Math.random() * affordable.length)];
+            
+            // Harcamayı yap
             lpBudget -= chosen.cost;
 
-            // İlgili jeneratörü çağır
             let item;
             if (chosen.type === 'brooch') {
                 item = generateRandomBrooch(chosen.tier);
             } else if (chosen.type === 'charm1') {
-                // Yeni Tılsım Jeneratörü
                 item = generateRandomCharm(chosen.tier);
             } else {
                 item = generateRandomItem(chosen.tier);
             }
 
             rewards.push({ type: 'item', value: item });
-            writeLog(`🎁 Düşen: ${getTranslatedItemName(item)} (T${chosen.tier})`);
+            
+            // Harcama Logu
+            writeLog(`🎁 ${getTranslatedItemName(item)} (T${chosen.tier}) düşürüldü. [-${chosen.cost.toFixed(2)} LP | Kalan: ${lpBudget.toFixed(2)} LP]`);
         }
 
-        // 5. KALAN PUANI (REMAINDER) FRAGMENT'A ÇEVİR
+        // 6. KALAN PUANI FRAGMENT'A ÇEVİR
+        const matRules = window.ITEM_RULES["material"];
         if (lpBudget > 0) {
-            let rawFragCount = lpBudget * monsterTier;
+            let rawFragCount = lpBudget * (monsterTier / (matRules.lootValue || 0.75));
             let finalFragCount = Math.round(rawFragCount); 
 
             if (finalFragCount > 0) {
                 const fragmentItem = { ...window.BASE_MATERIALS["jewelry_fragment"] };
                 rewards.push({ type: 'item', value: fragmentItem, amount: finalFragCount });
-                writeLog(`💎 Kalan bütçeyle **${finalFragCount}** parça kazanıldı.`);
+                writeLog(`💎 Kalan **${lpBudget.toFixed(2)} LP** ile **${finalFragCount}** parça kazanıldı.`);
             }
         }
 
-        // 6. ALTIN ÖDÜLÜ (SABİT: 5 - 16)
+        // 7. ALTIN ÖDÜLÜ
         const goldVal = Math.floor(Math.random() * 12) + 5;
         rewards.push({ type: 'gold', value: goldVal });
-        writeLog(`🪙 **${goldVal}** Altın keseye eklendi.`);
-
+        
         return rewards;
     }
 };
