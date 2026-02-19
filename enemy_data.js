@@ -86,6 +86,13 @@ window.ENEMY_STATS = {
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
+			{ 
+            id: "attack1", // Normal attack1'i eziyoruz!
+            template: "special_attack", 
+            category: "attack",
+            damageSplit: { physical: 0.8, curse: 0.4 }, // Vuruşu artık lanetli!
+            textKey: "cursed_hit" 
+			},
             { 
                 id: "pocket_sand", 
                 template: "stat_debuff", 
@@ -112,7 +119,7 @@ window.ENEMY_STATS = {
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
-        skills: [
+        skills: [				
             { 
                 id: "vampiric_bite", 
                 template: "special_attack", 
@@ -223,7 +230,7 @@ window.ENEMY_STATS = {
                 template: "special_attack", 
                 category: "attack",
                 damageSplit: { fire: 1.25 }, 
-                textKey: "bomb" 
+                textKey: "f_bomb" 
 			}
         ]
     },
