@@ -252,33 +252,45 @@ window.showItemTooltip = function(item, event) {
         freqDiv.innerHTML = `⌛ ${freqText}`;
         statsEl.appendChild(freqDiv);
     } 
-    // B - TILSIM (CHARM1) TİPİ
+    // B - TILSIM (CHARM1) TİPİ (İstediğin yer değiştirme burada yapıldı)
     else if (item.type === 'charm1') {
-        // 1. Temel Statlar (Atak, Defans veya Dirençler)
-        if (item.stats) {
-            for (const [key, val] of Object.entries(item.stats)) {
-                if (val > 0) {
-                    const row = document.createElement('div');
-                    row.className = 'tooltip-stat-row';
-                    // Renkleri ellemiyoruz, sistemin kendi tooltip-val rengini kullanıyor
-                    row.innerHTML = `<span>${window.getStatDisplayName(key)}</span> <span class="tooltip-val">+${val}</span>`;
-                    statsEl.appendChild(row);
-                }
-            }
-        }
-        // 2. Savaş Bonuşları (Elemental Hasar veya Tribe Hasar/Defans)
+        const langItems = window.LANGUAGES[window.gameSettings.lang].items;
+
+        // 1. ÖNCE HASAR BONUSLARINI GÖSTER (Üstte olması için)
         if (item.bonuses) {
             item.bonuses.forEach(b => {
                 if (b.type === 'elemDmg') {
+                    // ELEMENTAL HASAR ÜSTTE
                     const row = document.createElement('div');
                     row.className = 'tooltip-stat-row';
                     row.innerHTML = `<span>${langItems.eff_elemDmg}</span> <span class="tooltip-val">+${b.value}</span>`;
                     statsEl.appendChild(row);
                 } else if (b.type === 'tribe_mod') {
+                    // KLAN HASARI ÜSTTE
                     const dmgRow = document.createElement('div');
                     dmgRow.className = 'tooltip-stat-row';
                     dmgRow.innerHTML = `<span>${langItems.eff_skill_dmg}</span> <span class="tooltip-val">+${b.skillDmg}</span>`;
                     statsEl.appendChild(dmgRow);
+                }
+            });
+        }
+
+        // 2. SONRA SAVUNMA/RESIST STATLARINI GÖSTER (Altta olması için)
+        if (item.stats) {
+            for (const [key, val] of Object.entries(item.stats)) {
+                if (val > 0) {
+                    const row = document.createElement('div');
+                    row.className = 'tooltip-stat-row';
+                    row.innerHTML = `<span>${window.getStatDisplayName(key)}</span> <span class="tooltip-val">+${val}</span>`;
+                    statsEl.appendChild(row);
+                }
+            }
+        }
+
+        // 3. EĞER VARSA KLAN DEFANSINI EN ALTA EKLE
+        if (item.bonuses) {
+            item.bonuses.forEach(b => {
+                if (b.type === 'tribe_mod') {
                     const defRow = document.createElement('div');
                     defRow.className = 'tooltip-stat-row';
                     defRow.innerHTML = `<span>${langItems.eff_tribe_def}</span> <span class="tooltip-val">+${b.defense}</span>`;
