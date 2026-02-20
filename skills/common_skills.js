@@ -198,72 +198,13 @@ const COMMON_SKILLS = {
     },
 
     // --- TIER 3 (PASİFLER) ---
-    hoarder: {
-        data: {
-            name: "İstifçi",
-            description: "Daha fazla takı takabilirsin.",
-            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır.",
-            rageCost: 0,
-            levelReq: 2,
-            icon: 'skills/common/icon_hoarder.webp',
-            type: 'passive',
-            category: 'common',
-            tier: 4,
-			pointCost: 3,
-            onAcquire: function() {
-                hero.brooches.push(null);
-                writeLog("📿 Broş kapasitesi arttı! (+1 Slot)");
-            }
-        }
-    },
 
-    loot_junkie: {
-        data: {
-            name: "Ganimetçi",
-            description: "Çantanda daha çok yer açar.",
-            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır.",
-            rageCost: 0,
-            levelReq: 2,
-            icon: 'skills/common/icon_loot_junkie.webp',
-            type: 'passive',
-            category: 'common',
-            tier: 3,
-			pointCost: 2,
-            onAcquire: function() {
-                hero.inventory.push(null, null);
-                writeLog("🎒 Çanta kapasitesi arttı! (+2 Slot)");
-            }
-        }
-    },
-
-    fired_up: {
-        data: {
-            name: "Ateşli",
-            description: "Savaşta daha fazla yetenek kullan.",
-            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır.",
-            rageCost: 0,
-            levelReq: 3,
-            icon: 'skills/common/icon_fired_up.webp',
-            type: 'passive',
-            category: 'common',
-            tier: 4,
-			pointCost: 3,
-            onAcquire: function() {
-                hero.equippedSkills.push(null);
-                writeLog("⚔️ Savaş kapasitesi arttı! (+1 Skill Slotu)");
-                if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
-                if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
-            }
-        }
-    },
-
-    // --- TIER 4 ---
     sharpen: {
         data: {
             name: "Bileme",
             menuDescription: "30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.",
             rageCost: 30,
-            levelReq: 6, 
+            levelReq: 5, 
             cooldown: 5,
             icon: 'skills/common/icon_sharpen.webp',
             type: 'buff',
@@ -285,7 +226,7 @@ const COMMON_SKILLS = {
             name: "Lanet",
             menuDescription: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>",
             rageCost: 20,
-            levelReq: 6,
+            levelReq: 5,
             cooldown: 9,
             icon: 'skills/common/icon_curseskill.webp',
             type: 'debuff',
@@ -299,6 +240,66 @@ const COMMON_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "LANETLENDİ!", 'damage'); 
             setTimeout(() => { nextTurn(); }, 1000); 
+        }
+    },
+	
+    loot_junkie: {
+        data: {
+            name: "Ganimetçi",
+            description: "Çantanda daha çok yer açar.",
+            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır.",
+            rageCost: 0,
+            levelReq: 5,
+            icon: 'skills/common/icon_loot_junkie.webp',
+            type: 'passive',
+            category: 'common',
+            tier: 3,
+			pointCost: 2,
+            onAcquire: function() {
+                hero.inventory.push(null, null);
+                writeLog("🎒 Çanta kapasitesi arttı! (+2 Slot)");
+            }
+        }
+    },
+
+	// --- TIER 4 ---
+	hoarder: {
+        data: {
+            name: "İstifçi",
+            description: "Daha fazla takı takabilirsin.",
+            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır.",
+            rageCost: 0,
+            levelReq: 8,
+            icon: 'skills/common/icon_hoarder.webp',
+            type: 'passive',
+            category: 'common',
+            tier: 4,
+			pointCost: 3,
+            onAcquire: function() {
+                hero.brooches.push(null);
+                writeLog("📿 Broş kapasitesi arttı! (+1 Slot)");
+            }
+        }
+    },
+
+    fired_up: {
+        data: {
+            name: "Ateşli",
+            description: "Savaşta daha fazla yetenek kullan.",
+            menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır.",
+            rageCost: 0,
+            levelReq: 8,
+            icon: 'skills/common/icon_fired_up.webp',
+            type: 'passive',
+            category: 'common',
+            tier: 4,
+			pointCost: 3,
+            onAcquire: function() {
+                hero.equippedSkills.push(null);
+                writeLog("⚔️ Savaş kapasitesi arttı! (+1 Skill Slotu)");
+                if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+                if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+            }
         }
     },
 
@@ -340,4 +341,5 @@ const COMMON_SKILLS = {
     },	
 
 };
+
 
