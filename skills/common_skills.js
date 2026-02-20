@@ -208,8 +208,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_hoarder.webp',
             type: 'passive',
             category: 'common',
-            tier: 3,
-			pointCost: 2,
+            tier: 4,
+			pointCost: 3,
             onAcquire: function() {
                 hero.brooches.push(null);
                 writeLog("📿 Broş kapasitesi arttı! (+1 Slot)");
@@ -246,8 +246,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_fired_up.webp',
             type: 'passive',
             category: 'common',
-            tier: 3,
-			pointCost: 2,
+            tier: 4,
+			pointCost: 3,
             onAcquire: function() {
                 hero.equippedSkills.push(null);
                 writeLog("⚔️ Savaş kapasitesi arttı! (+1 Skill Slotu)");
@@ -268,8 +268,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_sharpen.webp',
             type: 'buff',
             category: 'common',
-            tier: 4,
-			pointCost: 3
+            tier: 3,
+			pointCost: 2
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'atk_up_percent', name: 'Keskinlik', turns: 4, value: 0.25, waitForCombat: false, resetOnCombatEnd: true });
@@ -290,8 +290,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_curseskill.webp',
             type: 'debuff',
             category: 'common',
-            tier: 4,
-			pointCost: 3
+            tier: 3,
+			pointCost: 2
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'curse_damage', name: 'Lanetli', turns: 5, value: 0.20, waitForCombat: false, resetOnCombatEnd: true });

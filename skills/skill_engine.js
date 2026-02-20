@@ -61,11 +61,21 @@ const SkillEngine = {
         let totalElemAfterResist = 0; // --- ERROR FIX: ÖNCE TANIMLADIK ---
         const elementTypes = ['fire', 'cold', 'lightning', 'poison', 'curse'];
 		
+		// --- CHARM1 ELEMENTAL BONUS KONTROLÜ ---
+        let charmElemBonuses = { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
+        hero.brooches.forEach(c => {
+            if (c && c.type === "charm1") {
+                c.bonuses.forEach(b => {
+                    if (b.type === 'elemDmg') charmElemBonuses[b.element] += b.value;
+                });
+            }
+        });
+
         elementTypes.forEach(type => {
             let elemRaw = 0;
             if (isAttackerHero) {
-                // Tılsım (Charm1) bonusları artık attackerStats.elementalDamage içinde hazır geliyor!
-                const itemPlusCharmBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
+                // Karakterin itemlarından gelen sabit elemental hasar
+                const itemElemBonus = attackerStats.elementalDamage ? (attackerStats.elementalDamage[type] || 0) : 0;
                 
                 // Skilin o element için konfigürasyonu
                 const elemConf = (sc.elemental && sc.elemental[type]) ? sc.elemental[type] : 0;
@@ -81,45 +91,49 @@ const SkillEngine = {
                     skillElemValue = Math.floor(rawAtk * elemConf);
                 }
                 
-                elemRaw = Math.floor(itemPlusCharmBonus + skillElemValue);
+                elemRaw = Math.floor(itemElemBonus + skillElemValue);
             } else {
-                // Canavar: Sadece Atak * Çarpan
+                // Canavar: Sadece Atak * Çarpan (Canavarların karmaşık statları yok)
                 elemRaw = Math.floor(rawAtk * (sc[type] || 0));
             }
+			
+			// Tılsımdan gelen ek hasarı ekle
+            elemRaw += charmElemBonuses[type]; 
 
-            // Direnç Uygulama (Flat Resistance - Sabit Azalma)
+            // Direnç Uygulama (Flat Resistance)
             if (elemRaw > 0) {
                 let resValue = targetResists[type] || 0;
                 totalElemAfterResist += Math.max(0, elemRaw - resValue);
             }
         });
 
-        // Fiziksel Net ve Kalan Defans Hesaplama
+        // --- 4. CHARM1 TRIBE HASAR BONUSU (HESAPLAMA ÖNCESİNE ÇEKİLDİ) ---
+        let charmTribeDmg = 0;
+        hero.brooches.forEach(c => {
+            if (c && c.type === "charm1" && c.targetTribe === target.tribe) {
+                const b = c.bonuses.find(x => x.type === 'tribe_mod');
+                if (b) {
+                    charmTribeDmg += b.skillDmg;
+                }
+            }
+        });
+
+        // Kural: Fiziksel ağırsa oraya, değilse elementale ekle (True damage olmaması için ham verilere ekliyoruz)
+        if (physRaw >= totalElemAfterResist) {
+            physRaw += charmTribeDmg;
+        } else {
+            totalElemAfterResist += charmTribeDmg;
+        }
+
+        // --- 5. NİHAİ NET HASAR HESAPLAMALARI ---
+        // Fiziksel Net ve Kalan Defans Hesaplama (Tılsım eklenmiş physRaw üzerinden)
         let physNet = Math.max(0, physRaw - effectiveDef);
         let remDef = (physRaw < effectiveDef) ? (effectiveDef - physRaw) : 0;
         
-        // Elemental Sönümleme (Kalan Defans / 2)
+        // Elemental Sönümleme (Tılsım eklenmiş totalElemAfterResist üzerinden)
         let elemNet = Math.max(0, totalElemAfterResist - Math.floor(remDef / 2));
-		
-		// --- 4. CHARM1 TRIBE HASAR/DEFANS BONUSU ---
-		let charmTribeDmg = 0;
-		hero.brooches.forEach(c => {
-			if (c && c.type === "charm1" && c.targetTribe === target.tribe) {
-				const b = c.bonuses.find(x => x.type === 'tribe_mod');
-				if (b) {
-					charmTribeDmg += b.skillDmg;
-				}
-			}
-		});
 
-		// KURAL: Fiziksel mi ağır Elemental mi? (İstediğin Mantık)
-		if (physNet >= elemNet) {
-			physNet += charmTribeDmg;
-		} else {
-			elemNet += charmTribeDmg;
-		}
-
-        // --- 5. YÜZDESEL KORUMALAR (Guard Active vb.) ---
+        // --- 6. YÜZDESEL KORUMALAR (Guard Active vb.) ---
         let totalHasar = physNet + elemNet;
         const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
         if (guardEffect) {
@@ -140,6 +154,7 @@ const SkillEngine = {
     }
 };
 
+// Sayfa yüklenince motoru ateşle
 document.addEventListener('DOMContentLoaded', () => {
     SkillEngine.init();
 });

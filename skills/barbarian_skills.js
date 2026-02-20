@@ -87,7 +87,7 @@ const BARBARIAN_SKILLS = {
     pierce_through: {
         data: {
             name: "Delip Geç",
-            menuDescription: "Hasar: <b style='color:orange'>1.5 x ATK + 0.8 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:cyan'>Düşman Defansının %50'sini yok sayar.</span>",
             rageCost: 30,
             levelReq: 3,
 			cooldown: 1,
@@ -232,7 +232,7 @@ const BARBARIAN_SKILLS = {
 	    reckless_strike: {
         data: {
             name: "Pervasız Vuruş",
-            menuDescription: "Hasar: <b style='color:orange'>2xATK</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>1.5xATK</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
             rageCost: 35,
             levelReq: 1,
 			cooldown: 1,
@@ -317,34 +317,42 @@ const BARBARIAN_SKILLS = {
 	// --- CHAOS TIER 3 ---
     double_blade: {
         data: {
-            name: "İki Uçlu Değnek",
-            menuDescription: "Kendini umursamadan düşmana saldır.",
-            rageCost: 20, 
+            name: "İki Uçlu Balta",
+            menuDescription: "Kendini umursamadan düşmana saldır. Düşmana verdiğin hasarın %25'i kadar HP kaybedersin. 15 Öfke.",
+            rageCost: 15, 
             levelReq: 3, 
             cooldown: 4, 
             icon: 'skills/barbarian/chaos/chaos_double_blade.webp',
-            type: 'buff', 
+            type: 'attack', 
             category: 'chaos', 
-            tier: 3			
+            tier: 3,
+            // YENİ: Yüksek hasar çarpanı (2.0x Atak + 0.5x Str)
+            scaling: { 
+                physical: { atkMult: 2.0, stat: "str", statMult: 0.5 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }			
         },
-        onCast: function() {
-            // Mevcut hasar motorumuzdaki atk_up_percent çarpanını kullanıyoruz
-            hero.statusEffects.push({ 
-                id: 'atk_up_percent', 
-                name: 'Hücum!', 
-                value: 0.50, 
-                turns: 4, 
-                waitForCombat: false, 
-                resetOnCombatEnd: true 
-            });
+        onCast: function(attacker, defender, dmgPack) {
+            // 1. Düşmana hasarı vur (Animasyonu başlat)
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
 
-            // Skill Cooldown
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'double_blade', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+            // 2. Geri Tepme (Recoil) Hesabı: Düşmana giden toplam hasarın %25'i
+            const recoilDamage = Math.floor(dmgPack.total * 0.25);
 
-            updateStats();
-            showFloatingText(document.getElementById('hero-display'), "ÖFKELENDİ!", 'heal');
-            
-            setTimeout(nextTurn, 1000);
+            // 3. Kahramana hasar verme işlemi (Vuruş anına denk gelmesi için kısa bir gecikme ile)
+            setTimeout(() => {
+                if (recoilDamage > 0) {
+                    hero.hp = Math.max(0, hero.hp - recoilDamage);
+                    showFloatingText(document.getElementById('hero-display'), recoilDamage, 'damage');
+                    writeLog(`🩸 **${this.data.name}**: Kendine ${recoilDamage} hasar verdin!`);
+                    updateStats();
+                    
+                    // Kahraman recoil yüzünden ölürse savaşı bitir
+                    if (hero.hp <= 0) {
+                        checkGameOver();
+                    }
+                }
+            }, 300); // 300ms vuruş karesine denk gelir
         }
     },
 	
