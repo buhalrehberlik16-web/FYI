@@ -424,7 +424,8 @@ window.LANG_EN = {
 			fire: "Fire",
 			cold: "Cold",
 			lightning: "Lightning",
-			curse: "Curse"
+			curse: "Curse",
+			immunity_active: "Immunity",
         },
 
         // Events
@@ -511,6 +512,7 @@ window.LANG_EN = {
 			double_blade: { name: "Double-Edged Blade", desc: "Attack the enemy without regard for yourself. You take 25% of the Damage you deal. 15 Rage." },
 			light_blade: { name: "Light Blade", desc: "Brave attack. 35 Rage.<br>Damage: <b style='color:orange'>ATK + 1.5 x MP</b>." },
             Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
+			sacred_will: { name: "Sacred Will", desc: "Grants immunity to ALL debuff and DoT effects for 2 turns. 20 Rage." },
             Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." }
         },
     

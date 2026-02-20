@@ -425,7 +425,8 @@ window.LANG_TR = {
 			fire: "Yanma",
 			cold: "Donma",
 			lightning: "Şok",
-			curse: "Lanet Hasarı"
+			curse: "Lanet Hasarı",
+			immunity_active: "Bağışıklık",
         },
 		
         // --- OLAYLAR (EVENTS) ---
@@ -512,6 +513,7 @@ window.LANG_TR = {
 			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır. Düşmana verdiğin hasarın %25'i kadar HP kaybedersin. 15 Öfke." },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>." },
 			light_blade: { name: "Işığın Kılıcı", desc: "Cesur saldırı. 35 Öfke.<br>Hasar: <b style='color:orange'>ATK + 1.5 x MP</b>." },
+			sacred_will: { name: "Kutsal İrade", desc: "2 tur boyunca TÜM debuff ve DoT etkilerine bağışıklık kazandırır. 20 Öfke." },
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."}
         },
 		
