@@ -23,6 +23,19 @@ window.applyStatusEffect = function(target, newEffect) {
         newEffect.name = lang.status[newEffect.id] || newEffect.id;
     }
     // -------------------------------------------------------
+	
+	// --- YENİ: FERVOR DEBUFF ENGELLEME (IMMUNITY) KONTROLÜ ---
+    if (isTargetHero) {
+        const hasImmunity = hero.statusEffects.some(e => e.id === 'immunity_active');
+        // Eğer kahraman 'immunity' (bağışıklık) etkisindeyse ve gelen şey bir debuff ise engelle
+        // (Buffları ve DoT hasar artışlarını engellememesi için id kontrolü yapılır)
+        const debuffIds = ['stun', 'atk_half', 'debuff_webbed', 'poison', 'defense_zero', 'curse_damage'];
+        if (hasImmunity && debuffIds.includes(newEffect.id)) {
+            writeLog(`🛡️ **Bağışıklık**: ${newEffect.name} etkisi savuşturuldu!`);
+            return; // Etkiyi uygulamadan çık
+        }
+    }
+	
     const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
 
     if (existingIndex !== -1) {
