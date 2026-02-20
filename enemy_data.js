@@ -16,7 +16,7 @@ window.ENEMY_STATS = {
     "Zehirli Mantar": { 
         tribe: "Plants",
         specificResists: { poison: 20 },
-        maxHp: 46, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/zehirli_mantar.webp',
         attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
         dead: 'enemies/zehirli_mantar_dead.webp',
@@ -27,7 +27,7 @@ window.ENEMY_STATS = {
 				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
 				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
 				subtype: "poison",       // EnemySkillEngine'e bunun bir zehir olduğunu söyler
-				damageSplit: { physical: 0, poison: 1.5 }, // Fiziksel hasar 0, elemental güç 1.2x Atak
+				damageSplit: { physical: 0, poison: 1.0 }, // Fiziksel hasar 0, elemental güç 1.2x Atak
 				dotType: "poison", 
 				duration: 3,
 				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
@@ -46,7 +46,7 @@ window.ENEMY_STATS = {
     "Orman Örümceği": { 
         tribe: "B&M",
         specificResists: { poison: 20 },
-        maxHp: 38, attack: 9, defense: 0, xp: 0, tier: 1, 
+        maxHp: 34, attack: 9, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
         dead: 'enemies/orman_orumcegi_dead.webp',
@@ -81,7 +81,7 @@ window.ENEMY_STATS = {
     "Hırsız Kobold": {
         tribe: "Dragonkind",
         specificResists: { fire: 10, curse: 10 },
-        maxHp: 48, attack: 7, defense: 0, xp: 0, tier: 1, 
+        maxHp: 36, attack: 7, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
@@ -115,7 +115,7 @@ window.ENEMY_STATS = {
     "Kan Yarasası": { 
         tribe: "B&M",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 8, defense: 0, xp: 0, tier: 1, 
+        maxHp: 24, attack: 8, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
@@ -124,10 +124,26 @@ window.ENEMY_STATS = {
                 id: "vampiric_bite", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { physical: 0.4, curse: 0.8 }, 
+                damageSplit: { physical: 0.4, curse: 0.6 }, 
                 healPercent: 1.0, 
                 textKey: "life_drain" 
             }, 
+			{ 
+            id: "attack1", // Normal attack1'i eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 0.4, curse: 0.6 }, 
+                healPercent: 1.0, 
+                textKey: "life_drain" 
+			},
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 0.4, curse: 0.6 }, 
+                healPercent: 1.0, 
+                textKey: "life_drain" 
+			},
             { 
                 id: "bat_shriek", 
                 template: "stat_debuff", 
@@ -141,7 +157,7 @@ window.ENEMY_STATS = {
     "İskelet": { 
         tribe: "Undead",
         specificResists: { cold: 10 },
-        maxHp: 40, attack: 6, defense: 3, xp: 0, tier: 1, 
+        maxHp: 30, attack: 6, defense: 3, xp: 0, tier: 1, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
@@ -492,5 +508,6 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+
 
 
