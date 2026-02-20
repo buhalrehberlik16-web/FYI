@@ -473,6 +473,33 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
+	sacred_will: {
+        data: {
+            name: "Kutsal İrade",
+            menuDescription: "Zihnini arındırır. 2 tur boyunca TÜM debuff ve DoT etkilerine bağışıklık kazandırır. 20 Öfke.",
+            rageCost: 20,
+            levelReq: 4,
+            cooldown: 5,
+            icon: 'skills/barbarian/fervor/fervor_sacred_will.webp',
+            type: 'buff',
+            category: 'fervor',
+            tier: 3
+        },
+        onCast: function() {
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            applyStatusEffect(hero, { 
+                id: 'immunity_active', 
+                name: lang.status.immunity_active || "Bağışıklık", 
+                turns: 3, // Bu tur + 2 tam tur
+                resetOnCombatEnd: true 
+            });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'sacred_will', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "ARINDI!", 'heal');
+            writeLog(`✨ **${this.data.name}**: 2 tur boyunca debuff almayacaksın.`);
+            setTimeout(nextTurn, 1000);
+        }
+    },
 	//Light_Up 1.5Atk+1.5MP Dmg (light or fire), Reduce enemy def for 2 turns,
     Healing_Light: {
     data: {
