@@ -44,6 +44,8 @@ window.updateStatusIcons = function(char, container) {
 };
 
 window.updateStats = function() {
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
     // 1. Karakter statlarını al
     const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: 40, maxRage: 110 };
     const currentMaxHp = effective.maxHp;
@@ -55,8 +57,18 @@ window.updateStats = function() {
     // HP ve Rage Barlarını Güncelle
     if(heroHpBar) heroHpBar.style.width = (hero.hp / currentMaxHp) * 100 + '%';
     if(heroHpText) heroHpText.textContent = `${hero.hp} / ${currentMaxHp}`;
-    if(heroRageBar) heroRageBar.style.width = (hero.rage / currentMaxRage) * 100 + '%';
-    if(heroRageText) heroRageText.textContent = `${hero.rage} / ${currentMaxRage}`;
+	
+    if(heroRageBar) {
+    heroRageBar.style.width = (hero.rage / currentMaxRage) * 100 + '%';
+    // --- YENİ: SINIF RENGİNİ UYGULA ---
+    const classRules = CLASS_CONFIG[hero.class];
+    heroRageBar.style.backgroundColor = classRules.resourceColor;
+	}
+    if(heroRageText) {
+    const resKey = CLASS_CONFIG[hero.class].resourceName; // "rage" veya "mana" döner
+    const resourceLabel = lang[`resource_${resKey}`]; // "Öfke" veya "Mana" döner
+    heroRageText.textContent = `${hero.rage} / ${currentMaxRage} ${resourceLabel}`;
+	}
 	
     if(heroNameDisplay) heroNameDisplay.innerHTML = `${hero.playerName} <span style="color:#ffffff; font-size:0.8em; opacity:0.8;">(${hero.class})</span>`;
     
@@ -116,11 +128,24 @@ window.rageBuffer = 0;
 window.isBufferingRage = false;
 
 window.showFloatingText = function(targetContainer, amount, type) {
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const classRules = CLASS_CONFIG[hero.class];
+    
+    // --- YENİ: DİNAMİK KAYNAK İSMİ DEĞİŞTİRME ---
+    // Eğer miktar bir yazıysa (örn: "+10 Rage") içindeki 'Rage' kelimesini 
+    // sınıfın gerçek kaynak ismiyle (Mana/Öfke) değiştirir.
+    let textStr = String(amount);
+    const resourceLabel = lang[`resource_${classRules.resourceName}`]; // "Mana" veya "Öfke"
+    
+    // 'Rage' kelimesini (büyük/küçük harf duyarsız) bul ve güncel etiketle değiştir
+    textStr = textStr.replace(/Rage/gi, resourceLabel);
+    // --------------------------------------------
+
     // --- BARBAR ÖZEL: GÖRSEL BİRLEŞTİRME KONTROLÜ ---
     if (window.isBufferingRage && hero.class === 'Barbar') {
-        const textStr = String(amount);
-        if (textStr.toLowerCase().includes('rage')) {
-            // Metnin içindeki rakamı ayıkla (+10 Rage -> 10)
+        // Not: Buffer kontrolünde hala 'textStr' kullanıyoruz çünkü yukarıda güncelledik
+        if (textStr.toLowerCase().includes(resourceLabel.toLowerCase())) {
             const num = parseInt(textStr.replace(/[^0-9]/g, '')) || 0;
             window.rageBuffer += num;
             return; // Ekrana basmadan çık (Susturma)
@@ -129,7 +154,10 @@ window.showFloatingText = function(targetContainer, amount, type) {
     // -----------------------------------------------
 
     const textEl = document.createElement('div');
-    textEl.textContent = (typeof amount === 'number' && amount > 0 && type === 'heal') ? `+${amount}` : amount;
+    
+    // İçerik sayıysa ve iyileşmeyse başına '+' koy, değilse filtrelenmiş metni bas
+    textEl.textContent = (typeof amount === 'number' && amount > 0 && type === 'heal') ? `+${amount}` : textStr;
+    
     textEl.className = `floating-text ${type}-text`;
     
     // Skill text stili kontrolü (Düşman skilleri için mor parlama)
@@ -138,15 +166,6 @@ window.showFloatingText = function(targetContainer, amount, type) {
     targetContainer.appendChild(textEl);
     setTimeout(() => textEl.remove(), 1500);
 };
-
-
-//window.showFloatingText = function(targetContainer, amount, type) {
-//    const textEl = document.createElement('div');
-//    textEl.textContent = (typeof amount === 'number' && amount > 0 && type === 'heal') ? `+${amount}` : amount;
-//    textEl.className = `floating-text ${type}-text`;
-//    targetContainer.appendChild(textEl);
-//    setTimeout(() => textEl.remove(), 1500);
-//};
 
 window.animateDamage = function(isHero) {
     const display = isHero ? heroDisplayImg : monsterDisplayImg;

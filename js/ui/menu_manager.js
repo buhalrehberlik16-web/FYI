@@ -32,6 +32,8 @@ window.toggleStatScreen = function() {
 };
 
 window.updateStatScreen = function() {
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
     if (!statName || !statClass) return;
     
     // 1. Verileri Hazırla
@@ -70,7 +72,23 @@ window.updateStatScreen = function() {
     if (statXp) statXp.textContent = `%${Math.floor(xpPercent)}`;
 
     statHp.textContent = `${hero.hp} / ${effective.maxHp}`;
-    if (statRage) statRage.textContent = `${hero.rage} / ${effective.maxRage}`;
+
+    // --- YENİ: KAYNAK (RAGE/MANA) ETİKETİ, RENGİ VE DEĞERİ ---
+    const classRules = CLASS_CONFIG[hero.class];
+    const resKey = classRules.resourceName;
+    const resourceLabel = lang[`resource_${resKey}`];
+
+    // A. "Öfke (Rage):" yazan sol etiketi bul ve değiştir
+    const resourceLabelEl = document.querySelector('[data-i18n="label_rage"]');
+    if (resourceLabelEl) {
+        resourceLabelEl.textContent = resourceLabel + ":";
+    }
+
+    // B. Sağdaki değeri (örn: 100/100 Mana) yazdır ve RENGİNİ ayarla
+    if (statRage) {
+        statRage.textContent = `${hero.rage} / ${effective.maxRage}`;
+        statRage.style.color = classRules.resourceColor; // Sınıfın rengini bas
+    }
 
     // 3. SAVAŞ STATLARI (ATAK VE DEFANS) - Sadece Skill/Choice etkisine duyarlı
     const applyEffectColor = (el, current, stable) => {
@@ -118,8 +136,6 @@ window.updateStatScreen = function() {
 
     // 5. Puan Dağıtma / Savaş Uyarısı (Aynı kalıyor)
     const isInBattle = battleScreen.classList.contains('active');
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
     const pointsBox = document.getElementById('points-container');
     const plusButtons = document.querySelectorAll('.btn-stat-plus');
 
@@ -479,6 +495,13 @@ function handleDrop(e, targetType, targetId) {
 // --- ANA RENDER FONKSİYONU ---
 window.renderInventory = function() {
     hideItemTooltip();
+	
+	// --- YENİ: ENVANTER KARAKTER GÖRSELİNİ SINIFDAN ÇEK ---
+    const charImgEl = document.getElementById('inv-char-img');
+    if (charImgEl) {
+        const classRules = CLASS_CONFIG[hero.class];
+        charImgEl.src = classRules.visuals.inventory;
+    }
 
     // 1. Savaş Durumu Kontrolü
     const isInBattle = document.getElementById('battle-screen').classList.contains('active');
@@ -595,19 +618,58 @@ function performSlotAction(item, type, identifier) {
 }
 
 // --- YETENEK KİTABI (K) ---
+// 1. YENİ FONKSİYON: Sınıfa göre sekme butonlarını oluşturur
+window.renderSkillTabs = function() {
+    const container = document.getElementById('skill-book-tabs-container');
+    if (!container) return;
+
+    const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    const classRules = CLASS_CONFIG[hero.class];
+    
+    container.innerHTML = ''; // Eski sekmeleri temizle
+
+    // Her zaman en başta duracak ortak "GENEL" sekmesi
+    const commonBtn = document.createElement('button');
+    commonBtn.className = `tab-btn ${currentTab === 'common' ? 'active' : ''}`;
+    commonBtn.textContent = lang.tab_common;
+    commonBtn.onclick = () => setSkillTab('common');
+    container.appendChild(commonBtn);
+
+    // Sınıfa özel sekmeleri ekle (Brutal, Arcane vb.)
+    classRules.skillTabs.forEach(tabKey => {
+        const btn = document.createElement('button');
+        btn.id = `tab-${tabKey}`; // CSS seçiciler için ID
+        btn.className = `tab-btn ${currentTab === tabKey ? 'active' : ''}`;
+        
+        // translations.js içindeki tab_brutal, tab_arcane vb. anahtarları kullanır
+        btn.textContent = lang[`tab_${tabKey}`] || tabKey.toUpperCase();
+        
+        btn.onclick = () => setSkillTab(tabKey);
+        container.appendChild(btn);
+    });
+};
+
+// 2. toggleSkillBook Fonksiyonunu Güncelle (Sekme çizimini tetiklemek için)
 window.toggleSkillBook = function() {
     if (!isCharacterUIAllowed()) return;
-    skillBookScreen.classList.toggle('hidden');
-    if (!skillBookScreen.classList.contains('hidden')) {
+    
+    if (skillBookScreen.classList.contains('hidden')) {
+        // Kitap açılırken sekmeleri de çiz
+        renderSkillTabs(); 
         renderSkillBookList();
         renderEquippedSlotsInBook();
+        skillBookScreen.classList.remove('hidden');
+    } else {
+        skillBookScreen.classList.add('hidden');
     }
 };
 
+// 3. setSkillTab Fonksiyonunu Güncelle (Aktif sekmeyi görsel olarak belli etmek için)
 window.setSkillTab = function(tab) {
     currentTab = tab;
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`tab-${tab}`)?.classList.add('active');
+    // Sekmeleri yeniden çiz ki 'active' sınıfı yeni seçilene geçsin
+    renderSkillTabs();
     renderSkillBookList();
 };
 
@@ -641,8 +703,12 @@ window.renderSkillBookList = function() {
         
         // --- YENİ TIER KISITLAMA MANTIĞI BİTİŞ ---
         if (skill.data.category === 'common' && skill.data.tier === 1 && !isLearned) return;
-
-        const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
+		const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
+        // --- YENİ: DİNAMİK AÇIKLAMA FİLTRESİ ---
+		const resourceLabel = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
+		// Metnin içindeki 'Rage' veya 'Öfke' kelimelerini güncel etiketle değiştir
+		let dynamicDesc = skillTrans.desc.replace(/Rage|Öfke/gi, resourceLabel);
+		// --------------------------------------
         const actualCost = skill.data.pointCost !== undefined ? skill.data.pointCost : skill.data.tier;
         const canAfford = hero.skillPoints >= actualCost;
         const treeMet = checkSkillTreeRequirement(skill.data.category, skill.data.tier);
@@ -656,11 +722,11 @@ window.renderSkillBookList = function() {
          (canAfford && treeMet ? `<button class="btn-learn-skill" onclick="learnSkill('${key}')">${actualCost} SP</button>` : `<small style="color:#777;">${actualCost} ${lang.sp_required}</small>`));
 
         item.innerHTML = `
-            <div style="position:relative;"><img src="images/${skill.data.icon}" class="skill-book-icon"><span class="tier-badge">T${skill.data.tier}</span></div>
-            <div class="skill-info" style="flex-grow:1;">
-                <div style="display:flex; justify-content:space-between; align-items:center;"><h4>${skillTrans.name}</h4>${action}</div>
-                <p>${skillTrans.desc}</p>
-            </div>`;
+			<div style="position:relative;"><img src="images/${skill.data.icon}" class="skill-book-icon"><span class="tier-badge">T${skill.data.tier}</span></div>
+			<div class="skill-info" style="flex-grow:1;">
+				<div style="display:flex; justify-content:space-between; align-items:center;"><h4>${skillTrans.name}</h4>${action}</div>
+				<p>${dynamicDesc}</p> <!-- GÜNCELLENDİ -->
+			</div>`;
         
         if (isLearned && skill.data.type !== 'passive') {
             item.setAttribute('draggable', true);
@@ -767,7 +833,14 @@ window.renderBasicSkillSelection = function() {
     for (const [key, skill] of Object.entries(SKILL_DATABASE)) {
         if (skill.data.category === 'common' && skill.data.tier === 1) {
 			const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
-            const card = document.createElement('div'); card.className = 'selection-card'; card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skillTrans.name}</h4><small>${skillTrans.desc}</small></div>`;
+            // --- YENİ: DİNAMİK FİLTRE ---
+		const resourceLabel = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
+		let dynamicDesc = skillTrans.desc.replace(/Rage|Öfke/gi, resourceLabel);
+		// ----------------------------
+
+		const card = document.createElement('div'); 
+		card.className = 'selection-card'; 
+		card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skillTrans.name}</h4><small>${dynamicDesc}</small></div>`; // dynamicDesc kullanıldı
             card.onclick = () => {
                 if (skill.data.type === 'attack') { selectedAttackKey = key; document.querySelectorAll('#selection-list-attack .selection-card').forEach(c => c.classList.remove('selected')); }
                 else { selectedDefenseKey = key; document.querySelectorAll('#selection-list-defense .selection-card').forEach(c => c.classList.remove('selected')); }

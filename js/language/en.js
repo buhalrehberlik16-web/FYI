@@ -47,12 +47,18 @@ window.LANG_EN = {
         class_barbarian_desc: "Pure physical power. Shakes dungeons with rage.",
         class_high_damage: "⚔️ Passive Ability ⚔️",
         class_high_hp: "Generates rage equal to 25% of damage dealt.",
+		class_high_magic: "🔮 High Magic Power 🔮",
+		class_resource_mana: "💧 Resource: Mana 💧",
         select: "SELECT",
         coming_soon: "COMING SOON",
         class_magus_name: "MAGUS",
         class_magus_desc: "Master of ancient spells. Controls elements.",
         class_trickster_name: "TRICKSTER",
         class_trickster_desc: "Speed and cunning. Attacks from shadows.",
+		
+		// Class Specific
+		resource_rage: "Rage",
+		resource_mana: "Mana",
 
         // Loading & Skill Select
         preparing: "Preparing...",
@@ -126,6 +132,9 @@ window.LANG_EN = {
         tab_brutal: "BRUTAL",
         tab_chaos: "CHAOS",
         tab_fervor: "FERVOR",
+		tab_arcane: "ARCANE",
+		tab_elemental: "ELEMENTAL",
+		tab_nature: "NATURE",
         skill_book_hint: "Drag or click unlocked skills to slots.(You can only unlock 1 skill from every tier.)",
 		sp_required: "SP REQUIRED",
 		sp_mean: "SP",
@@ -482,6 +491,7 @@ window.LANG_EN = {
 
         // Skills
         skills: {
+			// BARBARIAN SKILLS //
             cut: { name: "Cut", desc: "Damage equal to Attack. Generates +10 Rage." },
             guard: { name: "Guard", desc: "Reduces incoming damage by 25%. 0 Rage." },
             strike: { name: "Strike", desc: "115% Attack damage. Generates +0-9 Rage." },
@@ -513,7 +523,23 @@ window.LANG_EN = {
 			light_blade: { name: "Light Blade", desc: "Brave attack. 35 Rage.<br>Damage: <b style='color:orange'>ATK + 1.5 x MP</b>." },
             Cauterize: { name: "Cauterize", desc: "Heal by cauterizing the wound. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>." },
 			sacred_will: { name: "Sacred Will", desc: "Grants immunity to ALL debuff and DoT effects for 2 turns. 20 Rage." },
-            Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." }
+            Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." },
+			// BARBARIAN SKILLS //
+			// MAGUS SKILLS //
+			Magic_Arrow: { name: "Magic Arrow", desc: "Fires an arrow that deals 50% Attack + 80% MP as damage." },
+			Drain: { name: "Drain", desc: "Ignores defense to deal MP damage and gains equal amount of Mana." },
+			Arcane_Acuity: { name: "Arcane Acuity", desc: "Focuses your mind. Gains Mana equal to INT every turn for 4 turns." },
+			Arcane_Explosion: { name: "Arcane Explosion", desc: "Creates a magical blast dealing Atk + 2xMP damage." },
+			Fire_Bolt: { name: "Fire Bolt", desc: "Deals Strength as physical and half of MP as Fire damage." },
+			Zap: { name: "Zap", desc: "Deals 80% of INT as damage and reduces enemy Attack by 20%." },
+			Water_Whip: { name: "Water Whip", desc: "Attacks with a whip of water, dealing Str + MP damage." },
+			Ice_Shield: { name: "Ice Shield", desc: "Creates an ice shield around the hero. (2xMP Block)" },
+			Crystalised_Mana: { name: "Crystalised Mana", desc: "Crystalises mana. Releases a large amount of mana after 2 turns." },
+			Water_Snare: { name: "Water Snare", desc: "Traps the enemy. Deals Str damage every turn and reduces enemy Atk by 50%." },
+			Chaos_Rain: { name: "Chaos Rain", desc: "An elemental storm that targets the enemy's weakest resistance." },
+			Meditate: { name: "Meditate", desc: "Gains Mana equal to INT + 50% of missing HP." },
+			Rejuvanate: { name: "Rejuvanate", desc: "Gains INT HP and 1.5xINT Mana every turn for 3 turns." },
+			Natures_Wrath: { name: "Nature's Wrath", desc: "Deals ATK damage every turn for 3 turns and reduces enemy Atk/Def by 50%." },
         },
     
 	

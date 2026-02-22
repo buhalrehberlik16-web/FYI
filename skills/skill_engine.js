@@ -149,8 +149,8 @@ const SkillEngine = {
     },
 
     init: function() {
-        window.SKILL_DATABASE = { ...COMMON_SKILLS, ...BARBARIAN_SKILLS };
-        console.log("Skill Engine: Hybrid Elemental & Physical System Initialized.");
+        window.SKILL_DATABASE = { ...COMMON_SKILLS, ...BARBARIAN_SKILLS, ...MAGUS_SKILLS };
+        console.log("Skill Engine: Tüm yetenekler (Barbar & Magus) başarıyla birleştirildi.");
     }
 };
 

@@ -31,7 +31,7 @@ const COMMON_SKILLS = {
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
             
             // Animasyona artık sayı değil, paket gönderiyoruz
-            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, null, this.data.name); 
         }
     },
 
@@ -79,7 +79,7 @@ const COMMON_SKILLS = {
             hero.rage = Math.min(stats.maxRage, hero.rage + genRage);
             if(genRage > 0) showFloatingText(document.getElementById('hero-display'), `+${genRage} Rage`, 'heal');
             
-            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, null, this.data.name); 
         }
     },
 
@@ -193,7 +193,7 @@ const COMMON_SKILLS = {
             dmgPack.total += ignoredAmount;
             dmgPack.phys += ignoredAmount;
             
-            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
+            animateCustomAttack(dmgPack, null, this.data.name); 
         }
     },
 
@@ -336,7 +336,7 @@ const COMMON_SKILLS = {
             updateStats();
             
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'willful_strike', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
-            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp','images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            animateCustomAttack(dmgPack, null, this.data.name); 
         }
     },	
 
