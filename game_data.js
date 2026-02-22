@@ -31,15 +31,15 @@ const CLASS_CONFIG = {
 		
     },
     "Magus": {
-        startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
-        startingResistances: { fire: 15, cold: 15, lightning: 15, curse: 5, poison: 0 },
-        startingElementalDamage: { fire: 10, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingStats: { str: 2, dex: 2, int: 4, vit: 3, mp_pow: 6 },
+        startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
-        atkStats: { "int": 0.8 },
-        defStats: { "dex": 0.2 },
-        blockStats: { "int": 0.4 },
-        vitMultiplier: 5,
-        baseHp: 15,
+        atkStats: { "str": 0.8 },
+        defStats: { "dex": 0.25 },
+        blockStats: { "int": 0.5 },
+        vitMultiplier: 4,
+        baseHp: 18,
 		onHitRageGain: 0,
 		resourceName: "mana",
         resourceColor: "#3498db",
@@ -200,4 +200,5 @@ const EVENT_POOL = [
             } 
         }
     }
+
 ];
