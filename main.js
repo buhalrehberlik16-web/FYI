@@ -221,30 +221,40 @@ function selectClass(className) {
     if (!config) return;
 
     hero.class = className;
-	StatsManager.initNewRun(hero.playerName, className); // İstatistikleri sıfırla ve başlat
+    StatsManager.initNewRun(hero.playerName, className);
 
-    // 1. Temel Statları Kopyala
+    // 1. Temel Statları Kopyala (str, dex, int, vit, mp_pow)
     for (const [stat, value] of Object.entries(config.startingStats)) {
         hero[stat] = value;
     }
 
-    // 2. Dirençleri Kopyala (ESKİDEN BURASI EKSİKTİ)
+    // 2. Dirençleri ve Element Hasarlarını Kopyala
     hero.baseResistances = { ...config.startingResistances };
-
-    // 3. Element Hasarlarını Kopyala (BURASI DA EKSİKTİ)
     hero.elementalDamage = { ...config.startingElementalDamage };
 
-    // 4. Canı ve Kaynakları Sıfırla/Hesapla
-    hero.rage = 0; // Herkes 0 öfke ile başlar
-
-    writeLog(`⚔️ Sınıf Seçildi: ${className}. Statlar ve dirençler yüklendi.`);
+    // 3. CAN VE KAYNAK (MANA/RAGE) HESAPLAMASI
+    // getHeroEffectiveStats() yeni kopyaladığımız statlara (int, vit vb.) bakar
+    const effective = getHeroEffectiveStats();
     
-    // UI'ı hemen güncelle (Özellikle U ekranındaki direnç kutuları dolsun)
+    hero.hp = effective.maxHp; // Sınıfın vit değerine göre canı fulle
+    
+    // Kaynak Başlangıç Kuralı: 
+    // Barbar 0 Öfke ile başlar, Magus Full Mana ile başlar.
+    if (config.resourceName === "mana") {
+		hero.rage = 0;
+        //hero.rage = effective.maxRage; 
+    } else {
+        hero.rage = 0;
+    }
+
+    writeLog(`⚔️ ${className} seçildi. Yolun açık olsun!`);
+    
+    // UI'ı hemen güncelle
     updateStats(); 
     
-    // DEĞİŞEN KISIM:
+    // Starter City ilerlemesini işaretle
     window.starterCityProgress.classChosen = true;
-    switchScreen(window.starterCityScreen); // Şehre geri dön
+    switchScreen(window.starterCityScreen); 
     updateStarterCityUI();
 }
 

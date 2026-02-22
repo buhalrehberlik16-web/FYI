@@ -13,7 +13,22 @@ const CLASS_CONFIG = {
         blockStats: { "dex": 0.8 },
         vitMultiplier: 5,
         baseHp: 20,
-		hitRageGain: 0.25
+		hitRageGain: 0.25,
+		onHitRageGain: 5,
+		resourceName: "rage",
+		resourceColor: "#ff0000",
+		skillTabs: ["brutal", "chaos", "fervor"], 
+		visuals: {
+            idle: 'images/heroes/barbarian/barbarian.webp',
+            dead: 'images/heroes/barbarian/barbarian_dead.webp',
+			inventory: 'images/heroes/barbarian/barbarianinventory.webp',
+            attackFrames: [
+                'images/heroes/barbarian/barbarian_attack1.webp',
+                'images/heroes/barbarian/barbarian_attack2.webp',
+                'images/heroes/barbarian/barbarian_attack3.webp'
+            ]
+        }
+		
     },
     "Magus": {
         startingStats: { str: 5, dex: 8, int: 10, vit: 8, mp_pow: 20 },
@@ -23,8 +38,22 @@ const CLASS_CONFIG = {
         atkStats: { "int": 0.8 },
         defStats: { "dex": 0.2 },
         blockStats: { "int": 0.4 },
-        vitMultiplier: 7,
-        baseHp: 15
+        vitMultiplier: 5,
+        baseHp: 15,
+		onHitRageGain: 0,
+		resourceName: "mana",
+        resourceColor: "#3498db",
+		skillTabs: ["arcane", "elemental", "nature"],
+		visuals: {
+            idle: 'images/heroes/magus/magus_idle.webp',
+            dead: 'images/heroes/magus/magus_dead.webp',
+			inventory: 'images/heroes/magus/magusinventory.webp',
+            attackFrames: [
+                'images/heroes/magus/magus_cast1.webp', // Asasını kaldırır
+                'images/heroes/magus/magus_cast2.webp', // Büyü parlar
+                'images/heroes/magus/magus_cast3.webp'  // Büyü fırlar
+            ]
+        }
     }
 };
 
@@ -44,7 +73,7 @@ window.hero = {
     statPoints: 0, 
     skillPoints: 0,
     currentAct: 1,
-    str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2,
+    str: 0, dex: 0, int: 0, vit: 0, mp_pow: 0,
     baseAttack: 10, baseDefense: 0,
     baseResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },

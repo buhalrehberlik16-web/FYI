@@ -151,17 +151,21 @@
                 <div class="selection-btn" data-i18n="select">SEÇ</div>
             </div>
 
-            <!-- MAGUS (Kilitli) -->
-            <div class="class-card locked">
-                <div class="lock-overlay"><i class="fas fa-lock"></i><span data-i18n="coming_soon">YAKINDA</span></div>
-                <div class="class-image-box">
-                    <img src="images/heroes/magus/magus_placeholder.webp" alt="Magus" style="filter: grayscale(100%);">
-                </div>
-                <div class="class-info">
-                    <h2 data-i18n="class_magus_name">MAGUS</h2>
-                    <p data-i18n="class_magus_desc">Kadim büyülerin ustası. Elementleri kontrol eder.</p>
-                </div>
-            </div>
+            <!-- MAGUS (Aktif) -->
+			<div class="class-card available" id="select-magus" onclick="selectClass('Magus')">
+				<div class="class-image-box">
+					<img src="images/heroes/magus/magus_placeholder.webp" alt="Magus">
+				</div>
+				<div class="class-info">
+					<h2 data-i18n="class_magus_name">MAGUS</h2>
+					<p data-i18n="class_magus_desc">Kadim büyülerin ustası. Elementleri kontrol eder.</p>
+					<ul class="class-stats-preview">
+						<li data-i18n="class_high_magic"> 🔮 Yüksek Büyü Gücü 🔮</li>
+						<li data-i18n="class_resource_mana"> 💧 Kaynak: Mana 💧</li>
+					</ul>
+				</div>
+				<div class="selection-btn" data-i18n="select">SEÇ</div>
+			</div>
 
             <!-- TRICKSTER (Kilitli) -->
             <div class="class-card locked">
@@ -403,12 +407,9 @@
                         <span data-i18n="skill_points_label">YETENEK PUANI:</span> <span id="skill-points-display" style="color:#f0e68c; font-weight:bold;">0</span>
                     </div>
 
-                    <div class="skill-tabs">
-                        <button id="tab-common" class="tab-btn active" data-i18n="tab_common">GENEL (Common)</button>
-                        <button id="tab-brutal" class="tab-btn" data-i18n="tab_brutal">VAHŞET (Brutal)</button>
-						<button id="tab-chaos" class="tab-btn" data-i18n="tab_chaos">KAOS (Chaos)</button>
-						<button id="tab-fervor" class="tab-btn" data-i18n="tab_fervor">COŞKU (Fervor)</button>
-                    </div>
+                    <div class="skill-tabs" id="skill-book-tabs-container">
+					<!-- Sekmeler JavaScript (renderSkillTabs) tarafından buraya eklenecek -->
+					</div>
 
                     <div class="skill-list-container">
                         <p class="hint-text" data-i18n="skill_book_hint">Açık yetenekleri aşağıdaki slotlara sürükleyin. Kilitlileri puanla açın.</p>
@@ -1126,6 +1127,7 @@
 <!-- 2. SKILL ENGINE -->
 <script src="skills/common_skills.js"></script>
 <script src="skills/barbarian_skills.js"></script>
+<script src="skills/magus_skills.js"></script>
 <script src="skills/skill_engine.js"></script>
 
 <!-- 3. UI KATMANI (BÖLÜNMÜŞ) -->

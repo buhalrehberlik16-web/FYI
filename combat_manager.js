@@ -1,9 +1,5 @@
 // combat_manager.js - TÜM LOGLAR VE MEKANİKLER DAHİL TAM SÜRÜM
 
-const HERO_IDLE_SRC = 'images/heroes/barbarian/barbarian.webp'; 
-const HERO_ATTACK_FRAMES = ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'];
-const HERO_DEAD_SRC = 'images/heroes/barbarian/barbarian_dead.webp'; 
-
 // Savaş Değişkenleri
 window.heroDefenseBonus = 0; 
 window.isHeroDefending = false;
@@ -88,7 +84,7 @@ window.getHeroEffectiveStats = function() {
     };
     
     let currentResists = { ...hero.baseResistances };
-	let currentElemDmg = { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
+	let currentElemDmg = { ...hero.elementalDamage };
     let flatAtkBonus = 0;  
     let flatDefBonus = 0;  
     let totalAtkMult = 1.0; 
@@ -373,6 +369,13 @@ window.handleSkillUse = function(skillKey) {
 window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+	const classRules = CLASS_CONFIG[hero.class];
+
+    // --- GÜVENLİK: Eğer dışarıdan liste gelmezse (null ise) sınıfın karelerini kullan ---
+    const frames = (skillFrames && skillFrames.length > 0) ? skillFrames : classRules.visuals.attackFrames;
+    // ---------------------------------------------------------------------------------
+	
+	
     let finalDmg = dmgPack.total;
 
     // 1. Wind Up (Kurulma) Kontrolü
@@ -384,9 +387,9 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
 
     let fIdx = 0;
     function frame() {
-        if (fIdx < skillFrames.length) {
-            heroDisplayImg.src = skillFrames[fIdx]; 
-            if (fIdx === 1 || skillFrames.length === 1) { 
+        if (fIdx < frames.length) {
+            heroDisplayImg.src = frames[fIdx]; 
+            if (fIdx === 1 || frames.length === 1) { 
                 // Hasarı uygula ve istatistikleri işle
                 monster.hp = Math.max(0, monster.hp - finalDmg);
                 StatsManager.trackDamageDealt(finalDmg);
@@ -448,7 +451,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
             }
             fIdx++; setTimeout(frame, 150); 
         } else {
-            heroDisplayImg.src = HERO_IDLE_SRC; 
+            heroDisplayImg.src = classRules.visuals.idle; 
             window.isBufferingRage = false; // Güvenlik kilidi (animasyon biterken)
             if (!checkGameOver()) nextTurn(); 
         }
@@ -487,14 +490,26 @@ function processMonsterDamage(attacker, dmgPack, attackFrames) {
                 }
                 
                 if (finalDamage > 0) { 
-                    hero.hp = Math.max(0, hero.hp - finalDamage); 
-                    StatsManager.trackDamageTaken(finalDamage);
-                    animateDamage(true); 
-                    showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-                    writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu. (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
-                    // Hasar yiyince öfke kazanma (5 sabit)
-                    hero.rage = Math.min(hero.maxRage, hero.rage + 5); 
+                hero.hp = Math.max(0, hero.hp - finalDamage); 
+                StatsManager.trackDamageTaken(finalDamage);
+                animateDamage(true); 
+                showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
+                writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu. (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+
+                // --- GÜNCELLEME: SADECE SINIF KURALI VARSA KAYNAK EKLE ---
+                const stats = getHeroEffectiveStats();
+                const classRules = CLASS_CONFIG[hero.class];
+                const gainOnHit = classRules.onHitRageGain || 0; // Kuralı oku (Barbar: 5, Magus: 0)
+
+                if (gainOnHit > 0) {
+                    hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
+                    // İstersen darbe aldığında kazandığı öfkeyi de ekrana basabiliriz:
+                    const currentLang = window.gameSettings.lang || 'tr';
+                    const resLabel = window.LANGUAGES[currentLang][`resource_${classRules.resourceName}`];
+                    showFloatingText(heroDisplayContainer, `+${gainOnHit} ${resLabel}`, 'heal');
                 }
+                // --------------------------------------------------------
+				}
                 updateStats(); 
                 if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
             }
@@ -613,10 +628,11 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 
     if (scaling > 1) writeLog(`⚠️ Boss Karanlık Zamanın Etkisiyle Güçlendi! (x${scaling.toFixed(2)})`);
 	
+	const classRules = CLASS_CONFIG[hero.class];
     monsterDisplayImg.style.filter = 'none'; 
     monsterDisplayImg.style.opacity = '1';
     monsterDisplayImg.src = `images/${monster.idle}`;
-    heroDisplayImg.src = HERO_IDLE_SRC;
+    heroDisplayImg.src = classRules.visuals.idle;
 
     window.isMonsterDefending = false; window.monsterDefenseBonus = 0; 
     window.isHeroDefending = false; window.heroDefenseBonus = 0;
@@ -793,25 +809,35 @@ window.nextTurn = function() {
                     const packet = EnemySkillEngine.resolve(monster, action);
                     
                     if (packet) {
-                        // Yetenek ismini translations'dan çek (attack1/2 için translation yoksa boş döner)
-                        const skillName = lang.enemy_skills[packet.id]?.name;
-                        
-                        // Eğer bu özel bir skill ise ismini yazdır, değilse sessizce vur
-                        if (skillName) {
-                            writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
-                            showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
-                        }
+                        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                        const classRules = CLASS_CONFIG[hero.class];
+                        const resourceLabel = lang[`resource_${classRules.resourceName}`];
 
-                        // Etki Yazısı ($1 desteği ile)
+                        // 1. Yetenek İsmini Hazırla
+                        const skillName = lang.enemy_skills[packet.id]?.name || packet.id;
+                        
+                        // 2. Etki Yazısını Hazırla ve 'Rage/Öfke' kelimelerini filtrele (BURASI KRİTİK)
                         let effectLabel = lang.enemy_effects[packet.text] || "";
+                        
+                        // Kelime Değişimi: Rage/Öfke -> Mana/Öfke
+                        effectLabel = effectLabel.replace(/Rage|Öfke/gi, resourceLabel);
+
+                        // Sayı Değişimi: $1 -> 30
                         if (effectLabel.includes("$1") && packet.value) {
                             effectLabel = effectLabel.replace("$1", packet.value);
                         }
 
+                        // 3. Log Yaz ve Yetenek İsmini Canavarın Üstünde Göster
+                        writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                        showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
+
+                        // 4. Etki Yazısını (Örn: -30 Mana!) Kahraman/Canavar üzerinde göster
                         if (effectLabel) {
                             const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
                             const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
-                            setTimeout(() => { showFloatingText(floatingTarget, effectLabel, floatingType); }, 500);
+                            setTimeout(() => { 
+                                showFloatingText(floatingTarget, effectLabel, floatingType); 
+                            }, 500);
                         }
 
                         // Öfke Azaltma ve İyileşme (Mevcut paket mantığın)
@@ -833,7 +859,7 @@ window.nextTurn = function() {
                         if (packet.damage && packet.damage.total > 0) {
                             // Canavarın attackFrames'lerini kullanarak hasarı vur
                             processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
-                        } else {
+                        } else {							
                             // Hasarsız yetenekse sadece parlat
                             animateMonsterSkill();
                             updateStats();
@@ -875,8 +901,9 @@ window.animateMonsterSkill = function() {
 
 window.checkGameOver = function() {
     if (hero.hp <= 0) { 
+		const classRules = CLASS_CONFIG[hero.class];
         writeLog("💀 **Yenilgi**: Canın tükendi...");
-        hero.hp = 0; updateStats(); heroDisplayImg.src = HERO_DEAD_SRC; 
+        hero.hp = 0; updateStats(); heroDisplayImg.src = classRules.visuals.dead; 
 		
 		// --- PERMADEATH: KAYDI SİL ---
         if (window.deleteSave) {
