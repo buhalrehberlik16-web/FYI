@@ -7,7 +7,7 @@
 }
 
 @media (max-width: 768px) {
-    #arena { height: 60%; }
+    #arena { height: 120%; }
     .character-display img { max-height: 200px; }
     
     /* Mobilde Barlar ve İsimler Aşağıda */
