@@ -1,6 +1,6 @@
 // --- START OF FILE game_data.js ---
 
-const MAX_LEVEL = 60;
+const MAX_LEVEL = 90;
 
 const CLASS_CONFIG = {
     "Barbar": {
@@ -202,3 +202,4 @@ const EVENT_POOL = [
     }
 
 ];
+
