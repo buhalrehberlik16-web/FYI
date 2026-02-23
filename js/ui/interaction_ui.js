@@ -145,8 +145,13 @@ window.openBuilding = function(type) {
 
         if (type === 'stable') {
             const horseBtn = document.getElementById('btn-stable-master');
-            // Eğer bu kasabanın ustası stable değilse butonu gizle
-            if (horseBtn) horseBtn.classList.toggle('hidden', window.currentTownMaster !== 'stable');
+            // Eğer daha önce bu kasabada kiraladıysa VEYA usta stable değilse butonu gizle
+            if (horseBtn) {
+                const isNotMaster = window.currentTownMaster !== 'stable';
+                const alreadyRented = window.hasRentedInThisTown === true;
+                
+                horseBtn.classList.toggle('hidden', isNotMaster || alreadyRented);
+            }
         }
 		
         // Her açılışta orijinal selamlamayı geri getir (Özellikle Han için)
