@@ -156,8 +156,8 @@ const COMMON_SKILLS = {
             const currentLang = window.gameSettings.lang || 'tr';
             const lang = window.LANGUAGES[currentLang];
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'distract', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            applyStatusEffect({  id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(defender, { id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+			applyStatusEffect(defender, { id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "ZAYIFLADI!", 'damage');
             setTimeout(() => {  window.isHeroTurn = true; toggleSkillButtons(false); }, 300); 
@@ -235,7 +235,7 @@ const COMMON_SKILLS = {
 			pointCost: 2
         },
         onCast: function(attacker, defender) {
-            hero.statusEffects.push({ id: 'curse_damage', name: 'Lanetli', turns: 5, value: 0.20, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(defender, { id: 'curse_damage', name: 'Lanetli', turns: 5, value: 0.20, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'curse', turns: 10, maxTurns: 10, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "LANETLENDİ!", 'damage'); 

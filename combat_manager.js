@@ -149,21 +149,29 @@ window.getHeroEffectiveStats = function() {
         }
     });
 
-    // 4. HESAPLAMALARI YAP
+    // 4. HESAPLAMALARI YAP (DATA-DRIVEN)
     const rules = CLASS_CONFIG[hero.class];
+    const sc = rules.scaling; // Scaling kurallarını al
+
+    // HP ve RESOURCE (Mana/Rage) Hesapları
+    const finalMaxHp = rules.baseHp + Math.floor(s[sc.hp.stat] * sc.hp.mult);
+    const finalMaxRage = rules.baseResource + Math.floor(s[sc.resource.stat] * sc.resource.mult);
     
-    // HP ve RAGE Hesapları
-    const finalMaxHp = (rules.baseHp || 20) + (s.vit * (rules.vitMultiplier || 5));
-    const finalMaxRage = 100 + (s.int * 5);
-    const finalRageRegen = Math.floor(s.mp_pow * 0.5);
+    // REGEN Hesabı
+    const finalRageRegen = Math.floor(s[sc.regen.stat] * sc.regen.mult);
 
     // ATAK Hesabı
-    let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s.str * (rules.atkStats.str || 0.5));
+    let rawAtk = (hero.baseAttack || 10) + flatAtkBonus;
+    rawAtk += Math.floor(s[sc.atk.stat] * sc.atk.mult); // Sınıfın atak statına göre (STR veya INT)
     let finalAtk = Math.floor(rawAtk * totalAtkMult);
 
-    // DEFANS Hesabı (Çarpan artık burada uygulanıyor)
-    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s.dex * (rules.defStats.dex || 0.34));
+    // DEFANS Hesabı
+    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus;
+    baseDefCalc += Math.floor(s[sc.def.stat] * sc.def.mult); // Sınıfın defans statına göre
     let finalDef = Math.floor(baseDefCalc * totalDefMult);
+
+    // BLOK Hesabı
+    const finalBlockPower = Math.floor(s[sc.block.stat] * sc.block.mult);
 
     // Pervasız Vuruş (Defansı 0 yapar)
     if (hero.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat)) {
@@ -177,13 +185,13 @@ window.getHeroEffectiveStats = function() {
     return { 
         atk: Math.max(0, finalAtk), 
         def: Math.max(0, finalDef), 
-        blockPower: Math.floor(s.dex * (rules.blockStats.dex || 0.8)),
+        blockPower: Math.max(0, finalBlockPower),
         str: s.str, dex: s.dex, int: s.int, vit: s.vit, mp_pow: s.mp_pow,
         maxHp: finalMaxHp,
         maxRage: finalMaxRage,
         rageRegen: finalRageRegen,
         resists: currentResists,
-		elementalDamage: currentElemDmg,
+        elementalDamage: currentElemDmg,
         atkMultiplier: totalAtkMult 
     };
 };

@@ -138,7 +138,7 @@ const BARBARIAN_SKILLS = {
 			const lang = window.LANGUAGES[currentLang];
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
-            applyStatusEffect({ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(defender,{ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
@@ -162,7 +162,7 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'armor_break', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            hero.statusEffects.push({ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(defender,{ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             
             // ignore_def aktif olduğu için SkillEngine targetDef'i 0 görecektir
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);

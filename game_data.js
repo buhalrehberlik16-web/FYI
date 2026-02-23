@@ -7,17 +7,23 @@ const CLASS_CONFIG = {
         startingStats: { str: 6, dex: 3, int: 2, vit: 4, mp_pow: 2 },
         startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-        
-        atkStats: { "str": 0.5 },
-        defStats: { "dex": 0.34 },
-        blockStats: { "dex": 0.8 },
-        vitMultiplier: 5,
+         
         baseHp: 20,
+		baseResource: 100, // Başlangıç Öfke sınırı
 		hitRageGain: 0.25,
 		onHitRageGain: 5,
 		resourceName: "rage",
 		resourceColor: "#ff0000",
 		skillTabs: ["brutal", "chaos", "fervor"], 
+		// --- YENİ: MERKEZİ STAT ÇARPANLARI ---
+        scaling: {
+            hp: { stat: "vit", mult: 5 },      // 1 VIT = 5 HP
+            resource: { stat: "int", mult: 5 }, // 1 INT = 5 Max Rage
+            atk: { stat: "str", mult: 0.5 },    // 1 STR = 0.5 Saldırı
+            def: { stat: "dex", mult: 0.34 },   // 1 DEX = 0.34 Defans
+            block: { stat: "dex", mult: 0.8 },   // 1 DEX = 0.8 Blok Gücü
+            regen: { stat: "mp_pow", mult: 0.5 } // 1 MP = 0.5 Öfke Yenileme
+        },
 		visuals: {
             idle: 'images/heroes/barbarian/barbarian.webp',
             dead: 'images/heroes/barbarian/barbarian_dead.webp',
@@ -35,15 +41,21 @@ const CLASS_CONFIG = {
         startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
-        atkStats: { "str": 0.8 },
-        defStats: { "dex": 0.25 },
-        blockStats: { "int": 0.5 },
-        vitMultiplier: 4,
         baseHp: 18,
+		baseResource: 100, // Başlangıç Mana sınırı
 		onHitRageGain: 0,
 		resourceName: "mana",
         resourceColor: "#3498db",
 		skillTabs: ["arcane", "elemental", "nature"],
+		// --- YENİ: MERKEZİ STAT ÇARPANLARI ---
+        scaling: {
+            hp: { stat: "vit", mult: 4 },       // Magus VIT'ten daha çok can alır
+            resource: { stat: "int", mult: 5 },  // 1 INT = 5 Max Mana
+            atk: { stat: "str", mult: 0.8 },     // Magus atağını Str'den alır!
+            def: { stat: "dex", mult: 0.2 },     // Magus zırhı daha zayıf ölçeklenir
+            block: { stat: "dex", mult: 0.8 },    // Magus zekasıyla blok yapar
+            regen: { stat: "mp_pow", mult: 1.0 }  // Magus MP'den tam verim alır
+        },
 		visuals: {
             idle: 'images/heroes/magus/magus_idle.webp',
             dead: 'images/heroes/magus/magus_dead.webp',
