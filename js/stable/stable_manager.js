@@ -16,6 +16,12 @@ window.StableManager = {
             hero.gold -= cost;
             hero.mountedNodesLeft = 4;
             updateGoldUI();
+			
+			// --- YENİ: SATIN ALMA DURUMUNU KAYDET VE BUTONU GİZLE ---
+            window.hasRentedInThisTown = true; 
+            const btn = document.getElementById('btn-stable-master');
+            if(btn) btn.classList.add('hidden');
+            // -------------------------------------------------------
             
             // Pop-up'ı Göster
             this.showInfoPopup(lang.stable_steed_popup_title, lang.stable_steed_popup_text, "#ffd700");
