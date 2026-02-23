@@ -272,6 +272,11 @@ window.triggerRandomEvent = function() {
     updateNPCStatsDisplay();
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+	
+	// --- YENİ: KAYNAK ETİKETİNİ HAZIRLA ---
+    const classRules = CLASS_CONFIG[hero.class];
+    const resourceLabel = lang[`resource_${classRules.resourceName}`];
+    // --------------------------------------
     
     switchScreen(eventScreen);
     
@@ -297,6 +302,9 @@ window.triggerRandomEvent = function() {
     // ------------------------------------------------------
 
     const t = lang.events[evt.id];
+	// --- GÜNCELLEME: BAŞLIK VE AÇIKLAMAYI FİLTRELE ---
+    let rawTitle = t ? t.title : evt.title;
+    let rawDesc = t ? t.desc : evt.desc;
     document.getElementById('event-title').textContent = t ? t.title : evt.title;
     document.getElementById('event-desc').textContent = t ? t.desc : evt.desc;
 
@@ -304,9 +312,17 @@ window.triggerRandomEvent = function() {
         if (!opt) return;
         const b = document.createElement('button');
         b.className = 'event-btn';
-        const btnText = t ? t[optKey] : opt.text;
-        const bText = t ? t[optKey + "_b"] : "";
-        const dText = t ? t[optKey + "_d"] : "";
+		
+        // --- GÜNCELLEME: BUTON İÇİNDEKİ TÜM METİNLERİ FİLTRELE ---
+        let btnText = t ? t[optKey] : opt.text;
+        let bText = t ? t[optKey + "_b"] : (opt.buff || "");
+        let dText = t ? t[optKey + "_d"] : (opt.debuff || "");
+
+        // Kelime Değişimi (Rage/Öfke -> Mana/Öfke)
+        btnText = btnText.replace(/Rage|Öfke/gi, resourceLabel);
+        bText = bText.replace(/Rage|Öfke/gi, resourceLabel);
+        dText = dText.replace(/Rage|Öfke/gi, resourceLabel);
+
 
         b.innerHTML = `
             <span class="choice-title">${btnText}</span>
@@ -333,6 +349,9 @@ window.triggerRandomEvent = function() {
             // 4. Sonuç Ekranını Göster
             const resultArea = document.getElementById('event-result-area');
             const resultTextEl = document.getElementById('event-result-text');
+			
+			// Sonuç metnini de filtrele
+            let finalBtnText = btnText; 
             
             resultTextEl.innerHTML = `
                 <span style="color:#ffd700; font-size:1.4em;">${btnText}</span>
