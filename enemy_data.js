@@ -1,14 +1,15 @@
 // --- START OF FILE enemy_data.js ---
 
 window.TRIBE_BASES = {
-    "Greenskins": { fire: 2, cold: 2, lightning: 6, poison: 8, curse: 4 },
-    "Humans": { fire: 0, cold: 0, lightning: 0, poison: 0, curse: -5 },
+	// Ortalamada her triba +6, sadece dragonkind +10 ile daha dayanıklı
+    "Greenskins": { fire: 2, cold: 2, lightning: -2, poison: 2, curse: 2 },
+    "Humans": { fire: 3, cold: 3, lightning: 3, poison: 1, curse: -4 },
     //"Beasts&Monstrosities"
-    "B&M": { fire: -1, cold: 6, lightning: 1, poison: 0, curse: 0 },
-    "Plants": { fire: -3, cold: 0, lightning: 0, poison: 5, curse: 0 },
-    "Undead": { fire: -2, cold: 2, lightning: 0, poison: 10, curse: 0 },
-    "Dragonkind": { fire: 4, cold: 4, lightning: 4, poison: 3, curse: 3 },
-    "Magical Creatures": { fire: 5, cold: 5, lightning: 5, poison: 0, curse: -5 }
+    "B&M": { fire: -1, cold: 5, lightning: 2, poison: 0, curse: 0 },
+    "Plants": { fire: -2, cold: 0, lightning: 0, poison: 6, curse: 2 },
+    "Undead": { fire: -2, cold: 2, lightning: -2, poison: 8, curse: 0 },
+    "Dragonkind": { fire: 3, cold: 3, lightning: 2, poison: 1, curse: 1 },
+    "Magical Creatures": { fire: 4, cold: 4, lightning: 4, poison: 0, curse: -6 }
 };
 
 window.ENEMY_STATS = {
@@ -27,7 +28,7 @@ window.ENEMY_STATS = {
 				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
 				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
 				subtype: "poison",       // EnemySkillEngine'e bunun bir zehir olduğunu söyler
-				damageSplit: { physical: 0, poison: 1.0 }, // Fiziksel hasar 0, elemental güç 1.2x Atak
+				damageSplit: { physical: 0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
 				dotType: "poison", 
 				duration: 3,
 				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
@@ -212,7 +213,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 10, 
+                value: 6, 
                 duration: 2, 
                 textKey: "shield_wall" 
             }
@@ -245,7 +246,11 @@ window.ENEMY_STATS = {
                 id: "fire_bomb", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { fire: 1.25 }, 
+                damageSplit: { fire: 1.0}, 
+				dotType: "fire", 
+				duration: 2,
+				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler
+				textKey: "burning"  
                 textKey: "f_bomb" 
 			}
         ]
@@ -308,7 +313,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 12, 
+                value: 10, 
                 duration: 3, 
                 textKey: "hide" 
             }
@@ -508,6 +513,7 @@ window.BIOME_WEIGHTS = {
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
 window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+
 
 
 
