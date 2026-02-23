@@ -225,7 +225,7 @@ window.buyItemFromMerchant = function(index) {
         } else {
             window.showAlert(lang.bag_full_msg);
         }
-    });
+    }, 'buy');
 };
 
 window.sellItemToMerchant = function(index) {
@@ -252,12 +252,12 @@ window.sellItemToMerchant = function(index) {
         renderMerchantUI();
         writeLog(`💰 ${chosenQty}x ${getTranslatedItemName(item)} ${totalGoldEarned} altına satıldı.`);
         if(window.saveGame) window.saveGame();
-    });
+    }, 'sell');
 };
 
 let currentSellAmount = 1;
 
-window.showTradeConfirm = function(msg, item, onConfirm) {
+window.showTradeConfirm = function(msg, item, onConfirm, mode = 'sell') { // mode varsayılan 'sell'
     const modal = document.getElementById('trade-confirm-modal');
     const textEl = document.getElementById('trade-confirm-text');
     const nameEl = document.getElementById('confirm-item-name');
@@ -270,20 +270,25 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     // 1. Başlangıç Miktarı
     currentSellAmount = (item.count && item.count > 1) ? item.count : 1;
 
-    // 2. Fiyat Güncelleme (Canlı)
+    // 2. Arayüz ve Fiyat Güncelleme (Canlı)
     const updateModalDisplay = () => {
         const unitPrice = (item.subtype === 'material') ? 1 : (window.MERCHANT_CONFIG?.sellPrices[item.tier] || 1);
         const totalPrice = unitPrice * currentSellAmount;
         
-        // Üst mesaj ve Toplam Fiyat
-        textEl.innerHTML = `${msg} <br> <span style="color:gold; font-size:1.3rem; font-weight:bold;">${totalPrice} <i class="fas fa-coins"></i></span>`;
-        
-        // Miktar Yazısı
-        const qtyText = document.getElementById('modal-qty-value');
-        if (qtyText) qtyText.textContent = `x${currentSellAmount}`;
+        // --- KRİTİK AYRIM: Sadece satışta fiyatı ve miktarı göster ---
+        if (mode === 'sell') {
+            textEl.innerHTML = `${msg} <br> <span style="color:gold; font-size:1.3rem; font-weight:bold;">${totalPrice} <i class="fas fa-coins"></i></span>`;
+            
+            // Miktar Yazısını güncelle
+            const qtyText = document.getElementById('modal-qty-value');
+            if (qtyText) qtyText.textContent = `x${currentSellAmount}`;
+        } else {
+            // Satın alırken sadece ana mesajı ("Satın almak istiyor musun?") göster
+            textEl.innerHTML = msg; 
+        }
     };
 
-    // 3. Arayüzü İnşa Et
+    // 3. İsim ve Miktar Alanını İnşa Et
     const levelLabel = window.getItemLevelLabel(item);
     const isStackable = item.count && item.count > 1;
 
@@ -291,7 +296,7 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
         <div class="confirm-name-text">${getTranslatedItemName(item)}</div>
         <div class="confirm-tier-text ${rules.badgeType === "tier" ? 'tier-' + item.tier : ''}">${levelLabel}</div>
         
-        ${isStackable ? `
+        ${(isStackable && mode === 'sell') ? ` 
             <div class="quantity-selector-container">
                 <button id="qty-minus" class="qty-btn">-</button>
                 <div id="modal-qty-value" class="qty-display">x${currentSellAmount}</div>
@@ -300,8 +305,8 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
         ` : ""}
     `;
 
-    // 4. Buton Olaylarını Bağla (Sadece yığınlanabilirse)
-    if (isStackable) {
+    // 4. Buton Olaylarını Bağla (Sadece satışta ve yığınlanabilirse)
+    if (isStackable && mode === 'sell') {
         document.getElementById('qty-minus').onclick = () => {
             if (currentSellAmount > 1) {
                 currentSellAmount--;
@@ -318,7 +323,7 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
 
     updateModalDisplay();
 
-    // 5. Statlar (Materyal değilse göster)
+    // 5. Statlar (Aynı kalıyor)
     statsEl.innerHTML = '';
     if (item.stats && item.subtype !== 'material') {
         for (const [statKey, value] of Object.entries(item.stats)) {
@@ -337,5 +342,4 @@ window.showTradeConfirm = function(msg, item, onConfirm) {
     document.getElementById('trade-confirm-no').onclick = () => {
         modal.classList.add('hidden');
     };
-
 };
