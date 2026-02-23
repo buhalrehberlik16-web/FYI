@@ -7,7 +7,7 @@ const MAGUS_SKILLS = {
 	Magic_Arrow: {
 		data: {
 			name: "Magic Arrow",
-            menuDescription: "Atak değerinin %50'si + MP değerinin %80'i kadar hasar veren, büyüden yaratılmış bir ok fırlatır.",
+            menuDescription: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>",
             rageCost: 15,
             levelReq: 1,
 			cooldown: 0,
@@ -28,7 +28,7 @@ const MAGUS_SKILLS = {
 	Mana_Blast: {
 		data: {
 			name: "Mana Blast",
-            menuDescription: "Düşmanın çevresinde manayı yoğunlaştırarak bir patlama yaratır. MP değerinin %140'ı kadar fiziksel hasar verir.",
+            menuDescription: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			cooldown: 0,
@@ -49,7 +49,7 @@ const MAGUS_SKILLS = {
 	Drain: {
 		data: {
 			name: "Drain",
-            menuDescription: "Düşmanın defansını aşarak MP kadar hasar verir ve o kadar Mana kazandırır.",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>",
             rageCost: 35,
             levelReq: 8,
 			cooldown: 3,
@@ -79,7 +79,7 @@ const MAGUS_SKILLS = {
 	Arcane_Acuity: {
 		data: {
 			name: "Arcane Acuity",
-            menuDescription: "Karakterin büyüsel yeteneğini odaklar. 4 tur boyunca her tur Int değeri kadar mana verir.",
+            menuDescription: "<b>(Hızlı Aksiyon)</b><br><span style='color:#43FF64'>4 Tur: Her tur +INT kadar Mana.</span><br><span style='color:cyan'>-20 Mana. Tur harcamaz.</span>",
             rageCost: 20,
             levelReq: 8,
 			cooldown: 5,
@@ -109,7 +109,7 @@ const MAGUS_SKILLS = {
 	Arcane_Explosion: {
 		data: {
 			name: "Arcane Explosion",
-            menuDescription: "Düşmana odaklanan bir büyüsel patlama yaratarak Atk+2xMP hasar verir.",
+            menuDescription: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Fiziksel)</b>.<br><span style='color:cyan'>-75 Mana.</span>",
             rageCost: 75,
             levelReq: 15,
 			cooldown: 0,
@@ -132,7 +132,7 @@ const MAGUS_SKILLS = {
 	Fire_Bolt: {
 		data: {
 			name: "Fire Bolt",
-            menuDescription: "Ateşten bir ok yaratarak düşmana fırlatır. Str değeri kadar fiziksel, MP değerinin yarısı kadar ateş hasarı verir.",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 1,
 			cooldown: 0,
@@ -156,7 +156,7 @@ const MAGUS_SKILLS = {
 	Zap: {
 		data: {
 			name: "Zap",
-            menuDescription: "Düşmanın çevresinde bir elektrik alanı oluşturarak Int değerinin %80'i kadar hasar verir ve düşmanın Atk değerini %20 düşürür.",
+            menuDescription: "Hasar: <b style='color:orange'>0.8xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 1,
 			cooldown: 2,
@@ -190,7 +190,7 @@ const MAGUS_SKILLS = {
 	Water_Whip: {
 		data: {
 			name: "Water Whip",
-            menuDescription: "Sudan bir kırbaç oluşturarak düşmana saldırır, Str+MP değeri kadar fiziksel hasar verir.",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 1.0xMP (Buz)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			cooldown: 0,
@@ -215,7 +215,7 @@ const MAGUS_SKILLS = {
 	Ice_Shield: {
 		data: {
 			name: "Ice Shield",
-            menuDescription: "Karakterin çevresinde buzdan bir kalkan oluşturur 2xMP blok.",
+            menuDescription: "Buzdan kalkan.<br><span style='color:#3498db'>Kazanılan Blok: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>",
             rageCost: 40,
             levelReq: 5,
 			cooldown: 2,
@@ -237,7 +237,7 @@ const MAGUS_SKILLS = {
 	Crystalised_Mana: {
 		data: {
 			name: "Crystalised Mana",
-            menuDescription: "Bir miktar Manayı kristalleştirir. Bu kristal mana daha sonra kullanılabilir.",
+            menuDescription: "Manayı yoğunlaştırır.<br><span style='color:#43FF64'>2 Tur sonra +50 Mana kazanılır.</span><br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			cooldown: 2,
@@ -260,7 +260,7 @@ const MAGUS_SKILLS = {
 	Water_Snare: {
 		data: {
 			name: "Water Snare",
-            menuDescription: "Düşmanı sudan oluşturulmuş bir tuzak içerisine alarak her tur Str değeri kadar hasar verir ve düşman Atk değerini %50 düşürür.",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK %50 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 8,
 			cooldown: 5,
@@ -285,7 +285,7 @@ const MAGUS_SKILLS = {
 	Chaos_Rain: {
 		data: {
 			name: "Chaos Rain",
-            menuDescription: "Elemental güçlerin düşmana saldırdığı yerel bir fırtına oluşturur. Düşmanın en düşük fire, cold, Lightning resistini etkiler.",
+            menuDescription: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>",
             rageCost: 75,
             levelReq: 15,
 			cooldown: 6,
@@ -323,7 +323,7 @@ const MAGUS_SKILLS = {
 	Meditate: {
 		data: {
 			name: "Meditate",
-            menuDescription: "Kısa bir meditasyon ile Int değeri + Kayıp HP'nin %50'si kadar Mana kazanır.",
+            menuDescription: "<b>(Hızlı Meditasyon)</b><br><span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>",
             rageCost: 0,
             levelReq: 1,
 			cooldown: 2,
@@ -351,7 +351,7 @@ const MAGUS_SKILLS = {
 	Thorn_Whip: {
 		data: {
 			name: "Thorn Whip",
-            menuDescription: "Sarmaşıklar ve otlarla düşmana saldırarak Int değerinin %70'i kadar fiziksel, %70'i kadar zehir hasarı verir.",
+            menuDescription: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			cooldown: 0,
@@ -372,7 +372,7 @@ const MAGUS_SKILLS = {
 	Rejuvanate: {
 		data: {
 			name: "Rejuvanate",
-            menuDescription: "3 tur boyunca her tur boyunca INT değeri kadar HP ve Int değerinin 1,5 katı kadar Mana kazanır.",
+            menuDescription: "<span style='color:#43FF64'>4 Tur: Her tur +INT HP ve +1.5xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>",
             rageCost: 75,
             levelReq: 8,
 			cooldown: 0,
@@ -395,7 +395,7 @@ const MAGUS_SKILLS = {
 	Natures_Wrath: {
 		data: {
 			name: "Nature's Wrath",
-            menuDescription: "Doğanın güçlerini düşmanın üzerine salar. 3 tur boyunca her tur Atk değeri kadar hasar verir ve düşmanın Atk ve Def değerlerini %50 düşürür.",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>",
             rageCost: 120,
             levelReq: 15,
 			cooldown: 7,
