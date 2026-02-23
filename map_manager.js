@@ -494,6 +494,7 @@ function triggerNodeAction(node) {
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
+	window.hasRentedInThisTown = false; // <--- YENİ: Her yeni kasabada kısıtlamayı kaldır
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     refreshMerchantStock();
     switchScreen(townScreen);
