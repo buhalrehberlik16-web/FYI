@@ -703,6 +703,11 @@ window.nextTurn = function() {
         window.combatTurnCount++;
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
         if(turnCountDisplay) turnCountDisplay.textContent = window.combatTurnCount;
+		
+		// DİL DESTEĞİNİ DOĞRU ÇEKELİM (Hata buradaydı)
+		const currentLangCode = window.gameSettings.lang || 'tr';
+		const globalLang = window.LANGUAGES[currentLangCode]; // Ana dil objesi (resource_mana burada)
+		const combatLang = globalLang.combat; // Savaş metinleri burada
 
         // Blok Azalması
         if (window.heroBlock > 0) {
@@ -710,6 +715,25 @@ window.nextTurn = function() {
             if(window.heroBlock === 0) writeLog(lang.log_shield_expired);
         }
         
+		// --- YENİ: MANA KRİSTALİ PATLAMA MANTIĞI ---
+		const crystalEffect = hero.statusEffects.find(e => e.id === 'mana_crystal' && !e.waitForCombat);
+		if (crystalEffect && crystalEffect.turns === 1) {
+			const stats = getHeroEffectiveStats();
+			const classRules = CLASS_CONFIG[hero.class];
+    
+			// Doğru dil etiketini 'globalLang' üzerinden alıyoruz
+			const resLabel = globalLang[`resource_${classRules.resourceName}`]; 
+
+			hero.rage = Math.min(stats.maxRage, hero.rage + crystalEffect.value);
+    
+			// Görselleştirme
+			showFloatingText(heroDisplayContainer, `+${crystalEffect.value} ${resLabel}`, 'heal');
+			writeLog(`💎 **${crystalEffect.name}**: ${crystalEffect.value} ${resLabel} açığa çıktı!`);
+    
+			updateStats();
+		}
+		// -------------------------------------------
+		
         // Regen İşleme
         hero.statusEffects.filter(e => (e.id === 'regen' || e.id === 'percent_regen') && !e.waitForCombat).forEach((effect) => { 
             let healAmount = effect.id === 'regen' ? 10 : Math.floor(hero.hp * effect.value);
