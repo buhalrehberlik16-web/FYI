@@ -813,13 +813,21 @@ window.nextTurn = function() {
                         const classRules = CLASS_CONFIG[hero.class];
                         const resourceLabel = lang[`resource_${classRules.resourceName}`];
 
-                        // 1. Yetenek İsmini Hazırla
-                        const skillName = lang.enemy_skills[packet.id]?.name || packet.id;
+                        // --- GÜNCELLEME: SADECE TANIMLIYSA İSMİ GÖSTER ---
+                        // Eğer attack1/attack2 için enemy_skills içinde bir 'name' yoksa undefined döner
+                        const skillName = lang.enemy_skills[packet.id]?.name;
                         
-                        // 2. Etki Yazısını Hazırla ve 'Rage/Öfke' kelimelerini filtrele (BURASI KRİTİK)
+                        // Eğer skillName varsa (yani özel bir isimse) mor yazıyı bas
+                        if (skillName) {
+                            writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                            showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
+                        }
+                        // ------------------------------------------------
+
+                        // Etki Yazısını Hazırla (basic_hit boş olduğu için burada takılmayacak)
                         let effectLabel = lang.enemy_effects[packet.text] || "";
                         
-                        // Kelime Değişimi: Rage/Öfke -> Mana/Öfke
+                        // Kelime Değişimi: Rage/Öfke -> Mana/Öfke 
                         effectLabel = effectLabel.replace(/Rage|Öfke/gi, resourceLabel);
 
                         // Sayı Değişimi: $1 -> 30
@@ -827,18 +835,15 @@ window.nextTurn = function() {
                             effectLabel = effectLabel.replace("$1", packet.value);
                         }
 
-                        // 3. Log Yaz ve Yetenek İsmini Canavarın Üstünde Göster
-                        writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
-                        showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
-
-                        // 4. Etki Yazısını (Örn: -30 Mana!) Kahraman/Canavar üzerinde göster
-                        if (effectLabel) {
+                        // --- GÜNCELLEME: Etki metni (effectLabel) boş değilse bas ---
+                        if (effectLabel && effectLabel.trim() !== "") {
                             const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
                             const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
                             setTimeout(() => { 
                                 showFloatingText(floatingTarget, effectLabel, floatingType); 
                             }, 500);
                         }
+                        // -----------------------------------------------------------
 
                         // Öfke Azaltma ve İyileşme (Mevcut paket mantığın)
                         if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
