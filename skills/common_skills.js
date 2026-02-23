@@ -27,8 +27,8 @@ const COMMON_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
             const stats = getHeroEffectiveStats(); 
-            hero.rage = Math.min(stats.maxRage, hero.rage + 8);
-            showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
+            hero.rage = Math.min(stats.maxRage, hero.rage + 7);
+            showFloatingText(document.getElementById('hero-display'), "+7 Rage", 'heal');
             
             // Animasyona artık sayı değil, paket gönderiyoruz
             animateCustomAttack(dmgPack, null, this.data.name); 
@@ -341,6 +341,7 @@ const COMMON_SKILLS = {
     },	
 
 };
+
 
 
 
