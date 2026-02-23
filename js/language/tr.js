@@ -493,11 +493,11 @@ window.LANG_TR = {
         // --- SKİLLER ---
         skills: {
 			// BARBARIAN SKILLS //
-            cut: { name: "Kes", desc: "Atağın kadar hasar. +10 Rage üretir." },
+            cut: { name: "Kes", desc: "Atağın kadar hasar. +7 Rage üretir." },
             guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır. 0 Rage." },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar. +0-9 Rage üretir." },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage." },
-            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT)." },
+            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT)." },
             distract: { name: "Dikkat Dağıt", desc: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>" },
             tactical_strike: { name: "Taktiksel Vuruş", desc: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>" },
             hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır." },
@@ -663,4 +663,5 @@ window.LANG_TR = {
 		eff_curse_def: "Elemental Koruma",
 	}
   }
+
     
