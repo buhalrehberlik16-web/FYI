@@ -492,11 +492,11 @@ window.LANG_EN = {
         // Skills
         skills: {
 			// BARBARIAN SKILLS //
-            cut: { name: "Cut", desc: "Damage equal to Attack. Generates +10 Rage." },
+            cut: { name: "Cut", desc: "Damage equal to Attack. Generates +7 Rage." },
             guard: { name: "Guard", desc: "Reduces incoming damage by 25%. 0 Rage." },
             strike: { name: "Strike", desc: "115% Attack damage. Generates +0-9 Rage." },
             block: { name: "Block", desc: "Gain block equal to 80% of Dex. Block decays 50% at turn end. -10 Rage." },
-            minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT)." },
+            minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 10 HP</span> + (0.5 x INT)." },
             distract: { name: "Distract", desc: "<b>(Fast Action)</b><br>Enemy ATK -25% (1 Turn).<br>Enemy DEF -50% (2 Turns).<br><span style='color:cyan'>-50 Rage. No turn end.</span>" },
             tactical_strike: { name: "Tactical Strike", desc: "Deals 130% of Attack damage. Costs 15 Rage.<br><span style='color:cyan'>Ignores 10 Defense.</span>" },
             hoarder: { name: "Hoarder", desc: "Passive Skill.<br>Increases Brooch capacity by <span style='color:gold'>+1 Slots</span>." },
@@ -660,4 +660,5 @@ window.LANG_EN = {
 		eff_curse_dmg: "Elemental Damage",
 		eff_curse_def: "Elemental Protection",
 	}
+
   }
