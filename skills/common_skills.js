@@ -9,7 +9,7 @@ const COMMON_SKILLS = {
     cut: {
         data: {
             name: "Kes",
-            menuDescription: "Atağın kadar hasar. +10 Rage üretir.",
+            menuDescription: "Atağın kadar hasar. +7 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
             icon: 'skills/common/icon_attack.webp',
@@ -27,7 +27,7 @@ const COMMON_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
             const stats = getHeroEffectiveStats(); 
-            hero.rage = Math.min(stats.maxRage, hero.rage + 10);
+            hero.rage = Math.min(stats.maxRage, hero.rage + 8);
             showFloatingText(document.getElementById('hero-display'), "+10 Rage", 'heal');
             
             // Animasyona artık sayı değil, paket gönderiyoruz
@@ -117,7 +117,7 @@ const COMMON_SKILLS = {
     minor_healing: {
         data: {
             name: "Küçük İyileşme",
-            menuDescription: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).",
+            menuDescription: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT).",
             rageCost: 20,
             levelReq: 1,
             icon: 'skills/common/icon_minor_healing.webp',
@@ -128,7 +128,7 @@ const COMMON_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const healAmount = 15 + Math.floor((hero.int || 0) * 0.5);
+            const healAmount = 10 + Math.floor((hero.int || 0) * 0.5);
             const oldHp = hero.hp;
             hero.hp = Math.min(stats.maxHp, hero.hp + healAmount);
             updateStats(); 
@@ -341,5 +341,6 @@ const COMMON_SKILLS = {
     },	
 
 };
+
 
 
