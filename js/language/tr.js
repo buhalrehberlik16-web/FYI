@@ -493,11 +493,11 @@ window.LANG_TR = {
         // --- SKİLLER ---
         skills: {
 			// BARBARIAN SKILLS //
-            cut: { name: "Kes", desc: "Atağın kadar hasar. +7 Rage üretir." },
+            cut: { name: "Kes", desc: "Atağın kadar hasar. +10 Rage üretir." },
             guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır. 0 Rage." },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar. +0-9 Rage üretir." },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage." },
-            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT)." },
+            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT)." },
             distract: { name: "Dikkat Dağıt", desc: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>" },
             tactical_strike: { name: "Taktiksel Vuruş", desc: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>" },
             hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır." },
@@ -527,20 +527,22 @@ window.LANG_TR = {
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir."},
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
-			Magic_Arrow: { name: "Büyülü Ok", desc: "Atak değerinin %50'si + MP değerinin %80'i kadar hasar veren bir ok fırlatır." },
-			Drain: { name: "Öz Sömürüsü", desc: "Düşmanın defansını aşarak MP kadar hasar verir ve o kadar Mana kazandırır." },
-			Arcane_Acuity: { name: "Gizemli Odak", desc: "Zihnini arındırır. 4 tur boyunca her tur INT değeri kadar mana kazanırsın." },
-			Arcane_Explosion: { name: "Gizemli Patlama", desc: "Düşmana odaklanan bir büyüsel patlama yaratarak Atk+2xMP hasar verir." },
-			Fire_Bolt: { name: "Ateş Oku", desc: "Str değeri kadar fiziksel, MP değerinin yarısı kadar ateş hasarı verir." },
-			Zap: { name: "Çarpma", desc: "Int değerinin %80'i kadar hasar verir ve düşmanın Atk değerini %20 düşürür." },
-			Water_Whip: { name: "Su Kırbacı", desc: "Düşmana saldırarak Str+MP değeri kadar hasar verir." },
-			Ice_Shield: { name: "Buz Kalkanı", desc: "Karakterin çevresinde buzdan bir kalkan oluşturur. (2xMP Blok)" },
-			Crystalised_Mana: { name: "Mana Kristali", desc: "Manayı kristalleştirir. 2 tur sonra büyük miktarda mana açığa çıkar." },
-			Water_Snare: { name: "Su Tuzağı", desc: "Düşmanı tuzağa alır. Her tur Str kadar hasar verir ve düşman atağını %50 düşürür." },
-			Chaos_Rain: { name: "Kaos Yağmuru", desc: "Düşmanın en düşük direncine odaklanan, MP'den güç alan bir elemental fırtına." },
-			Meditate: { name: "Meditasyon", desc: "Kısa bir odaklanma ile INT + Kayıp HP'nin %50'si kadar Mana kazandırır." },
-			Rejuvanate: { name: "Gençleşme", desc: "Doğanın gücüyle 3 tur boyunca her tur INT kadar HP ve 1.5xINT kadar Mana kazandırır." },
-			Natures_Wrath: { name: "Doğanın Öfkesi", desc: "3 tur boyunca her tur ATK kadar hasar verir; düşman Atk ve Def değerini %50 düşürür." },
+			Magic_Arrow: { name: "Büyülü Ok", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
+			Mana_Blast: { name: "Mana Patlaması", desc: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Drain: { name: "Öz Sömürüsü", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>" },
+			Arcane_Acuity: { name: "Gizemli Odak", desc: "<b>(Hızlı Aksiyon)</b><br><span style='color:#43FF64'>4 Tur: Her tur +INT kadar Mana.</span><br><span style='color:cyan'>-20 Mana. Tur harcamaz.</span>" },
+			Arcane_Explosion: { name: "Gizemli Patlama", desc: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Fiziksel)</b>.<br><span style='color:cyan'>-75 Mana.</span>" },
+			Fire_Bolt: { name: "Ateş Oku", desc: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Zap: { name: "Çarpma", desc: "Hasar: <b style='color:orange'>0.8xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>" },
+			Water_Whip: { name: "Su Kırbacı", desc: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 1.0xMP (Buz)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Ice_Shield: { name: "Buz Kalkanı", desc: "Buzdan kalkan.<br><span style='color:#3498db'>Kazanılan Blok: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>" },
+			Crystalised_Mana: { name: "Mana Kristali", desc: "Manayı yoğunlaştırır.<br><span style='color:#43FF64'>2 Tur sonra +50 Mana kazanılır.</span><br><span style='color:cyan'>-20 Mana.</span>" },
+			Water_Snare: { name: "Su Tuzağı", desc: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK %50 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>" },
+			Chaos_Rain: { name: "Kaos Yağmuru", desc: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>" },
+			Meditate: { name: "Meditasyon", desc: "<b>(Hızlı Meditasyon)</b><br><span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
+			Thorn_Whip: { name: "Dikenli Kırbaç", desc: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Rejuvanate: { name: "Gençleşme", desc: "<span style='color:#43FF64'>4 Tur: Her tur +INT HP ve +1.5xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>" },
+			Natures_Wrath: { name: "Doğanın Öfkesi", desc: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
 		
 		items: {
@@ -663,5 +665,4 @@ window.LANG_TR = {
 		eff_curse_def: "Elemental Koruma",
 	}
   }
-
     

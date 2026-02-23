@@ -492,11 +492,11 @@ window.LANG_EN = {
         // Skills
         skills: {
 			// BARBARIAN SKILLS //
-            cut: { name: "Cut", desc: "Damage equal to Attack. Generates +7 Rage." },
+            cut: { name: "Cut", desc: "Damage equal to Attack. Generates +10 Rage." },
             guard: { name: "Guard", desc: "Reduces incoming damage by 25%. 0 Rage." },
             strike: { name: "Strike", desc: "115% Attack damage. Generates +0-9 Rage." },
             block: { name: "Block", desc: "Gain block equal to 80% of Dex. Block decays 50% at turn end. -10 Rage." },
-            minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 10 HP</span> + (0.5 x INT)." },
+            minor_healing: { name: "Minor Healing", desc: "Quick bandage. Costs 20 Rage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT)." },
             distract: { name: "Distract", desc: "<b>(Fast Action)</b><br>Enemy ATK -25% (1 Turn).<br>Enemy DEF -50% (2 Turns).<br><span style='color:cyan'>-50 Rage. No turn end.</span>" },
             tactical_strike: { name: "Tactical Strike", desc: "Deals 130% of Attack damage. Costs 15 Rage.<br><span style='color:cyan'>Ignores 10 Defense.</span>" },
             hoarder: { name: "Hoarder", desc: "Passive Skill.<br>Increases Brooch capacity by <span style='color:gold'>+1 Slots</span>." },
@@ -526,20 +526,22 @@ window.LANG_EN = {
             Healing_Light: { name: "Healing Light", desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
-			Magic_Arrow: { name: "Magic Arrow", desc: "Fires an arrow that deals 50% Attack + 80% MP as damage." },
-			Drain: { name: "Drain", desc: "Ignores defense to deal MP damage and gains equal amount of Mana." },
-			Arcane_Acuity: { name: "Arcane Acuity", desc: "Focuses your mind. Gains Mana equal to INT every turn for 4 turns." },
-			Arcane_Explosion: { name: "Arcane Explosion", desc: "Creates a magical blast dealing Atk + 2xMP damage." },
-			Fire_Bolt: { name: "Fire Bolt", desc: "Deals Strength as physical and half of MP as Fire damage." },
-			Zap: { name: "Zap", desc: "Deals 80% of INT as damage and reduces enemy Attack by 20%." },
-			Water_Whip: { name: "Water Whip", desc: "Attacks with a whip of water, dealing Str + MP damage." },
-			Ice_Shield: { name: "Ice Shield", desc: "Creates an ice shield around the hero. (2xMP Block)" },
-			Crystalised_Mana: { name: "Crystalised Mana", desc: "Crystalises mana. Releases a large amount of mana after 2 turns." },
-			Water_Snare: { name: "Water Snare", desc: "Traps the enemy. Deals Str damage every turn and reduces enemy Atk by 50%." },
-			Chaos_Rain: { name: "Chaos Rain", desc: "An elemental storm that targets the enemy's weakest resistance." },
-			Meditate: { name: "Meditate", desc: "Gains Mana equal to INT + 50% of missing HP." },
-			Rejuvanate: { name: "Rejuvanate", desc: "Gains INT HP and 1.5xINT Mana every turn for 3 turns." },
-			Natures_Wrath: { name: "Nature's Wrath", desc: "Deals ATK damage every turn for 3 turns and reduces enemy Atk/Def by 50%." },
+			Magic_Arrow: { name: "Magic Arrow", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
+			Mana_Blast: { name: "Mana Blast", desc: "Hasar: <b style='color:orange'>1.4xMP (Physical)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Drain: { name: "Drain", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Ignores defense. Gain Mana equal to damage. -35 Mana.</span>" },
+			Arcane_Acuity: { name: "Arcane Acuity", desc: "<b>(Fast Action)</b><br><span style='color:#43FF64'>4 Turns: Gain +INT Mana every turn.</span><br><span style='color:cyan'>-20 Mana. No turn end.</span>" },
+			Arcane_Explosion: { name: "Arcane Explosion", desc: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Physical)</b>.<br><span style='color:cyan'>-75 Mana.</span>" },
+			Fire_Bolt: { name: "Fire Bolt", desc: "Hasar: <b style='color:orange'>1.0xSTR (Phys) + 0.5xMP (Fire)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Zap: { name: "Zap", desc: "Hasar: <b style='color:orange'>0.8xINT (Lightning)</b>.<br><span style='color:#b19cd9'>3 Turns: Enemy Attack reduced by 20%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
+			Water_Whip: { name: "Water Whip", desc: "Hasar: <b style='color:orange'>1.0xSTR (Phys) + 1.0xMP (Cold)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Ice_Shield: { name: "Ice Shield", desc: "Ice shield.<br><span style='color:#3498db'>Block Gained: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>" },
+			Crystalised_Mana: { name: "Crystalised Mana", desc: "Crystalizes mana.<br><span style='color:#43FF64'>Gain +50 Mana after 2 turns.</span><br><span style='color:cyan'>-20 Mana.</span>" },
+			Water_Snare: { name: "Water Snare", desc: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy Attack reduced by 50%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
+			Chaos_Rain: { name: "Chaos Rain", desc: "Hasar: <b style='color:orange'>2.5xMP (Random Element)</b>.<br><span style='color:cyan'>Targets enemy's lowest resistance. -75 Mana.</span>" },
+			Meditate: { name: "Meditate", desc: "<b>(Fast Meditation)</b><br><span style='color:#43FF64'>Mana Gained: INT + 50% Missing HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
+			Thorn_Whip: { name: "Thorn Whip", desc: "Hasar: <b style='color:orange'>0.7xINT (Phys) + 0.7xINT (Poison)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Rejuvanate: { name: "Rejuvenate", desc: "<span style='color:#43FF64'>4 Turns: Restore INT HP and 1.5xINT Mana every turn.</span><br><span style='color:cyan'>-75 Mana.</span>" },
+			Natures_Wrath: { name: "Nature's Wrath", desc: "Hasar: <b style='color:orange'>1.0xMP (Physical)</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy ATK/DEF reduced by 50%.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
     
 	
@@ -660,5 +662,4 @@ window.LANG_EN = {
 		eff_curse_dmg: "Elemental Damage",
 		eff_curse_def: "Elemental Protection",
 	}
-
   }
