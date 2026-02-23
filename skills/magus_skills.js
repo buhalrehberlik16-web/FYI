@@ -24,6 +24,26 @@ const MAGUS_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
+	Mana_Blast: {
+		data: {
+			name: "Mana Blast",
+            menuDescription: "Yoğunlaştırılmış bir mana küresini patlatarak düşmana MP değerinin %140'si kadar fiziksel hasar verir.",
+            rageCost: 20,
+            levelReq: 5,
+			cooldown: 2,
+            icon: 'skills/magus/arcane/mana_blast.webp',
+            type: 'attack',
+            category: 'arcane', 
+            tier: 2,
+            scaling: { 
+                physical: { atkMult: 0.0, stat: "mp_pow", statMult: 1.4 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+		},
+        onCast: function(attacker, defender, dmgPack) {
+            animateCustomAttack(dmgPack, null, this.data.name);
+        }
+    },
 
 	Drain: {
 		data: {
@@ -326,7 +346,27 @@ const MAGUS_SKILLS = {
             setTimeout(nextTurn, 1000);
         }
     },
-
+	
+	Thorn_Whip: {
+		data: {
+			name: "Thorn Whip",
+            menuDescription: "Sarmaşıklar ve otlar bir kırbaç gibi düşmana saldırır.",
+            rageCost: 25,
+            levelReq: 5,
+			cooldown: 0,
+            icon: 'skills/magus/arcane/thorn_whip.webp',
+            type: 'attack',
+            category: 'nature', 
+            tier: 2,
+            scaling: { 
+                physical: { atkMult: 0.0, stat: "int", statMult: 0.7 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: {stat: "int", statMult: 0.7}, curse: 0 }
+            }
+		},
+        onCast: function(attacker, defender, dmgPack) {
+            animateCustomAttack(dmgPack, null, this.data.name);
+        }
+    },
 	Rejuvanate: {
 		data: {
 			name: "Rejuvanate",
@@ -375,4 +415,5 @@ const MAGUS_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     }
+
 };
