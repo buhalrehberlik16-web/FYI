@@ -38,28 +38,38 @@ window.updateStatScreen = function() {
     
     // 1. Verileri Hazırla
     const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : {};
-    const rules = CLASS_CONFIG[hero.class];
 
     // --- SADECE İTEM VE ANA STATLARDAN GELEN (SKILL-SIZ) DEĞERLERİ HESAPLA ---
-    let itemOnlyStr = hero.str;
-    let itemOnlyDex = hero.dex;
+    const rules = CLASS_CONFIG[hero.class];
+    const sc = rules.scaling; // Yeni scaling kurallarını al
+
+    // Hangi statın atak, hangisinin defans verdiğini sınıftan öğreniyoruz
+    const atkStatKey = sc.atk.stat; // Barbar için "str", Magus için "int"
+    const defStatKey = sc.def.stat; // "dex" vb.
+
+    let itemOnlyAtkStat = hero[atkStatKey];
+    let itemOnlyDefStat = hero[defStatKey];
     let itemAtkBonus = 0;
     let itemDefBonus = 0;
 
-    // Ekipmanları tara (Sadece item bonuslarını topluyoruz)
+    // Ekipmanları tara
     for (const slotKey in hero.equipment) {
         const item = hero.equipment[slotKey];
         if (item && item.stats) {
-            if (item.stats.str) itemOnlyStr += item.stats.str;
-            if (item.stats.dex) itemOnlyDex += item.stats.dex;
+            // Sınıfın ana atak statı (STR/INT) itemda var mı?
+            if (item.stats[atkStatKey]) itemOnlyAtkStat += item.stats[atkStatKey];
+            // Sınıfın ana defans statı (DEX vb.) itemda var mı?
+            if (item.stats[defStatKey]) itemOnlyDefStat += item.stats[defStatKey];
+            // Direkt Atak/Defans bonusları var mı? (Tılsımlardan gelebilir)
             if (item.stats.atk) itemAtkBonus += item.stats.atk;
             if (item.stats.def) itemDefBonus += item.stats.def;
         }
     }
 
     // "Stabil" değer (İtemler var ama Skill Buffları yok)
-    const stableAtk = (hero.baseAttack || 10) + itemAtkBonus + Math.floor(itemOnlyStr * (rules.atkStats.str || 0.5));
-    const stableDef = (hero.baseDefense || 0) + itemDefBonus + Math.floor(itemOnlyDex * (rules.defStats.dex || 0.34));
+    // Artık rules.scaling üzerinden dinamik çarpanlarla hesaplıyoruz
+    const stableAtk = (hero.baseAttack || 10) + itemAtkBonus + Math.floor(itemOnlyAtkStat * sc.atk.mult);
+    const stableDef = (hero.baseDefense || 0) + itemDefBonus + Math.floor(itemOnlyDefStat * sc.def.mult);
 
     // 2. Üst Bilgiler
     statName.textContent = hero.playerName; 
