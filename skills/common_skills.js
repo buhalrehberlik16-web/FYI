@@ -128,7 +128,7 @@ const COMMON_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const stats = getHeroEffectiveStats();
-            const healAmount = 10 + Math.floor((hero.int || 0) * 0.5);
+            const healAmount = 10 + Math.floor((stats.int || 0) * 0.5);
             const oldHp = hero.hp;
             hero.hp = Math.min(stats.maxHp, hero.hp + healAmount);
             updateStats(); 

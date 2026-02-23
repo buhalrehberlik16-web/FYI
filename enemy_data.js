@@ -249,8 +249,7 @@ window.ENEMY_STATS = {
                 damageSplit: { fire: 1.0}, 
 				dotType: "fire", 
 				duration: 2,
-				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler
-				textKey: "burning"  
+				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler  
                 textKey: "f_bomb" 
 			}
         ]

@@ -51,6 +51,12 @@ window.applyStatusEffect = function(target, newEffect) {
     } else {
         target.statusEffects.push(newEffect);
         // Yeni eklenen etkiler için log (isteğe bağlı, zaten genel log yetenekten geliyor)
+		// --- EKLE: Eğer hedef canavarsa ve bu bir buff ise loga yaz ---
+        if (target !== hero) {
+            const currentLang = window.gameSettings.lang || 'tr';
+            const statusName = window.LANGUAGES[currentLang].status[newEffect.id] || newEffect.id;
+            writeLog(`✨ **${target.name}**: ${statusName} etkisi kazandı!`);
+        }
     }
     updateStats();
 };

@@ -13,6 +13,23 @@ const SkillEngine = {
         const targetStats = (target === hero) ? getHeroEffectiveStats() : { def: target.defense, resists: target.resists };
         
         let rawAtk = attackerStats.atk;
+		
+		// --- YENİ: SALDIRGANIN ÜZERİNDEKİ ATK BUFFLARINI KONTROL ET (DİNAMİK) ---
+        // Sadece Hero'da değil, artık Canavar'da da atk_up etkisini kontrol ediyoruz
+        if (attacker.statusEffects) {
+            const atkUpEffect = attacker.statusEffects.find(e => e.id === 'atk_up' && !e.waitForCombat);
+            if (atkUpEffect) {
+                rawAtk += atkUpEffect.value; // +15 veya config'deki değer kadar hasar ekle
+            }
+            
+            // Yüzdesel Atak Bonusu kontrolü (Örn: %25 Atak Artışı)
+            const atkUpPercent = attacker.statusEffects.find(e => e.id === 'atk_up_percent' && !e.waitForCombat);
+            if (atkUpPercent) {
+                rawAtk = Math.floor(rawAtk * (1 + atkUpPercent.value));
+            }
+        }
+        // ---------------------------------------------------------------------
+		
         const targetResists = targetStats.resists || { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
 
         // Düşman atağını kontrol et (Debuff varsa rawAtk düşer)
