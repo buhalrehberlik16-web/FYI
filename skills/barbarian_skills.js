@@ -189,6 +189,53 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
+	rend: {
+        data: {
+            name: "Yar",
+            menuDescription: "Hasar: <b style='color:orange'>1.5xSTR</b>.<br><span style='color:#ff4d4d'>Vurulan toplam hasarın %50'si kadar 2 tur kanama verir.</span><br><span style='color:cyan'>-40 Öfke.</span>",
+            rageCost: 40,
+            levelReq: 12, // Tier 5 olduğu için level gereksinimi artırıldı
+            cooldown: 3,
+            icon: 'skills/barbarian/brutal/brutal_rend.webp',
+            type: 'attack',
+            category: 'brutal',
+            tier: 5,
+            // 1.5 x STR Fiziksel Hasar
+            scaling: { 
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.5 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            // 1. Ana darbeyi vur (Animasyon başlar - yaklaşık 450-600ms sürer)
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // 2. Kanama değerini hesapla
+            const bleedAmount = Math.floor(dmgPack.total * 0.5);
+
+            // 3. GECİKMELİ ETKİ: Vuruş bittikten kısa bir süre sonra kanamayı başlat
+            setTimeout(() => {
+                if (bleedAmount > 0 && defender.hp > 0) { // Düşman ölmediyse uygula
+                    
+                    // Görsel bir uyarı: Düşmanın üzerinde "YARALANDI!" yazısı fırlasın
+                    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                    showFloatingText(document.getElementById('monster-display'), lang.enemy_effects.vicious, 'damage');
+                    
+                    // Kanama etkisini uygula
+                    applyStatusEffect(defender, { 
+                        id: 'bleed', 
+                        value: bleedAmount, 
+                        turns: 2, 
+                        resetOnCombatEnd: true 
+                    });
+
+                    // Canavarın sarsılma efektini tekrar tetikle (acı çekme efekti)
+                    monsterDisplayImg.style.filter = 'brightness(1.5) saturate(2) drop-shadow(0 0 10px red)';
+                    setTimeout(() => { monsterDisplayImg.style.filter = 'none'; }, 300);
+                }
+            }, 800); // 800ms gecikme: Animasyon biter, karakter duruşuna geçer ve KANAMA başlar.
+        }
+    },
 
     // ======================================================
     // TAB: CHAOS (KAOS)
@@ -310,6 +357,45 @@ const BARBARIAN_SKILLS = {
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
+        }
+    },
+	
+	blood_shield: {
+        data: {
+            name: "Kan Kalkanı",
+            menuDescription: "Mevcut Canın %10'unu feda et. Feda edilen miktarın <b style='color:orange'>1.5 katı</b> kadar Blok kazan. 15 Öfke.",
+            rageCost: 0,
+            levelReq: 5,
+            cooldown: 4,
+            icon: 'skills/barbarian/chaos/chaos_blood_shield.webp',
+            type: 'defense',
+            category: 'chaos',
+            tier: 2
+        },
+        onCast: function() {
+            // --- Mevcut can (hero.hp) üzerinden hesapla ---
+            const currentHp = hero.hp;
+            const hpLoss = Math.floor(currentHp * 0.10);
+            
+            // Feda edilen canın 1.5 katı blok (Tam sayı)
+            const blockAmount = Math.floor(hpLoss * 1.5);
+
+            // Canı düş (Karakteri öldürmemesi için en az 1 HP bırakır)
+            hero.hp = Math.max(1, hero.hp - hpLoss);
+            
+            // Blok ekle
+            if (typeof addHeroBlock === 'function') {
+                addHeroBlock(blockAmount);
+            }
+
+            // Cooldown ve UI
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_shield', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+            
+            showFloatingText(document.getElementById('hero-display'), hpLoss, 'damage');
+            writeLog(`🩸 **${this.data.name}**: ${hpLoss} Can feda edilerek ${blockAmount} Blok kazanıldı.`);
+            updateStats();
+
+            setTimeout(nextTurn, 1000);
         }
     },
 
@@ -552,7 +638,6 @@ const BARBARIAN_SKILLS = {
 },
 
 };
-
 
 
 
