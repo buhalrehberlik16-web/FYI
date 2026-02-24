@@ -28,7 +28,6 @@ const BARBARIAN_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
             
 			const stats = getHeroEffectiveStats(); 
-            hero.rage = Math.min(stats.maxRage, hero.rage + 12);
             showFloatingText(document.getElementById('hero-display'), "+12 Rage", 'heal');
             
             // Animasyona artık sayı değil, paket gönderiyoruz
@@ -553,6 +552,7 @@ const BARBARIAN_SKILLS = {
 },
 
 };
+
 
 
 
