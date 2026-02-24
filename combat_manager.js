@@ -810,109 +810,117 @@ window.nextTurn = function() {
         toggleSkillButtons(true); 
         showMonsterIntention(null); 
 		
-		// --- KRİTİK EKLEME: CANAVAR EFEKT SÜRELERİNİ AZALT ---
-        if (monster.statusEffects && monster.statusEffects.length > 0) {
-            monster.statusEffects.forEach(e => {
-                if (!e.waitForCombat) e.turns--;
-            });
-            // Süresi biten (0 olan) etkileri sil
-            monster.statusEffects = monster.statusEffects.filter(e => e.turns > 0);
-            updateStats(); // İkonları ve süreleri tazele
-        }
-        // ---------------------------------------------------
-
-        
-        const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
-        if (monsterStun) { 
-            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-            writeLog(lang.combat.log_stun_skip);
-            showFloatingText(document.getElementById('monster-display'), lang.combat.f_stunned, 'damage'); 
-            window.isHeroTurn = true; 
-            setTimeout(nextTurn, 1000); 
-            return;
-        }
-
+		/// KRİTİK: DoT işlemlerini ve hamleyi setTimeout içine alıyoruz
         setTimeout(() => {
             if (!checkGameOver()) {
-                const action = window.monsterNextAction;
-                const stats = ENEMY_STATS[monster.name];
-                const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                
+                // --- 1. ÖNCE CANAVAR ÜZERİNDEKİ DoT (KANAMA/ZEHİR) İŞLE ---
+                // Bu işlem artık senin vuruşundan 600ms sonra başlayacak
+                const monsterDoTTypes = ['bleed', 'poison', 'fire', 'curse'];
+                monster.statusEffects.filter(e => monsterDoTTypes.includes(e.id) && !e.waitForCombat).forEach((effect, index) => {
+                    // Birden fazla DoT varsa (hem zehir hem kanama) onları da 300ms arayla basar
+                    setTimeout(() => {
+                        monster.hp = Math.max(0, monster.hp - effect.value);
+                        showFloatingText(document.getElementById('monster-display'), effect.value, 'damage');
+                        writeLog(`🩸 **${monster.name}**: ${effect.name} (-${effect.value} HP)`);
+                        updateStats();
+                    }, index * 300); 
+                });
 
-                // A. DEFANS (Hala özel bir durum olduğu için ayrı tutuyoruz)
-                if (action === 'defend') {
-                    handleMonsterDefend(monster);
-                } 
-                // B. TÜM ATAKLAR VE SKİLLER (Artık hepsi paket üzerinden dönüyor)
-                else {
-                    const packet = EnemySkillEngine.resolve(monster, action);
-                    
-                    if (packet) {
+                if (checkGameOver()) return;
+		
+                // --- 2. KRİTİK EKLEME: CANAVAR EFEKT SÜRELERİNİ AZALT (DÜZELTİLDİ) ---
+                if (monster.statusEffects && monster.statusEffects.length > 0) {
+                    monster.statusEffects.forEach(e => {
+                        if (!e.waitForCombat) e.turns--;
+                    });
+                    // Süresi biten (0 olan) etkileri sil
+                    monster.statusEffects = monster.statusEffects.filter(e => e.turns > 0);
+                    updateStats(); // İkonları ve süreleri tazele
+                }
+
+                // --- 3. SERSEMLEME KONTROLÜ (DÜZELTİLDİ) ---
+                const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
+                if (monsterStun) { 
+                    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                    writeLog(lang.combat.log_stun_skip);
+                    showFloatingText(document.getElementById('monster-display'), lang.combat.f_stunned, 'damage'); 
+                    window.isHeroTurn = true; 
+                    setTimeout(nextTurn, 1000); 
+                    return;
+                }
+
+                // --- 4. CANAVAR ASIL HAMLESİNİ YAPIYOR ---
+                setTimeout(() => {
+                    if (!checkGameOver()) {
+                        const action = window.monsterNextAction;
+                        const stats = ENEMY_STATS[monster.name];
                         const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-                        const classRules = CLASS_CONFIG[hero.class];
-                        const resourceLabel = lang[`resource_${classRules.resourceName}`];
 
-                        // --- GÜNCELLEME: SADECE TANIMLIYSA İSMİ GÖSTER ---
-                        // Eğer attack1/attack2 için enemy_skills içinde bir 'name' yoksa undefined döner
-                        const skillName = lang.enemy_skills[packet.id]?.name;
-                        
-                        // Eğer skillName varsa (yani özel bir isimse) mor yazıyı bas
-                        if (skillName) {
-                            writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
-                            showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
-                        }
-                        // ------------------------------------------------
+                        // A. DEFANS
+                        if (action === 'defend') {
+                            handleMonsterDefend(monster);
+                        } 
+                        // B. TÜM ATAKLAR VE SKİLLER
+                        else {
+                            const packet = EnemySkillEngine.resolve(monster, action);
+                            
+                            if (packet) {
+                                const classRules = CLASS_CONFIG[hero.class];
+                                const resourceLabel = lang[`resource_${classRules.resourceName}`];
 
-                        // Etki Yazısını Hazırla (basic_hit boş olduğu için burada takılmayacak)
-                        let effectLabel = lang.enemy_effects[packet.text] || "";
-                        
-                        // Kelime Değişimi: Rage/Öfke -> Mana/Öfke 
-                        effectLabel = effectLabel.replace(/Rage|Öfke/gi, resourceLabel);
+                                // Yetenek İsmi Gösterimi
+                                const skillName = lang.enemy_skills[packet.id]?.name;
+                                if (skillName) {
+                                    writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                                    showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
+                                }
 
-                        // Sayı Değişimi: $1 -> 30
-                        if (effectLabel.includes("$1") && packet.value) {
-                            effectLabel = effectLabel.replace("$1", packet.value);
-                        }
+                                // Etki Yazısı Hazırlama
+                                let effectLabel = lang.enemy_effects[packet.text] || "";
+                                effectLabel = effectLabel.replace(/Rage|Öfke/gi, resourceLabel);
+                                if (effectLabel.includes("$1") && packet.value) {
+                                    effectLabel = effectLabel.replace("$1", packet.value);
+                                }
 
-                        // --- GÜNCELLEME: Etki metni (effectLabel) boş değilse bas ---
-                        if (effectLabel && effectLabel.trim() !== "") {
-                            const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
-                            const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
-                            setTimeout(() => { 
-                                showFloatingText(floatingTarget, effectLabel, floatingType); 
-                            }, 500);
-                        }
-                        // -----------------------------------------------------------
+                                if (effectLabel && effectLabel.trim() !== "") {
+                                    const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
+                                    const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
+                                    setTimeout(() => { 
+                                        showFloatingText(floatingTarget, effectLabel, floatingType); 
+                                    }, 500);
+                                }
 
-                        // Öfke Azaltma ve İyileşme (Mevcut paket mantığın)
-                        if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
-                        if (packet.healing > 0) {
-                            monster.hp = Math.min(monster.maxHp, monster.hp + packet.healing);
-                            showFloatingText(document.getElementById('monster-display'), packet.healing, 'heal');
-                        }
+                                // Öfke Azaltma ve İyileşme
+                                if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
+                                if (packet.healing > 0) {
+                                    monster.hp = Math.min(monster.maxHp, monster.hp + packet.healing);
+                                    showFloatingText(document.getElementById('monster-display'), packet.healing, 'heal');
+                                }
 
-                        // Statü Etkileri Uygulama (Mevcut paket mantığın)
-                        if (packet.statusEffects) {
-                            packet.statusEffects.forEach(eff => {
-                                const targetChar = (packet.category === 'buff') ? monster : hero;
-                                applyStatusEffect(targetChar, { id: eff.id, name: eff.name, value: eff.value, turns: eff.turns, resetOnCombatEnd: true });
-                            });
-                        }
+                                // Statü Etkileri Uygulama
+                                if (packet.statusEffects) {
+                                    packet.statusEffects.forEach(eff => {
+                                        const targetChar = (packet.category === 'buff') ? monster : hero;
+                                        applyStatusEffect(targetChar, { id: eff.id, name: eff.name, value: eff.value, turns: eff.turns, resetOnCombatEnd: true });
+                                    });
+                                }
 
-                        // GÖRSEL VE HASAR UYGULAMA
-                        if (packet.damage && packet.damage.total > 0) {
-                            // Canavarın attackFrames'lerini kullanarak hasarı vur
-                            processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
-                        } else {							
-                            // Hasarsız yetenekse sadece parlat
-                            animateMonsterSkill();
-                            updateStats();
-                            window.isHeroTurn = true;
-                            setTimeout(nextTurn, 1000);
+                                // GÖRSEL VE HASAR UYGULAMA
+                                if (packet.damage && packet.damage.total > 0) {
+                                    processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
+                                } else {							
+                                    animateMonsterSkill();
+                                    updateStats();
+                                    window.isHeroTurn = true;
+                                    setTimeout(nextTurn, 1000);
+                                }
+                            }
                         }
                     }
-                }
-            }
-        }, 600);
+                }, 800); // DoT'lardan sonra hamleye başlama süresi
+            } // checkGameOver bitişi
+        }, 600); // Senin vuruşundan sonra DoT başlama süresi
     }
 };
 
