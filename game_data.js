@@ -9,7 +9,7 @@ const CLASS_CONFIG = {
         startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
          
         baseHp: 20,
-		baseResource: 100, // Başlangıç Öfke sınırı
+		baseResource: 40, // Başlangıç Öfke sınırı
 		hitRageGain: 0.25,
 		onHitRageGain: 5,
 		resourceName: "rage",
@@ -214,4 +214,5 @@ const EVENT_POOL = [
     }
 
 ];
+
 
