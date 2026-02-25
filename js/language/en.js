@@ -523,6 +523,7 @@ window.LANG_EN = {
             battle_cry: { name: "Battle Cry", desc: "Get motivated.<br><span style='color:#43FF64'>3 Turns: 40% STR Increase</span>.<br><span style='color:cyan'>-20 Rage.</span>" },
             restore_healing: { name: "Restoration", desc: "Strong healing.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>.<br><span style='color:cyan'>-50 Rage.</span>" },
 			double_blade: { name: "Double-Edged Blade", desc: "Attack enemy without regard for self.<br>Damage: <b style='color:orange'>2 x ATK + 0.5 x STR </b> <br><span style='color:#ff4d4d'>You take recoil damage equal to 25% of the damage you deal.</span><br><span style='color:cyan'>-15 Rage.</span>" },
+			hell_fire: { name: "Hell Fire", desc: "Creates a devastating flame blast.<br>Damage: <b style='color:orange'>3.0 x INT (Fire)</b><br><span style='color:#ff9800'>Applies fire DoT to both you and the enemy for 2 turns equal to 50% of damage dealt.</span><br><span style='color:cyan'>-30 Rage.</span>" },
             Cauterize: { name: "Cauterize", desc: "Seal wounds with fire.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>.<br><span style='color:cyan'>-30 Rage.</span>" },
 			light_blade: { name: "Light Blade", desc: "Brave attack.<br>Damage: <b style='color:orange'>ATK + 1.5 x MP</b>.<br><span style='color:cyan'>-35 Rage.</span>" },
 			sacred_will: { name: "Sacred Will", desc: "<span style='color:#43FF64'>Grants immunity to ALL debuff and DoT effects for 2 turns.</span><br><span style='color:cyan'>-20 Rage.</span>" },

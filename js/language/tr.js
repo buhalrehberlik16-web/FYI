@@ -524,6 +524,7 @@ window.LANG_TR = {
             battle_cry: { name: "Savaş Çığlığı", desc: "Motive ol.<br><span style='color:#43FF64'>3 Tur: %40 STR Artışı</span>.<br><span style='color:cyan'>-20 Öfke.</span>" },
             restore_healing: { name: "Yenilenme", desc: "Güçlü iyileşme.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.<br><span style='color:cyan'>-50 Öfke.</span>" },
 			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır.<br>Hasar: <b style='color:orange'>2 x ATK + 0.5 x STR </b><br><span style='color:#ff4d4d'>Düşmana verdiğin hasarın %25'i kadar HP kaybedersin.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
+			hell_fire: { name: "Cehennem Ateşi", desc: "Yıkıcı bir alev patlaması yaratır.<br>Hasar: <b style='color:orange'>3.0 x INT (Ateş)</b><br><span style='color:#ff9800'>Vurulan hasarın %50'si kadar hem sana hem düşmana 2 tur yanma hasarı verir.</span><br><span style='color:cyan'>-30 Öfke.</span>" },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.<br><span style='color:cyan'>-50 Öfke.</span>" },
 			light_blade: { name: "Işığın Kılıcı", desc: "Cesur saldırı.<br>Hasar: <b style='color:orange'>ATK + 1.5 x MP</b>.<br><span style='color:cyan'>-35 Öfke.</span>" },
 			sacred_will: { name: "Kutsal İrade", desc: "<span style='color:#43FF64'>2 tur boyunca TÜM debuff ve DoT etkilerine bağışıklık kazandırır.</span><br><span style='color:cyan'>-20 Öfke.</span>" },
