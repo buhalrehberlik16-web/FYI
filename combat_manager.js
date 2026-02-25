@@ -608,7 +608,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     const HALF_TIER_SCALE = 1.5; // Yarım Tier (Elite) çarpanı
     const HARD_SCALE = 1.25;      // isHard (Strong) çarpanı
     
-    let multiplier = 1.0;
+    let hpAtkMultiplier = 1.0 * scaling;
     if (isHalfTierFromMap) multiplier *= HALF_TIER_SCALE; // x1.50
     if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
 
@@ -1062,4 +1062,5 @@ window.executeBroochEffects = function(brooch, startDelay) {
         }, startDelay + (index * 400)); // Dış gecikme + iç sıra
     });
 };
+
 
