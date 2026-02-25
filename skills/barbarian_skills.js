@@ -375,7 +375,7 @@ const BARBARIAN_SKILLS = {
         onCast: function() {
             // --- Mevcut can (hero.hp) üzerinden hesapla ---
             const currentHp = hero.hp;
-            const hpLoss = Math.floor(currentHp * 0.10);
+            const hpLoss = Math.floor(currentHp * 0.20);
             
             // Feda edilen canın 1.5 katı blok (Tam sayı)
             const blockAmount = Math.floor(hpLoss * 1.5);
@@ -464,6 +464,64 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000);
         }
     },
+	
+	//--- CHAOS TIER 5 --- 
+	blood_terror: {
+        data: {
+            name: "Kan Dehşeti",
+            menuDescription: "Tüm yaşam enerjini tek bir darbede topla. Canını <b style='color:#ff4d4d'>1</b>'e indir ve kaybettiğin can kadar hasar vur. 0 Öfke.",
+            rageCost: 0,
+            levelReq: 15, // Tier 5 gereksinimi
+            cooldown: 8,  // Çok güçlü olduğu için yüksek cooldown
+            icon: 'skills/barbarian/chaos/chaos_blood_terror.webp',
+            type: 'attack',
+            category: 'chaos',
+            tier: 5,
+            // Bu skill statlardan değil, o anki can kaybından beslendiği için scaling'i 0 tutuyoruz
+            scaling: { 
+                physical: { atkMult: 0, stat: "str", statMult: 0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }			
+        },
+        onCast: function(attacker, defender) {
+            // 1. Kaybedilecek canı hesapla
+            const currentHp = hero.hp;
+            const hpSacrificed = currentHp - 1;
+
+            if (hpSacrificed <= 0) {
+                writeLog("❌ **Kan Dehşeti**: Feda edilecek yeterli canın yok!");
+                setTimeout(nextTurn, 500);
+                return;
+            }
+
+            // 2. Kahramanın canını 1'e indir
+            hero.hp = 1;
+            showFloatingText(document.getElementById('hero-display'), hpSacrificed, 'damage');
+
+            // 3. Özel Hasar Paketi Oluştur (Feda edilen can kadar)
+            // Bu hasar zırhtan etkilenmemesi için 'elem' kısmına koyup targetResists'i bypass edebiliriz
+            // ya da direkt total hasar olarak paketleyebiliriz.
+            const dmgPack = {
+                total: hpSacrificed,
+                phys: hpSacrificed,
+                elem: 0
+            };
+
+            // 4. Görsel Efekt: Karakteri kıpkırmızı parlat
+            heroDisplayImg.style.filter = 'brightness(2) saturate(5) hue-rotate(-50deg) drop-shadow(0 0 20px red)';
+            setTimeout(() => { heroDisplayImg.style.filter = 'none'; }, 600);
+
+            // 5. Saldırıyı gerçekleştir
+            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+            
+            writeLog(`💀 **${this.data.name}**: ${hpSacrificed} Can feda ederek dehşet saçtın!`);
+            updateStats();
+            
+            // Cooldown ekle
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_terror', turns: 9, maxTurns: 9, resetOnCombatEnd: true });
+        }
+    },
+	
 	// Hellfire (Deal ?xInt dmg to both the Enemy and the Player)
 	// Ulti 1 (Lose all HP, deal as much Dmg) 
 	// Path_of_Pain (Cost: All Rage - Deal ?xInt based damage, gain HP equal to Rage Spent)
