@@ -516,13 +516,22 @@ function processMonsterDamage(attacker, dmgPack, attackFrames) {
                 const gainOnHit = classRules.onHitRageGain || 0; // Kuralı oku (Barbar: 5, Magus: 0)
 
                 if (gainOnHit > 0) {
-                    hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
-                    // İstersen darbe aldığında kazandığı öfkeyi de ekrana basabiliriz:
-                    const currentLang = window.gameSettings.lang || 'tr';
-                    const resLabel = window.LANGUAGES[currentLang][`resource_${classRules.resourceName}`];
-                    showFloatingText(heroDisplayContainer, `+${gainOnHit} ${resLabel}`, 'heal');
-                }
-                // --------------------------------------------------------
+                        // Hasar rakamı çıktıktan 600ms sonra öfke kazandır ve yazısını bas
+                        setTimeout(() => {
+                            if (hero.hp > 0) { // Kahraman ölmediyse ekle
+                                hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
+                                
+                                const currentLang = window.gameSettings.lang || 'tr';
+                                const resLabel = window.LANGUAGES[currentLang][`resource_${classRules.resourceName}`];
+                                
+                                showFloatingText(heroDisplayContainer, `+${gainOnHit} ${resLabel}`, 'heal');
+                                // Loga da gecikmeli düşmesi akışı doğrular
+                                writeLog(`🛡️ **Savaşçı Sabrı**: Darbe aldığın için +${gainOnHit} ${resLabel} kazandın.`);
+                                updateStats();
+                            }
+                        }, 600);
+                    }
+                    // ---------------------------------------------------------------------
 				}
                 updateStats(); 
                 if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
@@ -601,39 +610,44 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     
     let multiplier = 1.0;
     if (isHalfTierFromMap) multiplier *= HALF_TIER_SCALE; // x1.50
-    if (isHardFromMap) multiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
+    if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
 
-    // Yardımcı yuvarlama fonksiyonu (Statları tam sayıya çevirir)
-    const scale = (val) => Math.ceil(val * multiplier * scaling);
+    // Defans ve Diğerleri için Çarpan (isHard hariç tutulur)
+    let otherMultiplier = 1.0 * scaling;
+    if (isHalfTierFromMap) otherMultiplier *= HALF_TIER_SCALE;
+
+    // Yardımcı yuvarlama fonksiyonları
+    const scaleHPAtk = (val) => Math.ceil(val * hpAtkMultiplier);
+    const scaleOther = (val) => Math.ceil(val * otherMultiplier);
 	
     switchScreen(battleScreen);
     monster = { 
-	name: enemyType, 
-	tribe: stats.tribe,
-    resists: finalMonsterResists,
-	maxHp: scale(stats.maxHp), 
-	hp: scale(stats.maxHp), 
-	attack: scale(stats.attack), 
-	defense: scale(stats.defense), 
-	isHard: isHardFromMap, 
-	isBoss: stats.isBoss, 
-	isHalfTier: isHalfTierFromMap,
-	xp: stats.xp, 
-	tier: stats.tier, 
-	idle: stats.idle,  dead: stats.dead,  attackFrames: stats.attackFrames,
-	skills: stats.skills,
-    firstTurnAction: stats.firstTurnAction,
-	statusEffects: [], // CANAVARIN KENDİ EFEKT DİZİSİ
+        name: enemyType, 
+        tribe: stats.tribe,
+        resists: finalMonsterResists,
+        // --- KRİTİK DEĞİŞİKLİK: SADECE HP VE ATK HARD MULTIPLIER ALIR ---
+        maxHp: scaleHPAtk(stats.maxHp), 
+        hp: scaleHPAtk(stats.maxHp), 
+        attack: scaleHPAtk(stats.attack), 
+        defense: scaleOther(stats.defense), // Defans isHard'dan etkilenmez
+        // --------------------------------------------------------------
+        isHard: isHardFromMap, 
+        isBoss: stats.isBoss, 
+        isHalfTier: isHalfTierFromMap,
+        xp: stats.xp, 
+        tier: stats.tier, 
+        idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames,
+        skills: stats.skills,
+        firstTurnAction: stats.firstTurnAction,
+        statusEffects: [], 
 	};
 	
-	console.log(`${monster.name} Dirençleri:`, monster.resists); // Debug için
-    
-	// --- LOGLAMA ---
+	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
 	if (isHalfTierFromMap) {
         writeLog(`⚠️ **Takviyeli Düşman**: Statlar %50 arttırıldı!`);
     }
     if (isHardFromMap && !isHalfTierFromMap) {
-        writeLog(`⚔️ **Güçlü Düşman**: ${monster.name} %25 daha dayanıklı ve sert vuruyor!`);
+        writeLog(`⚔️ **Güçlü Düşman**: ${monster.name} hasarı ve canı %25 arttı!`);
     }
 	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
@@ -681,30 +695,13 @@ window.nextTurn = function() {
 		// RAGE REGEN UYGULA
 		if (stats.rageRegen > 0) {
 			const oldRage = hero.rage;
+			const classRules = CLASS_CONFIG[hero.class];
 			hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
 			if (hero.rage > oldRage) {
 				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} Öfke kazanıldı.`);
 			}
 		}
-		
-		// ---  BROŞ EFEKTLERİNİ TETİKLE (Sadece Kahraman Sırası Başında) ---
-        hero.brooches.forEach((brooch, index) => {
-            if (!brooch) return;
 
-            if (!hero.broochCooldowns) hero.broochCooldowns = {};
-            if (hero.broochCooldowns[index] === undefined) hero.broochCooldowns[index] = 0;
-
-            // Eğer bekleme süresi bittiyse (veya 0 ise) çalıştır
-            if (hero.broochCooldowns[index] <= 0) {
-                window.executeBroochEffects(brooch);
-                hero.broochCooldowns[index] = brooch.frequency; // Süreyi başa sar (1, 2 veya 3)
-            }
-            
-            // Sayacı düşür
-            hero.broochCooldowns[index]--;
-        });
-		
-		
         // --- 1. TUR BAŞLANGICI VE BLOK/REGEN/ZEHİR İŞLEME ---
         window.combatTurnCount++;
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
@@ -750,60 +747,56 @@ window.nextTurn = function() {
             writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP`);
         });
 
-        // --- BURAYA YAZIYORUZ: ZAMANLA HASAR (DoT) İŞLEME SİSTEMİ ---
-        // Not: Eski 'poison' bloğunu silip yerine bunu koyuyoruz
-        const dotTypes = ['poison', 'fire', 'cold', 'lightning', 'curse'];
-        
-        hero.statusEffects.filter(e => dotTypes.includes(e.id) && !e.waitForCombat).forEach((effect) => {
-            // 1. Hasarı Uygula
-            hero.hp = Math.max(0, hero.hp - effect.value);
+		// --- 2. BROŞLARI SIRALI TETİKLE (Kümülatif Gecikme) ---
+        let currentBroochDelay = 500; // İlk broş 0.5sn sonra başlar
+        hero.brooches.forEach((brooch) => {
+            if (!brooch) return;
+            if (!hero.broochCooldowns) hero.broochCooldowns = {};
             
-            // 2. Görsel Efekt (Her zaman kırmızı 'damage' tipi fırlatırız ama logda ismini yazarız)
-            showFloatingText(heroDisplayContainer, effect.value, 'damage');
-            
-            // 3. Loglama (Örn: Yanma: -5 HP)
-            writeLog(`${effect.name}: -${effect.value} HP`);
-            
-            // 4. Sarsılma Efekti
-            animateDamage(true); 
+            const bIndex = hero.brooches.indexOf(brooch);
+            if (hero.broochCooldowns[bIndex] === undefined) hero.broochCooldowns[bIndex] = 0;
+
+            if (hero.broochCooldowns[bIndex] <= 0) {
+                // Bu broşu mevcut gecikmeyle çalıştır
+                window.executeBroochEffects(brooch, currentBroochDelay);
+                // Bir sonraki broş için gecikmeyi artır (Her broş için 800ms pencere ayırıyoruz)
+                currentBroochDelay += 800; 
+                hero.broochCooldowns[bIndex] = brooch.frequency;
+            }
+            hero.broochCooldowns[bIndex]--;
         });
-        // ----------------------------------------------------------
 
-		
-		if (checkGameOver()) return; 
+        // --- 3. DoT İŞLEME (Tüm broşlar bittikten sonra başlar) ---
+        const dotStartTime = currentBroochDelay + 400; 
+        setTimeout(() => {
+            const dotTypes = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
+            hero.statusEffects.filter(e => dotTypes.includes(e.id) && !e.waitForCombat).forEach((effect, idx) => {
+                setTimeout(() => {
+                    hero.hp = Math.max(0, hero.hp - effect.value);
+                    showFloatingText(heroDisplayContainer, effect.value, 'damage');
+                    writeLog(`${effect.name}: -${effect.value} HP`);
+                    animateDamage(true); 
+                    updateStats();
+                }, idx * 400);
+            });
+        }, dotStartTime);
 
-        // --- 2. STUN KONTROLÜ (KRİTİK NOKTA) ---
-        const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);
-        
-        if (stunEffect) {
-            writeLog(lang.log_stun_skip);
-            showFloatingText(heroDisplayContainer, stunEffect.name, 'damage'); 
-            
-            // Süreleri azalt (Stun'ı 0 yapıp silecek)
+        // --- 4. TUR SONU VE KİLİT AÇILIŞI (DoT'lar bittikten sonra) ---
+        const dotCount = hero.statusEffects.filter(e => ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'].includes(e.id)).length;
+        const totalWaitTime = dotStartTime + (dotCount * 450) + 200;
+
+        setTimeout(() => {
+            if (checkGameOver()) return; 
+
+            // Durum sürelerini azalt
             hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
             hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
-            updateStats();
-
-            // KRİTİK DÜZELTME: Sırayı devretmeden önce canavara YENİ hamle seçtiriyoruz!
-            // Böylece canavar tekrar web_trap atmak yerine yeni bir zar atar.
-            setTimeout(() => {
-                window.isHeroTurn = false; 
-                determineMonsterAction(); // Canavarın yeni niyetini (intention) belirle
-                setTimeout(nextTurn, 1000); 
-            }, 1000);
             
-            return; // Fonksiyondan çık, butonları açma
-        }
-
-        // --- 3. NORMAL DURUM SÜRE AZALMASI ---
-        hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
-        hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
-        updateStats(); 
-
-        // Kahraman hamlesine hazır
-        determineMonsterAction(); 
-        showMonsterIntention(window.monsterNextAction); 
-        toggleSkillButtons(false); 
+            determineMonsterAction(); 
+            showMonsterIntention(window.monsterNextAction); 
+            toggleSkillButtons(false); 
+            updateStats();
+        }, Math.max(2000, totalWaitTime)); // En az 2 saniye bekle
 
     } else {
         // --- CANAVAR SIRASI ---
@@ -1003,7 +996,7 @@ window.checkGameOver = function() {
     return false;
 };
 
-window.executeBroochEffects = function(brooch) {
+window.executeBroochEffects = function(brooch, startDelay) {
 	 // --- GÜVENLİK KONTROLÜ: Sadece Broşları İşle ---
     // Tılsımlar (charm1) pasif olduğu için burada bir 'effects' listesi barındırmazlar.
     if (!brooch || brooch.type !== "brooch" || !brooch.effects) return;
@@ -1020,57 +1013,53 @@ window.executeBroochEffects = function(brooch) {
     const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
     const isSpecialist = (monster && monster.tribe === brooch.specialtyTribe);
     const damageMult = isSpecialist ? 2 : 1;
+	
+    // Her broşun kendi içindeki efektlerini, dışarıdan gelen gecikmenin üzerine ekleyerek sıralıyoruz
+    brooch.effects.forEach((eff, index) => {
+        setTimeout(() => {
+            switch(eff.id) {
+                case "fixed_dmg":
+                    let finalFixed = eff.value * damageMult; 
+                    monster.hp = Math.max(0, monster.hp - finalFixed);
+                    if (isSpecialist) {
+                        showFloatingText(monsterDisplay, `${finalFixed} ${lang.combat.f_specialist}`, 'skill');
+                    } else {
+                        showFloatingText(monsterDisplay, finalFixed, 'damage');
+                    }
+                    const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
+                    writeLog(`📿 **Broş**: ${lang.items.eff_fixed_dmg} (${tribeName}) -> ${finalFixed} vurdu.`);
+                    break;
+                    
+                case "stat_scaling":
+                    let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
+                    if (scaleDmg < 1) scaleDmg = 1;
+                    monster.hp = Math.max(0, monster.hp - scaleDmg);
+                    showFloatingText(monsterDisplay, scaleDmg, 'damage');
+                    const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
+                    writeLog(`📿 **Broş**: ${statLabel} bonusuyla ${scaleDmg} vurdun.`);
+                    break;
 
-    brooch.effects.forEach(eff => {
-        switch(eff.id) {
-            case "fixed_dmg":
-                let finalFixed = eff.value * damageMult; 
-                monster.hp = Math.max(0, monster.hp - finalFixed);
-                
-                if (isSpecialist) {
-                    // Sadece fixed_dmg için: [Hasar] + [UZMAN! (translations'tan)]
-                    const specialistTag = lang.combat.f_specialist;
-                    showFloatingText(monsterDisplay, `${finalFixed} ${specialistTag}`, 'skill');
-                } else {
-                    showFloatingText(monsterDisplay, finalFixed, 'damage');
-                }
-                
-                const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
-                writeLog(`📿 **Broş**: ${lang.items.eff_fixed_dmg} (${tribeName}) -> ${finalFixed} vurdu.`);
-                break;
-                
-            case "stat_scaling":
-                // Stat hasarı (Str, Int, Mp) uzmanlıktan etkilenmez.
-                let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
-                if (scaleDmg < 1) scaleDmg = 1;
-                monster.hp = Math.max(0, monster.hp - scaleDmg);
-                showFloatingText(monsterDisplay, scaleDmg, 'damage');
-                
-                const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
-                writeLog(`📿 **Broş**: ${statLabel} bonusuyla ${scaleDmg} vurdun.`);
-                break;
+                case "heal":
+                    const oldHp = hero.hp;
+                    hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
+                    showFloatingText(display, (hero.hp - oldHp), 'heal');
+                    writeLog(`📿 **Broş**: +${eff.value} HP yenilendi.`);
+                    break;
 
-            case "heal":
-                const oldHp = hero.hp;
-                hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
-                showFloatingText(display, (hero.hp - oldHp), 'heal');
-                writeLog(`📿 **Broş**: +${eff.value} HP yenilendi.`);
-                break;
-
-            case "resource_regen":
-                const oldRage = hero.rage;
-                hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
-                
-                // KRİTİK: Barbar buffer'ına girmemesi için isBufferingRage'i geçici kapatıp basıyoruz
-                const wasBuffering = window.isBufferingRage;
-                window.isBufferingRage = false;
-                showFloatingText(display, `+${eff.value} Rage`, 'heal');
-                window.isBufferingRage = wasBuffering;
-                
-                writeLog(`📿 **Broş**: +${eff.value} Öfke kazanıldı.`);
-                break;
-        }
+                case "resource_regen":
+                    const classRules = CLASS_CONFIG[hero.class];
+                    hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
+                    const wasBuffering = window.isBufferingRage;
+                    window.isBufferingRage = false;
+                    // Dil hiyerarşisi düzeltildi (lang üzerinden root'a erişim)
+                    const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+                    showFloatingText(display, `+${eff.value} ${globalLang[`resource_${classRules.resourceName}`]}`, 'heal');
+                    window.isBufferingRage = wasBuffering;
+                    writeLog(`📿 **Broş**: +${eff.value} Öfke kazanıldı.`);
+                    break;
+            }
+            updateStats();
+        }, startDelay + (index * 400)); // Dış gecikme + iç sıra
     });
-    updateStats();
 };
 
