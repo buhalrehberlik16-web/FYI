@@ -1,27 +1,31 @@
 // js/enemy/enemy_skills.js
 
 window.EnemySkillEngine = {
-    applyOptionalDot: function(packet, config, dmgPack) {
+    // GÜNCELLEME: monster parametresi eklendi
+    applyOptionalDot: function(packet, config, dmgPack, monster) {
         if (config.dotType && config.duration) {
-            let dotVal = config.dotValue || 0;
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
             
-            if (dmgPack && dmgPack.elem > 0) {
-                // tickMult yoksa varsayılan 0.5 kullan
-                const mult = config.tickMult !== undefined ? config.tickMult : 0.5;
-                dotVal = Math.floor(dmgPack.elem * mult);
-            }
+            // --- KRİTİK HESAPLAMA DÜZELTMESİ ---
+            // Senin istediğin mantık: Canavarın o anki ATK değeri üzerinden hesapla
+            // (Scaling, Hard bonusları dahil olan monster.attack kullanılır)
+            const basePower = monster.attack || 0;
+            const mult = config.tickMult !== undefined ? config.tickMult : 0.5;
+            
+            // 4 * 0.75 = 3.0 (Küsürat kalmaması için Math.round veya Math.ceil en güvenlisidir)
+            let dotValRaw = Math.round(basePower * mult);
 
-            // Hero dirençlerini kontrol et (Failsafe: 0 dönmesi garanti edildi)
+            // --- DİRENÇ KONTROLÜ ---
             const heroStats = getHeroEffectiveStats();
-            const resists = heroStats.resists || {};
-            const heroResist = resists[config.dotType] || 0;
+            const heroResist = heroStats.resists[config.dotType] || 0;
             
-            // NaN engellemek için her zaman en az 0 veya 1 dönmesini sağla
-            let finalTickDamage = Math.max(1, (dotVal || 0) - heroResist);
+            // Net DoT Hasarı (En az 1 vurması için failsafe)
+            let finalTickDamage = Math.max(1, dotValRaw - heroResist);
+            // ----------------------------------
 
             packet.statusEffects.push({ 
                 id: config.dotType, 
-                name: window.LANGUAGES[window.gameSettings.lang].status[config.dotType] || config.dotType,
+                name: lang.status[config.dotType] || config.dotType,
                 value: finalTickDamage, 
                 turns: config.duration 
             });
@@ -29,15 +33,6 @@ window.EnemySkillEngine = {
     },
 
     templates: {
-		"basic_attack": (monster, config) => {
-            const dmgPack = SkillEngine.calculate(monster, { damageSplit: { physical: 1.0 } }, hero);
-            return {
-                id: config.id, // attack1 veya attack2
-                category: "attack",
-                damage: dmgPack,
-                text: "basic_hit" // translation -> Vurdu!
-            };
-        },
         "special_attack": (monster, config) => {
             const dmgPack = SkillEngine.calculate(monster, config, hero);
             let packet = {
@@ -48,7 +43,8 @@ window.EnemySkillEngine = {
                 healing: config.healPercent ? Math.floor(dmgPack.total * config.healPercent) : 0,
                 text: config.textKey
             };
-            window.EnemySkillEngine.applyOptionalDot(packet, config, dmgPack);
+            // monster parametresini gönderiyoruz
+            window.EnemySkillEngine.applyOptionalDot(packet, config, dmgPack, monster);
             return packet;
         },
 
@@ -58,13 +54,11 @@ window.EnemySkillEngine = {
                 category: config.category,
                 statusEffects: [],
                 text: config.textKey,
-                value: config.value || 0, // NaN koruması
+                value: config.value || 0,
                 damage: { total: 0, phys: 0, elem: 0 }
             };
 
-            // A. Stat Değişimi (Sadece subtype "poison" veya "fire" DEĞİLSE uygula)
-            // Çünkü poison/fire'ı applyOptionalDot halledecek.
-            const dotIds = ['poison', 'fire', 'cold', 'lightning', 'curse'];
+            const dotIds = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
             
             if (config.subtype === "rage_burn") {
                 packet.rageReduction = config.value || 0;
@@ -76,13 +70,12 @@ window.EnemySkillEngine = {
                 });
             }
 
-            // B. Hasar Hesabı (damageSplit varsa)
             if (config.damageSplit) {
                 packet.damage = SkillEngine.calculate(monster, config, hero);
             }
 
-            // C. DoT Hesabı
-            window.EnemySkillEngine.applyOptionalDot(packet, config, packet.damage);
+            // monster parametresini gönderiyoruz
+            window.EnemySkillEngine.applyOptionalDot(packet, config, packet.damage, monster);
 
             return packet;
         },
@@ -104,13 +97,10 @@ window.EnemySkillEngine = {
 
     resolve: function(monster, skillId) {
         const stats = ENEMY_STATS[monster.name];
-        
-        // 1. Canavarın kendi 'skills' listesinde bu ID var mı bak (attack1 veya attack2 de olabilir artık)
         let config = stats.skills.find(s => s.id === skillId);
 
-        // 2. EĞER YOKSA ve bu bir attack1/2 ise: Sanal bir 'basic_attack' konfigürasyonu oluştur
         if (!config && (skillId === 'attack1' || skillId === 'attack2')) {
-            config = { id: skillId, template: "basic_attack" };
+            config = { id: skillId, template: "special_attack", damageSplit: { physical: 1.0 } };
         }
 
         if (!config) return null;
