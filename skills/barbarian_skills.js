@@ -282,7 +282,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 35,
             levelReq: 1,
 			cooldown: 1,
-            icon: 'skills/barbarian/brutal/brutal_reckless_strike.webp',
+            icon: 'skills/barbarian/chaos/chaos_reckless_strike.webp',
             type: 'attack',
             category: 'chaos',
             tier: 1,
@@ -292,10 +292,40 @@ const BARBARIAN_SKILLS = {
             }
         },
         onCast: function(attacker, defender) {
-            hero.statusEffects.push({ id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            
+            // 1. Defansı 0 yapma etkisi (Mevcut)
+            applyStatusEffect(hero, { id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
+            
+            // 2. Hasar Paketini hesapla
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            
+            // 3. Ana saldırı animasyonunu başlat
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+
+            // --- YENİ: %50 İHTİMALLE KENDİNE HASAR VERME (RECOIL) ---
+            if (Math.random() < 0.50) {
+                const selfBleedVal = Math.floor(dmgPack.total * 0.50);
+                
+                // Vuruş bittikten sonra (800ms) etkiyi göster
+                setTimeout(() => {
+                    if (selfBleedVal > 0 && hero.hp > 0) {
+                        // Ekranda "KANAMA!" yazısını fırlat
+                        showFloatingText(document.getElementById('hero-display'), lang.enemy_effects.vicious, 'damage');
+                        
+                        // Kendine Bleed etkisini uygula
+                        applyStatusEffect(hero, { 
+                            id: 'bleed', 
+                            value: selfBleedVal, 
+                            turns: 2, 
+                            resetOnCombatEnd: true 
+                        });
+                        writeLog(`🩸 **Pervasızlık**: Hamlen geri tepti! Kendine ${selfBleedVal} kanama hasarı verdin.`);
+                    }
+                }, 800);
+            }
+            // -----------------------------------------------------
         }
     },
 	
@@ -373,9 +403,24 @@ const BARBARIAN_SKILLS = {
             tier: 2
         },
         onCast: function() {
+			// --- YENİ: 1 HP VARKEN BASILAMAZ KONTROLÜ ---
+            if (hero.hp <= 1) {
+                const currentLang = window.gameSettings.lang || 'tr';
+                const msg = currentLang === 'tr' ? "Feda edecek canın kalmadı!" : "No HP left to sacrifice!";
+                writeLog(`❌ **${this.data.name}**: ${msg}`);
+                
+                // Kaynakları ve Turu İade Et (Çünkü combat_manager bunları çoktan harcadı)
+                hero.rage += this.data.rageCost;
+                window.isHeroTurn = true;
+                toggleSkillButtons(false);
+                updateStats();
+                return; // Fonksiyondan çık, hiçbir etki uygulama
+            }
+            // --------------------------------------------
+			
             // --- Mevcut can (hero.hp) üzerinden hesapla ---
             const currentHp = hero.hp;
-            const hpLoss = Math.floor(currentHp * 0.20);
+            const hpLoss = Math.ceil(currentHp * 0.20);
             
             // Feda edilen canın 1.5 katı blok (Tam sayı)
             const blockAmount = Math.floor(hpLoss * 1.5);
@@ -441,6 +486,59 @@ const BARBARIAN_SKILLS = {
         }
     },
 	
+	hell_fire: {
+        data: {
+            name: "Cehennem Ateşi",
+            menuDescription: "Hasar: <b style='color:orange'>3.0xINT (Ateş)</b>.<br><span style='color:#ff9800'>Vurulan hasarın %50'si kadar hem sana hem düşmana 2 tur yanma hasarı verir.</span><br><span style='color:cyan'>-30 Öfke.</span>",
+            rageCost: 30,
+            levelReq: 8,
+            cooldown: 4,
+            icon: 'skills/barbarian/chaos/chaos_hell_fire.webp',
+            type: 'attack',
+            category: 'chaos',
+            tier: 3,
+            // 3.0 x INT Ateş Hasarı
+            scaling: { 
+                physical: { atkMult: 0, stat: "int", statMult: 0 },
+                elemental: { fire: { stat: "int", statMult: 3.0 }, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            // 1. Ana patlamayı vur
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // 2. Yanma (Fire DoT) değerini hesapla (Vurulan toplam hasarın %50'si)
+            const burnAmount = Math.floor(dmgPack.total * 0.5);
+
+            // 3. GECİKMELİ ÇİFT TARAFLI ETKİ
+            setTimeout(() => {
+                if (burnAmount > 0) {
+                    // DÜŞMANA UYGULA
+                    applyStatusEffect(defender, { 
+                        id: 'fire', 
+                        value: burnAmount, 
+                        turns: 2, 
+                        resetOnCombatEnd: true 
+                    });
+
+                    // KENDİNE UYGULA (Chaos bedeli)
+                    applyStatusEffect(hero, { 
+                        id: 'fire', 
+                        value: burnAmount, 
+                        turns: 2, 
+                        resetOnCombatEnd: true 
+                    });
+
+                    showFloatingText(document.getElementById('monster-display'), "ALEVLER!", 'damage');
+                    showFloatingText(document.getElementById('hero-display'), "TUTUŞTUN!", 'damage');
+                    writeLog(`🔥 **${this.data.name}**: Her yer alevler içinde! Çift taraflı yanma başladı.`);
+                }
+            }, 600);
+
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'hell_fire', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
+        }
+    },
+	
     Cauterize: {
 		//Lose 10% HP, gain 5%HP+?xInt per turn
         data: {
@@ -462,6 +560,63 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'Cauterize', resetOnCombatEnd: true });
             animateHealingParticles(); updateStats();
             setTimeout(() => { nextTurn(); }, 1000);
+        }
+    },
+	
+	//--- CHAOS TIER 4 ---
+	
+	blood_lust: {
+        data: {
+            name: "Kan Susuzluğu",
+            menuDescription: "Hasar: <b style='color:orange'>3.0 x INT</b>.<br><span style='color:#43FF64'>Vurulan hasarın %50'sini anında, %25'ini 2 tur boyunca iyileşme olarak alırsın.</span><br><span style='color:#ff4d4d'>Bedel: 2 tur boyunca giderek artan ATK/DEF kaybı (%20 -> %40).</span><br><span style='color:cyan'>-30 Öfke.</span>",
+            rageCost: 30,
+            levelReq: 12,
+            cooldown: 5,
+            icon: 'skills/barbarian/chaos/chaos_blood_lust.webp',
+            type: 'attack',
+            category: 'chaos',
+            tier: 4,
+            scaling: { 
+                physical: { atkMult: 0, stat: "int", statMult: 3.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }			
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            const stats = getHeroEffectiveStats();
+
+            // 1. Ana darbeyi vur
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // 2. Anlık İyileşme (%50)
+            const instantHeal = Math.floor(dmgPack.total * 0.50);
+            setTimeout(() => {
+                if (instantHeal > 0) {
+                    hero.hp = Math.min(stats.maxHp, hero.hp + instantHeal);
+                    showFloatingText(document.getElementById('hero-display'), instantHeal, 'heal');
+                    writeLog(`🩸 **${this.data.name}**: ${instantHeal} yaşam enerjisi emildi.`);
+                    updateStats();
+                }
+            }, 600);
+
+            // 3. Periyodik İyileşme (%25 x 2 Tur)
+            const tickHeal = Math.floor(dmgPack.total * 0.25);
+            applyStatusEffect(hero, { 
+                id: 'regen', 
+                name: "Kan Emme", 
+                value: tickHeal, 
+                turns: 2, 
+                resetOnCombatEnd: true 
+            });
+
+            // 4. GİDEREK ARTAN DEBUFF BEDELİ
+            applyStatusEffect(hero, { 
+                id: 'blood_lust_debuff', 
+                name: "Tükenmişlik", 
+                turns: 3, // Bu tur + 2 tur
+                resetOnCombatEnd: true 
+            });
+
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_lust', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
         }
     },
 	
