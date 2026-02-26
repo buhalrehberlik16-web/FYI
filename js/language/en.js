@@ -436,6 +436,7 @@ window.LANG_EN = {
 			curse: "Curse",
 			immunity_active: "Immunity",
 			bleed: "Bleed",
+			blood_lust_debuff: "Exhaustion",
         },
 
         // Events
@@ -507,7 +508,7 @@ window.LANG_EN = {
             curse: { name: "Curse", desc: "<span style='color:#b19cd9'>5 Turns: Enemy takes 20% more damage.</span><br><span style='color:cyan'>-20 Rage.</span>" },
             willful_strike: { name: "Willful Strike", desc: "Consumes <b>ALL CURRENT RAGE</b>.<br>Damage:<b style='color:orange'> ATK x (1 + Consumed Rage%).</b>" },
             slash: { name: "Slash", desc: "Damage: <b style='color:orange'>ATK + 0.25 x STR</b><br><span style='color:cyan'>-20 Rage.</span>" },
-            reckless_strike: { name: "Reckless Strike", desc: "Damage: <b style='color:orange'>1.5 x ATK.</b>.<br><span style='color:#b19cd9'>2 Turns: Your Defense becomes 0.</span><br><span style='color:cyan'>-35 Rage.</span>" },
+            reckless_strike: { name: "Reckless Strike", desc: "A wild attack with high risk.<br>Damage: <b style='color:orange'>1.5 x ATK</b><br><span style='color:#b19cd9'>2 Turns: Defense becomes 0.</span><br><span style='color:#ff4d4d'>50% chance to take 50% of damage as self-bleed.</span><br><span style='color:cyan'>-35 Rage.</span>" },
             wind_up: { name: "Wind Up", desc: "Next attack deals <b style='color:orange'>+1 x STR</b> extra damage.<br><span style='color:cyan'>+15 Rage.</span>" },
             bash: { name: "Bash", desc: "Damage: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>30% Chance to Stun (1 Turn).</span><br><span style='color:cyan'>-30 Rage.</span>" },
             pierce_through: { name: "Pierce Through", desc: "Damage: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>Ignores 50% of Enemy Defense.</span><br><span style='color:cyan'>-30 Rage.</span>" },
@@ -518,6 +519,7 @@ window.LANG_EN = {
             fiery_blade: { name: "Fiery Blade", desc: "<span style='color:#43FF64'>3 Turns: All attacks deal 50% more damage (Fire Damage).</span><br><span style='color:cyan'>-30 Rage.</span>" },
             hell_blade: { name: "Hell Blade", desc: "Bloody attack. <br>Damage: <b style='color:orange'>ATK + 1.3 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP </span><span style='color:cyan'>- 25 Rage.</span>" },
 			blood_shield: { name: "Blood Shield", desc: "<b style='color:#ff4d4d'>Sacrifice 20% of Current HP</b> to <span style='color:#43FF64'>gain Block equal to 1.5x of the amount sacrificed.</span>" },
+			blood_lust: { name: "Blood Lust", desc: "Drain life from the enemy.<br>Damage: <b style='color:orange'>3 x INT</b><br><span style='color:#43FF64'>Heal for 50% of damage dealt instantly, and 25% for 2 turns.</span><br><span style='color:#ff4d4d'>Penalty: Progressive ATK/DEF loss for 2 turns (20% -> 40%).</span><br><span style='color:cyan'>-30 Rage.</span>" },
 			blood_terror: { name: "Blood Terror", desc: "<b style='color:#ff4d4d'>Reduces current HP to 1 and deals damage equal to the amount of HP sacrificed.</b>" },
             Pommel_Bash: { name: "Pommel Bash", desc: "Damage: <b style='color:orange'>1 x STR.</b><br><span style='color:cyan'>+12 Rage.</span>" },
             battle_cry: { name: "Battle Cry", desc: "Get motivated.<br><span style='color:#43FF64'>3 Turns: 40% STR Increase</span>.<br><span style='color:cyan'>-20 Rage.</span>" },
