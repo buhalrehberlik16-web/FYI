@@ -330,7 +330,8 @@ function initGame() {
     if (barracksDot) barracksDot.style.background = "#ff4d4d";
     if (elderDot) elderDot.style.background = "#ff4d4d";
     if (leaveBtn) leaveBtn.classList.add('hidden');
-
+	
+	window.isMapNodeProcessing = false;
 	
     hero.level = 1; hero.xp = 0; 
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 

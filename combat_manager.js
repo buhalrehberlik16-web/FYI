@@ -40,7 +40,8 @@ window.applyStatusEffect = function(target, newEffect) {
         if (newEffect.id === 'poison') {
             existing.value += newEffect.value;
             existing.turns += newEffect.turns;
-            writeLog(`☣️ **${isTargetHero ? 'Zehir' : 'Düşman Zehiri'}** etkisi şiddetlendi! (Hasar: ${existing.value})`);
+            // newEffect.value yerine güncel toplam olan existing.value yazılmalı
+            writeLog(`☣️ **${isTargetHero ? 'Zehir' : 'Düşman Zehiri'}** etkisi şiddetlendi! (Yeni Hasar: ${existing.value})`);
         } else {
             existing.turns = Math.max(existing.turns, newEffect.turns);
             if (newEffect.value !== undefined) {
@@ -141,8 +142,15 @@ window.getHeroEffectiveStats = function() {
                 totalAtkMult *= (1 - e.value); // Atak %30 azalır
                 totalDefMult *= (1 - e.value); // Defans %30 azalır
             }
-
             if (e.id === 'resist_fire') currentResists.fire += e.value;
+			// --- YENİ: BLOOD LUST GİDEREK ARTAN ZAYIFLIK ---
+            if (e.id === 'blood_lust_debuff') {
+                // turns 3 iken (1. Tur): %20 kayıp (0.8)
+                // turns 2 iken (2. Tur): %40 kayıp (0.6)
+                let severity = (e.turns === 3) ? 0.20 : 0.40;
+                totalAtkMult *= (1 - severity);
+                totalDefMult *= (1 - severity);
+            }
         }
     });
 	
@@ -609,7 +617,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     const HARD_SCALE = 1.25;      // isHard (Strong) çarpanı
     
     let hpAtkMultiplier = 1.0 * scaling;
-    if (isHalfTierFromMap) multiplier *= HALF_TIER_SCALE; // x1.50
+    if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; // x1.50
     if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
 
     // Defans ve Diğerleri için Çarpan (isHard hariç tutulur)
@@ -906,12 +914,12 @@ window.nextTurn = function() {
                                     animateMonsterSkill();
                                     updateStats();
                                     window.isHeroTurn = true;
-                                    setTimeout(nextTurn, 1000);
+                                    setTimeout(nextTurn, 500);
                                 }
                             }
                         }
                     }
-                }, 800); // DoT'lardan sonra hamleye başlama süresi
+                }, 500); // DoT'lardan sonra hamleye başlama süresi
             } // checkGameOver bitişi
         }, 600); // Senin vuruşundan sonra DoT başlama süresi
     }
@@ -923,12 +931,20 @@ function handleMonsterDefend(attacker) {
     const combatLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     window.isMonsterDefending = true;
     window.monsterDefenseBonus = Math.floor(attacker.attack / 2) + 5;
+    
+    // Görseli ve Logu anında bas
     showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal');
     writeLog(`🛡️ **${attacker.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
-    window.isHeroTurn = true;
+    
     updateStats();
-    setTimeout(nextTurn, 1000);
+    
+    // --- GÜNCELLEME: 1000ms yerine 500ms bekle ---
+    setTimeout(() => {
+        window.isHeroTurn = true;
+        nextTurn();
+    }, 100); 
 }
+
 
 window.animateMonsterSkill = function() {
     // Yeşilden Mora geçiş için hue-rotate ve parlatma
@@ -1062,5 +1078,4 @@ window.executeBroochEffects = function(brooch, startDelay) {
         }, startDelay + (index * 400)); // Dış gecikme + iç sıra
     });
 };
-
 

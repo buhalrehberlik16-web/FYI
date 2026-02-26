@@ -1,6 +1,5 @@
-// map_manager.js - FİNAL DÜZELTİLMİŞ SÜRÜM
-
 // map_manager.js - TAM SÜRÜM (Biyom, Act/Tier, Master NPC ve Scout Entegre)
+window.isMapNodeProcessing = false; // Harita işlem görüyor mu kilidi
 
 const MAP_CONFIG = {
     totalStages: 25, 
@@ -340,45 +339,48 @@ function clearTrails() {
 
 // --- OYUNCU İLERLEME ---
 function handleNodeClick(node) {
+    // --- KRİTİK KİLİT: Eğer işlem sürüyorsa veya buton devre dışıysa basılmasın ---
+    if (window.isMapNodeProcessing) return;
+    window.isMapNodeProcessing = true; 
+    // --------------------------------------------------------------------------
+
 	window.CalendarManager.passDay();
 	StatsManager.trackNode();
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-	// Önceki "current" olanları temizle
-    document.querySelectorAll('.map-node').forEach(n => n.classList.remove('current-node'));
-    // Şimdiki seçilene ekle
+	
+    document.querySelectorAll('.map-node').forEach(n => {
+        n.classList.remove('current-node');
+        // Kilit süresince tüm butonları fiziksel olarak da kilitleyelim
+        n.disabled = true; 
+    });
+
     document.getElementById(`node-${node.id}`).classList.add('current-node');
     GAME_MAP.currentNodeId = node.id;
     GAME_MAP.completedNodes.push(node.id);
 		
-	
-
     processMapEffects();
     drawAllConnections();
 
-    // DÜZELTME: Tür isimlerini dilden al
     const typeNames = {
-        'start': lang.node_start, 
-        'encounter': lang.node_encounter, 
-        'town': lang.node_town,
-        'choice': lang.node_choice, 
-        'boss': lang.node_boss, 
-        'city': lang.node_city
+        'start': lang.node_start, 'encounter': lang.node_encounter, 'town': lang.node_town,
+        'choice': lang.node_choice, 'boss': lang.node_boss, 'city': lang.node_city
     };
     
     let desc = "";
 	if (node.isHard) desc = lang.hard_enemy_warning;
 	else if (node.type === 'encounter') desc = lang.normal_enemy_spotted;
-	else if (node.type === 'town') desc = lang.desc_town; // EKLENDİ
-	else if (node.type === 'choice') desc = lang.desc_event; // EKLENDİ
-	else if (node.type === 'boss') desc = lang.desc_boss; // EKLENDİ
+	else if (node.type === 'town') desc = lang.desc_town;
+	else if (node.type === 'choice') desc = lang.desc_event;
+	else if (node.type === 'boss') desc = lang.desc_boss;
     
-    // DÜZELTME: "Aşama 1" yazısını dile bağla
     document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
     document.getElementById('map-description').textContent = desc;
 	
 	window.currentTownMaster = node.masterNPC || null; 
     movePlayerMarkerToNode(node.id);
-    updateAvailableNodes();
+    
+    // NOT: updateAvailableNodes() buradan silindi! 
+    // Sadece aksiyonu tetikliyoruz.
     triggerNodeAction(node);
 }
 
