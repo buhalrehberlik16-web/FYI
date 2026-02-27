@@ -46,6 +46,7 @@ const CLASS_CONFIG = {
 		onHitRageGain: 0,
 		resourceName: "mana",
         resourceColor: "#3498db",
+		resourcePerDay: 10, // 1 Tam günde 10 Mana kazanır
 		skillTabs: ["arcane", "elemental", "nature"],
 		// --- YENİ: MERKEZİ STAT ÇARPANLARI ---
         scaling: {
@@ -214,5 +215,4 @@ const EVENT_POOL = [
     }
 
 ];
-
 
