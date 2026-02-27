@@ -69,17 +69,31 @@ window.CalendarManager = {
 
     passDay: function() {
     if (!window.hero.calendar) this.init();
+	
+	let passed = 0; // Geçen süreyi hesaplamak için değişken
 
-    // EĞER ATLIYSA: Zaman yarı yarıya akar (0.5 gün)
-    if (window.hero.mountedNodesLeft > 0) {
-        window.hero.calendar.daysPassed += 0.5;
-        window.hero.mountedNodesLeft--;
-        console.log(`Atlı Yolculuk: 0.5 gün geçti. Kalan Atlı Tur: ${window.hero.mountedNodesLeft}`);
-    } else {
-        window.hero.calendar.daysPassed += 1;
-    }
+        // EĞER ATLIYSA: Zaman yarı yarıya akar (0.5 gün)
+        if (window.hero.mountedNodesLeft > 0) {
+            passed = 0.5;
+            window.hero.calendar.daysPassed += 0.5;
+            window.hero.mountedNodesLeft--;
+            console.log(`Atlı Yolculuk: 0.5 gün geçti. Kalan Atlı Tur: ${window.hero.mountedNodesLeft}`);
+        } else {
+            passed = 1.0;
+            window.hero.calendar.daysPassed += 1;
+        }
+
+        // --- YENİ: SINIF BAZLI KAYNAK (MANA) YENİLEME ---
+        const classRules = CLASS_CONFIG[hero.class];
+        if (classRules && classRules.resourcePerDay) {
+            const stats = getHeroEffectiveStats(); // Max sınırı için
+            // Geçen gün * Günlük çarpan (1.0 * 10 veya 0.5 * 10)
+            hero.rage = Math.min(stats.maxRage, hero.rage + (passed * classRules.resourcePerDay));
+        }
+        // -----------------------------------------------
 
     this.updateTownUI();
+	if (typeof updateStats === 'function') updateStats(); // Barları anında güncelle
     if (window.saveGame) window.saveGame();
 },
 
