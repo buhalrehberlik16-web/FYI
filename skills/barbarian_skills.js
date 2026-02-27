@@ -685,6 +685,7 @@ const BARBARIAN_SKILLS = {
     // TAB: FERVOR (COŞKU)
     // ======================================================
     
+	// Tier 1 
     wind_up: {
     	data: {
         name: "Kurulma",
@@ -726,7 +727,7 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
-
+	// Tier 2
     light_blade: {
         data: {
             name: "Işığın Kılıcı",
@@ -771,6 +772,8 @@ const BARBARIAN_SKILLS = {
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
+	
+	//Tier 3
 	sacred_will: {
         data: {
             name: "Kutsal İrade",
@@ -849,6 +852,51 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
+
+	//Tier 4
+	celestial_judgement: {
+        data: {
+            name: "Göklerin Hükmü",
+            menuDescription: "Hasar: <b style='color:orange'>2.0 x MP (Yıldırım)</b>.<br><span style='color:#43FF64'>Savaş alanındaki her aktif Buff ve Debuff başına hasarı %10 artar.</span><br><span style='color:cyan'>-30 Öfke.</span>",
+            rageCost: 30,
+            levelReq: 10,
+            cooldown: 5,
+            icon: 'skills/barbarian/fervor/fervor_celestial_judgement.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 4,
+            // 2.0 x MP Yıldırım Hasarı
+            scaling: { 
+                physical: { atkMult: 0, stat: "mp_pow", statMult: 0 },
+                elemental: { fire: 0, cold: 0, lightning: { stat: "mp_pow", statMult: 2.0 }, poison: 0, curse: 0 }
+            }			
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            // --- NİŞ ÖZELLİK: ETKİ SAYICI ---
+            // 1. Kahramanın üzerindeki buffları say
+            const heroBuffs = hero.statusEffects.filter(e => !e.id.includes('debuff') && e.id !== 'block_skill' && !e.waitForCombat).length;
+            
+            // 2. Düşmanın üzerindeki debuffları say
+            const monsterDebuffs = defender.statusEffects.filter(e => (e.id.includes('debuff') || e.id === 'poison' || e.id === 'bleed' || e.id === 'fire') && !e.waitForCombat).length;
+
+            const totalEffects = heroBuffs + monsterDebuffs;
+            const multiplier = 1 + (totalEffects * 0.20); // Her etki için +%20 hasar
+
+            // Hasarı güncelle
+            dmgPack.total = Math.floor(dmgPack.total * multiplier);
+            dmgPack.elem = Math.floor(dmgPack.elem * multiplier);
+
+            // 3. Saldırıyı gerçekleştir
+            animateCustomAttack(dmgPack, null, this.data.name);
+            
+            if (totalEffects > 0) {
+                writeLog(`⚡ **${this.data.name}**: ${totalEffects} aktif etki sayesinde hasar %${totalEffects * 20} arttı!`);
+                showFloatingText(document.getElementById('monster-display'), "HÜKÜM!", 'skill');
+            }
+
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'celestial_judgement', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+        }
+    },
 
 };
 
