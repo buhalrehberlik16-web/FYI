@@ -284,6 +284,8 @@ window.triggerRandomEvent = function() {
     // --------------------------------------
     
     switchScreen(eventScreen);
+	
+	gainXP(1, true);
     
     // UI Sıfırlama
     document.getElementById('event-main-area').classList.remove('hidden');
