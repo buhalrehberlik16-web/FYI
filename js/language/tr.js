@@ -516,6 +516,7 @@ window.LANG_TR = {
             daze: { name: "Afallat", desc: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span><br><span style='color:cyan'>-25 Öfke.</span>" },
             armor_break: { name: "Zırh Kıran", desc: "Hasar: <b style='color:orange'> 1 x ATK + 1 x STR.</b><br><span style='color:#b19cd9'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:cyan'>-30 Öfke.</span>" },
             fury: { name: "Hiddet", desc: "<span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span><br><span style='color:cyan'>-50 Öfke.</span>" },
+			rend: { name: "Yar", desc: "Hasar: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Vurulan toplam hasarın %50'si kadar 2 tur kanama verir.</span><br><span style='color:cyan'>-40 Öfke.</span>"},
             blood_price: { name: "Kan Bedeli", desc: "<span style='color:green'>(Hızlı Aksiyon)</span><br><b style='color:#ff4d4d'>Maksimum Canın %15'ini feda et,</b><span style='color:cyan'> o kadar Öfke kazan.</span>" },
             fiery_blade: { name: "Alevli Kılıç", desc: "<span style='color:#43FF64'>3 Tur: Tüm saldırıların %50 daha fazla vurur (Ateş Hasarı).</span><br><span style='color:cyan'>-30 Öfke.</span>" },
             hell_blade: { name: "Cehennem Kılıcı", desc: "Kanlı saldırı. <br>Hasar: <b style='color:orange'>ATK + 1,3 x INT</b><br><span style='color:#ff4d4d'>Bedel: %10 Can </span><span style='color:cyan'>- 25 Öfke.</span>" },
@@ -531,7 +532,7 @@ window.LANG_TR = {
 			light_blade: { name: "Işığın Kılıcı", desc: "Cesur saldırı.<br>Hasar: <b style='color:orange'>1 x ATK + 1 x MP(Yıldırım)</b>.<br><span style='color:cyan'>-35 Öfke.</span>" },
 			sacred_will: { name: "Kutsal İrade", desc: "<span style='color:#43FF64'>2 tur boyunca TÜM debuff ve DoT etkilerine bağışıklık kazandırır.</span><br><span style='color:cyan'>-20 Öfke.</span>" },
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir.<br><span style='color:cyan'>-50 Öfke.</span>"},
-			rend: { name: "Yar", desc: "Hasar: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Vurulan toplam hasarın %50'si kadar 2 tur kanama verir.</span><br><span style='color:cyan'>-40 Öfke.</span>"},
+			celestial_judgement: { name: "Göklerin Hükmü", desc: "Mistik güçleri çağırır.<br>Hasar: <b style='color:orange'>2.0 x MP (Yıldırım)</b><br><span style='color:#43FF64'>Savaş alanındaki her aktif etki (Buff/Debuff) başına hasarı %20 artar.</span><br><span style='color:cyan'>-30 Öfke.</span>" },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
 			Magic_Arrow: { name: "Büyülü Ok", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },

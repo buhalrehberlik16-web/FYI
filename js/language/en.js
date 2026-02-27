@@ -515,6 +515,7 @@ window.LANG_EN = {
             daze: { name: "Daze", desc: "Damage: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Turns: Enemy ATK reduced by 25%.</span><br><span style='color:cyan'>-25 Rage.</span>" },
             armor_break: { name: "Armor Break", desc: "Damage: <b style='color:orange'> 1 x ATK + 1 x STR.</b><br><span style='color:#b19cd9'>2 Turns: Enemy Defense becomes 0</span>.<br><span style='color:cyan'>-30 Rage.</span>" },
             fury: { name: "Fury", desc: "<span style='color:#43FF64'>4 Turns: Gain Rage equal to 25% of damage dealt.<br></span><span style='color:cyan'>-50 Rage.</span>" },
+			rend: { name: "Rend", desc: "Damage: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Apply Bleeding for 2 turns equal to 50% of total damage.</span><br><span style='color:cyan'>-40 Rage.</span>"},
             blood_price: { name: "Blood Price", desc: "<span style='color:green'>(Fast Action)</span><br><b style='color:#ff4d4d'>Sacrifice 15% of Max HP</b><span style='color:cyan'> to gain equal amount of Rage.</span>" },
             fiery_blade: { name: "Fiery Blade", desc: "<span style='color:#43FF64'>3 Turns: All attacks deal 50% more damage (Fire Damage).</span><br><span style='color:cyan'>-30 Rage.</span>" },
             hell_blade: { name: "Hell Blade", desc: "Bloody attack. <br>Damage: <b style='color:orange'>ATK + 1.3 x INT</b>.<br><span style='color:#ff4d4d'>Cost: 10% HP </span><span style='color:cyan'>- 25 Rage.</span>" },
@@ -530,7 +531,7 @@ window.LANG_EN = {
 			light_blade: { name: "Light Blade", desc: "Brave attack.<br>Damage: <b style='color:orange'>1 x ATK + 1 x MP(Lightning)</b>.<br><span style='color:cyan'>-35 Rage.</span>" },
 			sacred_will: { name: "Sacred Will", desc: "<span style='color:#43FF64'>Grants immunity to ALL debuff and DoT effects for 2 turns.</span><br><span style='color:cyan'>-20 Rage.</span>" },
             Healing_Light: { name: "Healing Light",  desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>.<br><span style='color:cyan'>-50 Rage.</span>"},
-			rend: { name: "Rend", desc: "Damage: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Apply Bleeding for 2 turns equal to 50% of total damage.</span><br><span style='color:cyan'>-40 Rage.</span>"},
+			celestial_judgement: { name: "Celestial Judgement", desc: "Summons divine wrath.<br>Damage: <b style='color:orange'>2.0 x MP (Lightning)</b><br><span style='color:#43FF64'>Damage increases by 10% for each active Buff or Debuff in battle.</span><br><span style='color:cyan'>-30 Rage.</span>" },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
 			Magic_Arrow: { name: "Magic Arrow", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
