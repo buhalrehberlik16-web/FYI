@@ -1050,6 +1050,68 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'celestial_judgement', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
         }
     },
+	
+	// --- Tier 5 ---
+	spiritual_apocalypse: {
+        data: {
+            name: "Ruhani Kıyamet",
+            rageCost: 40,
+            levelReq: 20,
+            cooldown: 8,
+            icon: 'skills/barbarian/fervor/fervor_apocalypse.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 5,
+            scaling: { 
+                physical: { atkMult: 0, stat: "mp_pow", statMult: 0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: { stat: "mp_pow", statMult: 3.5 } }
+            }			
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            
+            // 1. Üzerindeki aktif buffları say (Bekleme süreleri ve kilitler hariç)
+            const activeBuffs = hero.statusEffects.filter(e => 
+                !e.id.includes('debuff') && 
+                !['poison', 'bleed', 'fire', 'curse', 'stun'].includes(e.id) &&
+                e.id !== 'block_skill' && e.id !== 'block_type' && !e.waitForCombat
+            );
+
+            const buffCount = activeBuffs.length;
+            
+            // 2. HASAR BONUSU: Her feda edilen buff başına %30 ekstra hasar
+            const multiplier = 1 + (buffCount * 0.30);
+            dmgPack.total = Math.floor(dmgPack.total * multiplier);
+            dmgPack.elem = Math.floor(dmgPack.elem * multiplier);
+
+            // 3. FEDA: Tüm buffları sil
+            hero.statusEffects = hero.statusEffects.filter(e => 
+                e.id.includes('debuff') || 
+                ['poison', 'bleed', 'fire', 'curse', 'stun'].includes(e.id) ||
+                e.id === 'block_skill' || e.id === 'block_type' || e.waitForCombat
+            );
+
+            // 4. LANET BIRAK: Feda edilen güç düşmana ağır bir DoT olarak döner
+            if (buffCount > 0) {
+                const curseVal = Math.floor(dmgPack.total * 0.25); // Toplam hasarın %25'i kadar DoT
+                applyStatusEffect(defender, { 
+                    id: 'curse', 
+                    name: "Kıyamet Laneti", 
+                    value: curseVal, 
+                    turns: 4, 
+                    resetOnCombatEnd: true 
+                });
+                writeLog(`💥 **${this.data.name}**: ${buffCount} Kutsallığı feda ettin! Hasar %${buffCount * 30} arttı.`);
+            }
+
+            // 5. Görsel Efekt: Ekranı mor bir parlama sarsın
+            animateMonsterSkill(); // Mor parlama efektini burada hero için kullanalım
+            animateCustomAttack(dmgPack, null, this.data.name);
+            
+            updateStats();
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'spiritual_apocalypse', turns: 9, maxTurns: 9, resetOnCombatEnd: true });
+        }
+    },
 
 };
 
