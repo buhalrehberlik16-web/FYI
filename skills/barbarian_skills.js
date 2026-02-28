@@ -279,7 +279,7 @@ const BARBARIAN_SKILLS = {
         data: {
             name: "Pervasız Vuruş",
             menuDescription: "Hasar: <b style='color:orange'>1.5xATK</b>.<br><span style='color:#ff4d4d'>2 Tur: Defansın 0 olur.</span>",
-            rageCost: 35,
+            rageCost: 20,
             levelReq: 1,
 			cooldown: 1,
             icon: 'skills/barbarian/chaos/chaos_reckless_strike.webp',
@@ -925,6 +925,72 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
+	provoke: {
+        data: {
+            name: "Kışkırtma",
+            rageCost: 20,
+            levelReq: 8,
+            cooldown: 5,
+            icon: 'skills/barbarian/fervor/fervor_provoke.webp',
+            type: 'utility',
+            category: 'fervor',
+            tier: 3
+        },
+        onCast: function() {
+            const stats = getHeroEffectiveStats();
+            const currentLang = window.gameSettings.lang || 'tr';
+            const lang = window.LANGUAGES[currentLang];
+
+            if (window.monster) {
+                // 1. DÜŞMANI KIŞKIRT (Niyeti Saldırıya Çevir)
+                const forcedAction = Math.random() < 0.5 ? 'attack1' : 'attack2';
+                window.monsterNextAction = forcedAction;
+                showMonsterIntention(forcedAction);
+                
+                // 2. NİŞ ÖZELLİK: ÖFKE TRANSFERİ (Düşmana Atak Buffı)
+                // Düşmanın mevcut defansının %25'ini atak bonusu olarak ona veriyoruz
+                // Not: def_up etkileri varsa getHeroEffectiveStats benzeri bir monster kontrolü gerekebilir 
+                // ama şimdilik monster.defense (baz + aktif bufflar) üzerinden gidelim.
+                const currentMonsterDef = monster.defense || 0;
+                const bonusAtk = Math.floor(currentMonsterDef * 0.25);
+
+                if (bonusAtk > 0) {
+                    applyStatusEffect(monster, { 
+                        id: 'atk_up', 
+                        name: "Kışkırtılmış", 
+                        value: bonusAtk, 
+                        turns: 2, // Bu tur ve saldıracağı tur
+                        resetOnCombatEnd: true 
+                    });
+                    showFloatingText(document.getElementById('monster-display'), `+${bonusAtk} ATAK`, 'damage');
+                }
+                
+                writeLog(`🗣️ **${this.data.name}**: ${monster.name} zırhına güvenerek öfkelendi! (+${bonusAtk} Atak)`);
+            }
+
+            // 3. REGEN (İyileşme): INT değerinin %100'ü kadar 2 tur yenilenme
+            const regenVal = Math.floor(stats.int * 1.0);
+            applyStatusEffect(hero, { 
+                id: 'regen', 
+                name: "Kışkırtma Şifası", 
+                value: regenVal, 
+                turns: 3, 
+                resetOnCombatEnd: true 
+            });
+
+            // 4. COOLDOWN VE HIZLI AKSİYON
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'provoke', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+            
+            showFloatingText(document.getElementById('hero-display'), "MEYDAN OKUDU!", 'heal');
+            updateStats();
+
+            // Hızlı Aksiyon: Turu bitirmez
+            setTimeout(() => { 
+                window.isHeroTurn = true; 
+                toggleSkillButtons(false); 
+            }, 300);
+        }
+    },
 
 	//Tier 4
 	celestial_judgement: {
