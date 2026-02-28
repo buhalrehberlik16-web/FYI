@@ -752,15 +752,34 @@ window.nextTurn = function() {
 		}
 		// -------------------------------------------
 		
-        // Regen İşleme
+        // --- DÜZELTİLDİ: DİNAMİK REGEN (İYİLEŞME) İŞLEME ---
         hero.statusEffects.filter(e => (e.id === 'regen' || e.id === 'percent_regen') && !e.waitForCombat).forEach((effect) => { 
-            let healAmount = effect.id === 'regen' ? 10 : Math.floor(hero.hp * effect.value);
+            let healAmount = 0;
+
+            if (effect.id === 'regen') {
+                // EĞER effect.value tanımlıysa onu kullan, yoksa (fallback) 10 kullan
+                healAmount = (effect.value !== undefined) ? effect.value : 10;
+            } else if (effect.id === 'percent_regen') {
+                // Yüzdesel regen (Örn: %10 can yenileme)
+                healAmount = Math.floor(hero.hp * effect.value);
+            }
+
+            // En az 1 iyileşme garantisi
             if (healAmount < 1) healAmount = 1;
+
+            const stats = getHeroEffectiveStats();
             const oldHp = hero.hp;
-            hero.hp = Math.min(hero.maxHp, hero.hp + healAmount); 
-            showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
-            writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP`);
+            
+            // İyileşmeyi uygula
+            hero.hp = Math.min(stats.maxHp, hero.hp + healAmount); 
+            
+            // Ekrana yazdır ve logla
+            if (hero.hp > oldHp) {
+                showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
+                writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP yenilendi.`);
+            }
         });
+        // ---------------------------------------------------
 
 		// --- 2. BROŞLARI SIRALI TETİKLE (Kümülatif Gecikme) ---
         let currentBroochDelay = 500; // İlk broş 0.5sn sonra başlar
