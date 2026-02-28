@@ -727,6 +727,38 @@ const BARBARIAN_SKILLS = {
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
+
+	spirit_shield: {
+        data: {
+            name: "Ruh Kalkanı",
+            rageCost: 15,
+            levelReq: 1,
+            cooldown: 2,
+            icon: 'skills/barbarian/fervor/fervor_spirit_shield.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 1,
+            scaling: { 
+                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 2.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            // Darbeyi vur
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // Ruh Kalkanı etkisini uygula (onHitRageGain'i geçici olarak artıran bir buff)
+            applyStatusEffect(hero, { 
+                id: 'spirit_shield_active', 
+                name: "Ruh Kalkanı", 
+                value: 10, // Her darbede +10 kaynak
+                turns: 3, 
+                resetOnCombatEnd: true 
+            });
+
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'spirit_shield', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
+        }
+    },
 	// Tier 2
     light_blade: {
         data: {
@@ -735,7 +767,7 @@ const BARBARIAN_SKILLS = {
             rageCost: 35,
             levelReq: 2,
 			cooldown: 0,
-            icon: 'skills/barbarian/chaos/chaos_hell_blade.webp',
+            icon: 'skills/barbarian/fervor/fervor_light_blade.webp',
             type: 'attack',
             category: 'fervor', 
             tier: 2,
@@ -770,6 +802,47 @@ const BARBARIAN_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), `+${bonusStr} STR`, 'heal');
             setTimeout(() => { nextTurn(); }, 1000); 
+        }
+    },
+	
+	scales_of_fate: {
+        data: {
+            name: "Kader Terazisi",
+            rageCost: 20,
+            levelReq: 4,
+            cooldown: 4,
+            icon: 'skills/barbarian/fervor/fervor_scales.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 2,
+            scaling: { 
+                physical: { atkMult: 1.2, stat: "mp_pow", statMult: 0.4 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            const stats = getHeroEffectiveStats();
+            const heroPct = (hero.hp / stats.maxHp);
+            const monsterPct = (defender.hp / defender.maxHp);
+            
+            // Yüzdesel farkı bul (Örn: %20 fark -> 0.20)
+            const diff = Math.abs(heroPct - monsterPct);
+
+            if (monsterPct > heroPct) {
+                // DURUM 1: Düşman daha sağlıklı -> EKSTRA HASAR
+                const bonusDmg = Math.floor(defender.maxHp * diff * 0.5); // Farkın yarısı kadar bonus hasar
+                dmgPack.total += bonusDmg;
+                dmgPack.phys += bonusDmg;
+                writeLog(`⚖️ **${this.data.name}**: Terazi dengeleniyor! +${bonusDmg} ekstra hasar.`);
+            } else {
+                // DURUM 2: Kahraman daha sağlıklı -> BLOK KAZAN
+                const bonusBlock = Math.floor(stats.maxHp * diff * 0.5);
+                addHeroBlock(bonusBlock);
+                writeLog(`⚖️ **${this.data.name}**: Kader senden yana! +${bonusBlock} Blok kazandın.`);
+            }
+
+            animateCustomAttack(dmgPack, null, this.data.name);
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'scales_of_fate', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
         }
     },
 	
@@ -857,7 +930,7 @@ const BARBARIAN_SKILLS = {
 	celestial_judgement: {
         data: {
             name: "Göklerin Hükmü",
-            menuDescription: "Hasar: <b style='color:orange'>2.0 x MP (Yıldırım)</b>.<br><span style='color:#43FF64'>Savaş alanındaki her aktif Buff ve Debuff başına hasarı %10 artar.</span><br><span style='color:cyan'>-30 Öfke.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>2.0 x MP (Yıldırım)</b>.<br><span style='color:#43FF64'>Savaş alanındaki her aktif Buff ve Debuff başına hasarı %20 artar.</span><br><span style='color:cyan'>-30 Öfke.</span>",
             rageCost: 30,
             levelReq: 10,
             cooldown: 5,
@@ -865,24 +938,38 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'fervor',
             tier: 4,
-            // 2.0 x MP Yıldırım Hasarı
             scaling: { 
                 physical: { atkMult: 0, stat: "mp_pow", statMult: 0 },
-                elemental: { fire: 0, cold: 0, lightning: { stat: "mp_pow", statMult: 2.0 }, poison: 0, curse: 0 }
+                elemental: { lightning: { stat: "mp_pow", statMult: 2.0 }, fire: 0, cold: 0, poison: 0, curse: 0 }
             }			
         },
         onCast: function(attacker, defender, dmgPack) {
-            // --- NİŞ ÖZELLİK: ETKİ SAYICI ---
-            // 1. Kahramanın üzerindeki buffları say
-            const heroBuffs = hero.statusEffects.filter(e => !e.id.includes('debuff') && e.id !== 'block_skill' && !e.waitForCombat).length;
+            // --- NİŞ ÖZELLİK: ETKİ SAYICI (PROFESYONEL FİLTRE) ---
             
-            // 2. Düşmanın üzerindeki debuffları say
-            const monsterDebuffs = defender.statusEffects.filter(e => (e.id.includes('debuff') || e.id === 'poison' || e.id === 'bleed' || e.id === 'fire') && !e.waitForCombat).length;
+            // 1. Kahramanın üzerindeki GERÇEK BUFFLARI say
+            // İstisnalar: Bekleme süreleri (block_skill) ve Kilitler (block_type) sayılamaz.
+            const heroBuffs = hero.statusEffects.filter(e => 
+                !e.id.includes('debuff') && 
+                e.id !== 'block_skill' && 
+                e.id !== 'block_type' && 
+                !e.waitForCombat
+            ).length;
+            
+            // 2. Düşmanın üzerindeki GERÇEK DEBUFFLARI say
+            // İstisnalar: Canavarın kendi bekleme süreleri veya teknik kilitleri sayılamaz.
+            const monsterDebuffs = defender.statusEffects.filter(e => 
+                (e.id.includes('debuff') || e.id === 'poison' || e.id === 'bleed' || e.id === 'fire' || e.id === 'curse' || e.id === 'stun') && 
+                e.id !== 'block_skill' && 
+                e.id !== 'block_type' && 
+                !e.waitForCombat
+            ).length;
 
             const totalEffects = heroBuffs + monsterDebuffs;
-            const multiplier = 1 + (totalEffects * 0.20); // Her etki için +%20 hasar
+            
+            // Senin istediğin %20 çarpanı (Her etki için 0.20)
+            const multiplier = 1 + (totalEffects * 0.20); 
 
-            // Hasarı güncelle
+            // Hasar paketini güncellenen çarpanla çarp
             dmgPack.total = Math.floor(dmgPack.total * multiplier);
             dmgPack.elem = Math.floor(dmgPack.elem * multiplier);
 
@@ -890,7 +977,7 @@ const BARBARIAN_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
             
             if (totalEffects > 0) {
-                writeLog(`⚡ **${this.data.name}**: ${totalEffects} aktif etki sayesinde hasar %${totalEffects * 20} arttı!`);
+                writeLog(`⚡ **${this.data.name}**: ${totalEffects} kutsal/lanetli bağ sayesinde hasar %${totalEffects * 20} arttı!`);
                 showFloatingText(document.getElementById('monster-display'), "HÜKÜM!", 'skill');
             }
 
