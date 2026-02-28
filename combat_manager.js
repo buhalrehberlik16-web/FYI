@@ -521,7 +521,14 @@ function processMonsterDamage(attacker, dmgPack, attackFrames) {
                 // --- GÜNCELLEME: SADECE SINIF KURALI VARSA KAYNAK EKLE ---
                 const stats = getHeroEffectiveStats();
                 const classRules = CLASS_CONFIG[hero.class];
-                const gainOnHit = classRules.onHitRageGain || 0; // Kuralı oku (Barbar: 5, Magus: 0)
+                let gainOnHit = classRules.onHitRageGain || 0;  // Kuralı oku (Barbar: 5, Magus: 0)
+				
+				// --- YENİ: RUH KALKANI KONTROLÜ ---
+                    const spiritShield = hero.statusEffects.find(e => e.id === 'spirit_shield_active');
+                    if (spiritShield) {
+                        gainOnHit += spiritShield.value; // +10 ekle
+                    }
+                    // ---------------------------------
 
                 if (gainOnHit > 0) {
                         // Hasar rakamı çıktıktan 600ms sonra öfke kazandır ve yazısını bas
