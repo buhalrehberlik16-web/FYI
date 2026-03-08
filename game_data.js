@@ -12,6 +12,8 @@ const CLASS_CONFIG = {
 		baseResource: 40, // Başlangıç Öfke sınırı
 		hitRageGain: 0.25,
 		onHitRageGain: 5,
+		baseAttack: 10,  // <--- YENİ: Barbar 12 Atak ile başlar
+        baseDefense: 0,
 		resourceName: "rage",
 		resourceColor: "#ff0000",
 		skillTabs: ["brutal", "chaos", "fervor"], 
@@ -44,6 +46,8 @@ const CLASS_CONFIG = {
         baseHp: 18,
 		baseResource: 100, // Başlangıç Mana sınırı
 		onHitRageGain: 0,
+		baseAttack: 12,  
+        baseDefense: 1,
 		resourceName: "mana",
         resourceColor: "#3498db",
 		resourcePerDay: 10, // 1 Tam günde 10 Mana kazanır
@@ -87,7 +91,7 @@ window.hero = {
     skillPoints: 0,
     currentAct: 1,
     str: 0, dex: 0, int: 0, vit: 0, mp_pow: 0,
-    baseAttack: 10, baseDefense: 0,
+    baseAttack: 0, baseDefense: 0,
     baseResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     elementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
     highestTierDefeated: 1,

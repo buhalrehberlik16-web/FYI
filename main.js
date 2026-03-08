@@ -227,6 +227,11 @@ function selectClass(className) {
     for (const [stat, value] of Object.entries(config.startingStats)) {
         hero[stat] = value;
     }
+	
+	// --- YENİ: TEMEL ATAK VE DEFANS DEĞERLERİNİ KOPYALA ---
+    hero.baseAttack = config.baseAttack || 0;
+    hero.baseDefense = config.baseDefense || 0;
+    // ----------------------------------------------------
 
     // 2. Dirençleri ve Element Hasarlarını Kopyala
     hero.baseResistances = { ...config.startingResistances };

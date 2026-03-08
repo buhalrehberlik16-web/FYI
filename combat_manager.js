@@ -368,15 +368,15 @@ window.handleSkillUse = function(skillKey) {
     if(skillObj.data.rageCost > 0) hero.rage -= skillObj.data.rageCost;
     updateStats(); 
 
-    // --- ARADIĞIN KODU TAM BURAYA YAZIYORUZ ---
-    // Sadece Barbar ise ve yeteneğin bir scaling verisi (hasar potansiyeli) varsa buffer aç
-    if (hero.class === 'Barbar' && skillObj.data.scaling) {
+    // --- KRİTİK DÜZELTME: TÜM SINIFLAR İÇİN BUFFER'I AÇ ---
+    // Yeteneğin bir hasar çarpanı varsa, gelen kaynak yazılarını biriktir
+    if (skillObj.data.scaling) {
         window.rageBuffer = 0;
         window.isBufferingRage = true;
     } else {
-        window.isBufferingRage = false; // Diğer durumlarda veya diğer sınıflarda kapalı tut
+        window.isBufferingRage = false; 
     }
-    // ------------------------------------------
+    // ----------------------------------------------------
 
     let dmgPack = null;
     if (skillObj.data.scaling) {
@@ -425,6 +425,9 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 const stats = getHeroEffectiveStats();
                 const classRules = CLASS_CONFIG[hero.class];
                 let totalRageToGain = 0;
+				
+				// !!! YENİ KONTROL: İşlem başlamadan önceki mevcut miktarı sakla !!!
+                const rageAtStart = hero.rage;
 
                 // A. Yetenek Dosyasından Gelen (Buffer'da bekleyen: örn +10 Rage)
                 totalRageToGain += window.rageBuffer;
@@ -451,8 +454,12 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 // Nihai Öfke Kazanımını Uygula ve Tek Floating Text Bas
                 if (totalRageToGain > 0) {
                     hero.rage = Math.min(stats.maxRage, hero.rage + totalRageToGain);
-                    showFloatingText(heroDisplayContainer, `+${totalRageToGain} Rage`, 'heal');
-                    writeLog(`🔥 +${totalRageToGain} ${lang.log_rage_gain}`);
+                    
+                    // --- GÖRSEL İYİLEŞTİRME: Sadece bar vuruş öncesi dolu değilse yazı bas ---
+                    if (rageAtStart < stats.maxRage) {
+                        showFloatingText(heroDisplayContainer, `+${totalRageToGain} Rage`, 'heal');
+                        writeLog(`🔥 +${totalRageToGain} ${lang.log_rage_gain}`);
+                    }
                 }
 
                 // Buffer'ı temizle
