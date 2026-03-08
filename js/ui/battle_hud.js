@@ -130,6 +130,7 @@ window.isBufferingRage = false;
 window.showFloatingText = function(targetContainer, amount, type) {
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
+	const stats = getHeroEffectiveStats(); // Max limitleri kontrol etmek için
     const classRules = CLASS_CONFIG[hero.class];
     
     // --- YENİ: DİNAMİK KAYNAK İSMİ DEĞİŞTİRME ---
@@ -141,14 +142,27 @@ window.showFloatingText = function(targetContainer, amount, type) {
     // 'Rage' kelimesini (büyük/küçük harf duyarsız) bul ve güncel etiketle değiştir
     textStr = textStr.replace(/Rage/gi, resourceLabel);
     // --------------------------------------------
+	
+	// --- YENİ: BAR DOLUYSA KAYNAK YAZISINI GÖSTERME ---
+    // Eğer metin kaynak ismi içeriyorsa ve can barı zaten doluysa (veya gelen miktar pozitifse)
+    if (textStr.toLowerCase().includes(resourceLabel.toLowerCase())) {
+        const isGain = textStr.includes('+') || (typeof amount === 'number' && amount > 0);
+        
+        if (isGain && hero.rage >= stats.maxRage) {
+            // Eğer bar zaten doluysa, buffer'ı da temizle ve metni göstermeden çık
+            if (window.isBufferingRage) window.rageBuffer = 0; 
+            return; 
+        }
+    }
+    // -------------------------------------------------
 
-    // --- BARBAR ÖZEL: GÖRSEL BİRLEŞTİRME KONTROLÜ ---
-    if (window.isBufferingRage && hero.class === 'Barbar') {
-        // Not: Buffer kontrolünde hala 'textStr' kullanıyoruz çünkü yukarıda güncelledik
+    // --- KRİTİK DÜZELTME: hero.class === 'Barbar' ŞARTINI KALDIRDIK ---
+    // Artık tüm sınıflar yetenek kullanırken kaynak yazılarını buffer'a atar
+    if (window.isBufferingRage) {
         if (textStr.toLowerCase().includes(resourceLabel.toLowerCase())) {
             const num = parseInt(textStr.replace(/[^0-9]/g, '')) || 0;
             window.rageBuffer += num;
-            return; // Ekrana basmadan çık (Susturma)
+            return; // Ekrana basmadan çık (Puanı sakla)
         }
     }
     // -----------------------------------------------
