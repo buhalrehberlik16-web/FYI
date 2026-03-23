@@ -189,6 +189,45 @@ window.ENEMY_STATS = {
 			}
         ]
     },
+	
+	"Serseri": { 
+        tribe: "Humans",
+        maxHp: 44, attack: 6, defense: 1, xp: 0, tier: 1, 
+        idle: 'enemies/vagabond_idle.webp',
+        attackFrames: ['enemies/vagabond_attack1.webp', 'enemies/vagabond_attack2.webp', 'enemies/vagabond_attack3.webp'],
+        dead: 'enemies/vagabond_dead.webp',
+        skills: [
+            { 
+                id: "dirty_kick", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "atk_half", 
+                duration: 2, 
+                textKey: "blinded" 
+            }
+        ]
+    },
+	
+	"Dikenli Çalı": { 
+        tribe: "Plants",
+        specificResists: { poison: 15 },
+        maxHp: 52, attack: 4, defense: 4, xp: 0, tier: 1, 
+        idle: 'enemies/thorn_idle.webp',
+        attackFrames: ['enemies/thorn_attack1.webp', 'enemies/thorn_attack2.webp', 'enemies/thorn_attack3.webp'],
+        dead: 'enemies/thorn_dead.webp',
+        skills: [
+            { 
+                id: "thorn_prick", 
+                template: "stat_debuff", 
+                category: "debuff",
+                dotType: "poison",
+                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                duration: 3,
+                tickMult: 0.5,
+                textKey: "poison_hit" 
+            }
+        ]
+    },
 
     // --- TIER 2 ---
     "Goblin Devriyesi": { 
@@ -219,6 +258,25 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	
+	"Haydut Gözcü": { 
+        tribe: "Humans",
+        maxHp: 68, attack: 14, defense: 3, xp: 0, tier: 2, 
+        idle: 'enemies/scout_bandit_idle.webp',
+        attackFrames: ['enemies/scout_bandit_attack1.webp', 'enemies/scout_bandit_attack2.webp', 'enemies/scout_bandit_attack3.webp'],
+        dead: 'enemies/scout_bandit_dead.webp',
+        skills: [
+            { 
+                id: "smoke_bomb", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "atk_half", 
+                duration: 2, 
+                textKey: "smoke" 
+            }
+        ]
+    },
+	
     "Kaçak Haydut": { 
         tribe: "Humans",
         specificResists: { cold: 10 },
@@ -254,6 +312,53 @@ window.ENEMY_STATS = {
 			}
         ]
     },
+	
+	"Genç Ayı": { 
+        tribe: "B&M",
+        maxHp: 88, attack: 16, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/young_bear_idle.webp',
+        attackFrames: ['enemies/young_bear_attack1.webp', 'enemies/young_bear_attack2.webp', 'enemies/young_bear_attack3.webp'],
+        dead: 'enemies/young_bear_dead.webp',
+        skills: [
+            { 
+                id: "bear_hug", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "stun", 
+                duration: 2, 
+                textKey: "stunned" 
+            }
+        ]
+    },
+	
+	
+	 "Şaman": { 
+        tribe: "Humans",
+        maxHp: 64, attack: 10, defense: 2, xp: 0, tier: 2, 
+        idle: 'enemies/shaman_idle.webp',
+        attackFrames: ['enemies/shaman_attack1.webp', 'enemies/shaman_attack2.webp', 'enemies/shaman_attack3.webp'],
+        dead: 'enemies/shaman_dead.webp',
+        skills: [
+            { 
+                id: "spirit_mend", 
+                template: "self_buff", 
+                category: "buff",
+                subtype: "heal", 
+                value: 0.25, 
+                textKey: "regrow" 
+            },
+            { 
+                id: "totem_curse", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "curse", 
+                value: 10, 
+                duration: 3, 
+                textKey: "cursed" 
+            }
+        ]
+    },
+	
     "Gri Kurt": { 
         tribe: "B&M",
         specificResists: { cold: 20 },
@@ -431,8 +536,8 @@ window.ENEMY_STATS = {
 
 // Düşman Havuzları
 window.TIER_ENEMIES = {
-    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet"],
-    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt"],
+    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
+    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
@@ -496,9 +601,14 @@ window.BIOME_WEIGHTS = {
     "Hırsız Kobold":  { forest: 0.2, plains: 0.5, cave: 0.0, iceland: 0, mountain: 0.1, urban: 0.2 },
     "Kan Yarasası":   { forest: 0.1, plains: 0.05,cave: 0.5, iceland: 0.05, mountain: 0.1, urban: 0.2,  },
     "İskelet":        { forest: 0.1, plains: 0.1, cave: 0.3, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+	"Serseri": 		  { forest: 0.1, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+    "Dikenli Çalı":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
     "Goblin Devriyesi": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
     "Kaçak Haydut":   { forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
     "Gri Kurt":       { forest: 0.3, plains: 0.2, cave: 0.0, iceland: 0.4,  mountain: 0.1,  urban: 0.0 },
+	"Haydut Gözcü":   { forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
+    "Genç Ayı": 	  { forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
+    "Şaman": 		  { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.0, mountain: 0.3, urban: 0.2 },
     "Yaban Domuzu":   { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.1, mountain: 0.1, urban: 0.0 },
     "Goblin Savaşçısı": { forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
     "Kaya Golemi":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },

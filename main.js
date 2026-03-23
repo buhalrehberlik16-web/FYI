@@ -611,6 +611,19 @@ window.brosver = function(tier = 1) {
     }
 };
 
+window.enemyver = function(enemyName) {
+    if (window.ENEMY_STATS[enemyName]) {
+        // Eğer haritadaysak kilidi aç (failsafe)
+        window.isMapNodeProcessing = false;
+        
+        // Savaş başlat
+        startBattle(enemyName, false, false);
+        writeLog(`🛠️ **Debug**: ${enemyName} zorla çağırıldı.`);
+    } else {
+        console.error("HATA: Bu isimde bir düşman datası bulunamadı!");
+    }
+};
+
 document.addEventListener('touchstart', (e) => {
     // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
     if (!e.target.closest('.item-slot')) {
