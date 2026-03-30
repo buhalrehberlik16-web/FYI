@@ -37,7 +37,11 @@ window.updateStatusIcons = function(char, container) {
             icon.classList.add('status-waiting');
             icon.title = `${statusName} (${lang.preparing})`; 
         } else { 
-            icon.title = `${statusName} (${effect.turns} ${turnText})`; 
+            if (effect.hideNumber) {
+			icon.title = `${statusName}`; // Tur sayısını yazma
+		} else {
+			icon.title = `${statusName} (${effect.turns} ${turnText})`;
+		}
         }
         container.appendChild(icon);
     });
