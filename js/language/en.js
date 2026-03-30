@@ -633,12 +633,23 @@ window.LANG_EN = {
     eff_skill_dmg: "Skill Damage",
     eff_tribe_def: "Defense Bonus",
 	eff_elemDmg: "Elemental Bonus",
+	
+	// Set Items
+	set_piece_label: "SET PIECE",
+    set_bonus_3: "3 Pieces: +5% Atk & Def",
+    set_bonus_6: "6 Pieces: +15% Atk/Def & Class Bonus",
+    set_str: "MIGHT SET (Red)",
+    set_int: "WISDOM SET (Purple)",
+    set_dex: "AGILITY SET (Yellow)",
+    set_vit: "VITALITY SET (Green)",
+    set_mp_pow: "MYSTIC SET (Blue)",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",
     stat_int: "Intelligence (INT)",
     stat_vit: "Vitality (VIT)",
     stat_mp_pow: "Magic Power (MP)",
+	stat_def: "Defense",
     res_fire: "Fire Resist",
     res_cold: "Cold Resist",
     res_lightning: "Lightning Resist",

@@ -634,6 +634,18 @@ window.LANG_TR = {
     eff_skill_dmg: "Yetenek Hasarı",
     eff_tribe_def: "Savunma Bonusu",
 	eff_elemDmg: "Element Bonusu",
+	
+	
+	// SET Görüntü İsimleri
+	set_piece_label: "SET PARÇASI",
+    set_bonus_3: "3 Parça: +%5 Atak & Defans",
+    set_bonus_6: "6 Parça: +%15 Atak/Def & Sınıf Bonusu",
+    // Renk Seti İsimleri
+    set_str: "KUVVET SETİ (Kırmızı)",
+    set_int: "BİLGELİK SETİ (Mor)",
+    set_dex: "ÇEVİKLİK SETİ (Sarı)",
+    set_vit: "DİRENÇ SETİ (Yeşil)",
+    set_mp_pow: "MİSTİK SET (Mavi)",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",
@@ -641,6 +653,7 @@ window.LANG_TR = {
     stat_int: "Zeka (INT)",
     stat_vit: "Canlılık (VIT)",
     stat_mp_pow: "Büyü Gücü (MP)",
+	stat_def: "Defans",
     res_fire: "Ateş Direnci",
     res_cold: "Buz Direnci",
     res_lightning: "Yıldırım Direnci",
