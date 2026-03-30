@@ -16,17 +16,17 @@ window.ENEMY_STATS = {
     // --- TIER 1 ---
     "Greenskins 1 1": { 
         tribe: "Greenskins",
-        maxHp: 30, attack: 5, defense: 3, xp: 0, tier: 1, 
+        maxHp: 25, attack: 5, defense: 4, xp: 0, tier: 1, 
         idle: 'enemies/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
         skills: [
-        ]
+        //Doomsaying - Curse- atk*0.8dmg
+		]
     },
-    "Humans 1 1": { 
+    "Vagabond": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 32, attack: 8, defense: 1, xp: 0, tier: 1, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
@@ -140,10 +140,10 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Plants 1 1": { 
+    "Thorny Shrub": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        specificResists: { poison: 5 },
+        maxHp: 30, attack: 8, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
@@ -248,10 +248,9 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Greenskins 2 2": { 
+    "Goblin Scout": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 65, attack: 10, defense: 7, xp: 0, tier: 2, 
         idle: 'enemies/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
@@ -281,6 +280,16 @@ window.ENEMY_STATS = {
                 duration: 2, 
                 textKey: "smoke" 
             },
+        ]
+    },
+    "Bandit Bandolier": { 
+        tribe: "Humans",
+        specificResists: { fire: 4 },
+        maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/kacak_haydut.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/kacak_haydut_dead.webp',
+        skills: [
 			{ 
                 id: "fire_bomb", 
                 template: "special_attack", 
@@ -291,16 +300,6 @@ window.ENEMY_STATS = {
 				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler  
                 textKey: "f_bomb" 
 			}
-        ]
-    },
-    "Humans 2 2": { 
-        tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
-        idle: 'enemies/kacak_haydut.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
-        dead: 'enemies/kacak_haydut_dead.webp',
-        skills: [
         ]
     },
     "Gri Kurt": { 
@@ -337,30 +336,50 @@ window.ENEMY_STATS = {
             },  
         ]
     },
-    "Beasts&Monstrosities 2 2": { 
+    "Young Boar": { 
         tribe: "B&M",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 80, attack: 16, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/kan_yarasasi.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/kan_yarasasi_dead.webp',
+        skills: [
+		//No Skill
+        ]
+    },
+    "Kobold Patrol": { 
+        tribe: "Dragonkind",
+        maxHp: 65, attack: 15, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
         skills: [
         ]
     },
-    "Plants 2 1": { 
+    "Kobold Shaman": { 
+        tribe: "Dragonkind",
+        maxHp: 55, attack: 12, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/kan_yarasasi.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/kan_yarasasi_dead.webp',
+        skills: [
+		//Elements
+        ]
+    },
+    "Treant Sapling": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        specificResists: { poison: 20, curse: -10 },
+        maxHp: 62, attack: 13, defense: 8, xp: 0, tier: 2, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
+		//Heal, Poison
         ]
 	},
     "Undead 2 1": { 
         tribe: "Undead",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
@@ -369,12 +388,12 @@ window.ENEMY_STATS = {
     },
     "Magical Creatures 2 1": { 
         tribe: "Magical Creatures",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 85, attack: 8, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
         skills: [
+		//No Basic, Fire&Cold
         ]
     },
 
@@ -406,45 +425,52 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Greenskins 3 2": { 
+    "Goblin Apprentice": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 80, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
+		//No Basic, Curse&Lightning
         ]
     },
-    "Greenskins 3 3": { 
+    "Goblin Tinker": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 110, attack: 20, defense: 15, xp: 0, tier: 3, 
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
+		//Poison, Debuff All
         ]
     },
 	
-    "Humans 3 1": { 
+    "Highwayman Patrol": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 85, attack: 25, defense: 15, xp: 0, tier: 3, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
+            { 
+                id: "dirty_strike", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 1.5 }, 
+                textKey: "dirty" 
+            }, 
+			//Def Up
         ]
     },
-    "Humans 3 2": { 
+    "Highwayman Archer": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 80, attack: 30, defense: 13, xp: 0, tier: 3, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
+		//F Bomb türevi
         ]
     },
     "Yaban Domuzu": { 
@@ -475,60 +501,85 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Beasts&Monstrosities 3 2": { 
+    "Wild Boar": { 
         tribe: "B&M",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 120, attack: 25, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
         skills: [
         ]
     },
-    "Beasts&Monstrosities 3 3": { 
+    "Grizzly Bear": { 
         tribe: "B&M",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 110, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
         skills: [
         ]
     },
-    "Plants 3 1": { 
+    "Cursed Grizzly": { 
+        tribe: "B&M",
+        maxHp: 105, attack: 32, defense: 10, xp: 0, tier: 3, 
+        idle: 'enemies/kan_yarasasi.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/kan_yarasasi_dead.webp',
+        skills: [
+		//Basics deal half Curse Dmg
+        ]
+    },
+    "Treant": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 90, attack: 28, defense: 18, xp: 0, tier: 3, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
         ]
     },
-    "Plants 3 2": { 
+    "Trap Seed": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 50, attack: 50, defense: 0, xp: 0, tier: 3, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
+		//Suicide bomber - Atk&Self dmg
         ]
     },
-    "Plants 3 3": { 
+    "Ancient Shroom": { 
         tribe: "Plants",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 110, attack: 20, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
+            { 
+                id: "spore_poison", 
+				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
+				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
+				subtype: "poison",       // EnemySkillEngine'e bunun bir zehir olduğunu söyler
+				damageSplit: { physical: 0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
+				dotType: "poison", 
+				duration: 3,
+				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
+				textKey: "poison_hit"  
+            },
+            { 
+                id: "fungal_regrow", 
+                template: "self_buff", 
+                category: "buff", // AI'nın tanıması için şart!
+                subtype: "heal", 
+                value: 0.20, 
+                textKey: "regrow" 
+            }
         ]
     },
     "Undead 3 1": { 
         tribe: "Undead",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
@@ -537,32 +588,31 @@ window.ENEMY_STATS = {
     },
     "Undead 3 2": { 
         tribe: "Undead",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
         skills: [
         ]
     },
-    "Dragonkind 3 1": { 
+    "Kobold Guard": { 
         tribe: "Dragonkind",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 85, attack: 25, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
         ]
     },
-    "Dragonkind 4 2": { 
+    "Dragonkin Speaker": { 
         tribe: "Dragonkind",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 90, attack: 20, defense: 18, xp: 0, tier: 3, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
+		//Fire, Buff, Debuff
         ]
     },
     "Kaya Golemi": { 
@@ -592,10 +642,9 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Magical Creatures 3 2": { 
+    "Clay Golem": { 
         tribe: "Magical Creatures",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 120, attack: 22, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
@@ -629,40 +678,37 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Greenskins 4 2": { 
+    "Orc Enforcer": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 180, attack: 42, defense: 21, xp: 0, tier: 4, 
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
         ]
     },
-    "Greenskins 4 3": { 
+    "Orc Shaman": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 180, attack: 40, defense: 18, xp: 0, tier: 4, 
         idle: 'enemies/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
+		//Fire&Curse
         ]
     },
-    "Humans 4 1": { 
+    "Nomad": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 180, attack: 35, defense: 22, xp: 0, tier: 4, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
         ]
     },
-    "Humans 4 2": { 
+    "Nomad Warrior": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 190, attack: 40, defense: 18, xp: 0, tier: 4, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
@@ -670,14 +716,14 @@ window.ENEMY_STATS = {
         ]
     },
 	
-    "Humans 4 3": { 
+    "Cultist Nomad": { 
         tribe: "Humans",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 180, attack: 38, defense: 16, xp: 0, tier: 4, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
+		//Curse&Debuff
         ]
     },
     "Beasts&Monstrosities 4 1": { 
@@ -700,40 +746,41 @@ window.ENEMY_STATS = {
         skills: [
         ]
     },
-    "Plants 4 1": { 
+    "Withering Treant": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        specificResists: { poison: 20, curse: 10 },
+        maxHp: 150, attack: 35, defense: 20, xp: 0, tier: 4, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
+		//Drain
         ]
     },
-    "Plants 4 2": { 
+    "Vine Monster": { 
         tribe: "Plants",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 170, attack: 40, defense: 30, xp: 0, tier: 4, 
         idle: 'enemies/treant.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
+		//Heal, Debuff
         ]
     },
-    "Undead 4 1": { 
+    "Ghost": { 
         tribe: "Undead",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+		//Specific Resist All -50
+        maxHp: 130, attack: 35, defense: 50, xp: 0, tier: 4, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
         skills: [
         ]
     },
-    "Undead 4 2": { 
+    "Wight": { 
         tribe: "Undead",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        //specificResists All -30,
+        maxHp: 140, attack: 40, defense: 40, xp: 0, tier: 4, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
@@ -743,37 +790,46 @@ window.ENEMY_STATS = {
     "Undead 4 3": { 
         tribe: "Undead",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 4, 
         idle: 'enemies/zehirli_mantar.webp',
         attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
         dead: 'enemies/zehirli_mantar_dead.webp',
         skills: [
         ]
     },
-    "Dragonkind 4 1": { 
+    "Kobold Chosen": { 
         tribe: "Dragonkind",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 170, attack: 36, defense: 20, xp: 0, tier: 4, 
+        idle: 'enemies/hirsiz_kobold.webp',
+        attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
+        dead: 'enemies/hirsiz_kobold_dead.webp',
+        skills: [
+		//Mixed Fire, Cold, Curse
+        ]
+    },
+    "Dragonkin Patrol": { 
+        tribe: "Dragonkind",
+        maxHp: 210, attack: 30, defense: 20, xp: 0, tier: 4, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
         ]
     },
-    "Dragonkind 4 2": { 
+    "Dragonkin Speaker": { 
         tribe: "Dragonkind",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 195, attack: 28, defense: 18, xp: 0, tier: 4, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
+		//Same as previous
         ]
     },
     "Magical Creatures 4 1": { 
         tribe: "Magical Creatures",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 4, 
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
@@ -783,7 +839,7 @@ window.ENEMY_STATS = {
     "Magical Creatures 4 2": { 
         tribe: "Magical Creatures",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 4, 
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
@@ -791,20 +847,19 @@ window.ENEMY_STATS = {
         ]
     },
 	//TIER 5
-    "Greenskins 5 1": { 
+    "Orcish Gladiator": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 320, attack: 50, defense: 30, xp: 0, tier: 4, 
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
         skills: [
         ]
     },
-    "Greenskins 5 2": { 
+    "Orc Spirit Speaker": { 
         tribe: "Greenskins",
-        specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        specificResists: { curse: 15 },
+        maxHp: 300, attack: 42, defense: 38, xp: 0, tier: 4, 
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
