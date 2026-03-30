@@ -348,6 +348,14 @@ window.processTransmutation = async function() {
     const template = window.BASE_ITEMS[newItem.type][finalMainStat] || window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
     newItem.nameKey = template.nameKey;
     newItem.icon = template.icon;
+	
+	// --- YENİ: ZIRH MİRASI (ADIM 2) ---
+    // Malzemelerdeki en yüksek implicitDef değerini bul (Upgrade olmaz, korunur)
+    const bestDef = Math.max(...transmuteIngredients.map(i => i.implicitDef || 0));
+    if (bestDef > 0) {
+        newItem.implicitDef = bestDef; 
+    }
+    // ---------------------------------
 
     // --- 6. GÖRSEL SONUÇ VE EFEKTLER ---
     resultSlot.innerHTML = '';
