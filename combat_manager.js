@@ -89,7 +89,7 @@ window.getHeroEffectiveStats = function() {
         vit: hero.vit, 
         mp_pow: hero.mp_pow 
     };
-    
+	
     let currentResists = { ...hero.baseResistances };
 	let currentElemDmg = { ...hero.elementalDamage };
     let flatAtkBonus = 0;  
@@ -97,7 +97,6 @@ window.getHeroEffectiveStats = function() {
     let totalAtkMult = 1.0; 
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 	
-
     // 2. EKİPMANLARI VE CHARMLARI TARA
      const allItems = [
         ...Object.values(hero.equipment), 
@@ -154,6 +153,13 @@ window.getHeroEffectiveStats = function() {
         }
     });
 	
+	// --- YENİ: BLOOD MARK DİRENÇ SIFIRLAMA ---
+    const isBloodMarkActive = hero.statusEffects.some(e => e.id === 'blood_mark_active');
+    if (isBloodMarkActive) {
+        // Tüm dirençleri oda sonuna kadar 0 kabul et
+        currentResists = { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
+    }
+	
 	// 3.1 HARİTA ETKİLERİNİ (MAP EFFECTS) TARA
     hero.mapEffects.forEach(me => {
         // Lanetli Altın / Yorgunluk Etkisi
@@ -168,7 +174,7 @@ window.getHeroEffectiveStats = function() {
     const sc = rules.scaling; // Scaling kurallarını al
 
     // HP ve RESOURCE (Mana/Rage) Hesapları
-    const finalMaxHp = rules.baseHp + Math.floor(s[sc.hp.stat] * sc.hp.mult);
+    const finalMaxHp = rules.baseHp + (hero.permanentHpBonus || 0) + Math.floor(s[sc.hp.stat] * sc.hp.mult);
     const finalMaxRage = rules.baseResource + Math.floor(s[sc.resource.stat] * sc.resource.mult);
     
     // REGEN Hesabı
@@ -336,7 +342,14 @@ window.toggleSkillButtons = function(forceDisable) {
             slot.classList.add('disabled'); 
             if (overlay && cdText && cdEffect) {
                 overlay.style.height = `${(cdEffect.turns / cdEffect.maxTurns) * 100}%`; 
-                cdText.textContent = cdEffect.turns > 1 ? cdEffect.turns - 1 : "⌛";
+                // --- GÜNCELLEME: RAKAM GİZLEME KONTROLÜ ---
+                // Eğer hideNumber true ise boş metin bas, değilse rakamı yaz
+                if (cdEffect.hideNumber) {
+                    cdText.textContent = ""; 
+                } else {
+                    cdText.textContent = cdEffect.turns > 1 ? cdEffect.turns - 1 : "⌛";
+                }
+                // -----------------------------------------
             } else if (overlay) { 
                 overlay.style.height = '100%'; 
                 if(cdText) cdText.textContent = stunned ? "💫" : "⛔";
@@ -445,6 +458,27 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                     totalRageToGain += furyGain;
                     writeLog(lang.log_fury_gain); 
                 }
+				
+				// D. YENİ: BLOOD MARK CAN ÇALMA (LIFE STEAL) ---
+                const bloodMark = hero.statusEffects.find(e => e.id === 'blood_mark_active');
+                if (bloodMark && finalDmg > 0) {
+                    // Mevcut can çalma oranını (value) al
+                    const stolen = Math.floor(finalDmg * bloodMark.value);
+                    
+                    if (stolen > 0) {
+                        const oldHp = hero.hp;
+                        // O anki güncel maxHp'yi al (Statlardan)
+                        const statsForHeal = getHeroEffectiveStats();
+                        
+                        hero.hp = Math.min(statsForHeal.maxHp, hero.hp + stolen);
+                        
+                        // Kazanılan canı sezonluk toplama ekle (NaN korumasıyla)
+                        hero.sessionLifeStolen = (hero.sessionLifeStolen || 0) + stolen;
+                        
+                        showFloatingText(heroDisplayContainer, stolen, 'heal');
+                        writeLog(`🩸 **Blood Mark**: ${stolen} can sömürdün! (Toplam: ${hero.sessionLifeStolen})`);
+                    }
+                }
                 
                 // !!! KRİTİK DÜZELTME BURASI !!!
                 // Yazıyı ekrana basmadan hemen ÖNCE tamponu kapatıyoruz.
@@ -491,6 +525,11 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
 
 window.handleMonsterAttack = function(attacker, defender) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+	// --- KRİTİK FİX: stats değişkeni burada tanımlanmalı ---
+    const stats = ENEMY_STATS[attacker.name]; 
+    if (!stats) return;
+    // -------------------------------------------------------
+
     // Temel saldırıyı SkillEngine'e "Sadece Fiziksel" olarak gönderiyoruz
     const basicAttackData = { damageSplit: { physical: 1.0 } };
     const dmgPack = SkillEngine.calculate(attacker, basicAttackData, defender);
@@ -709,7 +748,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 
 window.nextTurn = function() {
     if (checkGameOver()) return;
-    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+
+    // --- GLOBAL DİL VE KURALLAR TANIMLAMASI ---
+    const currentLangCode = window.gameSettings.lang || 'tr';
+    const globalLang = window.LANGUAGES[currentLangCode]; 
+    const combatLang = globalLang.combat; 
+    const classRules = CLASS_CONFIG[hero.class];
     
     if (window.isHeroTurn) {
 		const stats = getHeroEffectiveStats(); // Güncel çarpanları al
@@ -717,10 +761,9 @@ window.nextTurn = function() {
 		// RAGE REGEN UYGULA
 		if (stats.rageRegen > 0) {
 			const oldRage = hero.rage;
-			const classRules = CLASS_CONFIG[hero.class];
 			hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
 			if (hero.rage > oldRage) {
-				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} Öfke kazanıldı.`);
+				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} ${globalLang[`resource_${classRules.resourceName}`]} kazanıldı.`);
 			}
 		}
 
@@ -729,78 +772,53 @@ window.nextTurn = function() {
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
         if(turnCountDisplay) turnCountDisplay.textContent = window.combatTurnCount;
 		
-		// DİL DESTEĞİNİ DOĞRU ÇEKELİM (Hata buradaydı)
-		const currentLangCode = window.gameSettings.lang || 'tr';
-		const globalLang = window.LANGUAGES[currentLangCode]; // Ana dil objesi (resource_mana burada)
-		const combatLang = globalLang.combat; // Savaş metinleri burada
-
+		// --- BLOOD MARK SÖNÜMLEME MANTIĞI (KORUNDU) ---
+        const bm = hero.statusEffects.find(e => e.id === 'blood_mark_active');
+        if (bm && window.combatTurnCount > 6) {
+            bm.value = Math.max(0, bm.value - 0.01); 
+            if (bm.value > 0) {
+                writeLog(`📉 **Blood Mark**: Kan damgası zayıflıyor... (Yeni Oran: %${Math.round(bm.value * 100)})`);
+            }
+        }
+			
         // Blok Azalması
         if (window.heroBlock > 0) {
             window.heroBlock = Math.floor(window.heroBlock * 0.5);
-            if(window.heroBlock === 0) writeLog(lang.log_shield_expired);
+            if(window.heroBlock === 0) writeLog(combatLang.log_shield_expired);
         }
         
-		// --- YENİ: MANA KRİSTALİ PATLAMA MANTIĞI ---
+		// --- YENİ: MANA KRİSTALİ PATLAMA MANTIĞI (KORUNDU) ---
 		const crystalEffect = hero.statusEffects.find(e => e.id === 'mana_crystal' && !e.waitForCombat);
 		if (crystalEffect && crystalEffect.turns === 1) {
-			const stats = getHeroEffectiveStats();
-			const classRules = CLASS_CONFIG[hero.class];
-    
-			// Doğru dil etiketini 'globalLang' üzerinden alıyoruz
 			const resLabel = globalLang[`resource_${classRules.resourceName}`]; 
-
 			hero.rage = Math.min(stats.maxRage, hero.rage + crystalEffect.value);
-    
-			// Görselleştirme
 			showFloatingText(heroDisplayContainer, `+${crystalEffect.value} ${resLabel}`, 'heal');
 			writeLog(`💎 **${crystalEffect.name}**: ${crystalEffect.value} ${resLabel} açığa çıktı!`);
-    
 			updateStats();
 		}
-		// -------------------------------------------
 		
         // --- DÜZELTİLDİ: DİNAMİK REGEN (İYİLEŞME) İŞLEME ---
         hero.statusEffects.filter(e => (e.id === 'regen' || e.id === 'percent_regen') && !e.waitForCombat).forEach((effect) => { 
-            let healAmount = 0;
-
-            if (effect.id === 'regen') {
-                // EĞER effect.value tanımlıysa onu kullan, yoksa (fallback) 10 kullan
-                healAmount = (effect.value !== undefined) ? effect.value : 10;
-            } else if (effect.id === 'percent_regen') {
-                // Yüzdesel regen (Örn: %10 can yenileme)
-                healAmount = Math.floor(hero.hp * effect.value);
-            }
-
-            // En az 1 iyileşme garantisi
+            let healAmount = (effect.id === 'regen') ? (effect.value || 10) : Math.floor(hero.hp * effect.value);
             if (healAmount < 1) healAmount = 1;
-
-            const stats = getHeroEffectiveStats();
             const oldHp = hero.hp;
-            
-            // İyileşmeyi uygula
             hero.hp = Math.min(stats.maxHp, hero.hp + healAmount); 
-            
-            // Ekrana yazdır ve logla
             if (hero.hp > oldHp) {
                 showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
                 writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP yenilendi.`);
             }
         });
-        // ---------------------------------------------------
 
 		// --- 2. BROŞLARI SIRALI TETİKLE (Kümülatif Gecikme) ---
-        let currentBroochDelay = 500; // İlk broş 0.5sn sonra başlar
+        let currentBroochDelay = 500; 
         hero.brooches.forEach((brooch) => {
             if (!brooch) return;
             if (!hero.broochCooldowns) hero.broochCooldowns = {};
-            
             const bIndex = hero.brooches.indexOf(brooch);
             if (hero.broochCooldowns[bIndex] === undefined) hero.broochCooldowns[bIndex] = 0;
 
             if (hero.broochCooldowns[bIndex] <= 0) {
-                // Bu broşu mevcut gecikmeyle çalıştır
                 window.executeBroochEffects(brooch, currentBroochDelay);
-                // Bir sonraki broş için gecikmeyi artır (Her broş için 800ms pencere ayırıyoruz)
                 currentBroochDelay += 800; 
                 hero.broochCooldowns[bIndex] = brooch.frequency;
             }
@@ -822,14 +840,32 @@ window.nextTurn = function() {
             });
         }, dotStartTime);
 
-        // --- 4. TUR SONU VE KİLİT AÇILIŞI (DoT'lar bittikten sonra) ---
+        // --- 4. TUR SONU VE KONTROLLER (Gecikmeli) ---
         const dotCount = hero.statusEffects.filter(e => ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'].includes(e.id)).length;
         const totalWaitTime = dotStartTime + (dotCount * 450) + 200;
 
         setTimeout(() => {
             if (checkGameOver()) return; 
 
-            // Durum sürelerini azalt
+            // --- STUN KONTROLÜ (GÜNCELLEME: Intention buraya eklendi) ---
+            const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);
+            if (stunEffect) {
+                writeLog(combatLang.log_stun_skip);
+                showFloatingText(heroDisplayContainer, stunEffect.name, 'damage'); 
+                
+                hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
+                hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
+                
+                window.isHeroTurn = false; 
+                determineMonsterAction(); // Düşman ne yapacağını seçer
+                showMonsterIntention(window.monsterNextAction); // Niyeti gösterir (Kılıç/Yetenek vb.)
+                
+                updateStats();
+                setTimeout(nextTurn, 1000); // Sırayı canavara devreder
+                return;
+            }
+
+            // Normal durum süre azaltması
             hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
             hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
             
@@ -837,7 +873,7 @@ window.nextTurn = function() {
             showMonsterIntention(window.monsterNextAction); 
             toggleSkillButtons(false); 
             updateStats();
-        }, Math.max(2000, totalWaitTime)); // En az 2 saniye bekle
+        }, Math.max(2000, totalWaitTime));
 
     } else {
         // --- CANAVAR SIRASI ---
@@ -849,10 +885,8 @@ window.nextTurn = function() {
             if (!checkGameOver()) {
                 
                 // --- 1. ÖNCE CANAVAR ÜZERİNDEKİ DoT (KANAMA/ZEHİR) İŞLE ---
-                // Bu işlem artık senin vuruşundan 600ms sonra başlayacak
                 const monsterDoTTypes = ['bleed', 'poison', 'fire', 'curse'];
                 monster.statusEffects.filter(e => monsterDoTTypes.includes(e.id) && !e.waitForCombat).forEach((effect, index) => {
-                    // Birden fazla DoT varsa (hem zehir hem kanama) onları da 300ms arayla basar
                     setTimeout(() => {
                         monster.hp = Math.max(0, monster.hp - effect.value);
                         showFloatingText(document.getElementById('monster-display'), effect.value, 'damage');
@@ -863,22 +897,18 @@ window.nextTurn = function() {
 
                 if (checkGameOver()) return;
 		
-                // --- 2. KRİTİK EKLEME: CANAVAR EFEKT SÜRELERİNİ AZALT (DÜZELTİLDİ) ---
+                // --- 2. CANAVAR EFEKT SÜRELERİNİ AZALT ---
                 if (monster.statusEffects && monster.statusEffects.length > 0) {
-                    monster.statusEffects.forEach(e => {
-                        if (!e.waitForCombat) e.turns--;
-                    });
-                    // Süresi biten (0 olan) etkileri sil
+                    monster.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
                     monster.statusEffects = monster.statusEffects.filter(e => e.turns > 0);
-                    updateStats(); // İkonları ve süreleri tazele
+                    updateStats(); 
                 }
 
-                // --- 3. SERSEMLEME KONTROLÜ (DÜZELTİLDİ) ---
+                // --- 3. CANAVAR SERSEMLEME KONTROLÜ ---
                 const monsterStun = hero.statusEffects.find(e => e.id === 'monster_stunned' && !e.waitForCombat);
                 if (monsterStun) { 
-                    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-                    writeLog(lang.combat.log_stun_skip);
-                    showFloatingText(document.getElementById('monster-display'), lang.combat.f_stunned, 'damage'); 
+                    writeLog(combatLang.log_stun_skip);
+                    showFloatingText(document.getElementById('monster-display'), combatLang.f_stunned, 'damage'); 
                     window.isHeroTurn = true; 
                     setTimeout(nextTurn, 1000); 
                     return;
@@ -889,29 +919,24 @@ window.nextTurn = function() {
                     if (!checkGameOver()) {
                         const action = window.monsterNextAction;
                         const stats = ENEMY_STATS[monster.name];
-                        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 
-                        // A. DEFANS
                         if (action === 'defend') {
                             handleMonsterDefend(monster);
                         } 
-                        // B. TÜM ATAKLAR VE SKİLLER
                         else {
                             const packet = EnemySkillEngine.resolve(monster, action);
-                            
                             if (packet) {
-                                const classRules = CLASS_CONFIG[hero.class];
-                                const resourceLabel = lang[`resource_${classRules.resourceName}`];
+                                const resourceLabel = globalLang[`resource_${classRules.resourceName}`];
 
                                 // Yetenek İsmi Gösterimi
-                                const skillName = lang.enemy_skills[packet.id]?.name;
+                                const skillName = globalLang.enemy_skills[packet.id]?.name;
                                 if (skillName) {
                                     writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
                                     showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
                                 }
 
                                 // Etki Yazısı Hazırlama
-                                let effectLabel = lang.enemy_effects[packet.text] || "";
+                                let effectLabel = globalLang.enemy_effects[packet.text] || "";
                                 effectLabel = effectLabel.replace(/Rage|Öfke/gi, resourceLabel);
                                 if (effectLabel.includes("$1") && packet.value) {
                                     effectLabel = effectLabel.replace("$1", packet.value);
@@ -920,19 +945,15 @@ window.nextTurn = function() {
                                 if (effectLabel && effectLabel.trim() !== "") {
                                     const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
                                     const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
-                                    setTimeout(() => { 
-                                        showFloatingText(floatingTarget, effectLabel, floatingType); 
-                                    }, 500);
+                                    setTimeout(() => { showFloatingText(floatingTarget, effectLabel, floatingType); }, 500);
                                 }
 
-                                // Öfke Azaltma ve İyileşme
                                 if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
                                 if (packet.healing > 0) {
                                     monster.hp = Math.min(monster.maxHp, monster.hp + packet.healing);
                                     showFloatingText(document.getElementById('monster-display'), packet.healing, 'heal');
                                 }
 
-                                // Statü Etkileri Uygulama
                                 if (packet.statusEffects) {
                                     packet.statusEffects.forEach(eff => {
                                         const targetChar = (packet.category === 'buff') ? monster : hero;
@@ -940,7 +961,6 @@ window.nextTurn = function() {
                                     });
                                 }
 
-                                // GÖRSEL VE HASAR UYGULAMA
                                 if (packet.damage && packet.damage.total > 0) {
                                     processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
                                 } else {							
@@ -952,9 +972,9 @@ window.nextTurn = function() {
                             }
                         }
                     }
-                }, 500); // DoT'lardan sonra hamleye başlama süresi
-            } // checkGameOver bitişi
-        }, 600); // Senin vuruşundan sonra DoT başlama süresi
+                }, 500); 
+            }
+        }, 600); 
     }
 };
 
@@ -1026,6 +1046,23 @@ window.checkGameOver = function() {
         
         const rewards = window.LootManager.generateLoot(monster);
         // ----------------------------
+		
+		// --- KRİTİK: BLOOD MARK ZAFER BONUSU ---
+        if (hero.sessionLifeStolen > 0) {
+            // Toplam çalınan kanın %10'u kalıcı can olur
+            const hpReward = Math.floor(hero.sessionLifeStolen * 0.10); 
+            
+            if (hpReward > 0) {
+                hero.permanentHpBonus = (hero.permanentHpBonus || 0) + hpReward;
+                writeLog(`💎 **Ruh Hasadı**: Çaldığın kanın bir kısmı özüne karıştı! Kalıcı **+${hpReward} Max HP** kazandın.`);
+                
+                // Karakterin mevcut canını da artan Max HP kadar iyileştirebiliriz (Opsiyonel)
+                hero.hp += hpReward;
+            }
+            // Havuzu bir sonraki oda için sıfırla
+            hero.sessionLifeStolen = 0; 
+        }
+        // ----------------------------------------
 
         // Bosslar ve Hard (Turuncu çerçeveli) odalar 5 XP, normal odalar 4 XP verir
         const xpGainAmount = (monster.isHard || monster.isBoss) ? 5 : 4;
