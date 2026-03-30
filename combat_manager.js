@@ -775,7 +775,7 @@ window.nextTurn = function() {
 		// --- BLOOD MARK SÖNÜMLEME MANTIĞI (KORUNDU) ---
         const bm = hero.statusEffects.find(e => e.id === 'blood_mark_active');
         if (bm && window.combatTurnCount > 6) {
-            bm.value = Math.max(0, bm.value - 0.01); 
+            bm.value = Math.max(0, bm.value - 0.05); 
             if (bm.value > 0) {
                 writeLog(`📉 **Blood Mark**: Kan damgası zayıflıyor... (Yeni Oran: %${Math.round(bm.value * 100)})`);
             }
@@ -1049,8 +1049,8 @@ window.checkGameOver = function() {
 		
 		// --- KRİTİK: BLOOD MARK ZAFER BONUSU ---
         if (hero.sessionLifeStolen > 0) {
-            // Toplam çalınan kanın %10'u kalıcı can olur
-            const hpReward = Math.floor(hero.sessionLifeStolen * 0.10); 
+            // Toplam çalınan kanın %40'ı kalıcı can olur
+            const hpReward = Math.floor(hero.sessionLifeStolen * 0.40); 
             
             if (hpReward > 0) {
                 hero.permanentHpBonus = (hero.permanentHpBonus || 0) + hpReward;
