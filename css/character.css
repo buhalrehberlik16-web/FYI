@@ -413,4 +413,56 @@
     letter-spacing: 0.5px !important;
     /* ------------------------------ */
 }
+.set-info-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(240, 230, 140, 0.2);
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    font-family: 'Cinzel', serif;
+}
+
+.set-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #f0e68c;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.set-progression {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.set-dot {
+    width: 8px;
+    height: 8px;
+    background: #444;
+    border-radius: 50%;
+    border: 1px solid #222;
+}
+
+/* 3 ve 6 parça tamamlandığında yanan ışıklar */
+.set-dot.active {
+    background: #43FF64;
+    box-shadow: 0 0 8px #43FF64;
+    border-color: #fff;
+}
+
+.set-bonus-text {
+    font-size: 0.65rem;
+    color: #666;
+    margin-top: 3px;
+    font-style: italic;
+}
+
+.set-bonus-text.active {
+    color: #43FF64;
+    font-weight: bold;
+    font-style: normal;
+}
 
