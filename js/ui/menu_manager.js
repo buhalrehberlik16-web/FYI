@@ -213,6 +213,32 @@ window.showItemTooltip = function(item, event) {
     const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES.jewelry;
 
     nameEl.textContent = getTranslatedItemName(item);
+	
+	// --- YENİ: SET BONUSU GÖSTERİMİ ---
+    if (item.subtype === "jewelry" && item.color) {
+        // Kahramanın üzerindeki aynı renkli eşyaları say (6 takı slotuna bakar)
+        const equippedSetCount = Object.values(hero.equipment).filter(i => i && i.color === item.color).length;
+        
+        const setRow = document.createElement('div');
+        setRow.className = 'set-info-box'; // CSS ile stillendireceğiz
+        
+        const setName = langItems[`set_${item.color}`] || item.color;
+        
+        setRow.innerHTML = `
+            <div class="set-header">
+                <span class="set-name">${setName}</span>
+                <span class="set-count">${equippedSetCount}/6</span>
+            </div>
+            <div class="set-progression">
+                <div class="set-dot ${equippedSetCount >= 3 ? 'active' : ''}"></div>
+                <div class="set-dot ${equippedSetCount >= 6 ? 'active' : ''}"></div>
+            </div>
+            <div class="set-bonus-text ${equippedSetCount >= 3 ? 'active' : ''}">${langItems.set_bonus_3}</div>
+            <div class="set-bonus-text ${equippedSetCount >= 6 ? 'active' : ''}">${langItems.set_bonus_6}</div>
+        `;
+        statsEl.appendChild(setRow);
+    }
+    // ---------------------------------
 
     // 3. GÖRSEL SINIFLARI AYARLA
     if (rules.badgeType === "craft") {
@@ -327,6 +353,17 @@ window.showItemTooltip = function(item, event) {
     }
     // C - Standart Statlar (Takılar için)
     else if (item.stats && Object.keys(item.stats).length > 0) {
+		// --- YENİ: DEFANS GÖSTERİMİ (ADIM 4 - GÜNCELLENDİ) ---
+        if (item.implicitDef > 0) {
+            const defRow = document.createElement('div');
+            defRow.className = 'tooltip-stat-row';
+            // 'def' anahtarını kullanarak dilden "Defans" veya "Defense" çeker
+            const defLabel = window.getStatDisplayName('def'); 
+            
+            defRow.innerHTML = `<span>${defLabel}</span> <span class="tooltip-val">+${item.implicitDef}</span>`;
+            statsEl.appendChild(defRow);
+        }
+        // ---------------------------------------------------
         for (const [statKey, value] of Object.entries(item.stats)) {
             const row = document.createElement('div');
             row.className = 'tooltip-stat-row';
