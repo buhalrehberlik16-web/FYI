@@ -96,6 +96,7 @@ window.getHeroEffectiveStats = function() {
     let flatDefBonus = 0;  
     let totalAtkMult = 1.0; 
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
+	const colorCounts = {}; 
 	
     // 2. EKİPMANLARI VE CHARMLARI TARA
      const allItems = [
@@ -122,7 +123,31 @@ window.getHeroEffectiveStats = function() {
                 if (b.type === 'elemDmg') currentElemDmg[b.element] += b.value;
             });
         }
+		// --- YENİ: ZIRH VE SET TAKİBİ (ADIM 3B) ---
+        if (item && item.subtype === "jewelry") {
+            // 1. Sabit Zırhı (implicitDef) ekle
+            if (item.implicitDef) flatDefBonus += item.implicitDef;
+            
+            // 2. Set Rengini (mainStat türünü) say
+            if (item.color) {
+                colorCounts[item.color] = (colorCounts[item.color] || 0) + 1;
+            }
+        }
+        // -----------------------------------------
     });
+	
+	// --- YENİ: SET BONUSU UYGULAMA (ADIM 3C) ---
+    for (const color in colorCounts) {
+        const count = colorCounts[color];
+        if (count >= 3 && count < 6) {
+            totalAtkMult *= 1.05; // 3 Parça: +%5 Atak
+            totalDefMult *= 1.05; // 3 Parça: +%5 Defans
+        } else if (count >= 6) {
+            totalAtkMult *= 1.15; // 6 Parça: +%15 Atak
+            totalDefMult *= 1.15; // 6 Parça: +%15 Defans
+        }
+    }
+    // -------------------------------------------
 
     // 3. STATUS EFFECT'LERİ TARA (Buff/Debuff)
     hero.statusEffects.forEach(e => {
