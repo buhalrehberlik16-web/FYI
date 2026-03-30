@@ -620,6 +620,40 @@ const BARBARIAN_SKILLS = {
         }
     },
 	
+	blood_mark: {
+        data: {
+            name: "Kan Damgası",
+            rageCost: 30,
+            levelReq: 12,
+            cooldown: 0, // Oda başı bir kez açılır
+            icon: 'skills/barbarian/chaos/chaos_blood_mark.webp',
+            type: 'utility',
+            category: 'chaos',
+            tier: 4
+        },
+        onCast: function() {
+            // Sezonluk çalınan canı sıfırla
+            hero.sessionLifeStolen = 0;
+            
+            // Etkiyi uygula (value: 0.10 = %10 can çalma)
+            applyStatusEffect(hero, { 
+                id: 'blood_mark_active', 
+                name: "Kan Damgası", 
+                value: 0.20, 
+                turns: 99, // Oda bitene kadar sürer
+                resetOnCombatEnd: true 
+            });
+
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blood_mark', turns: 99, hideNumber: true, resetOnCombatEnd: true });
+            
+            updateStats();
+            showFloatingText(document.getElementById('hero-display'), "LANETLENDİ!", 'damage');
+            writeLog(`🩸 **${this.data.name}**: Tüm dirençlerini feda ederek kan sömürmeye başladın!`);
+            
+            setTimeout(nextTurn, 1000);
+        }
+    },
+	
 	//--- CHAOS TIER 5 --- 
 	blood_terror: {
         data: {
