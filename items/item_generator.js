@@ -14,8 +14,17 @@ window.generateRandomItem = function(tier) {
         tier: tier,
         icon: baseTemplate.icon,
         stats: {}, 
-        propertyKeys: [mainStat] 
+        propertyKeys: [mainStat],
+		// --- YENİ: SET VE ZIRH VERİLERİ ---
+        color: mainStat, // str, dex, int, vit, mp_pow (Zaten renkleri temsil ediyor)
+        implicitDef: 0		
     };
+	
+	// --- KURAL: T2+ EŞYALARDA %30 ŞANSLA SABİT DEFANS ---
+    if (tier > 1 && Math.random() < 0.30) {
+        newItem.implicitDef = (tier * 1) + 1; // T2:3, T3:4, T4:5, T5:6
+    }
+    // --------------------------------------------------
 
     // Stat puanı dağıtımı (Mevcut mantığın aynı kalıyor)
     newItem.stats[mainStat] = window.ITEM_CONFIG.multipliers.stats;
