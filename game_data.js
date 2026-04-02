@@ -108,6 +108,9 @@ window.hero = {
 	hasSeenSkillWarning: false,
 	sessionLifeStolen: 0, // Bu savaştaki toplam çalınan can
     permanentHpBonus: 0,  // Blood Mark'tan gelen kalıcı can bonusu
+	exhaustion: 0,
+    autoRestCount: 0,
+    skillUsage: {}, // { "slash": 1, "bash": 3 } gibi
 };
 
 // EVENT HAVUZU

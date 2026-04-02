@@ -265,6 +265,14 @@
 				</div>
 
                 <div id="arena">
+				<div id="arena-center-notif" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5000; pointer-events: none;"></div>
+					<div id="exhaustion-system">
+						<div class="exhaustion-bar-wrapper">
+							<div id="exhaustion-fill-sari" class="exhaust-fill-sari"></div>
+							<div id="exhaustion-fill-mor" class="exhaust-fill-mor"></div>
+						</div>
+						<div id="exhaustion-value">0</div>
+						</div>
                     <div id="hero-display" class="character-display">
                         <div id="hero-hp-overlay" class="hp-overlay-container">
 						<!-- YENİ: Blok Göstergesi (Sol tarafa yerleşecek) -->
@@ -470,8 +478,19 @@
             <div class="stat-row-detail">
                 <label data-i18n="label_rage">Öfke (Rage):</label> <span id="stat-rage" style="color:#3498db;">0 / 100</span>
             </div>
+			
+			<hr class="stat-separator">
 
-            <hr style="border-color: #444; margin: 15px 0;">
+			<div class="stat-row-detail">
+				<label data-i18n="exhaustion_label">Yorgunluk:</label>
+			<div class="stat-bar-group">
+				<div class="hp-bar-container exhaustion-horizontal-bg">
+					<div id="stat-exhaustion-bar-sari" class="exhaust-fill-sari"></div>
+					<div id="stat-exhaustion-bar-mor" class="exhaust-fill-mor"></div>
+				</div>
+					<span id="stat-exhaustion-text" style="color:#ffd700;">0 / 200</span>
+				</div>
+			</div>
 
             <!-- Savaş Statları -->
             <div class="combat-stats-row">

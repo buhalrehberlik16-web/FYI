@@ -79,6 +79,149 @@ window.addHeroBlock = function(amount) {
     updateStats(); 
 };
 
+window.getExhaustionCost = function(tier, usage) {
+    // 0. ve 1. kullanım her zaman baz değerdir (1-1, 2-2, 3-3 gibi başlar)
+    if (usage === 0 || usage === 1) return tier;
+
+    // Senin istediğin %50 artış ve küsuratı atma (floor) mantığı:
+    // Her adım bir önceki adımın değerine bakarak hesaplanır.
+    let val = tier;
+    
+    // Tier 1 istisnası: 3. vuruşta (usage 2) hala 1 kalması, 4. vuruşta (usage 3) 2 olması için
+    if (tier === 1) {
+        if (usage === 2) return 1;
+        // Tier 1 için çarpmaya 1.5 değerinden (sanal olarak) devam ediyoruz
+        let t1Val = 1.5; 
+        for (let i = 2; i < usage; i++) {
+            t1Val = t1Val * 1.5;
+        }
+        return Math.floor(t1Val);
+    }
+
+    // Diğer Tierlar için standart: Her kullanımdan sonra bir önceki maliyetin 1.5 katı
+    for (let i = 1; i < usage; i++) {
+        val = Math.floor(val * 1.5);
+    }
+    
+    return val;
+};
+
+window.updateExhaustionUI = function() {
+    // 1. Savaş Ekranı (Dikey)
+    const sariDikey = document.getElementById('exhaustion-fill-sari');
+    const morDikey = document.getElementById('exhaustion-fill-mor');
+    const valText = document.getElementById('exhaustion-value');
+    
+    // 2. Stat Ekranı (Yatay)
+    const sariYatay = document.getElementById('stat-exhaustion-bar-sari');
+    const morYatay = document.getElementById('stat-exhaustion-bar-mor');
+    const statText = document.getElementById('stat-exhaustion-text');
+
+	if (hero.exhaustion > 200) hero.exhaustion = 200;
+    const val = hero.exhaustion || 0;
+
+    // --- A. SAYISAL GÜNCELLEME VE RENK DEĞİŞİMİ ---
+    if (valText) {
+        valText.textContent = Math.floor(val);
+        // Savaş ekranındaki küçük rakamın rengini değiştir
+        valText.style.color = val > 100 ? "#9b59b6" : "#f0e68c";
+    }
+
+    if (statText) {
+        statText.textContent = `${Math.floor(val)} / 200`;
+        // --- KRİTİK DÜZELTME: 100'den sonra XP MORU (#9b59b6), önce SARI (#ffd700) ---
+        if (val > 100) {
+            statText.style.color = "#9b59b6"; // XP Barı Moru
+            statText.style.textShadow = "0 0 5px rgba(155, 89, 182, 0.5)"; // Hafif mor parlama
+        } else {
+            statText.style.color = "#ffd700"; // Altın Sarısı
+            statText.style.textShadow = "none";
+        }
+    }
+
+    // --- BARLARI DOLDURAN ASIL MOTOR ---
+    const applyBarFill = (sari, mor, isHorizontal) => {
+        if (!sari || !mor) return;
+
+        if (val <= 100) {
+            // 100 Altı
+            if (isHorizontal) {
+                sari.style.width = val + "%"; 
+                sari.style.height = "100%"; // Yatayda yüksekliği fulle
+                mor.style.width = "0%";
+            } else {
+                sari.style.height = val + "%";
+                sari.style.width = "100%"; // Dikeyde genişliği fulle
+                mor.style.height = "0%";
+            }
+        } else {
+            // 100 Üstü
+            const morVal = Math.min(100, val - 100);
+            if (isHorizontal) {
+                sari.style.width = "100%";
+                mor.style.width = morVal + "%";
+                mor.style.height = "100%";
+            } else {
+                sari.style.height = "100%";
+                mor.style.height = morVal + "%";
+                mor.style.width = "100%";
+            }
+        }
+    };
+
+    applyBarFill(sariDikey, morDikey, false);
+    applyBarFill(sariYatay, morYatay, true);
+
+    // --- C. "EXTINCT" (ÖLÜM) KONTROLÜ (DÖNGÜDEN ARINDIRILDI) ---
+    if (val >= 200 && hero.hp > 0) { // Sadece yaşıyorsa tetikle
+        const currentLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+        hero.hp = 0;
+        writeLog(`💀 **${currentLang.exhaustion_extinct}**: ${currentLang.dead_title}`);
+        
+        // DİKKAT: updateStats() burada ÇAĞRILMAZ, yoksa sonsuz döngüye girer!
+        // Sadece can barını görsel olarak 0 yapıp oyunu bitiriyoruz.
+        const hpBar = document.getElementById('hero-hp-bar');
+        if(hpBar) hpBar.style.width = "0%";
+        
+        checkGameOver();
+    }
+	window.refreshSkillExhaustionBadges(); // <--- RENKLERİN DEĞİŞMESİ İÇİN BURADA DA OLMALI
+};
+
+window.refreshSkillExhaustionBadges = function() {
+    const lang = window.LANG_TR || window.LANG_EN; 
+    const label = window.LANGUAGES[window.gameSettings.lang].exhaustion_short;
+
+    document.querySelectorAll('.skill-slot').forEach(slot => {
+        const key = slot.dataset.skillKey;
+        if (!key) return;
+
+        const skillObj = SKILL_DATABASE[key];
+        const sID = skillObj.data.id || key;
+        
+        let badge = slot.querySelector('.skill-exhaust-badge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.className = 'skill-exhaust-badge';
+            slot.appendChild(badge);
+        }
+
+        let costValue = 0;
+        if (sID === 'rest') {
+            const usage = hero.skillUsage["rest"] || 0;
+            costValue = -(Math.max(0, 5 - usage));
+        } else if (skillObj.data.category === 'common' && skillObj.data.tier === 1) {
+            costValue = 2;
+        } else if (skillObj.data.type !== 'passive') {
+            // AZ ÖNCE YAZDIĞIMIZ AKILLI HESAPLAMAYI BURADA DA KULLANIYORUZ
+            costValue = window.getExhaustionCost(skillObj.data.tier || 1, hero.skillUsage[sID] || 0);
+        }
+
+        badge.textContent = `${label}${costValue > 0 ? "+" : ""}${costValue}`;
+        badge.style.display = (skillObj.data.type === 'passive') ? 'none' : 'block';
+    });
+};
+
 // --- EFEKTİF STAT HESAPLAMA (GÜNCEL SÜRÜM) ---
 window.getHeroEffectiveStats = function() {
     // 1. TEMEL DEĞERLERİ HAZIRLA
@@ -97,6 +240,13 @@ window.getHeroEffectiveStats = function() {
     let totalAtkMult = 1.0; 
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 	const colorCounts = {}; 
+	
+	let exhaustionPenalty = 1.0;
+	if (hero.exhaustion >= 100) exhaustionPenalty = 0.7;
+	else if (hero.exhaustion >= 70) exhaustionPenalty = 0.8;
+	else if (hero.exhaustion >= 50) exhaustionPenalty = 0.9;
+	totalAtkMult *= exhaustionPenalty;
+	totalDefMult *= exhaustionPenalty;
 	
     // 2. EKİPMANLARI VE CHARMLARI TARA
      const allItems = [
@@ -136,15 +286,25 @@ window.getHeroEffectiveStats = function() {
         // -----------------------------------------
     });
 	
-	// --- YENİ: SET BONUSU UYGULAMA (ADIM 3C) ---
-    for (const color in colorCounts) {
-        const count = colorCounts[color];
-        if (count >= 3 && count < 6) {
-            totalAtkMult *= 1.05; // 3 Parça: +%5 Atak
-            totalDefMult *= 1.05; // 3 Parça: +%5 Defans
-        } else if (count >= 6) {
-            totalAtkMult *= 1.15; // 6 Parça: +%15 Atak
-            totalDefMult *= 1.15; // 6 Parça: +%15 Defans
+	// --- YENİ: SET BONUSU UYGULAMA (ADIM 3C - STAT BAZLI) ---
+    let totalRegenMult = 1.0; // Sınıf bonusu için çarpan
+
+    for (const statKey in colorCounts) {
+        const count = colorCounts[statKey];
+        
+        // 3 veya 6 parça bonusu (Doğrudan stat artışı)
+        if (count >= 3) {
+            let bonusAmount = (count >= 6) ? 6 : 3;
+            // s.str, s.int vb. değerlere direkt ekle
+            if (s.hasOwnProperty(statKey)) {
+                s[statKey] += bonusAmount;
+            }
+        }
+
+        // 6 parça tamamlandıysa Sınıf Bonusu (Regen)
+        if (count >= 6) {
+            if (hero.class === 'Barbar') totalRegenMult += 0.20;
+            if (hero.class === 'Magus') totalRegenMult += 0.50;
         }
     }
     // -------------------------------------------
@@ -203,7 +363,7 @@ window.getHeroEffectiveStats = function() {
     const finalMaxRage = rules.baseResource + Math.floor(s[sc.resource.stat] * sc.resource.mult);
     
     // REGEN Hesabı
-    const finalRageRegen = Math.floor(s[sc.regen.stat] * sc.regen.mult);
+    const finalRageRegen = Math.floor((s[sc.regen.stat] * sc.regen.mult) * totalRegenMult);
 
     // ATAK Hesabı
     let rawAtk = (hero.baseAttack || 10) + flatAtkBonus;
@@ -348,6 +508,7 @@ window.initializeSkillButtons = function() {
         }
     }
     toggleSkillButtons(false);
+	window.refreshSkillExhaustionBadges(); // <--- SAVAŞ BAŞINDA ÇİZ
 };
 
 window.toggleSkillButtons = function(forceDisable) {
@@ -419,6 +580,27 @@ window.handleSkillUse = function(skillKey) {
     let dmgPack = null;
     if (skillObj.data.scaling) {
         dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
+    }
+	
+	// --- YORGUNLUK ARTIŞI ---
+    const sID = skillObj.data.id || skillKey;
+    
+    if (sID !== 'rest' && skillObj.data.type !== 'passive') {
+        if (!hero.skillUsage) hero.skillUsage = {};
+        if (hero.skillUsage[sID] === undefined) hero.skillUsage[sID] = 0;
+
+        let exGain = 0;
+        if (skillObj.data.category === 'common' && skillObj.data.tier === 1) {
+            exGain = 2; // Basic skiller sabit 2
+        } else {
+            // Dinamik dizi: (T1 ise 1,1,1,2.. | T3 ise 3,3,4,6..)
+            exGain = window.getExhaustionCost(skillObj.data.tier || 1, hero.skillUsage[sID]);
+            hero.skillUsage[sID]++; 
+        }
+        
+        hero.exhaustion += exGain;
+        window.updateExhaustionUI();
+        if (window.refreshSkillExhaustionBadges) window.refreshSkillExhaustionBadges();
     }
 
     // 3. Yeteneği çalıştır (Buffer açık olduğu için buradaki floating textler yutulacak)
@@ -707,6 +889,9 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     const scaleOther = (val) => Math.ceil(val * otherMultiplier);
 	
     switchScreen(battleScreen);
+	hero.skillUsage = {}; // Skillerin fight içi artışlarını sıfırla
+    hero.autoRestCount = 0; // Auto-rest ceza sayacını sıfırla
+    window.updateExhaustionUI(); // Barı başlangıç değerine getir
     monster = { 
         name: enemyType, 
         tribe: stats.tribe,
@@ -726,6 +911,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         skills: stats.skills,
         firstTurnAction: stats.firstTurnAction,
         statusEffects: [], 
+		
 	};
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
@@ -804,6 +990,68 @@ window.nextTurn = function() {
             if (bm.value > 0) {
                 writeLog(`📉 **Blood Mark**: Kan damgası zayıflıyor... (Yeni Oran: %${Math.round(bm.value * 100)})`);
             }
+        }
+		
+		const currentLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+
+        // --- 1. YORGUNLUK HASARI (TICK) ---
+        if (hero.exhaustion > 100) {
+            let exDmg = 0;
+            if (hero.exhaustion <= 150) {
+                // 100-150 arası: Her 2 dolumda 1 damage
+                exDmg = Math.floor((hero.exhaustion - 100) / 2);
+            } else {
+                // 150-200 arası: 25 baz + her 1 dolumda 2 damage
+                exDmg = 25 + Math.floor((hero.exhaustion - 150) * 2);
+            }
+
+            if (exDmg > 0) {
+                hero.hp = Math.max(0, hero.hp - exDmg);
+                showFloatingText(heroDisplayContainer, exDmg, 'damage');
+                writeLog(currentLang.log_exhaustion_damage.replace("$1", exDmg));
+            }
+        }
+
+        // --- 2. AUTO-REST KONTROLÜ (FAILSAFE) ---
+        const activeSkills = hero.equippedSkills.filter(s => s !== null && s !== 'rest'); // 'rest' skilli hariç tutulur
+        
+        // Eğer bar sadece 'rest' ile doluysa veya boşsa 999 döner (yani auto-rest tetiklenmez)
+        const minCost = activeSkills.length > 0 
+            ? Math.min(...activeSkills.map(s => SKILL_DATABASE[s].data.rageCost)) 
+            : 999;
+
+        // Eğer mevcut öfke/mana, kullanılabilecek en ucuz saldırıya yetmiyorsa:
+        if (hero.rage < minCost && minCost !== 999) {
+            hero.autoRestCount++;
+            let exChange = 0;
+            
+            // Senin kuralın: 
+            // 1. kullanım: -2 | 2. kullanım: -1 | 3. kullanım: 0
+            if (hero.autoRestCount === 1) exChange = -2;
+            else if (hero.autoRestCount === 2) exChange = -1;
+            else if (hero.autoRestCount === 3) exChange = 0;
+            // 4. ve sonrası: +1, +2, +4, +8 (Geometrik artış)
+            else {
+                exChange = Math.pow(2, hero.autoRestCount - 4); 
+            }
+
+            // Yorgunluğu uygula
+            hero.exhaustion = Math.max(0, hero.exhaustion + exChange);
+            
+            // KRİTİK: En ucuz skili vurabilecek kadar kaynak ver
+            hero.rage = minCost; 
+            
+            // Log ve Görsel Bildirim
+            const arenaCenter = document.getElementById('arena-center-notif');
+            writeLog(currentLang.log_forced_rest.replace("$1", (exChange >= 0 ? "+" + exChange : exChange)));
+            setTimeout(showFloatingText(arenaCenter, currentLang.exhaustion_out_of_breath, 'damage'),1500);
+            
+            updateStats();
+            window.updateExhaustionUI();
+            
+            // Hamle yapamaz, sıra canavara geçer (veya yorgunluk hasarı vurduğu için oyun biter)
+            setTimeout(nextTurn, 1500); 
+            return; 
         }
 			
         // Blok Azalması

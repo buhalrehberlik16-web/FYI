@@ -352,6 +352,8 @@ function initGame() {
     hero.maxRage = stats.maxRage;
     hero.rage = 0;
 
+	hero.unlockedSkills = ['rest']; // <--- YENİ: Dinlen skilli her zaman açık başlar
+	hero.equippedSkills[2] = 'rest'; // 3. slota (numara 1) yerleştirdik
     hero.baseResistances = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.elementalDamage = { physical: 0, fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 };
     hero.statusEffects = []; hero.mapEffects = []; 
