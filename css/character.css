@@ -78,8 +78,6 @@
     flex-wrap: nowrap !important; /* Kesinlikle alt satıra geçme kuralı */
 }
 
-
-
 .stat-window {
     width: 610px;
     max-height: 85vh;
@@ -137,6 +135,52 @@
 }
 
 .stat-separator { border: 0; height: 1px; width: 100%; margin: 12px 0; background: linear-gradient(to right, transparent, #6b5c3b, transparent); }
+
+/* Exhaust */
+.exhaustion-horizontal-bg {
+    background-color: #111 !important;
+    position: relative;
+    height: 14px !important; /* Biraz kalınlaştırdık */
+    border-radius: 12px;
+    border: 1px solid #555;
+    overflow: hidden;
+    display: flex; /* İçindeki barları yan yana/üst üste yönetmek için */
+}
+
+.stat-bar-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* Ortak Dolgu Sınıfları (Hem dikey hem yatay uyumlu) */
+.exhaust-fill-sari, .exhaust-fill-mor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /* Başlangıçta 0 yapıyoruz, JS ile dolacak */
+    width: 0%; 
+    height: 0%;
+    transition: width 0.3s ease-out, height 0.3s ease-out;
+}
+
+.exhaust-fill-sari {
+    background: linear-gradient(to right, #ffd700, #ffae00);
+    z-index: 1;
+}
+
+.exhaust-fill-mor {
+    background: linear-gradient(to right, #6a0dad, #9b59b6);
+    box-shadow: 0 0 10px #9b59b6;
+    z-index: 2; /* Sarının üzerine biner */
+}
+
+#stat-exhaustion-text {
+    font-size: 0.7rem;
+    margin-top: 2px;
+    font-family: 'Cinzel', serif;
+}
 
 /* SALDIRI / DEFANS TABLARI (Font Boyutu Düzeltildi) */
 .combat-stats-row { display: flex; justify-content: space-between; gap: 20px; margin: 15px 0; }

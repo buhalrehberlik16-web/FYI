@@ -389,4 +389,80 @@
     filter: grayscale(100%) brightness(0.6);
     cursor: default !important;
 }
+#exhaustion-system {
+    position: absolute;
+    left: 15.5%;
+    bottom: 22.5%; /* Hero'nun yan hizası */
+    width: 25px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+}
+
+.exhaustion-bar-wrapper {
+    width: 100%;
+    height: 100%;
+    background: #111;
+    border: 2px solid #6b5c3b;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse; /* Alttan üste dolar */
+}
+
+.exhaust-fill-sari {
+    width: 100%;
+    height: 0%; /* 0-100 arası burası dolar */
+    background: linear-gradient(to top, #ffd700, #ffae00);
+    transition: height 0.3s ease;
+}
+
+.exhaust-fill-mor {
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    height: 0%; /* JS ile güncellenecek */
+    /* XP Barı ile aynı renkler: */
+    background: linear-gradient(to top, #6a0dad, #9b59b6); 
+    box-shadow: 0 0 10px #9b59b6;
+    transition: all 0.3s ease;
+    opacity: 1; /* Daha belirgin olması için opaklığı artırdık */
+    z-index: 5; /* Sarının (varsayılan 1) üzerinde durması için */
+}
+
+#exhaustion-value {
+    margin-top: 5px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: #f0e68c;
+}
+
+.skill-exhaust-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #111;
+    color: #ffd700; /* Başlangıç rengi sarı */
+    font-size: 10px;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    padding: 2px 5px;
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    z-index: 20;
+    pointer-events: none;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    transition: all 0.3s ease;
+}
+
+/* Yorgunluk 100'ü geçtiğinde kullanılacak mor stil */
+.exhaust-status-danger .skill-exhaust-badge {
+    color: #df9cff !important;
+    border-color: #8e44ad !important;
+    box-shadow: 0 0 8px rgba(142, 68, 173, 0.6);
+}
 
