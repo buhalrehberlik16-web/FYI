@@ -59,6 +59,30 @@
     font-family: 'Cinzel', serif;
 }
 
+#exhaustion-system {
+    position: absolute;
+    left: 1%;
+    bottom: 9%;  /* Hero'nun yan hizası */
+    width: 25px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+}
+
+.exhaustion-bar-wrapper {
+    width: 70%;
+    height: 100%;
+    background: #111;
+    border: 2px solid #6b5c3b;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column-reverse; /* Alttan üste dolar */
+}
+
 }
 
 @media (max-height: 600px) {
