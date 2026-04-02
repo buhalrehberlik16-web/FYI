@@ -82,6 +82,16 @@ window.CalendarManager = {
             passed = 1.0;
             window.hero.calendar.daysPassed += 1;
         }
+		
+		// --- YENİ: TOWNDA ZAMAN GEÇİRME (-10 YORGUNLUK) ---
+        // Eğer oyuncu şu an town ekranındaysa yorgunluk düşer
+        const townEl = document.getElementById('town-screen');
+        const isInsideTown = townEl && (townEl.classList.contains('active') || townEl.style.display === 'flex');
+        
+        if (isInsideTown) {
+            hero.exhaustion = Math.max(0, hero.exhaustion - 10);
+            window.updateExhaustionUI();
+        }
 
         // --- YENİ: SINIF BAZLI KAYNAK (MANA) YENİLEME ---
         const classRules = CLASS_CONFIG[hero.class];
