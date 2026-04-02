@@ -5,6 +5,41 @@ const COMMON_SKILLS = {
     // TAB: COMMON (GENEL)
     // ======================================================
     
+	// --- TIER 0 ---
+	rest: {
+        data: {
+            name: "Dinlen", // Bu isim aslında çeviriden gelecek ama kütüphanede kalabilir
+            rageCost: 0,
+            levelReq: 1,
+            icon: 'skills/common/icon_rest.webp',
+            type: 'utility',
+            category: 'common',
+            tier: 0
+        },
+        onCast: function() {
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+			
+            // Manuel kullanım sayısını al
+            const usage = hero.skillUsage["rest"] || 0;
+            
+            // Kural: 5'ten başlar, her kullanımda 1 azalır, 0'da çakılı kalır.
+            const reduction = Math.max(0, 5 - usage);
+            
+            hero.exhaustion = Math.max(0, hero.exhaustion - reduction);
+            hero.skillUsage["rest"] = usage + 1;
+			
+			const arenaCenter = document.getElementById('arena-center-notif');
+			showFloatingText(arenaCenter, lang.exhaustion_rest, 'heal');
+            
+            // Loglama
+            writeLog(lang.log_rest_skill.replace("$1", reduction));
+            
+            updateStats();
+            window.updateExhaustionUI();
+            setTimeout(nextTurn, 1000);
+        }
+    },
+	
     // --- TIER 1 ---
     cut: {
         data: {
