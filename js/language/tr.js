@@ -276,6 +276,17 @@ window.LANG_TR = {
 		scout_stage: "AŞAMA",
 		stable_rent: "At Kirala(40G)",
 		stable_scout: "Gözcü(20G)",
+		
+		// Exhaust
+		exhaustion_label: "Yorgunluk",
+		exhaustion_out_of_breath: "NEFES NEFESE",
+		exhaustion_forced_rest: "ZORUNLU DİNLENME",
+		exhaustion_extinct: "TÜKENİŞ",
+		exhaustion_rest: "DİNLENİYORSUN",
+		exhaustion_short: "Y:",
+		log_exhaustion_damage: "😓 **Yorgunluk**: Zorlanma yüzünden $1 hasar aldın.",
+		log_forced_rest: "⚠️ **Zorunlu Dinlenme**: Kaynak yetersiz! Yorgunluk: $1",
+		log_rest_skill: "🧘 **Dinlen**: $1 Yorgunluk atıldı.",
 
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
@@ -505,6 +516,7 @@ window.LANG_TR = {
         // --- SKİLLER ---
         skills: {
 			// BARBARIAN SKILLS //
+			rest: { name: "Dinlen", desc: "Zihnini ve bedenini sakinleştirir.<br><span style='color:#43FF64'>5 Yorgunluk düşürür (Dövüş boyu verimi her kullanımda 1 azalır).</span><br><span style='color:cyan'>0 Öfke.</span>" },
             cut: { name: "Kes", desc: "Atağın kadar hasar.<span style='color:cyan'>+10 Öfke üretir.</span>" },
             guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır.<span style='color:cyan'>0 Öfke.</span>" },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar.<span style='color:cyan'>0-9 Öfke üretir.</span>" },
@@ -638,8 +650,10 @@ window.LANG_TR = {
 	
 	// SET Görüntü İsimleri
 	set_piece_label: "SET PARÇASI",
-    set_bonus_3: "3 Parça: +%5 Atak & Defans",
-    set_bonus_6: "6 Parça: +%15 Atak/Def & Sınıf Bonusu",
+    set_bonus_3: "3 Parça: +3 $1",
+    set_bonus_6: "6 Parça: +6 $1 & Sınıf Bonusu",
+    class_bonus_Barbar: "Barbar: +%20 Öfke Yenileme",
+    class_bonus_Magus: "Magus: +%50 Mana Yenileme",
     // Renk Seti İsimleri
     set_str: "KUVVET SETİ (Kırmızı)",
     set_int: "BİLGELİK SETİ (Mor)",

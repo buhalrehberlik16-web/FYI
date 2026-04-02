@@ -274,6 +274,17 @@ window.LANG_EN = {
 		scout_stage: "STAGE",
 		stable_rent: "Horse Rental(40G)",
 		stable_scout: "Scout(20G)",
+		
+		// Exhaust
+		exhaustion_label: "Exhaustion",
+		exhaustion_out_of_breath: "OUT OF BREATH",
+		exhaustion_forced_rest: "FORCED REST",
+		exhaustion_extinct: "EXTINCT",
+		exhaustion_rest: "RESTING",
+		exhaustion_short: "Ex:",
+		log_exhaustion_damage: "😓 **Exhaustion**: Took $1 damage due to strain.",
+		log_forced_rest: "⚠️ **Forced Rest**: Insufficient resources! Exhaustion: $1",
+		log_rest_skill: "🧘 **Rest**: Removed $1 Exhaustion.",
 
         // Enemy Names
         enemy_names: {
@@ -504,6 +515,7 @@ window.LANG_EN = {
         // Skills
         skills: {
 			// BARBARIAN SKILLS //
+			rest: { name: "Rest", desc: "Calms your mind and body.<br><span style='color:#43FF64'>Reduces 5 Exhaustion (Efficiency decreases by 1 each use during fight).</span><br><span style='color:cyan'>0 Rage.</span>" },
             cut: { name: "Cut", desc: "Deals damage equal to Attack. <span style='color:cyan'>+10 Rage.</span>" },
             guard: { name: "Guard", desc: "Reduces incoming damage by 25%. <span style='color:cyan'>0 Rage.</span>" },
             strike: { name: "Strike", desc: "Deals 115% of Attack as damage. <span style='color:cyan'>+0-9 Rage.</span>" },
@@ -636,8 +648,10 @@ window.LANG_EN = {
 	
 	// Set Items
 	set_piece_label: "SET PIECE",
-    set_bonus_3: "3 Pieces: +5% Atk & Def",
-    set_bonus_6: "6 Pieces: +15% Atk/Def & Class Bonus",
+    set_bonus_3: "3 Pieces: +3 $1",
+    set_bonus_6: "6 Pieces: +6 $1 & Class Bonus",
+    class_bonus_Barbar: "Barbarian: +20% Rage Regen",
+    class_bonus_Magus: "Magus: +50% Mana Regen",
     set_str: "MIGHT SET (Red)",
     set_int: "WISDOM SET (Purple)",
     set_dex: "AGILITY SET (Yellow)",
