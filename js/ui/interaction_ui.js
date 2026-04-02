@@ -185,10 +185,15 @@ window.restAtInn = function() {
         
         // Dinamik limitleri al ve fulle
         const stats = getHeroEffectiveStats();
-        hero.hp = stats.maxHp;  
+        hero.hp = stats.maxHp; 
+		// --- YENİ: DİNLENME (-60 Yorgunluk) ---
+        hero.exhaustion = Math.max(0, hero.exhaustion - 60);
+        // --------------------------------------
+		
 
         updateGoldUI();
         updateStats();
+		window.updateExhaustionUI(); // Barı tazele
         
         dialogue.textContent = lang.rest_success;
         dialogue.style.color = "#43FF64";
@@ -198,10 +203,6 @@ window.restAtInn = function() {
 
     } else {
         window.showAlert(lang.rest_fail);
-        // --- BAŞARISIZLIK DURUMU ---
-        //dialogue.textContent = lang.rest_fail;
-        //dialogue.style.color = "#ff4d4d";
-        // Gün atlatma kodunu buraya koymadığımız için hiçbir şey değişmez.
     }
 
     setTimeout(() => {
@@ -221,16 +222,18 @@ window.buyDrink = function() {
      
      if (hero.gold >= cost) {
          hero.gold -= cost;
-         hero.rage = Math.min(hero.maxRage, hero.rage + 10);
+		 // --- YENİ: İÇECEK (-25 Yorgunluk) ---
+         hero.exhaustion = Math.max(0, hero.exhaustion - 25);
+         // ------------------------------------
          updateGoldUI();
          updateStats();
+		 window.updateExhaustionUI();
          
          dialogue.textContent = lang.drink_success;
          dialogue.style.color = "#3498db"; // Mavi
      } else {
 		 window.showAlert(lang.drink_fail);
-         //dialogue.textContent = lang.drink_fail;
-         //dialogue.style.color = "#ff4d4d"; // Kırmızı
+         
      }
 
      // 3 SANİYE SONRA ESKİ HALİNE DÖN
@@ -286,6 +289,8 @@ window.triggerRandomEvent = function() {
     switchScreen(eventScreen);
 	
 	gainXP(1, true);
+	hero.exhaustion = Math.max(0, hero.exhaustion + 1);
+    window.updateExhaustionUI(); // Barı güncelle
     
     // UI Sıfırlama
     document.getElementById('event-main-area').classList.remove('hidden');

@@ -125,6 +125,28 @@ window.updateStats = function() {
     
 	const spDisplay = document.getElementById('skill-points-display');
 	if (spDisplay) spDisplay.textContent = hero.skillPoints;
+	
+	// --- YORGUNLUK GÖRSEL GÜNCELLEME (STAT EKRANI) ---
+    const statExText = document.getElementById('stat-exhaustion-text');
+    const statExSari = document.getElementById('stat-exhaustion-bar-sari');
+    const statExMor = document.getElementById('stat-exhaustion-bar-mor');
+
+    if (statExText) {
+        statExText.textContent = `${Math.floor(hero.exhaustion)} / 200`;
+        // Renk değişimi: 100'den sonra mor, önce sarı
+        statExText.style.color = hero.exhaustion > 100 ? "#6a0dad" : "#9b59b6";
+
+        if (hero.exhaustion <= 100) {
+            statExSari.style.width = hero.exhaustion + "%";
+            statExMor.style.width = "0%";
+        } else {
+            statExSari.style.width = "100%";
+            statExMor.style.width = (hero.exhaustion - 100) + "%";
+        }
+    }
+	if (hero.hp > 0 && typeof window.updateExhaustionUI === 'function') {
+        window.updateExhaustionUI();
+    }
 };
 
 // Biriktirme için global değişkenler

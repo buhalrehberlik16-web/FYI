@@ -214,16 +214,20 @@ window.showItemTooltip = function(item, event) {
 
     nameEl.textContent = getTranslatedItemName(item);
 	
-	// --- YENİ: SET BONUSU GÖSTERİMİ ---
+	// --- YENİ: SET BONUSU GÖSTERİMİ (ADIM 4 - DİNAMİK STATLI) ---
     if (item.subtype === "jewelry" && item.color) {
-        // Kahramanın üzerindeki aynı renkli eşyaları say (6 takı slotuna bakar)
         const equippedSetCount = Object.values(hero.equipment).filter(i => i && i.color === item.color).length;
-        
         const setRow = document.createElement('div');
-        setRow.className = 'set-info-box'; // CSS ile stillendireceğiz
+        setRow.className = 'set-info-box';
         
         const setName = langItems[`set_${item.color}`] || item.color;
-        
+        const statDisplayName = window.getStatDisplayName(item.color).split(' ')[0]; // Sadece "Güç" veya "Zeka" kısmını al
+
+        // Metinleri Hazırla
+        const bonus3Text = langItems.set_bonus_3.replace("$1", statDisplayName);
+        const bonus6Text = langItems.set_bonus_6.replace("$1", statDisplayName);
+        const classBonusDesc = langItems[`class_bonus_${hero.class}`] || "";
+
         setRow.innerHTML = `
             <div class="set-header">
                 <span class="set-name">${setName}</span>
@@ -233,8 +237,11 @@ window.showItemTooltip = function(item, event) {
                 <div class="set-dot ${equippedSetCount >= 3 ? 'active' : ''}"></div>
                 <div class="set-dot ${equippedSetCount >= 6 ? 'active' : ''}"></div>
             </div>
-            <div class="set-bonus-text ${equippedSetCount >= 3 ? 'active' : ''}">${langItems.set_bonus_3}</div>
-            <div class="set-bonus-text ${equippedSetCount >= 6 ? 'active' : ''}">${langItems.set_bonus_6}</div>
+            <div class="set-bonus-text ${equippedSetCount >= 3 ? 'active' : ''}">${bonus3Text}</div>
+            <div class="set-bonus-text ${equippedSetCount >= 6 ? 'active' : ''}">${bonus6Text}</div>
+            <div class="set-bonus-text ${equippedSetCount >= 6 ? 'active' : ''}" style="border-top:1px solid rgba(255,255,255,0.1); margin-top:5px; padding-top:2px;">
+                ${classBonusDesc}
+            </div>
         `;
         statsEl.appendChild(setRow);
     }
@@ -774,6 +781,27 @@ window.renderSkillBookList = function() {
 				<div style="display:flex; justify-content:space-between; align-items:center;"><h4>${skillTrans.name}</h4>${action}</div>
 				<p>${dynamicDesc}</p> <!-- GÜNCELLENDİ -->
 			</div>`;
+			
+			const sID = skill.data.id || key;
+        let exhaustionInfo = "";
+
+        // --- GÜNCELLEME: Sadece Pasif DEĞİLSE ve Rest DEĞİLSE göster ---
+        if (skill.data.type !== 'passive' && sID !== 'rest') {
+            const baseEx = skill.data.tier || 1;
+            const usage = hero.skillUsage[sID] || 0;
+            const currentEx = (skill.data.category === 'common' && skill.data.tier === 1) ? 2 : Math.floor(baseEx * Math.pow(1.5, usage));
+            
+            exhaustionInfo = `<div style="color:#ffae00; font-size:0.75rem; margin-top:5px;">${lang.exhaustion_label}: +${currentEx}</div>`;
+        }
+        // -------------------------------------------------------------
+
+        item.innerHTML = `
+            <div style="position:relative;"><img src="images/${skill.data.icon}" class="skill-book-icon"><span class="tier-badge">T${skill.data.tier}</span></div>
+            <div class="skill-info" style="flex-grow:1;">
+                <div style="display:flex; justify-content:space-between; align-items:center;"><h4>${skillTrans.name}</h4>${action}</div>
+                <p>${dynamicDesc}</p>
+                ${exhaustionInfo}
+            </div>`;
         
         if (isLearned && skill.data.type !== 'passive') {
             item.setAttribute('draggable', true);
