@@ -785,13 +785,13 @@ window.renderSkillBookList = function() {
 			const sID = skill.data.id || key;
         let exhaustionInfo = "";
 
-        // --- GÜNCELLEME: Sadece Pasif DEĞİLSE ve Rest DEĞİLSE göster ---
-        if (skill.data.type !== 'passive' && sID !== 'rest') {
-            const baseEx = skill.data.tier || 1;
+        if (skill.data.type !== 'passive') {
+            // --- GÜNCELLEME: Anlık kullanım sayısına göre maliyeti hesapla ---
             const usage = hero.skillUsage[sID] || 0;
-            const currentEx = (skill.data.category === 'common' && skill.data.tier === 1) ? 2 : Math.floor(baseEx * Math.pow(1.5, usage));
+            const currentEx = window.getExhaustionCost(skill.data, usage);
             
-            exhaustionInfo = `<div style="color:#ffae00; font-size:0.75rem; margin-top:5px;">${lang.exhaustion_label}: +${currentEx}</div>`;
+            // translations'dan "Yorgunluk" kelimesini çek (Exhaustion veya Yorgunluk)
+            exhaustionInfo = `<div style="color:#ffae00; font-size:0.75rem; margin-top:5px;">${lang.exhaustion_label}: ${currentEx > 0 ? "+" : ""}${currentEx}</div>`;
         }
         // -------------------------------------------------------------
 
