@@ -82,6 +82,9 @@ window.LANG_TR = {
         turn_suffix: "Tur",
         same_turn_warning: "Aynı tur tekrar kullanılamaz.",
 		stat_battle_warning: "⚠️ SAVAŞ ESNASINDA STAT VERİLEMEZ",
+		combat_warning_title: "SAVAŞ UYARISI",
+		combat_warning_msg: "Herhangi bir Saldırı yeteneği kuşanmadan savaşa girmek üzeresin! Bu durum savaşı kazanmanı imkansız kılabilir. Devam etmek istediğine emin misin?",
+		dont_show_again: "Bunu bir daha gösterme",
         
 
         // Harita & Savaş
@@ -211,6 +214,7 @@ window.LANG_TR = {
 		desc_boss: "BÖLÜM SONU CANAVARI! KAÇIŞIN YOK!",
 		log_enter_town: "🏰 Köye giriş yaptın.",
 		log_leave_town: "Köyden ayrıldın.",
+		
 
 
         // NPC Dialogları

@@ -84,6 +84,9 @@ window.LANG_EN = {
 		stat_battle_warning: "⚠️ CANNOT DISTRIBUTE STATS IN BATTLE",
 		battle_skill_lock_msg: "SKILLS CANNOT BE CHANGED DURING BATTLE",
 		battle_inventory_lock_msg: "EQUIPMENT CANNOT BE CHANGED DURING BATTLE",
+		combat_warning_title: "COMBAT WARNING",
+		combat_warning_msg: "You are about to enter battle without any Attack skills equipped! This might make the fight unwinnable. Are you sure you want to proceed?",
+		dont_show_again: "Don't show this again",
 
         // Map & Battle
         map_loading: "Loading Map...",
