@@ -343,23 +343,19 @@ function handleNodeClick(node) {
     if (window.isMapNodeProcessing) return;
     window.isMapNodeProcessing = true; 
     // --------------------------------------------------------------------------
-
-	window.CalendarManager.passDay();
-	StatsManager.trackNode();
+	
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 	
     document.querySelectorAll('.map-node').forEach(n => {
-        n.classList.remove('current-node');
-        // Kilit süresince tüm butonları fiziksel olarak da kilitleyelim
+        // n.classList.remove('current-node'); // BURADAN SİLİNDİ: proceedWithNodeAction içine taşındı
         n.disabled = true; 
     });
 
-    document.getElementById(`node-${node.id}`).classList.add('current-node');
-    GAME_MAP.currentNodeId = node.id;
-    GAME_MAP.completedNodes.push(node.id);
+    // GAME_MAP.currentNodeId = node.id; // BURADAN SİLİNDİ: Karar verilmeden oda güncellenmemeli
+    // GAME_MAP.completedNodes.push(node.id); // BURADAN SİLİNDİ: Karar verilmeden oda tamamlanmamalı
 		
-    processMapEffects();
-    drawAllConnections();
+    // processMapEffects(); // BURADAN SİLİNDİ: İlerleyince çalışmalı
+    // drawAllConnections(); // BURADAN SİLİNDİ
 
     const typeNames = {
         'start': lang.node_start, 'encounter': lang.node_encounter, 'town': lang.node_town,
@@ -373,14 +369,14 @@ function handleNodeClick(node) {
 	else if (node.type === 'choice') desc = lang.desc_event;
 	else if (node.type === 'boss') desc = lang.desc_boss;
     
+    // Bilgi kutusunu güncelle (Nereye gitmek istediğini görsün)
     document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
     document.getElementById('map-description').textContent = desc;
 	
 	window.currentTownMaster = node.masterNPC || null; 
-    movePlayerMarkerToNode(node.id);
     
-    // NOT: updateAvailableNodes() buradan silindi! 
-    // Sadece aksiyonu tetikliyoruz.
+    // movePlayerMarkerToNode(node.id); // BURADAN SİLİNDİ: Karakter sadece onay verince yürümeli
+    
     triggerNodeAction(node);
 }
 
@@ -450,9 +446,62 @@ function updateAvailableNodes() {
     }
 }
 
-// --- AKSİYON TETİKLEME ---
 function triggerNodeAction(node) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    
+    // --- YENİ: SAVAŞ ÖNCESİ YETENEK KONTROLÜ ---
+    const combatNodes = ['encounter', 'start', 'boss'];
+    
+    if (combatNodes.includes(node.type)) {
+        // 1. Herhangi bir 'attack' tipi veya Tier 1 Common skill takılı mı?
+        const hasAttackSkill = hero.equippedSkills.some(key => {
+            if (!key) return false;
+            const s = SKILL_DATABASE[key];
+            return s.data.type === 'attack' || (s.data.category === 'common' && s.data.tier === 1);
+        });
+
+        // 2. Eğer saldırı skilli yoksa ve oyuncu "uyarıyı kapat" demediyse:
+        if (!hasAttackSkill && !hero.skipCombatWarning) {
+            window.showWarningWithToggle(lang.combat_warning_msg, () => {
+                // EVET derse: Checkbox'a bak ve savaşı başlat
+                const isChecked = document.getElementById('g-modal-checkbox').checked;
+                if (isChecked) hero.skipCombatWarning = true;
+                
+                proceedWithNodeAction(node); // Yardımcı fonksiyona pasla
+            }, () => {
+                // HAYIR derse: Harita kilidini aç ve odada kal
+                window.isMapNodeProcessing = false;
+                updateAvailableNodes();
+            });
+            return; // Savaşın başlamasını engelle, onay bekle
+        }
+    }
+    
+    // Uyarıya takılmadıysa veya uyarı onaylandıysa normal devam et
+    proceedWithNodeAction(node);
+}
+
+// --- AKSİYON TETİKLEME ---
+function proceedWithNodeAction(node) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+	
+	// --- YENİ: GERÇEK İLERLEME BURADA TETİKLENİR ---
+    // Artık 'Hayır' denirse burası hiç çalışmaz, karakter eski yerinde kalır.
+    window.CalendarManager.passDay(); 
+    StatsManager.trackNode();        
+    
+    // Görseli güncellemeden önce eskileri temizle
+    document.querySelectorAll('.map-node').forEach(n => n.classList.remove('current-node'));
+    
+    document.getElementById(`node-${node.id}`).classList.add('current-node');
+    GAME_MAP.currentNodeId = node.id;
+    GAME_MAP.completedNodes.push(node.id);
+    
+    movePlayerMarkerToNode(node.id); // Karakter şimdi ilerler
+    processMapEffects();
+    drawAllConnections();
+    // ----------------------------------------------
+	
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
             let enemy = node.enemyName;
@@ -462,26 +511,21 @@ function triggerNodeAction(node) {
             startBattle(enemy, node.isHard, node.isHalfTier); 
 
         } else if (node.type === 'town') {
-            // DÜZELTİLDİ:
             document.getElementById('map-description').textContent = lang.desc_town;
             enterTown();
         
         } else if (node.type === 'choice') {
-            // DÜZELTİLDİ:
             document.getElementById('map-description').textContent = lang.desc_event;
             triggerRandomEvent();
 
         } else if (node.type === 'boss') {
-            // DÜZELTİLDİ:
             document.getElementById('map-description').textContent = lang.desc_boss;
             startBattle("Goblin Şefi");
         }
-          // --- KRİTİK EKLENTİ BURASI ---
         else if (node.type === 'city') {
             document.getElementById('map-description').textContent = lang.desc_city;
             writeLog("🏆 " + lang.desc_city);
             
-            // 1 saniye sonra şehir ekranına geç
             setTimeout(() => {
                 if (typeof enterCity === 'function') {
                     enterCity();

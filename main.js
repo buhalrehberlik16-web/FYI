@@ -533,6 +533,35 @@ returnToMenuButton.addEventListener('click', () => {
     switchScreen(startScreen);
 });
 
+window.showWarningWithToggle = function(msg, onYes, onNo) {
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    gModalTitle.textContent = lang.combat_warning_title;
+    gModalText.textContent = msg;
+    
+    // Checkbox alanını göster
+    const toggleContainer = document.getElementById('g-modal-toggle-container');
+    toggleContainer.classList.remove('hidden');
+    document.getElementById('g-modal-checkbox').checked = false;
+
+    gModalActions.innerHTML = `
+        <button id="g-modal-yes" class="npc-btn confirm-btn-yes" style="width:120px;">${lang.yes}</button>
+        <button id="g-modal-no" class="npc-btn confirm-btn-no" style="width:120px;">${lang.no}</button>
+    `;
+
+    document.getElementById('g-modal-yes').onclick = () => { 
+        toggleContainer.classList.add('hidden'); 
+        closeGlobalModal(); 
+        onYes(); 
+    };
+    document.getElementById('g-modal-no').onclick = () => { 
+        toggleContainer.classList.add('hidden'); 
+        closeGlobalModal(); 
+        onNo(); 
+    };
+    
+    globalModal.classList.remove('hidden');
+};
+
 // ALERT (Sadece Tamam butonu olan uyarılar)
 window.showAlert = function(msg, title = null) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];

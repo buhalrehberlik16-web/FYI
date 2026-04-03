@@ -79,31 +79,31 @@ window.addHeroBlock = function(amount) {
     updateStats(); 
 };
 
-window.getExhaustionCost = function(tier, usage) {
-    // 0. ve 1. kullanım her zaman baz değerdir (1-1, 2-2, 3-3 gibi başlar)
-    if (usage === 0 || usage === 1) return tier;
-
-    // Senin istediğin %50 artış ve küsuratı atma (floor) mantığı:
-    // Her adım bir önceki adımın değerine bakarak hesaplanır.
-    let val = tier;
+window.getExhaustionCost = function(skillData, usage) {
+    let base = skillData.exhaustion || 0;
     
-    // Tier 1 istisnası: 3. vuruşta (usage 2) hala 1 kalması, 4. vuruşta (usage 3) 2 olması için
-    if (tier === 1) {
-        if (usage === 2) return 1;
-        // Tier 1 için çarpmaya 1.5 değerinden (sanal olarak) devam ediyoruz
-        let t1Val = 1.5; 
-        for (let i = 2; i < usage; i++) {
-            t1Val = t1Val * 1.5;
-        }
-        return Math.floor(t1Val);
+    // --- 1. DİNLEN (REST) ÖZEL KURALI: -5, -4, -3, -2, -1, 0 ---
+    if (skillData.name === 'Dinlen') {
+        // usage 0 ise -5, usage 1 ise -4...
+        let val = base + usage; 
+        return Math.min(0, val); 
     }
 
-    // Diğer Tierlar için standart: Her kullanımdan sonra bir önceki maliyetin 1.5 katı
+    // --- 2. DİĞER TÜM SKİLLER ---
+    if (usage === 0 || usage === 1) return base;
+
+    if (skillData.category === 'common' && skillData.tier === 1) {
+        return base + usage;
+    }
+
+    let finalValue = base;
+    // Diğer skiller için her kullanımda bir önceki değerin %50'si (Aşağı yuvarlayarak)
     for (let i = 1; i < usage; i++) {
-        val = Math.floor(val * 1.5);
+        if (base > 0) finalValue = Math.floor(finalValue * 1.5);
+        else finalValue = Math.floor(finalValue * 0.5);
     }
-    
-    return val;
+
+    return finalValue;
 };
 
 window.updateExhaustionUI = function() {
@@ -189,37 +189,32 @@ window.updateExhaustionUI = function() {
 };
 
 window.refreshSkillExhaustionBadges = function() {
-    const lang = window.LANG_TR || window.LANG_EN; 
-    const label = window.LANGUAGES[window.gameSettings.lang].exhaustion_short;
+    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    const label = lang.exhaustion_short;
 
     document.querySelectorAll('.skill-slot').forEach(slot => {
         const key = slot.dataset.skillKey;
         if (!key) return;
-
         const skillObj = SKILL_DATABASE[key];
-        const sID = skillObj.data.id || key;
-        
+        if (skillObj.data.type === 'passive') return;
+
+        // --- GÜNCELLEME: Doğru kullanımı gönderiyoruz ---
+        const usage = (hero.skillUsage && hero.skillUsage[skillObj.data.id || key]) ? hero.skillUsage[skillObj.data.id || key] : 0;
+        const nextCost = window.getExhaustionCost(skillObj.data, usage);
+
         let badge = slot.querySelector('.skill-exhaust-badge');
         if (!badge) {
             badge = document.createElement('div');
             badge.className = 'skill-exhaust-badge';
             slot.appendChild(badge);
         }
-
-        let costValue = 0;
-        if (sID === 'rest') {
-            const usage = hero.skillUsage["rest"] || 0;
-            costValue = -(Math.max(0, 5 - usage));
-        } else if (skillObj.data.category === 'common' && skillObj.data.tier === 1) {
-            costValue = 2;
-        } else if (skillObj.data.type !== 'passive') {
-            // AZ ÖNCE YAZDIĞIMIZ AKILLI HESAPLAMAYI BURADA DA KULLANIYORUZ
-            costValue = window.getExhaustionCost(skillObj.data.tier || 1, hero.skillUsage[sID] || 0);
-        }
-
-        badge.textContent = `${label}${costValue > 0 ? "+" : ""}${costValue}`;
-        badge.style.display = (skillObj.data.type === 'passive') ? 'none' : 'block';
+        badge.textContent = `${label}${nextCost > 0 ? "+" : ""}${nextCost}`;
     });
+
+    const skillBook = document.getElementById('skill-book-screen');
+    if (skillBook && !skillBook.classList.contains('hidden')) {
+        renderSkillBookList();
+    }
 };
 
 // --- EFEKTİF STAT HESAPLAMA (GÜNCEL SÜRÜM) ---
@@ -585,21 +580,17 @@ window.handleSkillUse = function(skillKey) {
 	// --- YORGUNLUK ARTIŞI ---
     const sID = skillObj.data.id || skillKey;
     
-    if (sID !== 'rest' && skillObj.data.type !== 'passive') {
+    if (skillObj.data.type !== 'passive') {
         if (!hero.skillUsage) hero.skillUsage = {};
         if (hero.skillUsage[sID] === undefined) hero.skillUsage[sID] = 0;
 
-        let exGain = 0;
-        if (skillObj.data.category === 'common' && skillObj.data.tier === 1) {
-            exGain = 2; // Basic skiller sabit 2
-        } else {
-            // Dinamik dizi: (T1 ise 1,1,1,2.. | T3 ise 3,3,4,6..)
-            exGain = window.getExhaustionCost(skillObj.data.tier || 1, hero.skillUsage[sID]);
-            hero.skillUsage[sID]++; 
-        }
+        // --- YENİ MANTIK: Kullanmadan önce maliyeti hesapla ---
+        const exGain = window.getExhaustionCost(skillObj.data, hero.skillUsage[sID]);
         
         hero.exhaustion += exGain;
-        window.updateExhaustionUI();
+        hero.skillUsage[sID]++; // Artık her kullanımda kesinlikle artar
+        
+        window.updateExhaustionUI(); 
         if (window.refreshSkillExhaustionBadges) window.refreshSkillExhaustionBadges();
     }
 
@@ -1013,45 +1004,34 @@ window.nextTurn = function() {
         }
 
         // --- 2. AUTO-REST KONTROLÜ (FAILSAFE) ---
-        const activeSkills = hero.equippedSkills.filter(s => s !== null && s !== 'rest'); // 'rest' skilli hariç tutulur
+        const activeSkills = hero.equippedSkills.filter(s => s !== null && s !== 'rest');
         
-        // Eğer bar sadece 'rest' ile doluysa veya boşsa 999 döner (yani auto-rest tetiklenmez)
-        const minCost = activeSkills.length > 0 
-            ? Math.min(...activeSkills.map(s => SKILL_DATABASE[s].data.rageCost)) 
-            : 999;
+        const canUseAnyAttack = activeSkills.some(key => {
+            const s = SKILL_DATABASE[key];
+            const isBlocked = hero.statusEffects.some(e => e.id === 'block_skill' && e.blockedSkill === key && !e.waitForCombat);
+            return hero.rage >= s.data.rageCost && !isBlocked;
+        });
 
-        // Eğer mevcut öfke/mana, kullanılabilecek en ucuz saldırıya yetmiyorsa:
-        if (hero.rage < minCost && minCost !== 999) {
+        if (!canUseAnyAttack && activeSkills.length > 0) {
             hero.autoRestCount++;
             let exChange = 0;
             
-            // Senin kuralın: 
-            // 1. kullanım: -2 | 2. kullanım: -1 | 3. kullanım: 0
             if (hero.autoRestCount === 1) exChange = -2;
             else if (hero.autoRestCount === 2) exChange = -1;
             else if (hero.autoRestCount === 3) exChange = 0;
-            // 4. ve sonrası: +1, +2, +4, +8 (Geometrik artış)
-            else {
-                exChange = Math.pow(2, hero.autoRestCount - 4); 
-            }
+            else exChange = Math.pow(2, hero.autoRestCount - 4);
 
-            // Yorgunluğu uygula
             hero.exhaustion = Math.max(0, hero.exhaustion + exChange);
-            
-            // KRİTİK: En ucuz skili vurabilecek kadar kaynak ver
-            hero.rage = minCost; 
-            
-            // Log ve Görsel Bildirim
+            const minCostNeeded = Math.min(...activeSkills.map(s => SKILL_DATABASE[s].data.rageCost));
+            hero.rage = Math.max(hero.rage, minCostNeeded); 
+
+
             const arenaCenter = document.getElementById('arena-center-notif');
-            writeLog(currentLang.log_forced_rest.replace("$1", (exChange >= 0 ? "+" + exChange : exChange)));
-            setTimeout(showFloatingText(arenaCenter, currentLang.exhaustion_out_of_breath, 'damage'),1500);
+            writeLog(globalLang.log_forced_rest.replace("$1", (exChange >= 0 ? "+" + exChange : exChange)));
+            setTimeout(showFloatingText(arenaCenter, globalLang.exhaustion_out_of_breath, 'damage'), 1500);
             
             updateStats();
             window.updateExhaustionUI();
-            
-            // Hamle yapamaz, sıra canavara geçer (veya yorgunluk hasarı vurduğu için oyun biter)
-            setTimeout(nextTurn, 1500); 
-            return; 
         }
 			
         // Blok Azalması
