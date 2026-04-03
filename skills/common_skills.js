@@ -8,7 +8,9 @@ const COMMON_SKILLS = {
 	// --- TIER 0 ---
 	rest: {
         data: {
-            name: "Dinlen", // Bu isim aslında çeviriden gelecek ama kütüphanede kalabilir
+            id: "rest", 
+            name: "Dinlen",
+            exhaustion: -5, 
             rageCost: 0,
             levelReq: 1,
             icon: 'skills/common/icon_rest.webp',
@@ -18,24 +20,17 @@ const COMMON_SKILLS = {
         },
         onCast: function() {
             const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-			
-            // Manuel kullanım sayısını al
-            const usage = hero.skillUsage["rest"] || 0;
             
-            // Kural: 5'ten başlar, her kullanımda 1 azalır, 0'da çakılı kalır.
-            const reduction = Math.max(0, 5 - usage);
+            const usage = hero.skillUsage["rest"] || 1;
+            const lastReduction = window.getExhaustionCost(this.data, usage - 1);
             
-            hero.exhaustion = Math.max(0, hero.exhaustion - reduction);
-            hero.skillUsage["rest"] = usage + 1;
-			
-			const arenaCenter = document.getElementById('arena-center-notif');
-			showFloatingText(arenaCenter, lang.exhaustion_rest, 'heal');
-            
-            // Loglama
-            writeLog(lang.log_rest_skill.replace("$1", reduction));
+            // Log metni (Mutlak değer kullanarak: -5 -> 5)
+            writeLog(lang.log_rest_skill.replace("$1", Math.abs(lastReduction)));
             
             updateStats();
             window.updateExhaustionUI();
+            
+            // Sırayı canavara devret
             setTimeout(nextTurn, 1000);
         }
     },
@@ -47,6 +42,7 @@ const COMMON_SKILLS = {
             menuDescription: "Atağın kadar hasar. +7 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
+			exhaustion: 2,
             icon: 'skills/common/icon_attack.webp',
             type: 'attack',
             category: 'common',
@@ -75,6 +71,7 @@ const COMMON_SKILLS = {
             menuDescription: "Gelen hasarı %25 azaltır. 0 Rage.",
             rageCost: -1,
             levelReq: 1,
+			exhaustion: 2,
             icon: 'skills/common/icon_defend.webp',
             type: 'defense',
             category: 'common',
@@ -96,6 +93,7 @@ const COMMON_SKILLS = {
             menuDescription: "Atağın %115'i kadar hasar. +0-9 Rage üretir.",
             rageCost: 0,
             levelReq: 1,
+			exhaustion: 2,
             icon: 'skills/common/icon_strike.webp',
             type: 'attack',
             category: 'common',
@@ -122,6 +120,7 @@ const COMMON_SKILLS = {
             menuDescription: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır. -10 Rage.",
             rageCost: 10,
             levelReq: 1,
+			exhaustion: 2,
             icon: 'skills/common/icon_block.webp',
             type: 'utility',
             category: 'common',
@@ -153,6 +152,7 @@ const COMMON_SKILLS = {
             menuDescription: "Hızlı pansuman. 20 Öfke harcar.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT).",
             rageCost: 20,
             levelReq: 1,
+			exhaustion: 3,
             icon: 'skills/common/icon_minor_healing.webp',
             type: 'defense',
             category: 'common', 
@@ -178,6 +178,7 @@ const COMMON_SKILLS = {
             menuDescription: "<b>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Rage. Tur harcamaz.</span>",
             rageCost: 50,
             levelReq: 1,
+			exhaustion: 3,
             cooldown: 1,
             icon: 'skills/common/icon_distract.webp',
             type: 'debuff',
@@ -203,6 +204,7 @@ const COMMON_SKILLS = {
             menuDescription: "Saldırı gücünün %130'u kadar hasar. 15 Öfke harcar.<br><span style='color:cyan'>10 Defansı Yok Sayar.</span>",
             rageCost: 15,
             levelReq: 1, 
+			exhaustion: 4,
             icon: 'skills/common/icon_tactical_strike.webp',
             type: 'attack',
             category: 'common', 
@@ -238,6 +240,7 @@ const COMMON_SKILLS = {
             menuDescription: "30 Öfke harcar.<br><span style='color:#43FF64'>4 Tur: +%25 Saldırı Gücü</span>.",
             rageCost: 30,
             levelReq: 5, 
+			exhaustion: 4,
             cooldown: 5,
             icon: 'skills/common/icon_sharpen.webp',
             type: 'buff',
@@ -260,6 +263,7 @@ const COMMON_SKILLS = {
             menuDescription: "20 Öfke harcar.<br><span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span>",
             rageCost: 20,
             levelReq: 5,
+			exhaustion: 5,
             cooldown: 9,
             icon: 'skills/common/icon_curseskill.webp',
             type: 'debuff',
@@ -283,6 +287,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 5,
+			exhaustion: 0,
             icon: 'skills/common/icon_loot_junkie.webp',
             type: 'passive',
             category: 'common',
@@ -303,6 +308,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 8,
+			exhaustion: 0,
             icon: 'skills/common/icon_hoarder.webp',
             type: 'passive',
             category: 'common',
@@ -322,6 +328,7 @@ const COMMON_SKILLS = {
             menuDescription: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır.",
             rageCost: 0,
             levelReq: 8,
+			exhaustion: 0,
             icon: 'skills/common/icon_fired_up.webp',
             type: 'passive',
             category: 'common',
@@ -343,6 +350,7 @@ const COMMON_SKILLS = {
             menuDescription: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar: Paket x (1 + Harcanan Öfke%).",
             rageCost: 0, 
             levelReq: 8, 
+			exhaustion: 10,
             icon: 'skills/common/icon_willful_strike.webp',
             type: 'attack',
             category: 'common',
