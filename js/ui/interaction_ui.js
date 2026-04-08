@@ -250,6 +250,7 @@ window.updateNPCStatsDisplay = function() {
     const hpDisplays = document.querySelectorAll('.npc-hp-stat .hp-val');
     const rageDisplays = document.querySelectorAll('.npc-rage-stat .rage-val');
     const goldDisplays = document.querySelectorAll('.npc-gold-stat .gold-val');
+	const exhaustDisplays = document.querySelectorAll('.npc-exhaust-stat .exhaust-val');
 
     // Effective Stats'tan güncel Max HP'yi alalım
     const effective = typeof getHeroEffectiveStats === 'function' ? getHeroEffectiveStats() : { maxHp: hero.maxHp, maxRage: hero.maxRage };
@@ -257,6 +258,13 @@ window.updateNPCStatsDisplay = function() {
     hpDisplays.forEach(el => el.textContent = `${hero.hp}/${effective.maxHp}`);
     rageDisplays.forEach(el => el.textContent = `${hero.rage}/${effective.maxRage}`); // maxRage fix
     goldDisplays.forEach(el => el.textContent = hero.gold);
+	 // --- YENİ: YORGUNLUK DEĞERİNİ YAZDIR ---
+    exhaustDisplays.forEach(el => {
+        const val = Math.floor(hero.exhaustion || 0);
+        el.textContent = val;
+        // Görsel tutarlılık: 100'den sonra rengi mor yapalım (Stat ekranındaki gibi)
+        el.parentElement.style.color = val >= 100 ? "#9b59b6" : "#ffd700";
+    });
 };
 
 window.startCampfireEvent = function(node) {

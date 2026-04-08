@@ -6,13 +6,36 @@ window.updateStatusIcons = function(char, container) {
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
 	
-    char.statusEffects.forEach(effect => {
+    // --- YENİ: YORGUNLUK İKONLARINI LİSTEYE ENJEKTE ET ---
+    // Sadece karakter (hero) ise ve yorgunluk 50 üzerindeyse statü listesine sanal etkiler ekle
+    let displayEffects = [...char.statusEffects]; // Orijinal listeyi bozmamak için kopyasını alıyoruz
+
+    if (char === window.hero && char.exhaustion >= 50) {
+        // 50+ Zırh Cezası İkonu
+        displayEffects.push({
+            id: 'exhaust_def_debuff',
+            name: lang.status.exhaust_def_debuff || "Yorgunluk (Zırh Kaybı)",
+            isPermanent: true // Tur sayacı görünmesin diye
+        });
+
+        // 100+ Atak Cezası İkonu
+        if (char.exhaustion >= 100) {
+            displayEffects.push({
+                id: 'exhaust_atk_debuff',
+                name: lang.status.exhaust_atk_debuff || "Yorgunluk (Atak Kaybı)",
+                isPermanent: true
+            });
+        }
+    }
+    // -------------------------------------------------------
+
+    displayEffects.forEach(effect => {
         const icon = document.createElement('div'); 
         icon.className = 'status-icon';
         const buffIds = ['atk_up', 'def_up', 'regen', 'str_up', 'atk_up_percent', 'ignore_def', 'guard_active', 'fury_active', 'insta_kill', 'wind_up'];
-        const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero', 'debuff_webbed', 'debuff_enemy_atk', 'debuff_enemy_def'];
+        const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero', 'debuff_webbed', 'debuff_enemy_atk', 'debuff_enemy_def', 'exhaust_def_debuff', 'exhaust_atk_debuff'];
 
-        // İkon Belirleme (Mevcut ikon mantığın korunuyor)
+        // İkon Belirleme (Yorgunluk İkonları Eklendi)
         if (effect.id === 'atk_up' || effect.id === 'atk_up_percent') icon.innerHTML = '⚔️';
         else if (effect.id === 'def_up' || effect.id === 'guard_active') icon.innerHTML = '🛡️';
         else if (effect.id === 'str_up') icon.innerHTML = '💪';
@@ -25,6 +48,16 @@ window.updateStatusIcons = function(char, container) {
         else if (effect.id === 'atk_half') icon.innerHTML = '👎';
         else if (effect.id === 'defense_zero') icon.innerHTML = '💔';
         else if (effect.id === 'debuff_webbed') icon.innerHTML = '🕸️';
+        // --- YORGUNLUK ÖZEL SEMBOLLERİ ---
+        else if (effect.id === 'exhaust_def_debuff') {
+            // RPG Ruhu: Kalkanın içinde eksi (-) işareti
+            icon.innerHTML = '<div style="position:relative;">🛡️<span style="position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); font-size:0.6em; color:#ff4d4d; font-weight:900;">-</span></div>';
+        }
+        else if (effect.id === 'exhaust_atk_debuff') {
+            // RPG Ruhu: Kılıç/Atak sembolü ve eksi (-) işareti
+            icon.innerHTML = '<div style="position:relative;">⚔️<span style="position:absolute; top:45%; left:50%; transform:translate(-50%,-50%); font-size:0.6em; color:#ff4d4d; font-weight:900;">-</span></div>';
+        }
+        // ---------------------------------
         else icon.innerHTML = '✨';
 
         if (buffIds.includes(effect.id)) icon.classList.add('status-buff');
@@ -37,11 +70,12 @@ window.updateStatusIcons = function(char, container) {
             icon.classList.add('status-waiting');
             icon.title = `${statusName} (${lang.preparing})`; 
         } else { 
-            if (effect.hideNumber) {
-			icon.title = `${statusName}`; // Tur sayısını yazma
-		} else {
-			icon.title = `${statusName} (${effect.turns} ${turnText})`;
-		}
+            // Yorgunluk statiktir, yanına (3 Tur) gibi bir yazı gelmesin
+            if (effect.isPermanent || effect.hideNumber) {
+                icon.title = `${statusName}`; 
+            } else {
+                icon.title = `${statusName} (${effect.turns} ${turnText})`;
+            }
         }
         container.appendChild(icon);
     });
