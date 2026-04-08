@@ -461,6 +461,8 @@ window.LANG_EN = {
 			immunity_active: "Immunity",
 			bleed: "Bleed",
 			blood_lust_debuff: "Exhaustion",
+			exhaust_def_debuff: "Def Shrink",
+			exhaust_atk_debuff: "Atk Shrink",
         },
 
         // Events
@@ -576,7 +578,7 @@ window.LANG_EN = {
 			Crystalised_Mana: { name: "Crystalised Mana", desc: "Crystalizes mana.<br><span style='color:#43FF64'>Gain +50 Mana after 2 turns.</span><br><span style='color:cyan'>-20 Mana.</span>" },
 			Water_Snare: { name: "Water Snare", desc: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy Attack reduced by 50%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
 			Chaos_Rain: { name: "Chaos Rain", desc: "Hasar: <b style='color:orange'>2.5xMP (Random Element)</b>.<br><span style='color:cyan'>Targets enemy's lowest resistance. -75 Mana.</span>" },
-			Meditate: { name: "Meditate", desc: "<b>(Fast Meditation)</b><br><span style='color:#43FF64'>Mana Gained: INT + 50% Missing HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
+			Meditate: { name: "Meditate", desc: "<span style='color:#43FF64'>Mana Gained: INT + 50% Missing HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
 			Thorn_Whip: { name: "Thorn Whip", desc: "Hasar: <b style='color:orange'>0.7xINT (Phys) + 0.7xINT (Poison)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Rejuvanate: { name: "Rejuvenate", desc: "<span style='color:#43FF64'>4 Turns: Restore INT HP and 1.5xINT Mana every turn.</span><br><span style='color:cyan'>-75 Mana.</span>" },
 			Natures_Wrath: { name: "Nature's Wrath", desc: "Hasar: <b style='color:orange'>1.0xMP (Physical)</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy ATK/DEF reduced by 50%.</span><br><span style='color:cyan'>-120 Mana.</span>" },

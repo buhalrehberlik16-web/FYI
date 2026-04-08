@@ -220,7 +220,7 @@ window.LANG_TR = {
         // NPC Dialogları
         innkeeper_title: "HANCI",
         rest_btn: "Dinlen (10g)",
-        drink_btn: "İçecek Al (5g)",
+        drink_btn: "İçecek Al   (5g)",
         exit_btn: "Çıkış",
         innkeeper_hello: "Yorgun görünüyorsun gezgin.",
         alchemist_title: "SİMYACI",
@@ -278,8 +278,8 @@ window.LANG_TR = {
 		stable_steed_popup_text: "Asil bir binek kiraladın! Önündeki 4 bölge boyunca seyahatlerin normalden iki kat daha hızlı sürecek. (Her adım 0.5 gün).",
 		stable_scout_popup_title: "KEŞİF RAPORU",
 		scout_stage: "AŞAMA",
-		stable_rent: "At Kirala(40G)",
-		stable_scout: "Gözcü(20G)",
+		stable_rent: "At Kirala  (40G)",
+		stable_scout: "Gözcü (20G)",
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",
@@ -463,6 +463,8 @@ window.LANG_TR = {
 			immunity_active: "Bağışıklık",
 			bleed: "Kanama",
 			blood_lust_debuff: "Tükenmişlik",
+			exhaust_atk_debuff: "Atk Kaybı",
+			exhaust_def_debuff: "Defans Kaybı",
         },
 		
         // --- OLAYLAR (EVENTS) ---
@@ -578,7 +580,7 @@ window.LANG_TR = {
 			Crystalised_Mana: { name: "Mana Kristali", desc: "Manayı yoğunlaştırır.<br><span style='color:#43FF64'>2 Tur sonra +50 Mana kazanılır.</span><br><span style='color:cyan'>-20 Mana.</span>" },
 			Water_Snare: { name: "Su Tuzağı", desc: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK %50 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>" },
 			Chaos_Rain: { name: "Kaos Yağmuru", desc: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>" },
-			Meditate: { name: "Meditasyon", desc: "<b>(Hızlı Meditasyon)</b><br><span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
+			Meditate: { name: "Meditasyon", desc: "<span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>" },
 			Thorn_Whip: { name: "Dikenli Kırbaç", desc: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Rejuvanate: { name: "Gençleşme", desc: "<span style='color:#43FF64'>4 Tur: Her tur +INT HP ve +1.5xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>" },
 			Natures_Wrath: { name: "Doğanın Öfkesi", desc: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>" },
