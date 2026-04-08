@@ -97,9 +97,17 @@
     margin-bottom: 10px;
     font-family: 'Georgia', serif;
 }
-
+	/* 1.Merchant */
+	#modal-merchant .npc-actions-left { top: 43% !important; left: 9.7% !important; }
+    #modal-merchant  .npc-actions-right { top: 41% !important; right: 12% !important; }
+	/* 2. INN */
+	#modal-inn .npc-actions-left { top: 43% !important; left: 9.7% !important; }
+    #modal-inn  .npc-actions-right { top: 41% !important; right: 12% !important; }
+	/* 3. Blacksmith */
+	#modal-blacksmith .npc-actions-left { top: 43% !important; left: 9.7% !important; }
+    #modal-blacksmith  .npc-actions-right { top: 41% !important; right: 12% !important; }
     /* 4. SİMYACI (ALCHEMIST) MOBİL */
-    #modal-alchemist .npc-actions-left { top: 41% !important; left: 9.7% !important; }
+    #modal-alchemist .npc-actions-left { top: 43% !important; left: 9.7% !important; }
     #modal-alchemist .npc-actions-right { top: 41% !important; right: 12% !important; }
 	#modal-alchemist .npc-title { top: 36.2% !important; font-size: 1em !important;}
 	#modal-alchemist .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.46em !important; }
@@ -160,7 +168,7 @@
 	
 
     /* 5. AHIR (STABLE) MOBİL */
-    #modal-stable .npc-actions-left { top: 42% !important; left: 11% !important; }
+    #modal-stable .npc-actions-left { top: 43% !important; left: 11% !important; }
     #modal-stable .npc-actions-right { top: 42% !important; right: 13% !important; }
 	#modal-stable .npc-title { top: 36.9% !important; font-size: 1em !important;}
 	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
@@ -193,7 +201,13 @@
 	.npc-hp-stat { color: #ff4d4d; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
 	.npc-rage-stat { color: #3498db; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; }
 	.npc-gold-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.6em; }
+	.npc-exhaust-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 0.5em; display: flex; align-items: center;}
 
+/* Choice ekranındaki (event-screen) ikonların hizası için küçük dokunuş */
+#event-screen .npc-exhaust-stat {
+    font-size: 1rem;
+}
+	
 	.npc-stats-header i { margin-right: 5px; font-size: 0.9em; }
 	
 .reward-content { 
