@@ -1,4 +1,18 @@
 // js/ui/interaction_ui.js
+window.showGameInfo = function(title, content, color = "#00ccff") {
+    const modal = document.getElementById('info-popup-modal');
+    const titleEl = document.getElementById('info-popup-title');
+    const contentEl = document.getElementById('info-popup-content');
+
+    if (modal && titleEl && contentEl) {
+        titleEl.textContent = title;
+        titleEl.style.color = color;
+        modal.querySelector('.stat-window').style.borderColor = color;
+        contentEl.innerHTML = content;
+        modal.classList.remove('hidden');
+    }
+};
+
 window.openRewardScreen = function(rewards) {
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
@@ -190,7 +204,10 @@ window.restAtInn = function() {
         hero.exhaustion = Math.max(0, hero.exhaustion - 60);
         // --------------------------------------
 		
-
+		// --- YENİ: ALERT EKRANI ---
+        window.showGameInfo(lang.innkeeper_title, `<div style="padding:10px;">${lang.rest_alert_msg}</div>`, "#43FF64");
+        // --------------------------
+		
         updateGoldUI();
         updateStats();
 		window.updateExhaustionUI(); // Barı tazele
@@ -228,6 +245,10 @@ window.buyDrink = function() {
          updateGoldUI();
          updateStats();
 		 window.updateExhaustionUI();
+		 
+		 // --- YENİ: ALERT EKRANI ---
+         window.showGameInfo(lang.innkeeper_title, `<div style="padding:10px;">${lang.drink_alert_msg}</div>`, "#3498db");
+         // --------------------------
          
          dialogue.textContent = lang.drink_success;
          dialogue.style.color = "#3498db"; // Mavi
@@ -261,7 +282,7 @@ window.updateNPCStatsDisplay = function() {
 	 // --- YENİ: YORGUNLUK DEĞERİNİ YAZDIR ---
     exhaustDisplays.forEach(el => {
         const val = Math.floor(hero.exhaustion || 0);
-        el.textContent = val;
+        el.textContent = `${val}/200`; 
         // Görsel tutarlılık: 100'den sonra rengi mor yapalım (Stat ekranındaki gibi)
         el.parentElement.style.color = val >= 100 ? "#9b59b6" : "#ffd700";
     });
