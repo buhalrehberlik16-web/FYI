@@ -113,6 +113,8 @@ window.LANG_EN = {
 		desc_city: "You reached the Great City of Eldoria! This act of your journey ends here.",
 		loot_full_msg:"There are rewards left on the ground! Are you sure you want to leave without them?",
 		setting_show_notifs: "POINT NOTIFICATIONS",
+		rest_alert_msg: "You rest through the night, and your exhaustion decreases by 60.",
+		drink_alert_msg: "You take a break and quench your thirst, your exhaustion decreases by 25.",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",

@@ -112,6 +112,8 @@ window.LANG_TR = {
 		desc_city: "Büyük Eldoria şehrine ulaştın! Maceranın bu perdesi burada son buluyor.",
 		loot_full_msg: "Yerde ödüllerin var! Onları almadan gitmek istediğine emin misin?",
 		setting_show_notifs: "PUAN BİLDİRİMLERİ",
+		rest_alert_msg: "Gece boyu dinleniyorsun ve yorgunluk değerin 60 azalıyor.",
+		drink_alert_msg: "Biraz ara veriyorsun ve susuzluğunu gideriyorsun yorgunluk değerin 25 azalıyor.",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
