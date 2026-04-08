@@ -129,7 +129,8 @@
 /* Değerlerin Choice kutusunda daha kibar durması için */
 #event-screen .npc-hp-stat, 
 #event-screen .npc-rage-stat, 
-#event-screen .npc-gold-stat {
+#event-screen .npc-gold-stat ,
+#event-screen .npc-exhaust-stat{
     font-size: 1rem;
 }
 #cost-gold, #cost-fragments {
