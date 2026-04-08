@@ -98,11 +98,11 @@
     font-family: 'Georgia', serif;
 }
 	/* 1.Merchant */
-	#modal-merchant .npc-actions-left { top: 43% !important; left: 9.7% !important; }
-    #modal-merchant  .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-merchant .npc-actions-left { top: 43% !important; left: 10.7% !important; }
+    #modal-merchant  .npc-actions-right { top: 41% !important; right: 13% !important; }
 	/* 2. INN */
-	#modal-inn .npc-actions-left { top: 43% !important; left: 9.7% !important; }
-    #modal-inn  .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-inn .npc-actions-left { top: 43% !important; left: 10.5% !important; }
+    #modal-inn  .npc-actions-right { top: 41% !important; right: 13% !important; }
 	/* 3. Blacksmith */
 	#modal-blacksmith .npc-actions-left { top: 43% !important; left: 9.7% !important; }
     #modal-blacksmith  .npc-actions-right { top: 41% !important; right: 12% !important; }
