@@ -596,6 +596,12 @@
 .npc-hp-stat { color: #ff4d4d; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.1em; }
 .npc-rage-stat { color: #3498db; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.1em; }
 .npc-gold-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.2em; }
+.npc-exhaust-stat { color: #ffd700; font-weight: bold; text-shadow: 2px 2px 2px #000; font-size: 1.1em; display: flex; align-items: center;}
+
+/* Choice ekranındaki (event-screen) ikonların hizası için küçük dokunuş */
+#event-screen .npc-exhaust-stat {
+    font-size: 1rem;
+}
 
 .npc-stats-header i { margin-right: 5px; font-size: 0.9em; }
 
