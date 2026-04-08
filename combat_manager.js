@@ -107,6 +107,7 @@ window.getExhaustionCost = function(skillData, usage) {
 };
 
 window.updateExhaustionUI = function() {
+	if (hero.exhaustion < 0) hero.exhaustion = 0;
     // 1. Savaş Ekranı (Dikey)
     const sariDikey = document.getElementById('exhaustion-fill-sari');
     const morDikey = document.getElementById('exhaustion-fill-mor');
@@ -236,12 +237,30 @@ window.getHeroEffectiveStats = function() {
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 	const colorCounts = {}; 
 	
-	let exhaustionPenalty = 1.0;
-	if (hero.exhaustion >= 100) exhaustionPenalty = 0.7;
-	else if (hero.exhaustion >= 70) exhaustionPenalty = 0.8;
-	else if (hero.exhaustion >= 50) exhaustionPenalty = 0.9;
-	totalAtkMult *= exhaustionPenalty;
-	totalDefMult *= exhaustionPenalty;
+	 // --- YENİ: YORGUNLUK DEBUFF HESAPLAYICI ---
+    let exhaustionPenaltyMult = 1.0;
+    let flatExhaustDefPenalty = 0; // 50+ sonrası statik defans kaybı
+    let flatExhaustAtkPenalty = 0; // 100+ sonrası statik atak kaybı
+
+    if (hero.exhaustion >= 50) {
+        exhaustionPenaltyMult = 0.9;
+        // 50'den sonra her 10 yorgunlukta defans kaybı artar: 50 -> -3, 60 -> -4, 70 -> -5...
+        flatExhaustDefPenalty = 3 + Math.floor((hero.exhaustion - 50) / 10);
+    }
+    
+    if (hero.exhaustion >= 70) {
+        exhaustionPenaltyMult = 0.8;
+    }
+    
+    if (hero.exhaustion >= 100) {
+        exhaustionPenaltyMult = 0.7;
+        // 100'den sonra her 10 yorgunlukta atak kaybı: 100 -> -1, 110 -> -2, 120 -> -3...
+        flatExhaustAtkPenalty = 1 + Math.floor((hero.exhaustion - 100) / 10);
+    }
+
+    totalAtkMult *= exhaustionPenaltyMult;
+    totalDefMult *= exhaustionPenaltyMult;
+    // ------------------------------------------
 	
     // 2. EKİPMANLARI VE CHARMLARI TARA
      const allItems = [
@@ -360,15 +379,14 @@ window.getHeroEffectiveStats = function() {
     // REGEN Hesabı
     const finalRageRegen = Math.floor((s[sc.regen.stat] * sc.regen.mult) * totalRegenMult);
 
-    // ATAK Hesabı
-    let rawAtk = (hero.baseAttack || 10) + flatAtkBonus;
-    rawAtk += Math.floor(s[sc.atk.stat] * sc.atk.mult); // Sınıfın atak statına göre (STR veya INT)
-    let finalAtk = Math.floor(rawAtk * totalAtkMult);
+    // ATAK: Önce çarpanı uygula, sonra Exhaustion statik cezasını çıkar
+    let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s[sc.atk.stat] * sc.atk.mult);
+    let finalAtk = Math.floor(rawAtk * totalAtkMult) - flatExhaustAtkPenalty;
 
-    // DEFANS Hesabı
-    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus;
-    baseDefCalc += Math.floor(s[sc.def.stat] * sc.def.mult); // Sınıfın defans statına göre
-    let finalDef = Math.floor(baseDefCalc * totalDefMult);
+    // DEFANS: Önce çarpanı uygula, sonra Exhaustion statik cezasını çıkar
+    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s[sc.def.stat] * sc.def.mult);
+    let finalDef = Math.floor(baseDefCalc * totalDefMult) - flatExhaustDefPenalty;
+
 
     // BLOK Hesabı
     const finalBlockPower = Math.floor(s[sc.block.stat] * sc.block.mult);
@@ -384,7 +402,7 @@ window.getHeroEffectiveStats = function() {
     // 5. SONUCU DÖNDÜR
     return { 
         atk: Math.max(0, finalAtk), 
-        def: Math.max(0, finalDef), 
+        def: finalDef, 
         blockPower: Math.max(0, finalBlockPower),
         str: s.str, dex: s.dex, int: s.int, vit: s.vit, mp_pow: s.mp_pow,
         maxHp: finalMaxHp,
@@ -587,7 +605,7 @@ window.handleSkillUse = function(skillKey) {
         // --- YENİ MANTIK: Kullanmadan önce maliyeti hesapla ---
         const exGain = window.getExhaustionCost(skillObj.data, hero.skillUsage[sID]);
         
-        hero.exhaustion += exGain;
+        hero.exhaustion = Math.max(0, hero.exhaustion + exGain); 
         hero.skillUsage[sID]++; // Artık her kullanımda kesinlikle artar
         
         window.updateExhaustionUI(); 
