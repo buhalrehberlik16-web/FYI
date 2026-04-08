@@ -402,6 +402,8 @@
 #modal-inn .npc-dialogue {bottom: 170px; font-size: 0.9em}
 
 /* --- SİMYACI (ALCHEMIST) --- */
+#modal-alchemist .npc-actions-left { top: 32%;  left: 22.8%; }
+#modal-alchemist .npc-actions-right { top: 32%;  right: 24%; }
 #modal-alchemist .npc-title {top: 170px;}
 #modal-alchemist .npc-dialogue {bottom: 170px;}
 #modal-alchemist .npc-stats-left {left:340px;}
