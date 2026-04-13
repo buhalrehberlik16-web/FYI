@@ -192,7 +192,7 @@ window.ENEMY_STATS = {
 	
 	"Serseri": { 
         tribe: "Humans",
-        maxHp: 44, attack: 6, defense: 1, xp: 0, tier: 1, 
+        maxHp: 32, attack: 8, defense: 1, xp: 0, tier: 1, 
         idle: 'enemies/vagabond_idle.webp',
         attackFrames: ['enemies/vagabond_attack1.webp', 'enemies/vagabond_attack2.webp', 'enemies/vagabond_attack3.webp'],
         dead: 'enemies/vagabond_dead.webp',
@@ -210,8 +210,8 @@ window.ENEMY_STATS = {
 	
 	"Dikenli Çalı": { 
         tribe: "Plants",
-        specificResists: { poison: 15 },
-        maxHp: 52, attack: 4, defense: 4, xp: 0, tier: 1, 
+        specificResists: { poison: 5 },
+        maxHp: 30, attack: 8, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/thorn_idle.webp',
         attackFrames: ['enemies/thorn_attack1.webp', 'enemies/thorn_attack2.webp', 'enemies/thorn_attack3.webp'],
         dead: 'enemies/thorn_dead.webp',
@@ -261,7 +261,7 @@ window.ENEMY_STATS = {
 	
 	"Haydut Gözcü": { 
         tribe: "Humans",
-        maxHp: 68, attack: 14, defense: 3, xp: 0, tier: 2, 
+        maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/scout_bandit_idle.webp',
         attackFrames: ['enemies/scout_bandit_attack1.webp', 'enemies/scout_bandit_attack2.webp', 'enemies/scout_bandit_attack3.webp'],
         dead: 'enemies/scout_bandit_dead.webp',
@@ -315,7 +315,7 @@ window.ENEMY_STATS = {
 	
 	"Genç Ayı": { 
         tribe: "B&M",
-        maxHp: 88, attack: 16, defense: 6, xp: 0, tier: 2, 
+        maxHp: 80, attack: 16, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/young_bear_idle.webp',
         attackFrames: ['enemies/young_bear_attack1.webp', 'enemies/young_bear_attack2.webp', 'enemies/young_bear_attack3.webp'],
         dead: 'enemies/young_bear_dead.webp',
@@ -334,7 +334,7 @@ window.ENEMY_STATS = {
 	
 	 "Şaman": { 
         tribe: "Humans",
-        maxHp: 64, attack: 10, defense: 2, xp: 0, tier: 2, 
+        maxHp: 55, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/shaman_idle.webp',
         attackFrames: ['enemies/shaman_attack1.webp', 'enemies/shaman_attack2.webp', 'enemies/shaman_attack3.webp'],
         dead: 'enemies/shaman_dead.webp',
