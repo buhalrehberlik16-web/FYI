@@ -526,7 +526,7 @@ window.LANG_TR = {
 			// BARBARIAN SKILLS //
 			rest: { name: "Dinlen", desc: "Zihnini ve bedenini sakinleştirir.<br><span style='color:#43FF64'>5 Yorgunluk düşürür (Dövüş boyu verimi her kullanımda 1 azalır).</span><br><span style='color:cyan'>0 Öfke.</span>" },
             cut: { name: "Kes", desc: "Atağın kadar hasar.<span style='color:cyan'>+10 Öfke üretir.</span>" },
-            guard: { name: "Siper", desc: "Gelen hasarı %25 azaltır.<span style='color:cyan'>0 Öfke.</span>" },
+            guard: { name: "Siper", desc: "Savunma duruşuna geçer. 2 Tur boyunca alınan hasarı <span style='color:#43FF64'>0.25 x INT</span> kadar azaltır.<br><span style='color:cyan'>0 Öfke.</span>" },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar.<span style='color:cyan'>0-9 Öfke üretir.</span>" },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır.<span style='color:cyan'>-10 Öfke.</span>" },
             minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Öfke.</span>" },
@@ -560,7 +560,7 @@ window.LANG_TR = {
 			double_blade: { name: "İki Uçlu Balta", desc: "Kendini umursamadan düşmana saldır.<br>Hasar: <b style='color:orange'>2 x ATK + 0.5 x STR </b><br><span style='color:#ff4d4d'>Düşmana verdiğin hasarın %25'i kadar HP kaybedersin.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
 			hell_fire: { name: "Cehennem Ateşi", desc: "Yıkıcı bir alev patlaması yaratır.<br>Hasar: <b style='color:orange'>3.0 x INT (Ateş)</b><br><span style='color:#ff9800'>Vurulan hasarın %50'si kadar hem sana hem düşmana 2 tur yanma hasarı verir.</span><br><span style='color:cyan'>-30 Öfke.</span>" },
             Cauterize: { name: "Dağlama", desc: "Yarayı dağlayarak iyileş. <br><span style='color:#43FF64'>30 HP + (10 HP x 3 Tur)</span>.<br><span style='color:cyan'>-50 Öfke.</span>" },
-			spirit_shield: { name: "Ruh Kalkanı", desc: "Ruhunu mistik bir kalkanla sarar.<br>Hasar: <b style='color:orange'>0.5 x ATK + 2 x MP</b><br><span style='color:#43FF64'>2 Tur: Aldığın her darbe seni +10 Öfke/Mana ile doldurur.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
+			spirit_shield: { name: "Ruh Kalkanı", desc: "Ruhunu mistik bir kalkanla sarar.<br>Hasar: <b style='color:orange'>0.5 x ATK + 2 x MP</b><br><span style='color:#43FF64'>2 Tur: Aldığın her darbe seni +10 Öfke ile doldurur.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
 			light_blade: { name: "Işığın Kılıcı", desc: "Cesur saldırı.<br>Hasar: <b style='color:orange'>1 x ATK + 1 x MP(Yıldırım)</b>.<br><span style='color:cyan'>-35 Öfke.</span>" },
 			scales_of_fate: { name: "Kader Terazisi", desc: "Can durumuna göre şekil alır.<br>Hasar: <b style='color:orange'>1.2 x ATK + 0.4 x MP</b><br><span style='color:#43FF64'>Düşman Can % > Senin Can %: Aradaki fark kadar ekstra hasar.</span><br><span style='color:#43FF64'>Senin Can % > Düşman Can %: Aradaki fark kadar Blok kazanırsın.</span><br><span style='color:cyan'>-20 Öfke.</span>" },
 			sacred_will: { name: "Kutsal İrade", desc: "<span style='color:#43FF64'>2 tur boyunca TÜM debuff ve DoT etkilerine bağışıklık kazandırır.</span><br><span style='color:cyan'>-20 Öfke.</span>" },

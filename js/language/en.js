@@ -524,7 +524,7 @@ window.LANG_EN = {
 			// BARBARIAN SKILLS //
 			rest: { name: "Rest", desc: "Calms your mind and body.<br><span style='color:#43FF64'>Reduces 5 Exhaustion (Efficiency decreases by 1 each use during fight).</span><br><span style='color:cyan'>0 Rage.</span>" },
             cut: { name: "Cut", desc: "Deals damage equal to Attack. <span style='color:cyan'>+10 Rage.</span>" },
-            guard: { name: "Guard", desc: "Reduces incoming damage by 25%. <span style='color:cyan'>0 Rage.</span>" },
+            guard: { name: "Guard", desc: "Takes a defensive stance. Reduces incoming damage by <span style='color:#43FF64'>0.25 x INT</span> for 2 turns.<br><span style='color:cyan'>0 Rage.</span>" },
             strike: { name: "Strike", desc: "Deals 115% of Attack as damage. <span style='color:cyan'>+0-9 Rage.</span>" },
             block: { name: "Block", desc: "Gain Block equal to 80% of Dex. Block decays by 50% at turn end. <span style='color:cyan'>-10 Rage.</span>" },
             minor_healing: { name: "Minor Healing", desc: "Quick bandage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Rage.</span>" },
@@ -558,7 +558,7 @@ window.LANG_EN = {
 			double_blade: { name: "Double-Edged Blade", desc: "Attack enemy without regard for self.<br>Damage: <b style='color:orange'>2 x ATK + 0.5 x STR </b> <br><span style='color:#ff4d4d'>You take recoil damage equal to 25% of the damage you deal.</span><br><span style='color:cyan'>-15 Rage.</span>" },
 			hell_fire: { name: "Hell Fire", desc: "Creates a devastating flame blast.<br>Damage: <b style='color:orange'>3.0 x INT (Fire)</b><br><span style='color:#ff9800'>Applies fire DoT to both you and the enemy for 2 turns equal to 50% of damage dealt.</span><br><span style='color:cyan'>-30 Rage.</span>" },
             Cauterize: { name: "Cauterize", desc: "Seal wounds with fire.<br><span style='color:#43FF64'>30 HP + (10 HP x 3 Turns)</span>.<br><span style='color:cyan'>-30 Rage.</span>" },
-			spirit_shield: { name: "Spirit Shield", desc: "Wraps your soul in a mystic shield.<br>Damage: <b style='color:orange'>0.5 x ATK + 2 x MP</b><br><span style='color:#43FF64'>2 Turns: Every hit taken restores +10 Rage/Mana.</span><br><span style='color:cyan'>-15 Rage.</span>" },
+			spirit_shield: { name: "Spirit Shield", desc: "Wraps your soul in a mystic shield.<br>Damage: <b style='color:orange'>0.5 x ATK + 2 x MP</b><br><span style='color:#43FF64'>2 Turns: Every hit taken restores +10 Rage.</span><br><span style='color:cyan'>-15 Rage.</span>" },
 			light_blade: { name: "Light Blade", desc: "Brave attack.<br>Damage: <b style='color:orange'>1 x ATK + 1 x MP(Lightning)</b>.<br><span style='color:cyan'>-35 Rage.</span>" },
 			scales_of_fate: { name: "Scales of Fate", desc: "Adjusts based on health status.<br>Damage: <b style='color:orange'>1.2 x ATK + 0.4 x MP</b><br><span style='color:#43FF64'>Enemy HP% > Your HP%: Deal extra damage equal to the difference.</span><br><span style='color:#43FF64'>Your HP% > Enemy HP%: Gain Block equal to the difference.</span><br><span style='color:cyan'>-20 Rage.</span>" },
 			sacred_will: { name: "Sacred Will", desc: "<span style='color:#43FF64'>Grants immunity to ALL debuff and DoT effects for 2 turns.</span><br><span style='color:cyan'>-20 Rage.</span>" },
