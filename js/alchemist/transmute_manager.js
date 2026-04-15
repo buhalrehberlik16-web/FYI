@@ -313,7 +313,11 @@ window.processTransmutation = async function() {
         type: resultType,
         tier: targetTier,
         stats: {},
-        propertyKeys: []
+        propertyKeys: [],
+		// --- KRİTİK EKLENEN SATIR ---
+        color: finalMainStat, // Set bonusunun çalışması için renk/stat türünü tanımlıyoruz
+        // ----------------------------
+        implicitDef: 0
     };
 
     let pointsToDistribute = Math.max(1, Math.floor(targetTier * 2) - 2);
