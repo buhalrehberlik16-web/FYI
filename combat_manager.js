@@ -37,12 +37,24 @@ window.applyStatusEffect = function(target, newEffect) {
     if (existingIndex !== -1) {
         const existing = target.statusEffects[existingIndex];
         
+        // --- ZEHİR: BİRİKMEYE DEVAM EDER (Log ve Mantık Korundu) ---
         if (newEffect.id === 'poison') {
             existing.value += newEffect.value;
             existing.turns += newEffect.turns;
-            // newEffect.value yerine güncel toplam olan existing.value yazılmalı
             writeLog(`☣️ **${isTargetHero ? 'Zehir' : 'Düşman Zehiri'}** etkisi şiddetlendi! (Yeni Hasar: ${existing.value})`);
-        } else {
+        } 
+        // --- SİPER: SADECE TAZELEME YAPAR (YENİ MANTIK) ---
+        else if (newEffect.id === 'guard_active') {
+            // SİLME GEREKÇESİ: existing.value += newEffect.value; satırı silindi.
+            // SEBEP: Siper her basışta defansı sonsuza kadar artırmamalı, formüldeki güncel değeri almalı.
+            
+            existing.value = newEffect.value; // Üzerine ekleme yapma, güncel formül değerini yaz
+            existing.turns = newEffect.turns; // Süreyi de en baştan başlat (Tazele)
+            
+            writeLog(`🛡️ **${existing.name}** etkisi yenilendi. (+${existing.value} Savunma)`);
+        }
+        // --- DİĞER ETKİLER: MEVCUT MANTIĞI KORU ---
+        else {
             existing.turns = Math.max(existing.turns, newEffect.turns);
             if (newEffect.value !== undefined) {
                 existing.value = Math.max(existing.value, newEffect.value);
@@ -51,8 +63,6 @@ window.applyStatusEffect = function(target, newEffect) {
         }
     } else {
         target.statusEffects.push(newEffect);
-        // Yeni eklenen etkiler için log (isteğe bağlı, zaten genel log yetenekten geliyor)
-		// --- EKLE: Eğer hedef canavarsa ve bu bir buff ise loga yaz ---
         if (target !== hero) {
             const currentLang = window.gameSettings.lang || 'tr';
             const statusName = window.LANGUAGES[currentLang].status[newEffect.id] || newEffect.id;
@@ -331,6 +341,7 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'int_up') s.int += e.value;
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
+			if (e.id === 'guard_active') flatDefBonus += e.value; 
             
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;

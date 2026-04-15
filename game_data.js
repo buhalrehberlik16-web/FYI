@@ -22,8 +22,8 @@ const CLASS_CONFIG = {
             hp: { stat: "vit", mult: 5 },      // 1 VIT = 5 HP
             resource: { stat: "int", mult: 5 }, // 1 INT = 5 Max Rage
             atk: { stat: "str", mult: 0.5 },    // 1 STR = 0.5 Saldırı
-            def: { stat: "dex", mult: 0.34 },   // 1 DEX = 0.34 Defans
-            block: { stat: "dex", mult: 0.8 },   // 1 DEX = 0.8 Blok Gücü
+            def: { stat: "dex", mult: 0.5 },   // 1 DEX = 0.34 Defans
+            block: { stat: "dex", mult: 0.6 },   // 1 DEX = 0.6 Blok Gücü
             regen: { stat: "mp_pow", mult: 0.5 } // 1 MP = 0.5 Öfke Yenileme
         },
 		visuals: {
