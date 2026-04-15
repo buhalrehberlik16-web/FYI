@@ -243,12 +243,33 @@ window.showFloatingText = function(targetContainer, amount, type) {
 
 window.animateDamage = function(isHero) {
     const display = isHero ? heroDisplayImg : monsterDisplayImg;
+	const battleContainer = document.getElementById('battle-screen'); // Sallanacak konteynır
+
+    // --- GARANTİLENMİŞ KONTROL VE TETİKLEME ---
+    if (isHero && window.gameSettings.showImpacts && battleContainer) {
+        battleContainer.classList.remove('shake-effect', 'flash-effect');
+        void battleContainer.offsetWidth; 
+        
+        battleContainer.classList.add('shake-effect');
+        battleContainer.classList.add('flash-effect');
+        
+        // Sarsıntı 0.3s, Vignette 1s olduğu için 1.1 saniye sonra temizlemek yeterli
+        setTimeout(() => {
+            battleContainer.classList.remove('shake-effect', 'flash-effect');
+        }, 1100); 
+    }
+    // -------------------------------------------------------------
     display.style.transition = 'transform 0.1s ease-out, filter 0.1s ease-out'; 
     display.style.transform = 'translateX(-50%) translateY(-10px) scale(1.05)';
     display.style.filter = 'brightness(1.5) drop-shadow(0 0 10px red)';
     setTimeout(() => {
         display.style.transform = 'translateX(-50%) translateY(0) scale(1)';
         display.style.filter = 'none';
+		
+		// Animasyon bitince sınıfları temizle ki bir sonraki vuruşa hazır olsun
+        if (battleContainer) {
+            battleContainer.classList.remove('shake-effect', 'flash-effect');
+        }
     }, 150); 
 };
 

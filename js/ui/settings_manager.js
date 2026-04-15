@@ -4,7 +4,8 @@ window.gameSettings = {
     lang: localStorage.getItem('game_lang') || 'tr',
     resolution: localStorage.getItem('game_res') || 'fit',
     // Varsayılan olarak true (açık) kabul et
-    showNotifs: localStorage.getItem('game_notifs') !== 'false' 
+    showNotifs: localStorage.getItem('game_notifs') !== 'false', 
+	showImpacts: localStorage.getItem('game_impacts') !== 'false'
 };
 
 window.applySettings = function() {
@@ -33,6 +34,10 @@ window.applySettings = function() {
     if (notifToggle) {
         notifToggle.checked = window.gameSettings.showNotifs;
     }
+	
+	// Ayarları uygulama fonksiyonuna (applySettings) şu satırı ekle:
+	const impactToggle = document.getElementById('setting-impact-toggle');
+	if (impactToggle) impactToggle.checked = window.gameSettings.showImpacts;
 
     // Değişiklikten sonra bildirimleri hemen güncelle
     if (typeof updateStats === 'function') updateStats();
@@ -78,3 +83,9 @@ function updateUITexts() {
         }
     });
 }
+
+// Yeni toggle fonksiyonunu en alta ekle:
+window.setImpactEffectsToggle = function(val) {
+    window.gameSettings.showImpacts = val;
+    localStorage.setItem('game_impacts', val);
+};
