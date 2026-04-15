@@ -761,77 +761,59 @@ window.handleMonsterAttack = function(attacker, defender) {
     const basicAttackData = { damageSplit: { physical: 1.0 } };
     const dmgPack = SkillEngine.calculate(attacker, basicAttackData, defender);
     
-    processMonsterDamage(attacker, dmgPack, stats.attackFrames.map(f => `images/${f}`));
+    processMonsterDamage(attacker, dmgPack, null); 
 };
 
 // Canavar hasarını uygulayan merkezi fonksiyon (Bunu nextTurn içinde kullanacaksın)
-function processMonsterDamage(attacker, dmgPack, attackFrames) {
+function processMonsterDamage(attacker, dmgPack) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     let finalDamage = dmgPack.total;
 
-    let fIdx = 0;
-    function frame() {
-        if (fIdx < attackFrames.length) {
-            monsterDisplayImg.src = attackFrames[fIdx]; 
-            if (fIdx === 1) { 
-                // BLOK SİSTEMİ
-                if (window.heroBlock > 0) {
-                    if (window.heroBlock >= finalDamage) { 
-                        window.heroBlock -= finalDamage; finalDamage = 0; 
-                        showFloatingText(heroDisplayContainer, lang.f_block, 'heal'); 
-                    } else { 
-                        finalDamage -= window.heroBlock; window.heroBlock = 0; 
-                    }
-                }
-                
-                if (finalDamage > 0) { 
-                hero.hp = Math.max(0, hero.hp - finalDamage); 
-                StatsManager.trackDamageTaken(finalDamage);
-                animateDamage(true); 
-                showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-                writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu. (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+     // 1. Animasyonu Başlat
+    monsterDisplayImg.classList.remove('monster-attack-anim');
+    void monsterDisplayImg.offsetWidth; // Sihirli satır: DOM'u zorla yeniler (Reset)
+    monsterDisplayImg.classList.add('monster-attack-anim');
 
-                // --- GÜNCELLEME: SADECE SINIF KURALI VARSA KAYNAK EKLE ---
-                const stats = getHeroEffectiveStats();
-                const classRules = CLASS_CONFIG[hero.class];
-                let gainOnHit = classRules.onHitRageGain || 0;  // Kuralı oku (Barbar: 5, Magus: 0)
-				
-				// --- YENİ: RUH KALKANI KONTROLÜ ---
-                    const spiritShield = hero.statusEffects.find(e => e.id === 'spirit_shield_active');
-                    if (spiritShield) {
-                        gainOnHit += spiritShield.value; // +10 ekle
-                    }
-                    // ---------------------------------
-
-                if (gainOnHit > 0) {
-                        // Hasar rakamı çıktıktan 600ms sonra öfke kazandır ve yazısını bas
-                        setTimeout(() => {
-                            if (hero.hp > 0) { // Kahraman ölmediyse ekle
-                                hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
-                                
-                                const currentLang = window.gameSettings.lang || 'tr';
-                                const resLabel = window.LANGUAGES[currentLang][`resource_${classRules.resourceName}`];
-                                
-                                showFloatingText(heroDisplayContainer, `+${gainOnHit} ${resLabel}`, 'heal');
-                                // Loga da gecikmeli düşmesi akışı doğrular
-                                writeLog(`🛡️ **Savaşçı Sabrı**: Darbe aldığın için +${gainOnHit} ${resLabel} kazandın.`);
-                                updateStats();
-                            }
-                        }, 600);
-                    }
-                    // ---------------------------------------------------------------------
-				}
-                updateStats(); 
-                if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
+    // Darbe anını animasyonun en eğik olduğu ana (220ms) denk getiriyoruz
+    setTimeout(() => {
+        // Blok ve Hasar Hesaplama
+        if (window.heroBlock > 0) {
+            if (window.heroBlock >= finalDamage) { 
+                window.heroBlock -= finalDamage; finalDamage = 0; 
+                showFloatingText(heroDisplayContainer, lang.f_block, 'heal'); 
+            } else { 
+                finalDamage -= window.heroBlock; window.heroBlock = 0; 
             }
-            fIdx++; setTimeout(frame, 150); 
-        } else {
-            monsterDisplayImg.src = `images/${ENEMY_STATS[attacker.name].idle}`; 
-            window.isHeroTurn = true; 
-            if (!checkGameOver()) nextTurn(); 
         }
-    }
-    frame();
+        
+        if (finalDamage > 0) { 
+            hero.hp = Math.max(0, hero.hp - finalDamage); 
+            StatsManager.trackDamageTaken(finalDamage);
+            animateDamage(true); 
+            showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
+            writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu.`);
+
+            // Kaynak Kazanımı (Barbar/Magus)
+            const stats = getHeroEffectiveStats();
+            const classRules = CLASS_CONFIG[hero.class];
+            let gainOnHit = classRules.onHitRageGain || 0;
+            if (hero.statusEffects.some(e => e.id === 'spirit_shield_active')) gainOnHit += 10;
+
+            if (gainOnHit > 0 && hero.hp > 0) {
+                hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
+                updateStats();
+            }
+        }
+        updateStats(); 
+        if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
+        
+    }, 250); 
+
+    // Sıra devri (Animasyon bittikten biraz sonra)
+    setTimeout(() => {
+        window.isHeroTurn = true; 
+        if (!checkGameOver()) nextTurn(); 
+    }, 550); 
 }
 
 window.determineMonsterAction = function() {
@@ -912,6 +894,14 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	hero.skillUsage = {}; // Skillerin fight içi artışlarını sıfırla
     hero.autoRestCount = 0; // Auto-rest ceza sayacını sıfırla
     window.updateExhaustionUI(); // Barı başlangıç değerine getir
+	
+	if (monsterDisplayImg) {
+        monsterDisplayImg.classList.remove('monster-attack-anim');
+        // Resmin yamuk kalmaması için transformu da sıfırlayalım
+        monsterDisplayImg.style.transform = "translateX(-50%) rotate(0deg)";
+    }
+    // ----------------------------------
+	
     monster = { 
         name: enemyType, 
         tribe: stats.tribe,
@@ -933,6 +923,10 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         statusEffects: [], 
 		
 	};
+	
+	monsterDisplayImg.src = `images/${monster.idle}`;
+    monsterDisplayImg.style.filter = 'none'; 
+    monsterDisplayImg.style.opacity = '1';
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
 	if (isHalfTierFromMap) {
@@ -1244,7 +1238,7 @@ window.nextTurn = function() {
                                 }
 
                                 if (packet.damage && packet.damage.total > 0) {
-                                    processMonsterDamage(monster, packet.damage, stats.attackFrames.map(f => `images/${f}`));
+                                    processMonsterDamage(monster, packet.damage);
                                 } else {							
                                     animateMonsterSkill();
                                     updateStats();
