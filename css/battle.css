@@ -466,3 +466,49 @@
     box-shadow: 0 0 8px rgba(142, 68, 173, 0.6);
 }
 
+/* Düşman Saldırı Animasyonu (Hacivat-Karagöz Tarzı) */
+@keyframes enemyHeadbutt {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-53%) rotate(-4deg); } 
+    50% { transform: translateX(-68%) rotate(-12deg); } /* En uç nokta */
+    100% { transform: translateX(-50%) rotate(0deg); }
+}
+
+.monster-attack-anim {
+    /* ease-in-out daha doğal bir yavaşlama/hızlanma sağlar */
+    animation: enemyHeadbutt 0.5s ease-in-out !important;
+    transform-origin: bottom center;
+    will-change: transform; /* Tarayıcıya performans optimizasyonu yaptırır */
+}
+
+/* Mikro-Sarsıntı: Sadece 2-3 piksellik hızlı titreşim */
+@keyframes subtleShake {
+    0% { transform: translate(0, 0); }
+    20% { transform: translate(-3px, 1px); }
+    40% { transform: translate(2px, -1px); }
+    60% { transform: translate(-2px, 2px); }
+    80% { transform: translate(1px, -1px); }
+    100% { transform: translate(0, 0); }
+}
+
+/* Kan Efekti: 1.5s yerine 1s yaptık, daha seri biter */
+@keyframes bloodVignette {
+    0% { opacity: 0; box-shadow: inset 0 0 0 rgba(255, 0, 0, 0); }
+    10% { opacity: 1; box-shadow: inset 0 0 100px rgba(150, 0, 0, 0.7); } 
+    100% { opacity: 0; box-shadow: inset 0 0 0 rgba(255, 0, 0, 0); }
+}
+
+.shake-effect {
+    /* Süreyi 0.3 saniyeye indirdik, daha 'anlık' bir titreme */
+    animation: subtleShake 0.3s ease-in-out both !important;
+}
+
+.flash-effect::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: bloodVignette 1.0s ease-out forwards !important;
+}
+
