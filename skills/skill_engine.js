@@ -152,10 +152,10 @@ const SkillEngine = {
 
         // --- 6. YÜZDESEL KORUMALAR (Guard Active vb.) ---
         let totalHasar = physNet + elemNet;
-        const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
-        if (guardEffect) {
-            totalHasar = Math.floor(totalHasar * (1 - guardEffect.value));
-        }
+        //const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
+        //if (guardEffect) {
+        //    totalHasar = Math.max(0, totalHasar - guardEffect.value); 
+        //}
 
         // Nihai paket (Tüm sayılar tam sayı)
         return {

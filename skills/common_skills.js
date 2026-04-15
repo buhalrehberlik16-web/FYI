@@ -68,7 +68,7 @@ const COMMON_SKILLS = {
     guard: {
         data: {
             name: "Siper",
-            menuDescription: "Gelen hasarı %25 azaltır. 0 Rage.",
+            menuDescription: "Gelen hasarı 0.25 x INT kadar azaltır. (2 Tur)", // Açıklama mantığı tr.js'den gelecek ama burada da kalsın
             rageCost: -1,
             levelReq: 1,
 			exhaustion: 2,
@@ -78,11 +78,28 @@ const COMMON_SKILLS = {
             tier: 1
         },
         onCast: function(attacker, defender) {
-            // Guard_active etkisi SkillEngine içinde %25 (0.25) sönümleme yapar
-            hero.statusEffects.push({ id: 'guard_active', name: 'Koruma', value: 0.25, turns: 1, waitForCombat: false, resetOnCombatEnd: true });
+            // --- YENİ HESAPLAMA SİSTEMİ ---
+            const stats = getHeroEffectiveStats(); // Güncel INT değerini almak için stats'ı çağırıyoruz
+            const reductionValue = Math.floor(stats.int * 0.25); // 0.25 x INT hesaplaması
+            
+            // guard_active etkisini 2 tur sürecek şekilde ve yeni değerle ekliyoruz
+            applyStatusEffect(hero, { 
+                id: 'guard_active', 
+                name: 'Koruma', 
+                value: reductionValue,
+                turns: 2, 
+                waitForCombat: false, 
+                resetOnCombatEnd: true 
+            });
+            
             isHeroDefending = true;
             updateStats();
-            writeLog(`🛡️ **${this.data.name}**: Savunma pozisyonu (%25 Hasar Azaltma).`);
+            
+            // Log mesajını dilden alarak yazdır
+            const currentLang = window.gameSettings.lang || 'tr';
+            const skillName = window.LANGUAGES[currentLang].skills.guard.name;
+            writeLog(`🛡️ **${skillName}**: Savunma pozisyonu alındı. Gelen hasar ${reductionValue} azalacak. (2 Tur)`);
+            
             setTimeout(() => { nextTurn(); }, 1000);
         }
     },
