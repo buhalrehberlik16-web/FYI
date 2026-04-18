@@ -341,6 +341,14 @@ function initGame() {
     hero.level = 1; hero.xp = 0; 
     hero.maxRage = 100; hero.rage = 0; hero.gold = 0; 
     hero.statPoints = 0; hero.skillPoints = 0;
+	
+	// --- YENİ: YORGUNLUK VE SAYAÇ SIFIRLAMA ---
+    // SİLME YAPILMADI: Eksik olan sıfırlama komutları eklendi.
+    hero.exhaustion = 0;     // Yorgunluk barını boşalt
+    hero.autoRestCount = 0;  // Zorunlu dinlenme ceza sayacını sıfırla
+    hero.skillUsage = {};    // Yetenek kullanım sayılarını temizle (Maliyetler normale dönsün)
+    // ------------------------------------------
+	
     hero.unlockedSkills = []; 
     hero.equippedSkills = [null, null, null, null, null, null]; 
     hero.currentAct = 1;

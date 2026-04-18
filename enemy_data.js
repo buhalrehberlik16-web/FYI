@@ -359,6 +359,26 @@ window.ENEMY_STATS = {
         ]
     },
 	
+	"Haydut Simyacı": { 
+        tribe: "Humans",
+        specificResists: { fire: 4 },
+        maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/bandolier_idle.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/bandolier_dead.webp',
+        skills: [
+			{ 
+                id: "fire_bomb", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0}, 
+				dotType: "fire", 
+				duration: 2,
+				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler  
+                textKey: "f_bomb" 
+			}
+        ]
+    },
     "Gri Kurt": { 
         tribe: "B&M",
         specificResists: { cold: 20 },
@@ -393,8 +413,72 @@ window.ENEMY_STATS = {
             },  
         ]
     },
+	"Kobold Devriye": { 
+        tribe: "Dragonkind",
+        maxHp: 65, attack: 15, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/kobold_patrol_idle.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/kobold_patrol_dead.webp',
+        skills: [ 
+			{ 
+                id: "goblin_yell", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "atk_up", 
+                value: 7, 
+                duration: 3, 
+                textKey: "yell" 
+            }, 
+        ]
+    },
+	"Treant Sapling": { 
+        tribe: "Plants",
+        specificResists: { poison: 20, curse: -10 },
+        maxHp: 62, attack: 13, defense: 8, xp: 0, tier: 2, 
+        idle: 'enemies/treant_sapling_idle.webp',
+        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
+        dead: 'enemies/treant_sapling_dead.webp',
+        skills: [ 
+			{ 
+                id: "fungal_regrow", 
+                template: "self_buff", 
+                category: "buff", // AI'nın tanıması için şart!
+                subtype: "heal", 
+                value: 0.20, 
+                textKey: "regrow" 
+            },
+			{ 
+                id: "thorn_prick", 
+                template: "stat_debuff", 
+                category: "debuff",
+                dotType: "poison",
+                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                duration: 3,
+                tickMult: 0.5,
+                textKey: "poison_hit" 
+            },
+		//Heal, Poison
+        ]
+	},
 
     // --- TIER 3 ---
+	"Haydut Devriye": { 
+        tribe: "Humans",
+        maxHp: 85, attack: 25, defense: 15, xp: 0, tier: 3, 
+        idle: 'enemies/highwayman_idle.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/highwayman_dead.webp',
+        skills: [
+            { 
+                id: "dirty_strike", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 1.5 }, 
+                textKey: "dirty" 
+            }, 
+			//Def Up
+        ]
+    },
     "Yaban Domuzu": { 
         tribe: "B&M",
         specificResists: { cold: 10 },
@@ -537,8 +621,8 @@ window.ENEMY_STATS = {
 // Düşman Havuzları
 window.TIER_ENEMIES = {
     1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
-    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi"],
+    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
     5: [], 
@@ -604,8 +688,11 @@ window.BIOME_WEIGHTS = {
 	"Serseri": 		  { forest: 0.1, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.4 },
     "Dikenli Çalı":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
     "Goblin Devriyesi": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
+	"Kobold Devriye": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
     "Kaçak Haydut":   { forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
+	"Haydut Simyacı":   { forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
     "Gri Kurt":       { forest: 0.3, plains: 0.2, cave: 0.0, iceland: 0.4,  mountain: 0.1,  urban: 0.0 },
+	"Treant Sapling":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
 	"Haydut Gözcü":   { forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
     "Genç Ayı": 	  { forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
     "Şaman": 		  { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.0, mountain: 0.3, urban: 0.2 },
