@@ -327,7 +327,11 @@ window.LANG_TR = {
             "İskelet Şövalye": "İskelet Şövalye",
             "Gulyabani": "Gulyabani",
             "Kemik Golemi": "Kemik Golemi",
-			"İskelet": "İskelet"
+			"İskelet": "İskelet",
+			"Haydut Simyacı": "Haydut Simyacı",
+			"Kobold Devriye": "Kobold Devriye",
+			"Treant Sapling": "Ağaç Fidanı",
+			"Haydut Devriye": "Haydut Devriye",
         },
 		
 		enemy_effects: {

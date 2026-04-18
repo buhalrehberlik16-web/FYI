@@ -323,7 +323,11 @@ window.LANG_EN = {
             "İskelet Şövalye": "Skeleton Knight",
             "Gulyabani": "Ghoul",
             "Kemik Golemi": "Bone Golem",
-			"İskelet": "Skeleton"
+			"İskelet": "Skeleton",
+			"Haydut Simyacı": "Bandit Bandolier",
+			"Kobold Devriye": "Kobold Patrol",
+			"Treant Sapling": "Treant Sapling",
+			"Haydut Devriye": "Highwayman Patrol",
         },
 		
 		enemy_effects: {
