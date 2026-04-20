@@ -303,7 +303,7 @@ window.showCampfireResult = function(title, text) {
 
 let isEventProcessing = false; // Sayfanın en üstünde tanımlayabilirsin
 
-window.triggerRandomEvent = function() {
+window.triggerRandomEvent = function(forcedEvent = null) {
     if (isEventProcessing) return;
     
     updateNPCStatsDisplay();
@@ -326,10 +326,14 @@ window.triggerRandomEvent = function() {
     document.getElementById('event-result-area').classList.add('hidden');
     const container = document.getElementById('event-choices-container');
     container.innerHTML = ''; 
-
-    // --- KRİTİK DEĞİŞİKLİK: ÖNCEDEN ATANMIŞ EVENT VAR MI? ---
+	
+	// --- KRİTİK DEĞİŞİKLİK: ÖNCEDEN ATANMIŞ EVENT VAR MI? ---
+	let evt;
+	if (forcedEvent) {
+		evt = forcedEvent;
+	} else {
     const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
-    let evt;
+    
 
     if (currentNode && currentNode.eventId) {
         // Scout tarafından belirlenmiş olayı çek
@@ -340,6 +344,7 @@ window.triggerRandomEvent = function() {
     if (!evt) {
         evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
     }
+	}
     // ------------------------------------------------------
 
     const t = lang.events[evt.id];
@@ -381,7 +386,8 @@ window.triggerRandomEvent = function() {
             document.getElementById('event-main-area').classList.add('hidden');
 
             // 2. Aksiyonu Uygula
-            opt.action(hero); 
+            // --- GÜNCELLEME: Aksiyondan dönen sonucu yakala ---
+            const actionResult = opt.action(hero); 
             
             // 3. UI'ı Güncelle
             updateStats();
@@ -390,19 +396,40 @@ window.triggerRandomEvent = function() {
             // 4. Sonuç Ekranını Göster
             const resultArea = document.getElementById('event-result-area');
             const resultTextEl = document.getElementById('event-result-text');
+			const visualEl = document.getElementById('event-visual-outcome'); // Yeni eklediğimiz div
 			
-			// Sonuç metnini de filtrele
-            let finalBtnText = btnText; 
-            
-            resultTextEl.innerHTML = `
-                <span style="color:#ffd700; font-size:1.4em;">${btnText}</span>
-                <br><br>
-                <span style="color:#fff;">${lang.event_applied_msg}</span>
-            `;
+			visualEl.innerHTML = ''; // Önceki görseli temizle
+			
+			// 1. EĞER SONUÇ BİR EŞYA İSE (Transmute gibi çiz)
+            if (actionResult && actionResult.type === 'item') {
+                const item = actionResult.value;
+                const slot = document.createElement('div');
+                slot.className = 'item-slot result-flash'; // Parlama efektiyle gelsin
+                slot.style.width = "80px"; slot.style.height = "80px";
+                
+                slot.innerHTML = `
+                    <img src="items/images/${item.icon}">
+                    ${window.getItemBadgeHTML(item)}
+                `;
+                
+                // Tooltip desteği (Transmute ile aynı)
+                slot.onmouseenter = (e) => window.showItemTooltip(item, e);
+                slot.onmouseleave = () => window.hideItemTooltip();
+                
+                visualEl.appendChild(slot);
+                resultTextEl.innerHTML = `<span style="color:#43FF64;">${lang.items.scavenge_success_text}</span>`;
+            } 
+            // 2. EĞER SONUÇ HASAR İSE
+            else if (actionResult && actionResult.type === 'damage') {
+                visualEl.innerHTML = `<div style="font-size:3rem; filter:drop-shadow(0 0 10px red);">💔</div>`;
+                resultTextEl.innerHTML = `<span style="color:#ff4d4d;">${lang.items.scavenge_fail_text.replace("$1", actionResult.value)}</span>`;
+            }
+            // 3. DİĞER DURUMLAR (Eski sistem)
+            else {
+                resultTextEl.innerHTML = `<span style="color:#ffd700; font-size:1.4em;">${btnText}</span><br><br>${lang.event_applied_msg}`;
+            }
             
             resultArea.classList.remove('hidden');
-            
-            // Kaydet ve Kilidi bir sonraki oda için hazırla
             if(window.saveGame) window.saveGame();
             isEventProcessing = false; 
         };
@@ -411,6 +438,18 @@ window.triggerRandomEvent = function() {
 
     createBtn(evt.option1, 'opt1');
     createBtn(evt.option2, 'opt2');
+};
+
+window.openSmallMerchant = function() {
+    // 1. Normal tüccar stoğunu temizle ve 4 rastgele takı üret
+    window.merchantStock = [];
+    const progress = hero.highestTierDefeated || 1;
+    for (let i = 0; i < 4; i++) {
+        window.merchantStock.push(generateRandomItem(progress));
+    }
+    // 2. Tüccar ekranını aç
+    window.openMerchantTrade('buy');
+    writeLog("🎒 Gizemli bir gezgin sana mallarını gösteriyor...");
 };
 
 document.addEventListener('click', e => {
