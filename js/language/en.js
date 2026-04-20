@@ -516,6 +516,29 @@ window.LANG_EN = {
                 opt1: "Rest (+HP)", opt1_b: "+25 HP", opt1_d: "",
                 opt2: "Practice (+XP)", opt2_b: "+XP", opt2_d: ""
             },
+			traveling_merchant: {
+				title: "Traveling Merchant", 
+				desc: "An old man in a frayed cloak sits by the road. 'I have rare pieces for you, traveler,' he says.",
+				opt1: "Look at Wares", opt1_b: "Open Shop", opt1_d: "",
+				opt2: "Leave", opt2_b: "", opt2_d: ""
+			},
+			caravan_rest: {
+				title: "Caravan Camp", 
+				desc: "A friendly merchant caravan has stopped for a break. Their fire is still smoking.",
+				opt1: "Stay Over", opt1_b: "-10 Exhaustion / +1 Day Passes", opt1_d: "",
+				opt2: "Move On", opt2_b: "Found +5 Gold", opt2_d: ""
+			},
+			scavenge_ruins: {
+				title: "Ancient Ruins", 
+				desc: "You found a dusty cellar. Something might be glowing inside.",
+				opt1: "Search Rubble", opt1_b: "50%: Find Random Jewelry", opt1_d: "50%: Get Hurt (-15 HP)",
+				opt2: "Don't Risk It", opt2_b: "", opt2_d: ""
+			},
+			lost_child: {
+				title: "Lost Child", desc: "A child's crying echoes from the woods... A terrible creature has cornered them!",
+				opt1: "Help (Battle)", opt1_b: "Reward: Extra Gold", opt1_d: "Tier 1 Enemy",
+				opt2: "Ignore", opt2_b: "", opt2_d: ""
+			},
             flee_option: "Flee In Fear",
             flee_debuff: "-10 HP"
         },
@@ -657,6 +680,8 @@ window.LANG_EN = {
     eff_skill_dmg: "Skill Damage",
     eff_tribe_def: "Defense Bonus",
 	eff_elemDmg: "Elemental Bonus",
+	scavenge_success_text: "You pulled a valuable piece from the ruins!",
+	scavenge_fail_text: "The ceiling collapsed! You took $1 damage while escaping.",
 	
 	// Set Items
 	set_piece_label: "SET PIECE",

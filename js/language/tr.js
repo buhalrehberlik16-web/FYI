@@ -518,6 +518,30 @@ window.LANG_TR = {
                 opt1: "Dinlen (+HP)", opt1_b: "+25 HP", opt1_d: "",
                 opt2: "Antrenman Yap (+XP)", opt2_b: "+XP", opt2_d: ""
             },
+			traveling_merchant: {
+				title: "Gezgin Tüccar", 
+				desc: "Yolun kenarında eski bir pelerinli adam oturuyor. 'Sana özel parçalarım var gezgin,' diyor.",
+				opt1: "Mallara Bak", opt1_b: "Tüccarı Aç", opt1_d: "",
+				opt2: "Uzaklaş", opt2_b: "", opt2_d: ""
+			},
+			caravan_rest: {
+				title: "Kervan Kampı", 
+				desc: "Dost canlısı bir tüccar kervanı mola vermiş. Ateşleri hala tütüyor.",
+				opt1: "Konakla", opt1_b: "-10 Yorgunluk / +1 Gün Geçer", opt1_d: "",
+				opt2: "Yola Devam", opt2_b: "+5 Altın Buldun", opt2_d: ""
+			},
+			scavenge_ruins: {
+				title: "Eski Yıkıntılar", 
+				desc: "Tozlu bir mahzen buldun. İçeride parlayan bir şeyler olabilir.",
+				opt1: "Enkazı Karıştır", opt1_b: "%50: Rastgele Takı Bul", opt1_d: "%50: Yaralan (-15 HP)",
+				opt2: "Tehlikeye Atılma", opt2_b: "", opt2_d: ""
+			},
+			lost_child: {
+				title: "Kayıp Çocuk", 
+				desc: "Ormanda ağlayan bir çocuk sesi geliyor... Onu korkunç bir yaratık köşeye sıkıştırmış!",
+				opt1: "Yardım Et (Savaş)", opt1_b: "Ödül: Ekstra Altın", opt1_d: "Tier 1 Düşman",
+				opt2: "Görmezden Gel", opt2_b: "", opt2_d: ""
+		},
             flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
             flee_debuff: "-10 HP"
         },
@@ -659,6 +683,8 @@ window.LANG_TR = {
     eff_skill_dmg: "Yetenek Hasarı",
     eff_tribe_def: "Savunma Bonusu",
 	eff_elemDmg: "Element Bonusu",
+	scavenge_success_text: "Yıkıntıların arasından değerli bir parça çıkardın!",
+	scavenge_fail_text: "Tavan çöktü! Enkazdan kaçarken $1 hasar aldın.",
 	
 	
 	// SET Görüntü İsimleri
