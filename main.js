@@ -663,6 +663,21 @@ window.enemyver = function(enemyName) {
     }
 };
 
+window.eventver = function(eventId) {
+    const evt = EVENT_POOL.find(e => e.id === eventId);
+    if (evt) {
+        // Eğer haritadaysak kilidi aç (failsafe)
+        window.isMapNodeProcessing = false;
+        
+        // Event'i zorla başlat
+        window.triggerRandomEvent(evt);
+        writeLog(`🛠️ **Cheat**: ${eventId} eventi zorla çağırıldı.`);
+    } else {
+        console.error("HATA: Bu ID'ye sahip bir event bulunamadı!");
+        console.log("Mevcut Eventler:", EVENT_POOL.map(e => e.id));
+    }
+};
+
 document.addEventListener('touchstart', (e) => {
     // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
     if (!e.target.closest('.item-slot')) {

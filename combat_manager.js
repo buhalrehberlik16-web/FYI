@@ -1321,6 +1321,14 @@ window.checkGameOver = function() {
     }
         
         const rewards = window.LootManager.generateLoot(monster);
+		
+		// --- YENİ: EVENT BONUS ALTIN KONTROLÜ ---
+        if (hero.eventBonusGold) {
+            rewards.push({ type: 'gold', value: hero.eventBonusGold });
+            writeLog(`👦 Çocuk sana teşekkür ederek ${hero.eventBonusGold} altın verdi!`);
+            hero.eventBonusGold = 0; // Bonusu sıfırla
+        }
+		
         // ----------------------------
 		
 		// --- KRİTİK: BLOOD MARK ZAFER BONUSU ---

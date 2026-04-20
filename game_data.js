@@ -221,6 +221,64 @@ const EVENT_POOL = [
                 writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+3 XP).`);
             } 
         }
+    },
+	// game_data.js içindeki EVENT_POOL dizisine ekle:
+
+    {
+        id: "traveling_merchant", type: "neutral", 
+        option1: { text: "Look", action: () => { window.openSmallMerchant(); } },
+        option2: { text: "Leave", action: () => {} }
+    },
+    {
+        id: "caravan_rest", type: "node_based",
+        option1: { 
+            text: "Stay", 
+            action: (hero) => { 
+                hero.exhaustion = Math.max(0, hero.exhaustion - 10);
+                window.CalendarManager.passDay(); 
+                writeLog("🔥 Kervanla bir gece geçirdin ve dinlendin.");
+            } 
+        },
+        option2: { text: "Move", action: (hero) => { hero.gold += 5; updateGoldUI(); } }
+    },
+    {
+        id: "scavenge_ruins", type: "permanent",
+        option1: { 
+            text: "Search", 
+            action: (hero) => { 
+                if (Math.random() < 0.5) {
+                    let t = hero.highestTierDefeated || 1;
+                    let lootTier = Math.random() < 0.5 ? Math.floor(t/2) : Math.ceil(t/2);
+                    if (lootTier < 1) lootTier = 1;
+                    const item = generateRandomItem(lootTier);
+                    addItemToInventory(item);
+                    
+                    // --- YENİ: UI'a yakalaması için obje döndür ---
+                    return { type: 'item', value: item };
+                } else {
+                    const dmg = 15;
+                    hero.hp = Math.max(1, hero.hp - dmg);
+                    
+                    // --- YENİ: UI'a yakalaması için obje döndür ---
+                    return { type: 'damage', value: dmg };
+                }
+            } 
+        },
+        option2: { text: "Leave", action: () => { return { type: 'nothing' }; } }
+    },
+    {
+        id: "lost_child", type: "neutral",
+        option1: { 
+            text: "Rescue", 
+            action: (hero) => { 
+                hero.eventBonusGold = 10; // Savaş sonu için bayrak as
+                // Tier 1 havuzundan rastgele bir canavar çağır
+                const t1Pool = window.TIER_ENEMIES[1];
+                const enemy = t1Pool[Math.floor(Math.random() * t1Pool.length)];
+                startBattle(enemy); 
+            } 
+        },
+        option2: { text: "Ignore", action: () => {} }
     }
 
 ];
