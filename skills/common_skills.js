@@ -69,7 +69,7 @@ const COMMON_SKILLS = {
         data: {
             name: "Siper",
             menuDescription: "Gelen hasarı 0.25 x INT kadar azaltır. (2 Tur)", // Açıklama mantığı tr.js'den gelecek ama burada da kalsın
-            rageCost: -1,
+            rageCost: 10,
             levelReq: 1,
 			exhaustion: 2,
             icon: 'skills/common/icon_defend.webp',
