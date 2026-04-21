@@ -555,7 +555,7 @@ window.LANG_TR = {
 			// BARBARIAN SKILLS //
 			rest: { name: "Dinlen", desc: "Zihnini ve bedenini sakinleştirir.<br><span style='color:#43FF64'>5 Yorgunluk düşürür (Dövüş boyu verimi her kullanımda 1 azalır).</span><br><span style='color:cyan'>0 Öfke.</span>" },
             cut: { name: "Kes", desc: "Atağın kadar hasar.<span style='color:cyan'>+10 Öfke üretir.</span>" },
-            guard: { name: "Siper", desc: "2 Tur boyunca alınan hasarı <span style='color:#43FF64'>0.25 x INT</span> kadar azaltır.<br><span style='color:cyan'>10 Öfke.</span>" },
+            guard: { name: "Siper", desc: "2 Tur boyunca alınan hasarı <span style='color:#43FF64'>0.25 x INT</span> kadar azaltır.<br><span style='color:cyan'>-10 Öfke.</span>" },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar.<span style='color:cyan'>0-9 Öfke üretir.</span>" },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır.<span style='color:cyan'>-10 Öfke.</span>" },
             minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Öfke.</span>" },

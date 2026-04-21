@@ -552,7 +552,7 @@ window.LANG_EN = {
 			// BARBARIAN SKILLS //
 			rest: { name: "Rest", desc: "Calms your mind and body.<br><span style='color:#43FF64'>Reduces 5 Exhaustion (Efficiency decreases by 1 each use during fight).</span><br><span style='color:cyan'>0 Rage.</span>" },
             cut: { name: "Cut", desc: "Deals damage equal to Attack. <span style='color:cyan'>+10 Rage.</span>" },
-            guard: { name: "Guard", desc: "Reduces incoming damage by <span style='color:#43FF64'>0.25 x INT</span> for 2 turns.<br><span style='color:cyan'>10 Rage.</span>" },
+            guard: { name: "Guard", desc: "Reduces incoming damage by <span style='color:#43FF64'>0.25 x INT</span> for 2 turns.<br><span style='color:cyan'>-10 Rage.</span>" },
             strike: { name: "Strike", desc: "Deals 115% of Attack as damage. <span style='color:cyan'>+0-9 Rage.</span>" },
             block: { name: "Block", desc: "Gain Block equal to 80% of Dex. Block decays by 50% at turn end. <span style='color:cyan'>-10 Rage.</span>" },
             minor_healing: { name: "Minor Healing", desc: "Quick bandage.<br><span style='color:#43FF64'>Flat 15 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Rage.</span>" },
