@@ -123,10 +123,18 @@ window.updateStats = function() {
 
         // Canavar blok göstergesi
         const monBlockInd = document.getElementById('monster-block-indicator');
-        if (monBlockInd) {
-            monBlockInd.classList.toggle('hidden', !window.isMonsterDefending);
-            monBlockInd.classList.toggle('active-shield', window.isMonsterDefending);
-        }
+		const monBlockTurnsText = document.getElementById('monster-block-turns');
+
+		if (monBlockInd) {
+			const isVisible = window.isMonsterDefending && window.monsterDefenseTurns > 0;
+			monBlockInd.classList.toggle('hidden', !isVisible);
+			monBlockInd.classList.toggle('active-shield', isVisible);
+    
+			// Eğer kalkan görünürse rakamı güncelle
+			if (isVisible && monBlockTurnsText) {
+				monBlockTurnsText.textContent = window.monsterDefenseTurns;
+			}
+		}
     } else {
         // Canavar yoksa blok göstergesini gizle
         const monBlockInd = document.getElementById('monster-block-indicator');
