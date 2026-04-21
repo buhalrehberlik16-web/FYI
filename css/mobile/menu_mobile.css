@@ -94,7 +94,7 @@
     /* 3. Skill Kartları - Metinlerin Kesilmesini Kökten Çöz */
     .selection-card {
         width: 100% !important;
-        min-height: 90px !important; /* İçeriğe göre uzasın */
+        min-height: 140px !important; /* İçeriğe göre uzasın */
         height: auto !important;
         padding: 10px 6px !important;
         gap: 6px !important;
