@@ -680,9 +680,9 @@ window.eventver = function(eventId) {
 
 document.addEventListener('touchstart', (e) => {
     // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
-    if (!e.target.closest('.item-slot')) {
+    if (!e.target.closest('.item-slot') && !e.target.closest('.reward-item')) {
         window.hideItemTooltip();
-        lastTappedSlot = null; // Seçimi sıfırla
+        window.lastTappedSlot = null; // window. prefix'i eklemek daha güvenlidir
     }
 }, { passive: true });
 
