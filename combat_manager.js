@@ -733,10 +733,16 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 writeLog(`⚔️ **${skillName}**: ${monster.name} ${lang.log_hit_monster} **${finalDmg}** (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
                 
                 // Düşman Kalkan Kırma
-                if (window.isMonsterDefending) { 
-                    window.isMonsterDefending = false; 
-                    window.monsterDefenseBonus = 0; 
-                }
+                if (window.isMonsterDefending) {
+				if (finalDmg > 0) {
+				window.isMonsterDefending = false; 
+				window.monsterDefenseBonus = 0; 
+				window.monsterDefenseTurns = 0;
+				writeLog(`🛡️ **${monster.name}** ${lang.log_shield_break}`);
+			} else if (finalDmg > 0) {
+				writeLog(`🛡️ **${monster.name}** savunması darbeyi emdi! (Kalkan Kırılmadı)`);
+			}
+}
                 updateStats();
             }
             fIdx++; setTimeout(frame, 150); 
@@ -806,6 +812,15 @@ function processMonsterDamage(attacker, dmgPack) {
         }
         updateStats(); 
         if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
+		
+		if (window.monsterDefenseTurns > 0) {
+			window.monsterDefenseTurns--;
+			if (window.monsterDefenseTurns === 0) {
+				window.isMonsterDefending = false;
+				window.monsterDefenseBonus = 0;
+				writeLog(`🛡️ **${monster.name}** savunma duruşunu bozdu.`);
+			}
+		}
         
     }, 250); 
 
@@ -1242,6 +1257,14 @@ window.nextTurn = function() {
                                 } else {							
                                     animateMonsterSkill();
                                     updateStats();
+										if (window.monsterDefenseTurns > 0) {
+										window.monsterDefenseTurns--;
+										if (window.monsterDefenseTurns === 0) {
+										window.isMonsterDefending = false;
+										window.monsterDefenseBonus = 0;
+										writeLog(`🛡️ **${monster.name}** savunma duruşunu bozdu.`);
+											}
+											}
                                     window.isHeroTurn = true;
                                     setTimeout(nextTurn, 500);
                                 }
@@ -1258,16 +1281,21 @@ window.nextTurn = function() {
 // YARDIMCI FONKSİYONLAR:
 function handleMonsterDefend(attacker) {
     const combatLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
-    window.isMonsterDefending = true;
-    window.monsterDefenseBonus = Math.floor(attacker.attack / 2) + 5;
     
-    // Görseli ve Logu anında bas
+    // --- YENİ SİSTEM: SÜRE VE TAZELEME MANTIĞI ---
+    // Eğer canavar zaten savunmadaysa, defans değerini artırma (stackleme), sadece süreyi tazele.
+    if (!window.isMonsterDefending) {
+        window.monsterDefenseBonus = Math.floor(attacker.attack / 2) + 5;
+    }
+
+    window.isMonsterDefending = true;
+    window.monsterDefenseTurns = 2; // 2 yapıyoruz ki canavarın turu bittiğinde 1 kalsın.
+    
     showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal');
-    writeLog(`🛡️ **${attacker.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans).`);
+    writeLog(`🛡️ **${attacker.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans, 2 Tur).`);
     
     updateStats();
     
-    // --- GÜNCELLEME: 1000ms yerine 500ms bekle ---
     setTimeout(() => {
         window.isHeroTurn = true;
         nextTurn();
