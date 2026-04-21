@@ -321,6 +321,10 @@
     box-shadow: 0 0 15px rgba(255, 77, 77, 0.5) !important;
 }
 
+.monster-block i {
+    font-size: 1.8rem; /* Kalkanı biraz büyüttük ki içine rakam sığsın */
+}
+
 /* Kalkanın hafif titreme animasyonu (Savunmada olduğunu belli eder) */
 .monster-block.active-shield {
     animation: shield-pulse 2s infinite ease-in-out;
