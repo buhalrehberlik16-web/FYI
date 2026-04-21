@@ -394,7 +394,7 @@ window.hideItemTooltip = function() {
     if (tooltip) tooltip.classList.add('hidden');
 };
 
-function moveTooltip(e) {
+window.moveTooltip = function(e) {
     const tooltip = document.getElementById('item-tooltip');
     if (tooltip) {
         tooltip.style.left = (e.clientX + 15) + 'px';

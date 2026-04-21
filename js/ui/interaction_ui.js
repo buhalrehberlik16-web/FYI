@@ -90,17 +90,50 @@ window.openRewardScreen = function(rewards) {
                     <span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span>
                 </div>`;
 
-            itemDiv.onclick = () => {
-                const success = window.addItemToInventory(item, qty);
-                if (success) {
-                    renderInventory();
-                    itemDiv.remove();
-                    updateContinueButtonState();
-					if(window.saveGame) window.saveGame();
+            // --- YENİ: TOOLTIP DESTEĞİ ---
+            // PC için üzerine gelince göster
+            itemDiv.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
+            itemDiv.onmousemove = (e) => { if (window.innerWidth > 768) window.moveTooltip(e); };
+            itemDiv.onmouseleave = () => window.hideItemTooltip();
+
+            // Tıklama mantığını (Loot alma) Tooltip ile uyumlu hale getiriyoruz
+            itemDiv.onclick = (e) => {
+                const isMobile = window.innerWidth <= 768;
+                
+                const performLootAction = () => {
+                    const success = window.addItemToInventory(item, qty);
+                    if (success) {
+                        window.hideItemTooltip(); // Eşya alınınca kutuyu kapat
+                        renderInventory();
+                        itemDiv.remove();
+                        updateContinueButtonState();
+                        if(window.saveGame) window.saveGame();
+                        window.lastTappedSlot = null; // Mobil seçim kilidini temizle
+                    } else {
+                        window.showAlert(lang.bag_full_msg);
+                    }
+                };
+
+                if (isMobile) {
+                    // MOBİL MANTIĞI:
+                    if (window.lastTappedSlot === itemDiv) {
+                        // Eğer zaten seçiliyse eşyayı al
+                        performLootAction();
+                    } else {
+                        // İlk dokunuşsa sadece seç ve tooltip göster
+                        window.lastTappedSlot = itemDiv;
+                        window.showItemTooltip(item, e);
+                        
+                        // Diğer satırlardaki seçili kalmış görsel efektleri temizlemek istersen:
+                        document.querySelectorAll('.reward-item').forEach(el => el.style.borderColor = "");
+                        itemDiv.style.borderColor = "#43FF64"; // Seçilen satırı yeşil yap
+                    }
                 } else {
-                    window.showAlert(lang.bag_full_msg);
+                    // PC: Doğrudan al
+                    performLootAction();
                 }
             };
+            // -----------------------------
         }
         list.appendChild(itemDiv);
     });
