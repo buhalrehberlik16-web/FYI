@@ -87,6 +87,7 @@ window.LANG_EN = {
 		combat_warning_title: "COMBAT WARNING",
 		combat_warning_msg: "You are about to enter battle without any Attack skills equipped! This might make the fight unwinnable. Are you sure you want to proceed?",
 		dont_show_again: "Don't show this again",
+		combat_log_title: "Combat Log",
 
         // Map & Battle
         map_loading: "Loading Map...",
@@ -424,7 +425,6 @@ window.LANG_EN = {
             log_fury_gain: "🔥 **Fury**: Gained rage from damage.",
             log_hit_monster: "damage dealt to",
             log_shield_break: "defense broken!",
-            log_monster_hit: "hit you for",
             log_block_full: "🧱 **Block**: You blocked all damage!",
             log_block_partial: "🧱 **Block**: Damage absorbed, remaining:",
             log_stun_skip: "💫 **Stunned**: You skip this turn!",
@@ -435,7 +435,14 @@ window.LANG_EN = {
             log_healing_light: "✨ **Healing Light**: Holy light enveloped you.",
 			log_rage_gain: "🔥 Gained rage from damage.",
 			monster_defend_text: "DEFENSE!", 
-            monster_log_defend: "took a defensive stance"
+            monster_log_defend: "took a defensive stance",
+			log_player_hit: "⚔️ **$1**: Dealt **$3** damage to $2. (Phys: $4 | Ele: $5)",
+			log_monster_hit: "⚠️ **$1**: hit you for $2. (Phys: $3 | Ele: $4)",
+			log_mp_regen: "✨ **MP Focus**: +$1 $2 gained.",
+			log_brooch_fixed: "📿 **Brooch**: $1 ($2) -> dealt $3.",
+			log_brooch_stat: "📿 **Brooch**: Dealt $2 with $1 bonus.",
+			log_brooch_heal: "📿 **Brooch**: +$1 HP restored.",
+			log_brooch_resource: "📿 **Brooch**: +$1 $2 gained.",
         },
 		
 		status: {

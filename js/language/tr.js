@@ -85,6 +85,7 @@ window.LANG_TR = {
 		combat_warning_title: "SAVAŞ UYARISI",
 		combat_warning_msg: "Herhangi bir Saldırı yeteneği kuşanmadan savaşa girmek üzeresin! Bu durum savaşı kazanmanı imkansız kılabilir. Devam etmek istediğine emin misin?",
 		dont_show_again: "Bunu bir daha gösterme",
+		combat_log_title: "Savaş Günlüğü",
         
 
         // Harita & Savaş
@@ -428,7 +429,6 @@ window.LANG_TR = {
             log_fury_gain: "🔥 **Hiddet**: Hasardan öfke kazandın.",
             log_hit_monster: "adlı düşmana hasar verdin.",
             log_shield_break: "savunması kırıldı!",
-            log_monster_hit: "Sana hasar vurdu.",
             log_block_full: "🧱 **Blok**: Hasarı tamamen engelledin!",
             log_block_partial: "🧱 **Blok**: Hasar emildi, kalan hasar:",
             log_stun_skip: "💫 **Sersemleme**: Bu turu pas geçiyorsun!",
@@ -438,6 +438,13 @@ window.LANG_TR = {
             log_cauterize: "🩹 **Dağlama**: Yaralarını ateşle temizledin.",
             log_healing_light: "✨ **İyileştiren Işık**: Kutsal ışık seni sarmaladı.",
 			log_rage_gain: "🔥 Hasardan öfke kazandın!",
+			log_player_hit: "⚔️ **$1**: $2 adlı düşmana hasar verdin. **$3** (Fiz: $4 | Ele: $5)",
+			log_monster_hit: "⚠️ **$1**: $2 vurdu. (Fiz: $3 | Ele: $4)",
+			log_mp_regen: "✨ **MP Odaklanması**: +$1 $2 kazanıldı.",
+			log_brooch_fixed: "📿 **Broş**: $1 ($2) -> $3 vurdu.",
+			log_brooch_stat: "📿 **Broş**: $1 bonusuyla $2 vurdun.",
+			log_brooch_heal: "📿 **Broş**: +$1 HP yenilendi.",
+			log_brooch_resource: "📿 **Broş**: +$1 $2 kazanıldı.",
         },
 		
 		status: {
