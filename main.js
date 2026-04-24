@@ -252,7 +252,7 @@ function selectClass(className) {
         hero.rage = 0;
     }
 
-    writeLog(`⚔️ ${className} seçildi. Yolun açık olsun!`);
+    writeLog(`${className} seçildi. Yolun açık olsun!`);
     
     // UI'ı hemen güncelle
     updateStats(); 
@@ -842,4 +842,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 };
+
+window.toggleCombatLog = function() {
+    const wrapper = document.getElementById('combat-log-wrapper');
+    if (wrapper) {
+        wrapper.classList.toggle('collapsed');
+    }
+};
+
 });

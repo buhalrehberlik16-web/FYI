@@ -235,30 +235,19 @@
             <!-- Node butonları JS ile buraya eklenecek -->
         </div>
     </div>
-    
-    <div id="map-info-box" class="expanded">
-    <!-- Tıklanabilir Üst Bar (Handle) -->
-    <div id="map-info-header" onclick="toggleMapInfo()">
-        <h2 id="current-node-name" data-i18n="map_loading">Harita Yükleniyor...</h2>
-        <div class="toggle-control">
-            <label class="switch">
-                <input type="checkbox" id="info-toggle-check" checked>
-                <span class="slider round"></span>
-            </label>
-            <i class="fas fa-chevron-down" id="info-arrow"></i>
-        </div>
-    </div>
-
-    <!-- Gizlenebilir İçerik Alanı -->
-    <div id="map-info-content">
-        <p id="map-description">...</p>
-        <div id="map-action-buttons"></div>
-    </div>
-</div>
 </div>
 
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
+				<div id="combat-log-wrapper" class="collapsed">
+			<div id="combat-log-header" onclick="toggleCombatLog()">
+				<span data-i18n="combat_log_title">SAVAŞ GÜNLÜĞÜ</span>
+				<i class="fas fa-chevron-down" id="combat-log-arrow"></i>
+			</div>
+			<div id="combat-log-area">
+				<!-- Loglar buraya akacak -->
+			</div>
+				</div>
 					<div id="turn-counter-box">
 					<span class="turn-label" data-i18n="turn_label">TUR</span>
 					<span id="turn-count-display">1</span>

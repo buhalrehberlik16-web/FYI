@@ -205,8 +205,6 @@ function renderMap() {
 	
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     
-    document.getElementById('current-node-name').textContent = lang.map_start_title;
-    document.getElementById('map-description').textContent = lang.map_start_desc;
 
     GAME_MAP.nodes.forEach(node => {
         const btn = document.createElement('button');
@@ -367,11 +365,7 @@ function handleNodeClick(node) {
 	else if (node.type === 'encounter') desc = lang.normal_enemy_spotted;
 	else if (node.type === 'town') desc = lang.desc_town;
 	else if (node.type === 'choice') desc = lang.desc_event;
-	else if (node.type === 'boss') desc = lang.desc_boss;
-    
-    // Bilgi kutusunu güncelle (Nereye gitmek istediğini görsün)
-    document.getElementById('current-node-name').textContent = `${lang.stage_label} ${node.stage + 1}: ${typeNames[node.type]}`;
-    document.getElementById('map-description').textContent = desc;
+	else if (node.type === 'boss') desc = lang.desc_boss;   
 	
 	window.currentTownMaster = node.masterNPC || null; 
     
@@ -507,23 +501,18 @@ function proceedWithNodeAction(node) {
             let enemy = node.enemyName;
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
-            document.getElementById('map-description').textContent = appearanceMsg;
             startBattle(enemy, node.isHard, node.isHalfTier); 
 
         } else if (node.type === 'town') {
-            document.getElementById('map-description').textContent = lang.desc_town;
             enterTown();
         
         } else if (node.type === 'choice') {
-            document.getElementById('map-description').textContent = lang.desc_event;
             triggerRandomEvent();
 
         } else if (node.type === 'boss') {
-            document.getElementById('map-description').textContent = lang.desc_boss;
             startBattle("Goblin Şefi");
         }
         else if (node.type === 'city') {
-            document.getElementById('map-description').textContent = lang.desc_city;
             writeLog("🏆 " + lang.desc_city);
             
             setTimeout(() => {
@@ -758,35 +747,6 @@ window.startNextAct = function() {
     if(window.saveGame) window.saveGame();
 };
 
-window.toggleMapInfo = function() {
-    const box = document.getElementById('map-info-box');
-    const checkbox = document.getElementById('info-toggle-check');
-    const arrow = document.getElementById('info-arrow');
-
-    if (box.classList.contains('collapsed')) {
-        // Aç
-        box.classList.remove('collapsed');
-        box.classList.add('expanded');
-        checkbox.checked = true;
-    } else {
-        // Kapat
-        box.classList.remove('expanded');
-        box.classList.add('collapsed');
-        checkbox.checked = false;
-    }
-};
-
-// Tik kutusuna tıklandığında da çalışması için (opsiyonel ama iyi olur)
-document.getElementById('info-toggle-check').addEventListener('change', function(e) {
-    // Tıklama event'i header'a da sıçramaması için stopPropagation kullanıyoruz
-    e.stopPropagation();
-    const box = document.getElementById('map-info-box');
-    if (this.checked) {
-        box.classList.remove('collapsed');
-    } else {
-        box.classList.add('collapsed');
-    }
-});
 // Haritayı fareyle tutup kaydırma (Drag to Scroll)
 const mapDisplay = document.getElementById('map-display');
 let isDown = false;

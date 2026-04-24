@@ -730,7 +730,22 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 // Görsel Efektler ve Loglama
                 animateDamage(false); 
                 showFloatingText(document.getElementById('monster-display'), finalDmg, 'damage');
-                writeLog(`⚔️ **${skillName}**: ${monster.name} ${lang.log_hit_monster} **${finalDmg}** (Fiz: ${dmgPack.phys} | Ele: ${dmgPack.elem})`);
+                const currentLang = window.gameSettings.lang || 'tr';
+				const langRoot = window.LANGUAGES[currentLang]; // Kök objeyi al
+				const combatL = langRoot.combat || {}; // Savaş sözlüğünü al
+				const enemyL = langRoot.enemy_names || {}; // Düşman isimlerini al
+
+				const monsterName = enemyL[monster.name] || monster.name;
+				const skillNameTrans = (langRoot.skills && langRoot.skills[dmgPack.skillKey]) ? langRoot.skills[dmgPack.skillKey].name : skillName;
+
+				const logMsg = (combatL.log_player_hit || "")
+				.replace("$1", skillNameTrans)
+				.replace("$2", monsterName)
+				.replace("$3", finalDmg)
+				.replace("$4", dmgPack.phys)
+				.replace("$5", dmgPack.elem);
+
+				writeLog(logMsg);
                 
                 // Düşman Kalkan Kırma
                 if (window.isMonsterDefending) {
@@ -797,7 +812,20 @@ function processMonsterDamage(attacker, dmgPack) {
             StatsManager.trackDamageTaken(finalDamage);
             animateDamage(true); 
             showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-            writeLog(`⚠️ **${attacker.name}**: ${finalDamage} vurdu.`);
+			const currentLang = window.gameSettings.lang || 'tr';
+const langRoot = window.LANGUAGES[currentLang];
+const enemyL = langRoot.enemy_names || {};
+const combatL = langRoot.combat || {};
+
+const attackerName = enemyL[attacker.name] || attacker.name;
+
+const logMsg = (combatL.log_monster_hit || "")
+    .replace("$1", attackerName)
+    .replace("$2", finalDamage)
+    .replace("$3", dmgPack.phys)
+    .replace("$4", dmgPack.elem);
+
+writeLog(logMsg);
 
             // Kaynak Kazanımı (Barbar/Magus)
             const stats = getHeroEffectiveStats();
@@ -982,7 +1010,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         showMonsterIntention(window.monsterNextAction); 
         window.isHeroTurn = true; 
         toggleSkillButtons(false); 
-        writeLog(`⚔️ **Dövüş Başladı**: ${monster.name} ile karşı karşıyasın!`);
+        writeLog(`**Dövüş Başladı**: ${monster.name} ile karşı karşıyasın!`);
     }, 100);
 };
 
@@ -1003,7 +1031,11 @@ window.nextTurn = function() {
 			const oldRage = hero.rage;
 			hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
 			if (hero.rage > oldRage) {
-				writeLog(`✨ **MP Odaklanması**: +${stats.rageRegen} ${globalLang[`resource_${classRules.resourceName}`]} kazanıldı.`);
+				const resLabel = globalLang[`resource_${classRules.resourceName}`];
+				const logMsg = combatLang.log_mp_regen
+					.replace("$1", stats.rageRegen)
+					.replace("$2", resLabel);
+				writeLog(logMsg);
 			}
 		}
 
@@ -1216,6 +1248,8 @@ window.nextTurn = function() {
                         } 
                         else {
                             const packet = EnemySkillEngine.resolve(monster, action);
+							const enemyNames = globalLang.enemy_names || {}; // Eğer liste yoksa boş obje kabul et
+							const monsterName = enemyNames[monster.name] || monster.name; // Çeviri varsa al, yoksa orijinal kalsın
                             if (packet) {
                                 const resourceLabel = globalLang[`resource_${classRules.resourceName}`];
 
@@ -1425,7 +1459,11 @@ window.executeBroochEffects = function(brooch, startDelay) {
                         showFloatingText(monsterDisplay, finalFixed, 'damage');
                     }
                     const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
-                    writeLog(`📿 **Broş**: ${lang.items.eff_fixed_dmg} (${tribeName}) -> ${finalFixed} vurdu.`);
+                    const logFixed = lang.combat.log_brooch_fixed
+						.replace("$1", lang.items.eff_fixed_dmg)
+						.replace("$2", tribeName)
+						.replace("$3", finalFixed);
+					writeLog(logFixed);
                     break;
                     
                 case "stat_scaling":
@@ -1434,14 +1472,17 @@ window.executeBroochEffects = function(brooch, startDelay) {
                     monster.hp = Math.max(0, monster.hp - scaleDmg);
                     showFloatingText(monsterDisplay, scaleDmg, 'damage');
                     const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
-                    writeLog(`📿 **Broş**: ${statLabel} bonusuyla ${scaleDmg} vurdun.`);
+                    const logStat = lang.combat.log_brooch_stat
+						.replace("$1", statLabel)
+						.replace("$2", scaleDmg);
+					writeLog(logStat);
                     break;
 
                 case "heal":
                     const oldHp = hero.hp;
                     hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
                     showFloatingText(display, (hero.hp - oldHp), 'heal');
-                    writeLog(`📿 **Broş**: +${eff.value} HP yenilendi.`);
+                    writeLog(lang.combat.log_brooch_heal.replace("$1", eff.value));
                     break;
 
                 case "resource_regen":
@@ -1453,7 +1494,8 @@ window.executeBroochEffects = function(brooch, startDelay) {
                     const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
                     showFloatingText(display, `+${eff.value} ${globalLang[`resource_${classRules.resourceName}`]}`, 'heal');
                     window.isBufferingRage = wasBuffering;
-                    writeLog(`📿 **Broş**: +${eff.value} Öfke kazanıldı.`);
+                    const rLabel = globalLang[`resource_${classRules.resourceName}`];
+					writeLog(lang.combat.log_brooch_resource.replace("$1", eff.value).replace("$2", rLabel));
                     break;
             }
             updateStats();
