@@ -68,8 +68,34 @@ window.switchScreen = function(targetScreen) {
 };
 
 window.writeLog = function(message) {
+    // 1. Konsola her zaman yaz (Debug için)
     console.log("[Oyun]: " + message.replace(/<[^>]*>?/gm, ''));
 
+    // 2. Savaş Günlüğü Filtreleme
+    const combatLogArea = document.getElementById('combat-log-area');
+    if (!combatLogArea) return;
+
+    // Sadece bu ikonlarla başlayan mesajları UI'a bas
+    const allowedIcons = ['⚔️', '⚠️', '✨', '📿', '🛡️', '🧪', '💥', '💀', '☣️', '🔥', '🩸'];
+    
+    // Mesajın bu ikonlardan biriyle başlayıp başlamadığını kontrol et
+    const shouldDisplay = allowedIcons.some(icon => message.trim().startsWith(icon));
+
+    if (shouldDisplay) {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = message; // HTML etiketlerini (b, span) korur
+        
+        combatLogArea.appendChild(entry);
+
+        // Otomatik olarak en aşağı kaydır (Yeni mesajı göster)
+        combatLogArea.scrollTop = combatLogArea.scrollHeight;
+
+        // Çok birikirse eski logları sil (Performans için max 30 satır)
+        if (combatLogArea.childElementCount > 30) {
+            combatLogArea.removeChild(combatLogArea.firstChild);
+        }
+    }
 };
 
 // Oyun içi ayarlar menüsünü aç
