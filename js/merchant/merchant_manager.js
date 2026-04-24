@@ -2,61 +2,41 @@
 
 window.merchantStock = [];
 window.currentTradeMode = 'buy';
+window.currentMerchantDiscount = 1.0; // Varsayılan: İndirim yok
 
 // 1. STOK YENİLEME
-window.refreshMerchantStock = function() {
-    console.log("🛒 Tüccar stokları yenileniyor (4 Takı, 2 Parşömen, 2 Rastgele)...");
+window.refreshMerchantStock = function(count = 8) { // Varsayılan değer 8 yapıldı
+    console.log(`🛒 Tüccar stokları yenileniyor (${count} eşya)...`);
     window.merchantStock = [];
     const progress = (window.hero && window.hero.highestTierDefeated) ? window.hero.highestTierDefeated : 1;
 
-    // Yardımcı: İlerlemeye göre Tier belirleme
-    const getTargetTier = () => {
-        if (progress === 1) return 1;
-        if (progress === 2) return Math.random() < 0.5 ? 1 : 2;
-        if (progress === 3) return 2;
-        if (progress === 4) return Math.random() < 0.5 ? 2 : 3;
-        return Math.max(1, Math.floor(progress * 0.7));
-    };
-
-    // --- 1. KESİN 4 TAKI (JEWELRY) ---
-    for (let i = 0; i < 4; i++) {
-        window.merchantStock.push(generateRandomItem(getTargetTier()));
-    }
-
-    // --- 2. KESİN 2 PARŞÖMEN (SCROLL) ---
-    // SPECIAL_MERCH_ITEMS içinden sadece subtype'ı 'scroll' olanları filtrele
-    const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
-    for (let i = 0; i < 2; i++) {
-        const randomScroll = { ...scrollPool[Math.floor(Math.random() * scrollPool.length)] };
-        window.merchantStock.push(randomScroll);
-    }
-
-    // --- 3. KESİN 2 RASTGELE (WILD CARD) ---
-    // Bu slotlar Takı, Kertenkele Gözü (Charm) veya Direnç Taşı olabilir.
-    for (let i = 0; i < 2; i++) {
-        const t = getTargetTier();
-        
-        if (Math.random() < 0.2) {
-            // %20 ihtimalle bir takı daha
-            window.merchantStock.push(generateRandomItem(t));
-        } else {
-            // %80 ihtimalle SPECIAL_MERCH_ITEMS içinden tamamen rastgele biri
-            const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
-            const newItem = { ...baseItem };
-
-            // Eğer bu bir pasif charm (Lizard) ise, Tier'a göre stat ver
-            if (newItem.type === "passive_charm") {
-                newItem.tier = t;
-                newItem.stats = {};
-                const resistValue = t * (window.ITEM_CONFIG?.multipliers?.resists || 3);
-                newItem.stats[newItem.resistType] = resistValue;
+    // Eşya üretme döngüsü - count parametresine göre döner
+    for (let i = 0; i < count; i++) {
+        // Eğer gezgin tüccarsa (count 4 ise) sadece takı üret
+        if (count === 4) {
+            window.merchantStock.push(generateRandomItem(progress));
+        } 
+        // Normal tüccarsa (count 8 ise) senin orijinal 4 takı + 2 parşömen + 2 rastgele mantığını çalıştır
+        else {
+            if (i < 4) {
+                window.merchantStock.push(generateRandomItem(progress));
+            } else if (i < 6) {
+                const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
+                window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
+            } else {
+                // Rastgele 2 slot
+                if (Math.random() < 0.2) {
+                    window.merchantStock.push(generateRandomItem(progress));
+                } else {
+                    const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
+                    window.merchantStock.push({ ...baseItem });
+                }
             }
-            window.merchantStock.push(newItem);
         }
     }
-
-    console.log("✅ Yeni stok hazır:", window.merchantStock);
+    console.log("✅ Stok hazır.");
 };
+
 
 // 2. TİCARET EKRANINI AÇ
 window.openMerchantTrade = function(mode) {
@@ -102,6 +82,11 @@ window.renderMerchantUI = function() {
     }
     
     grid.innerHTML = '';
+	
+	// --- YENİ: EKRANDAKİ ALTINI GÜNCELLE ---
+    const goldDisplay = document.getElementById('trade-screen-gold');
+    if (goldDisplay) goldDisplay.textContent = hero.gold;
+    // ---------------------------------------
 
     if (window.currentTradeMode === 'buy') {
         title.textContent = lang.buy_btn || "BUY";
@@ -191,6 +176,13 @@ window.calculateItemPrice = function(item, isBuying) {
     // 2. ALIŞ/SATIŞ ÇARPANI
     // Dükkan satarken (isBuying: true) daha pahalıya satar
     let finalPrice = isBuying ? unitPrice * (window.MERCHANT_CONFIG?.buyMultiplier || 4) : unitPrice;
+	
+	// --- YENİ: İNDİRİM UYGULAMA ---
+    // Eğer oyuncu satın alıyorsa (isBuying), global indirim oranını çarp
+    if (isBuying) {
+        finalPrice = Math.floor(finalPrice * window.currentMerchantDiscount);
+    }
+    // ------------------------------
 
     // 3. MİKTAR ÇARPANI (KRİTİK DÜZELTME)
     // Eğer eşya bir yığın (stack) ise, birim fiyatı adetle çarp
