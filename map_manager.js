@@ -540,6 +540,10 @@ function proceedWithNodeAction(node) {
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
+	// --- YENİ: İNDİRİMİ SIFIRLA ---
+    window.currentMerchantDiscount = 1.0; // Köydeki tüccar tam fiyattan satar
+    // ------------------------------
+	window.refreshMerchantStock(8); 
 	window.hasRentedInThisTown = false; // <--- YENİ: Her yeni kasabada kısıtlamayı kaldır
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     refreshMerchantStock();
@@ -559,6 +563,8 @@ function enterTown() {
     }
 }
 window.enterCity = function() {
+	window.currentMerchantDiscount = 1.0; // Şehirde indirim yok
+    window.refreshMerchantStock(8); // Tam stok
     switchScreen(window.cityScreen);
 	if(window.saveGame) window.saveGame();
 	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];

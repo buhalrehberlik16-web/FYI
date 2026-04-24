@@ -222,7 +222,6 @@ const EVENT_POOL = [
             } 
         }
     },
-	// game_data.js içindeki EVENT_POOL dizisine ekle:
 
     {
         id: "traveling_merchant", type: "neutral", 
@@ -234,7 +233,7 @@ const EVENT_POOL = [
         option1: { 
             text: "Stay", 
             action: (hero) => { 
-                hero.exhaustion = Math.max(0, hero.exhaustion - 10);
+                hero.exhaustion = Math.max(0, hero.exhaustion - 11);
                 window.CalendarManager.passDay(); 
                 writeLog("🔥 Kervanla bir gece geçirdin ve dinlendin.");
             } 
