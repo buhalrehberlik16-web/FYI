@@ -83,6 +83,42 @@
     flex-direction: column-reverse; /* Alttan üste dolar */
 }
 
+#combat-log-wrapper {
+        width: 92% !important;
+        max-width: 240px !important;
+        left: 29.2%;
+        top: 90px !important; /* Üst bara daha yakın */
+        border-radius: 4px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.8) !important;
+		transition: all 0.3s ease-in-out;
+    }
+
+    #combat-log-header {
+        padding: 4px 10px !important; /* Daha ince handle */
+        font-size: 0.65rem !important; 
+        min-height: 25px !important;
+    }
+
+    #combat-log-area {
+        /* Mobilde 3 satır (yaklaşık 60px) yeterlidir */
+        height: 60px !important; 
+        padding: 6px 10px !important;
+        font-size: 0.7rem !important;
+        line-height: 1.3 !important;
+		transition: all 0.3s ease-in-out;
+    }
+
+    /* Kapalı durumun mobilde sırıtmaması için ek önlem */
+    #combat-log-wrapper.collapsed {
+		left: 25%;
+        width: 140px !important; /* Kapalıyken sadece başlık kadar daralsın */
+    }
+    
+    #combat-log-wrapper.collapsed #combat-log-area {
+        height: 0 !important;
+        padding: 0 !important;
+        border-top: none !important;
+    }
 }
 
 @media (max-height: 600px) {
