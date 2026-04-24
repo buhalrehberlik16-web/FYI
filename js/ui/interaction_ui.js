@@ -79,6 +79,33 @@ window.openRewardScreen = function(rewards) {
             const qty = reward.amount || 1;
             const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
             const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
+			
+			// --- GÜNCELLEME: KURAL KONTROLÜ (ÇOKLU KONTROL) ---
+            // Önce subtype'a bak, yoksa type'a bak, o da yoksa jewelry kuralını al
+            const rules = window.ITEM_RULES[item.subtype] || window.ITEM_RULES[item.type] || window.ITEM_RULES.jewelry;
+            
+            // Eğer kuralda showTooltip açıkça false ise gösterme
+            const canShowTooltip = rules && rules.showTooltip !== false;
+            // ------------------------------------------------
+			
+			// --- GÜNCELLEME: Loot işlemini paketledik ---
+            const processSingleLoot = () => {
+				window.lastTappedSlot = null; // Herhangi bir şeyi aldığında mobil seçimi sıfırla
+                const success = window.addItemToInventory(item, qty);
+                if (success) {
+                    window.hideItemTooltip();
+                    renderInventory();
+                    itemDiv.remove();
+                    updateContinueButtonState();
+                    if(window.saveGame) window.saveGame();
+                    window.lastTappedSlot = null;
+                } else {
+                    window.showAlert(lang.bag_full_msg);
+                }
+            };
+
+            // Eşyayı butona "emanet" ediyoruz ki toplu toplamada buna ulaşabilsin
+            itemDiv.executeLoot = processSingleLoot; 
 
             itemDiv.innerHTML = `
                 <img src="items/images/${item.icon}" class="reward-item-icon">
@@ -89,51 +116,39 @@ window.openRewardScreen = function(rewards) {
                     </div>
                     <span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span>
                 </div>`;
-
-            // --- YENİ: TOOLTIP DESTEĞİ ---
-            // PC için üzerine gelince göster
-            itemDiv.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
-            itemDiv.onmousemove = (e) => { if (window.innerWidth > 768) window.moveTooltip(e); };
-            itemDiv.onmouseleave = () => window.hideItemTooltip();
+				
+			// --- KRİTİK DÜZELTME: OLAY DİNLEYİCİLERİ ---
+            if (canShowTooltip) {
+                // Sadece takı ve broşlarda çalışır
+                itemDiv.onmouseenter = (e) => { if (window.innerWidth > 768) window.showItemTooltip(item, e); };
+                itemDiv.onmousemove = (e) => { if (window.innerWidth > 768) window.moveTooltip(e); };
+                itemDiv.onmouseleave = () => window.hideItemTooltip();
+            } else {
+                // Materyal ise hover olaylarını temizle (Garantiye alıyoruz)
+                itemDiv.onmouseenter = null;
+                itemDiv.onmousemove = null;
+                itemDiv.onmouseleave = null;
+            }
 
             // Tıklama mantığını (Loot alma) Tooltip ile uyumlu hale getiriyoruz
             itemDiv.onclick = (e) => {
                 const isMobile = window.innerWidth <= 768;
-                
-                const performLootAction = () => {
-                    const success = window.addItemToInventory(item, qty);
-                    if (success) {
-                        window.hideItemTooltip(); // Eşya alınınca kutuyu kapat
-                        renderInventory();
-                        itemDiv.remove();
-                        updateContinueButtonState();
-                        if(window.saveGame) window.saveGame();
-                        window.lastTappedSlot = null; // Mobil seçim kilidini temizle
-                    } else {
-                        window.showAlert(lang.bag_full_msg);
-                    }
-                };
 
-                if (isMobile) {
-                    // MOBİL MANTIĞI:
+                // --- MOBİLDE TOOLTIP KONTROLÜ EKLENDİ ---
+                if (isMobile && canShowTooltip) {
                     if (window.lastTappedSlot === itemDiv) {
-                        // Eğer zaten seçiliyse eşyayı al
-                        performLootAction();
+                        processSingleLoot();
                     } else {
-                        // İlk dokunuşsa sadece seç ve tooltip göster
                         window.lastTappedSlot = itemDiv;
                         window.showItemTooltip(item, e);
-                        
-                        // Diğer satırlardaki seçili kalmış görsel efektleri temizlemek istersen:
                         document.querySelectorAll('.reward-item').forEach(el => el.style.borderColor = "");
-                        itemDiv.style.borderColor = "#43FF64"; // Seçilen satırı yeşil yap
+                        itemDiv.style.borderColor = "#43FF64"; 
                     }
                 } else {
-                    // PC: Doğrudan al
-                    performLootAction();
+                    // PC ise VEYA materyal ise (canShowTooltip false ise) direkt al
+                    processSingleLoot();
                 }
             };
-            // -----------------------------
         }
         list.appendChild(itemDiv);
     });
@@ -142,8 +157,20 @@ window.openRewardScreen = function(rewards) {
     
     // HEPSİNİ TOPLA SADECE BU BUTONLA ÇALIŞIR
     btnTakeAll.onclick = () => {
-        const allRewards = Array.from(list.querySelectorAll('.reward-item'));
-        allRewards.forEach(el => el.click());
+        const allItemDivs = Array.from(list.querySelectorAll('.reward-item'));
+        
+        allItemDivs.forEach(div => {
+            // Eğer bu bir altınsa (reward-gold sınıfı varsa) click() yap (Altında tooltip yok)
+            if (div.classList.contains('reward-gold')) {
+                div.click();
+            } 
+            // Eğer bu bir eşyaysa, direkt loot fonksiyonunu çalıştır (Tooltip'i bypass et)
+            else if (div.executeLoot) {
+                div.executeLoot();
+            }
+        });
+        
+        window.hideItemTooltip(); // Failsafe: Her ihtimale karşı tooltipi kapat
     };
 
     // YOLA DEVAM ET: OTOMATİK TOPLAMA SİLİNDİ
@@ -474,15 +501,15 @@ window.triggerRandomEvent = function(forcedEvent = null) {
 };
 
 window.openSmallMerchant = function() {
-    // 1. Normal tüccar stoğunu temizle ve 4 rastgele takı üret
-    window.merchantStock = [];
-    const progress = hero.highestTierDefeated || 1;
-    for (let i = 0; i < 4; i++) {
-        window.merchantStock.push(generateRandomItem(progress));
-    }
-    // 2. Tüccar ekranını aç
+    // 1. İndirimi aç
+    window.currentMerchantDiscount = 0.5; 
+    
+    // 2. SADECE 4 eşya üret (Fonksiyona 4 gönderiyoruz)
+    window.refreshMerchantStock(4); 
+    
+    // 3. Trade ekranını aç
     window.openMerchantTrade('buy');
-    writeLog("🎒 Gizemli bir gezgin sana mallarını gösteriyor...");
+    writeLog("🎒 Gizemli bir gezgin sana mallarını indirimle sunuyor!");
 };
 
 document.addEventListener('click', e => {
