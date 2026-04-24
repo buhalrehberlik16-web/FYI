@@ -558,7 +558,7 @@ window.LANG_TR = {
             guard: { name: "Siper", desc: "2 Tur boyunca alınan hasarı <span style='color:#43FF64'>0.25 x INT</span> kadar azaltır.<br><span style='color:cyan'>-10 Öfke.</span>" },
             strike: { name: "Vuruş", desc: "Atağın %115'i kadar hasar.<span style='color:cyan'>0-9 Öfke üretir.</span>" },
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır.<span style='color:cyan'>-10 Öfke.</span>" },
-            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman.<br><span style='color:#43FF64'>Sabit 15 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Öfke.</span>" },
+            minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Öfke.</span>" },
             distract: { name: "Dikkat Dağıt", desc: "<b style= 'color:green'>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Öfke.</span>" },
             tactical_strike: { name: "Taktiksel Vuruş", desc: "Hasar: <b style='color:orange'>1.3 x ATK.</b><br><span style='color:#b19cd9'>10 Defansı Yok Sayar.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
             hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır." },
