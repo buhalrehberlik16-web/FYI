@@ -516,3 +516,59 @@
     animation: bloodVignette 1.0s ease-out forwards !important;
 }
 
+#combat-log-wrapper {
+    position: absolute;
+    top: 20px; /* Üst barın hemen altı */
+    left: 25%;
+    transform: translateX(-50%);
+    width: 450px;
+    background: rgba(0, 0, 0, 0.75);
+    border: 1px solid #6b5c3b;
+    border-radius: 8px;
+    z-index: 1000;
+    font-family: 'Cinzel', serif;
+    transition: all 0.3s ease;
+    overflow: hidden;
+	transition: all 0.3s ease-in-out;
+}
+
+#combat-log-header {
+    padding: 5px 15px;
+    background: rgba(43, 34, 24, 0.9);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #f0e68c;
+    border-bottom: 1px solid #6b5c3b;
+}
+
+#combat-log-area {
+    height: 100px; /* Yaklaşık 4 satır */
+    overflow-y: auto;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: #ccc;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scroll-behavior: smooth;
+	transition: all 0.3s ease-in-out;
+}
+
+#combat-log-area::-webkit-scrollbar { width: 4px; }
+#combat-log-area::-webkit-scrollbar-thumb { background: #6b5c3b; }
+
+/* Kapalı Durum */
+#combat-log-wrapper.collapsed #combat-log-area { height: 0; padding: 0; }
+#combat-log-wrapper.collapsed #combat-log-arrow { transform: rotate(-90deg); }
+
+.log-entry { 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    padding-bottom: 2px; 
+    animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
