@@ -66,7 +66,12 @@ window.applyStatusEffect = function(target, newEffect) {
         if (target !== hero) {
             const currentLang = window.gameSettings.lang || 'tr';
             const statusName = window.LANGUAGES[currentLang].status[newEffect.id] || newEffect.id;
-            writeLog(`✨ **${target.name}**: ${statusName} etkisi kazandı!`);
+			const langRoot = window.LANGUAGES[currentLang]; // Kök objeyi al
+            const targetName = (langRoot.enemy_names || {})[target.name] || target.name;
+			const logGain = (langRoot.combat.log_status_gain || "")
+			.replace("$1", targetName)
+			.replace("$2", statusName);
+			writeLog(logGain);
         }
     }
     updateStats();
@@ -733,14 +738,27 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 const currentLang = window.gameSettings.lang || 'tr';
 				const langRoot = window.LANGUAGES[currentLang]; // Kök objeyi al
 				const combatL = langRoot.combat || {}; // Savaş sözlüğünü al
-				const enemyL = langRoot.enemy_names || {}; // Düşman isimlerini al
+				const enemyL = globalLang.enemy_names || {};
+				const monsterNameTranslated = enemyL[monster.name] || monster.name;
 
-				const monsterName = enemyL[monster.name] || monster.name;
-				const skillNameTrans = (langRoot.skills && langRoot.skills[dmgPack.skillKey]) ? langRoot.skills[dmgPack.skillKey].name : skillName;
+				const skillKey = dmgPack.skillKey || ""; 
+				const skillNameTrans = (langRoot.skills && langRoot.skills[skillKey]) ? langRoot.skills[skillKey].name : skillName;
+				
+				// --- KESİN ÇÖZÜM: SKILL ID ÜZERİNDEN ÇEVİRİ ---
+				// Eğer fonksiyona bir ID gelirse (strike, slash vb.) onu dilden çek, yoksa gelen ismi kullan
+				let finalSkillName = skillName;
+				if (langRoot.skills && SKILL_DATABASE) {
+					// Bu darbenin hangi skillden geldiğini anlamak için dmgPack.skillKey'e bakıyoruz
+					const key = dmgPack.skillKey; 
+					if (langRoot.skills[key]) {
+						finalSkillName = langRoot.skills[key].name; // "Vuruş" yerine "Strike" olur
+					}
+				}
+				// ----------------------------------------------
 
 				const logMsg = (combatL.log_player_hit || "")
 				.replace("$1", skillNameTrans)
-				.replace("$2", monsterName)
+				.replace("$2", monsterNameTranslated)
 				.replace("$3", finalDmg)
 				.replace("$4", dmgPack.phys)
 				.replace("$5", dmgPack.elem);
@@ -753,9 +771,9 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
 				window.isMonsterDefending = false; 
 				window.monsterDefenseBonus = 0; 
 				window.monsterDefenseTurns = 0;
-				writeLog(`🛡️ **${monster.name}** ${lang.log_shield_break}`);
+				writeLog(`🛡️ **${monsterNameTranslated}** ${langRoot.combat.log_shield_break}`);
 			} else if (finalDmg > 0) {
-				writeLog(`🛡️ **${monster.name}** savunması darbeyi emdi! (Kalkan Kırılmadı)`);
+				writeLog(`🛡️ **${monsterNameTranslated}** ${langRoot.combat.log_shield_absorb}`);
 			}
 }
                 updateStats();
@@ -1199,6 +1217,8 @@ window.nextTurn = function() {
         }, Math.max(2000, totalWaitTime));
 
     } else {
+		const enemyL = globalLang.enemy_names || {};
+		const monsterNameTranslated = enemyL[monster.name] || monster.name;
         // --- CANAVAR SIRASI ---
         toggleSkillButtons(true); 
         showMonsterIntention(null); 
@@ -1256,7 +1276,7 @@ window.nextTurn = function() {
                                 // Yetenek İsmi Gösterimi
                                 const skillName = globalLang.enemy_skills[packet.id]?.name;
                                 if (skillName) {
-                                    writeLog(`⚠️ **${monster.name}**: ${skillName}!`);
+                                    writeLog(`⚠️ **${monsterNameTranslated}**: ${skillName}!`);
                                     showFloatingText(document.getElementById('monster-display'), skillName, 'skill');
                                 }
 
@@ -1314,6 +1334,7 @@ window.nextTurn = function() {
 
 // YARDIMCI FONKSİYONLAR:
 function handleMonsterDefend(attacker) {
+	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     const combatLang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
     
     // --- YENİ SİSTEM: SÜRE VE TAZELEME MANTIĞI ---
@@ -1326,7 +1347,15 @@ function handleMonsterDefend(attacker) {
     window.monsterDefenseTurns = 2; // 2 yapıyoruz ki canavarın turu bittiğinde 1 kalsın.
     
     showFloatingText(document.getElementById('monster-display'), combatLang.monster_defend_text, 'heal');
-    writeLog(`🛡️ **${attacker.name}**: ${combatLang.monster_log_defend} (+${window.monsterDefenseBonus} Defans, 2 Tur).`);
+    const enemyL = window.LANGUAGES[window.gameSettings.lang || 'tr'].enemy_names || {};
+	const monsterName = enemyL[attacker.name] || attacker.name;
+
+	const logDef = lang.combat.log_monster_defend
+    .replace("$1", monsterName)
+    .replace("$2", lang.combat.monster_log_defend)
+    .replace("$3", window.monsterDefenseBonus)
+    .replace("$4", "2 " + lang.turn_suffix); // "2 Tur" veya "2 Turns"
+	writeLog(logDef);
     
     updateStats();
     
