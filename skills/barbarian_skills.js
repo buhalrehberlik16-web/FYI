@@ -27,6 +27,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender) {
             // SkillEngine artık {total, phys, elem} paketi döner
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'Pommel_Bash';
             
 			const stats = getHeroEffectiveStats(); 
             showFloatingText(document.getElementById('hero-display'), "+12 Rage", 'heal');
@@ -55,6 +56,7 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'slash';
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'slash', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
@@ -80,6 +82,7 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'bash';
             if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
@@ -106,6 +109,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender) {
             // "Defansın %50'sini Yok Sayar" özel bir durumdur, dmgPack hesaplandıktan sonra müdahale edelim
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'pierce_through';
             
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             
@@ -141,6 +145,7 @@ const BARBARIAN_SKILLS = {
 			const currentLang = window.gameSettings.lang || 'tr';
 			const lang = window.LANGUAGES[currentLang];
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'daze';
             
             applyStatusEffect(defender,{ id: 'debuff_enemy_atk', name: lang.status.debuff_enemy_atk, value: 0.25, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'daze', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
@@ -171,6 +176,7 @@ const BARBARIAN_SKILLS = {
             
             // ignore_def aktif olduğu için SkillEngine targetDef'i 0 görecektir
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'armor_break';
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
     },
@@ -310,6 +316,7 @@ const BARBARIAN_SKILLS = {
             
             // 2. Hasar Paketini hesapla
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'reckless_strike';
             
             // 3. Ana saldırı animasyonunu başlat
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
@@ -398,6 +405,7 @@ const BARBARIAN_SKILLS = {
             hero.hp = Math.max(1, hero.hp - hpCost);
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'hell_blade';
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
         }
     },
@@ -714,7 +722,8 @@ const BARBARIAN_SKILLS = {
                 phys: hpSacrificed,
                 elem: 0
             };
-
+			dmgPack.skillKey = 'blood_terror';
+			
             // 4. Görsel Efekt: Karakteri kıpkırmızı parlat
             heroDisplayImg.style.filter = 'brightness(2) saturate(5) hue-rotate(-50deg) drop-shadow(0 0 20px red)';
             setTimeout(() => { heroDisplayImg.style.filter = 'none'; }, 600);
@@ -834,6 +843,7 @@ const BARBARIAN_SKILLS = {
         },
 		onCast: function(attacker, defender) {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'light_blade';
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'light_blade', turns: 1, maxTurns: 1, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }

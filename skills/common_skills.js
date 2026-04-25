@@ -19,7 +19,8 @@ const COMMON_SKILLS = {
             tier: 0
         },
         onCast: function() {
-            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            const currentLang = window.gameSettings.lang || 'tr';
+			const lang = window.LANGUAGES[currentLang]; 
             
             const usage = hero.skillUsage["rest"] || 1;
             const lastReduction = window.getExhaustionCost(this.data, usage - 1);
@@ -56,6 +57,7 @@ const COMMON_SKILLS = {
         onCast: function(attacker, defender) {
             // SkillEngine artık {total, phys, elem} paketi döner
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'cut';
             
             const stats = getHeroEffectiveStats(); 
             showFloatingText(document.getElementById('hero-display'), "+7 Rage", 'heal');
@@ -78,6 +80,7 @@ const COMMON_SKILLS = {
             tier: 1
         },
         onCast: function(attacker, defender) {
+			const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
             // --- YENİ HESAPLAMA SİSTEMİ ---
             const stats = getHeroEffectiveStats(); // Güncel INT değerini almak için stats'ı çağırıyoruz
             const reductionValue = Math.floor(stats.int * 0.25); // 0.25 x INT hesaplaması
@@ -98,7 +101,11 @@ const COMMON_SKILLS = {
             // Log mesajını dilden alarak yazdır
             const currentLang = window.gameSettings.lang || 'tr';
             const skillName = window.LANGUAGES[currentLang].skills.guard.name;
-            writeLog(`🛡️ **${skillName}**: Savunma pozisyonu alındı. Gelen hasar ${reductionValue} azalacak. (2 Tur)`);
+            const logGuard = lang.combat.log_guard_skill
+			.replace("$1", skillName)
+			.replace("$2", reductionValue)
+			.replace("$3", "2 " + lang.turn_suffix);
+				writeLog(logGuard);
             
             setTimeout(() => { nextTurn(); }, 1000);
         }
@@ -122,6 +129,7 @@ const COMMON_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'strike';
             
             const genRage = Math.floor(Math.random() * 10);
             const stats = getHeroEffectiveStats(); 
@@ -235,6 +243,7 @@ const COMMON_SKILLS = {
         onCast: function(attacker, defender) {
             // Önce normal paketimizi hesaplayalım
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'tactical_strike';
             
             // "10 Defansı Yok Sayar" mantığı: 
             // Eğer fiziksel hasar defansa takıldıysa (physRaw < def), aradaki kaybın 10 puanını geri verelim.
@@ -384,6 +393,7 @@ const COMMON_SKILLS = {
             
             // Önce ham paketi hesapla
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'willful_strike';
             
             // Tüm paketi öfke çarpanıyla güncelle
             dmgPack.total = Math.floor(dmgPack.total * multiplier);
