@@ -84,10 +84,11 @@
 }
 
 #combat-log-wrapper {
+	    position: absolute;
         width: 92% !important;
         max-width: 240px !important;
-        left: 29.2%;
-        top: 90px !important; /* Üst bara daha yakın */
+        left: 31.2cqw;
+        top: 23.2cqw !important; /* Üst bara daha yakın */
         border-radius: 4px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.8) !important;
 		transition: all 0.3s ease-in-out;
@@ -110,8 +111,9 @@
 
     /* Kapalı durumun mobilde sırıtmaması için ek önlem */
     #combat-log-wrapper.collapsed {
-		left: 25%;
-        width: 140px !important; /* Kapalıyken sadece başlık kadar daralsın */
+		position: absolute;
+		left: 23cqw;
+        width: 32cqw !important; /* Kapalıyken sadece başlık kadar daralsın */
     }
     
     #combat-log-wrapper.collapsed #combat-log-area {
