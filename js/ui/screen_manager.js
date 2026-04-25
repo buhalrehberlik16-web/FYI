@@ -76,8 +76,8 @@ window.writeLog = function(message) {
     if (!combatLogArea) return;
 
     // Sadece bu ikonlarla başlayan mesajları UI'a bas
-    const allowedIcons = ['⚔️', '⚠️', '✨', '📿', '🛡️', '🧪', '💥', '💀', '☣️', '🔥', '🩸'];
-    
+    const allowedIcons = ['⚔️', '⚠️', '✨', '📿', '🛡️', '🧪', '💥', '💀', '☣️', '🔥', '🩸', '🧘', '🩹', '💚']; 
+
     // Mesajın bu ikonlardan biriyle başlayıp başlamadığını kontrol et
     const shouldDisplay = allowedIcons.some(icon => message.trim().startsWith(icon));
 
