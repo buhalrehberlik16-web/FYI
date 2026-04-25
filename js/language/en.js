@@ -443,6 +443,11 @@ window.LANG_EN = {
 			log_brooch_stat: "📿 **Brooch**: Dealt $2 with $1 bonus.",
 			log_brooch_heal: "📿 **Brooch**: +$1 HP restored.",
 			log_brooch_resource: "📿 **Brooch**: +$1 $2 gained.",
+			log_status_gain: "✨ **$1**: gained $2 effect!",
+			log_monster_defend: "🛡️ **$1**: $2 (+$3 Defense, $4)",
+			log_guard_skill: "🛡️ **$1**: Defensive stance taken. Incoming damage reduced by $2. ($3)",
+			log_shield_absorb: "🛡️ **$1**'s defense absorbed the blow! (Shield Intact)",
+			log_minor_heal: "💚 **$1**: HP restored.",
         },
 		
 		status: {

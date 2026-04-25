@@ -445,6 +445,11 @@ window.LANG_TR = {
 			log_brooch_stat: "📿 **Broş**: $1 bonusuyla $2 vurdun.",
 			log_brooch_heal: "📿 **Broş**: +$1 HP yenilendi.",
 			log_brooch_resource: "📿 **Broş**: +$1 $2 kazanıldı.",
+			log_status_gain: "✨ **$1**: $2 etkisi kazandı!",
+			log_monster_defend: "🛡️ **$1**: $2 (+$3 Defans, $4)",
+			log_guard_skill: "🛡️ **$1**: Savunma pozisyonu alındı. Gelen hasar $2 azalacak. ($3)",
+			log_shield_absorb: "🛡️ **$1** savunması darbeyi emdi! (Kalkan Kırılmadı)",
+			log_minor_heal: "💚 **$1**: HP iyileşti.",
         },
 		
 		status: {
