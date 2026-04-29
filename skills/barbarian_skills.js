@@ -178,6 +178,7 @@ const BARBARIAN_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'armor_break';
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+			window.logSkillEffect('armor_break');
         }
     },
 
@@ -200,6 +201,7 @@ const BARBARIAN_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "HİDDET!", 'heal');
             setTimeout(() => { nextTurn(); }, 1000); 
+			window.logSkillEffect('fury');
         }
     },
 	rend: {
@@ -223,6 +225,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
             // 1. Ana darbeyi vur (Animasyon başlar - yaklaşık 450-600ms sürer)
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'rend';
 
             // 2. Kanama değerini hesapla
             const bleedAmount = Math.floor(dmgPack.total * 0.5);
@@ -278,7 +281,7 @@ const BARBARIAN_SKILLS = {
 
             showFloatingText(document.getElementById('hero-display'), hpLoss, 'damage');
             showFloatingText(document.getElementById('hero-display'), `+${hpLoss} Rage`, 'heal');
-            writeLog(`🩸 **Kan Bedeli**: ${hpLoss} Can feda ederek ${hpLoss} Öfke kazandın.`);
+            window.logSkillEffect('blood_price', hpLoss, hpLoss); 
 
             updateStats();
             // Hızlı aksiyon olduğu için nextTurn() çağrılmıyor, turu sana geri veriyoruz
@@ -309,6 +312,7 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+			const currentLang = window.gameSettings.lang || 'tr';
             
             // 1. Defansı 0 yapma etkisi (Mevcut)
             applyStatusEffect(hero, { id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
@@ -338,7 +342,9 @@ const BARBARIAN_SKILLS = {
                             turns: 2, 
                             resetOnCombatEnd: true 
                         });
-                        writeLog(`🩸 **Pervasızlık**: Hamlen geri tepti! Kendine ${selfBleedVal} kanama hasarı verdin.`);
+						const logMsg = lang.combat.log_bleed.replace("$1", selfBleedVal);
+						writeLog(logMsg);
+                        //writeLog(`🩸 **Pervasızlık**: Hamlen geri tepti! Kendine ${selfBleedVal} kanama hasarı verdin.`);
                     }
                 }, 800);
             }
@@ -377,6 +383,7 @@ const BARBARIAN_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "ALEVLENDİ!", 'heal');
             writeLog(`🔥 **Alevli Kılıç**: Silahın alev aldı! 3 tur boyunca %50 ekstra hasar vereceksin.`);
+			window.logSkillEffect('fiery_blade');
             
             setTimeout(nextTurn, 1000);
         }
@@ -459,6 +466,7 @@ const BARBARIAN_SKILLS = {
             
             showFloatingText(document.getElementById('hero-display'), hpLoss, 'damage');
             writeLog(`🩸 **${this.data.name}**: ${hpLoss} Can feda edilerek ${blockAmount} Blok kazanıldı.`);
+			window.logSkillEffect('blood_shield', hpLoss, blockAmount);
             updateStats();
 
             setTimeout(nextTurn, 1000);
@@ -487,6 +495,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
             // 1. Düşmana hasarı vur (Animasyonu başlat)
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
+			dmgPack.skillKey = 'double_blade';
 
             // 2. Geri Tepme (Recoil) Hesabı: Düşmana giden toplam hasarın %25'i
             const recoilDamage = Math.floor(dmgPack.total * 0.25);
@@ -529,6 +538,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
             // 1. Ana patlamayı vur
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'hell_fire';
 
             // 2. Yanma (Fire DoT) değerini hesapla (Vurulan toplam hasarın %50'si)
             const burnAmount = Math.floor(dmgPack.total * 0.5);
@@ -582,6 +592,7 @@ const BARBARIAN_SKILLS = {
             if ((hero.hp - oldHp) > 0) showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
             hero.statusEffects.push({ id: 'regen', name: 'Yenilenme', turns: 3, min: 10, max: 10, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', turns: 5, maxTurns: 5, blockedSkill: 'Cauterize', resetOnCombatEnd: true });
+			window.logSkillEffect('Cauterize', initialHeal);
             animateHealingParticles(); updateStats();
             setTimeout(() => { nextTurn(); }, 1000);
         }
@@ -611,6 +622,7 @@ const BARBARIAN_SKILLS = {
 
             // 1. Ana darbeyi vur
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'blood_lust';
 
             // 2. Anlık İyileşme (%50)
             const instantHeal = Math.floor(dmgPack.total * 0.50);
@@ -675,6 +687,7 @@ const BARBARIAN_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "LANETLENDİ!", 'damage');
             writeLog(`🩸 **${this.data.name}**: Tüm dirençlerini feda ederek kan sömürmeye başladın!`);
+			window.logSkillEffect('blood_mark');
             
             setTimeout(nextTurn, 1000);
         }
@@ -787,6 +800,7 @@ const BARBARIAN_SKILLS = {
         updateStats();
         showFloatingText(document.getElementById('hero-display'), "GÜÇ TOPLANIYOR!", 'heal');
         writeLog(`💨 **${this.data.name}**: Bir sonraki vuruşa +${dmgPack.total} güç eklendi.`);
+		window.logSkillEffect('wind_up', 15);
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
@@ -810,6 +824,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
             // Darbeyi vur
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'spirit_shield';
 
             // Ruh Kalkanı etkisini uygula (onHitRageGain'i geçici olarak artıran bir buff)
             applyStatusEffect(hero, { 
@@ -821,6 +836,7 @@ const BARBARIAN_SKILLS = {
             });
 
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'spirit_shield', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
+			window.logSkillEffect('spirit_shield');
         }
     },
 	// Tier 2
@@ -868,6 +884,7 @@ const BARBARIAN_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'battle_cry', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('hero-display'), `+${bonusStr} STR`, 'heal');
+			window.logSkillEffect('battle_cry', bonusStr);
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
@@ -910,6 +927,7 @@ const BARBARIAN_SKILLS = {
             }
 
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'scales_of_fate';
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'scales_of_fate', turns: 5, maxTurns: 5, resetOnCombatEnd: true });
         }
     },
@@ -940,6 +958,7 @@ const BARBARIAN_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "ARINDI!", 'heal');
             writeLog(`✨ **${this.data.name}**: 2 tur boyunca debuff almayacaksın.`);
+			window.logSkillEffect('sacred_will');
             setTimeout(nextTurn, 1000);
         }
     },
@@ -992,6 +1011,7 @@ const BARBARIAN_SKILLS = {
         animateHealingParticles(); 
         updateStats();
         writeLog(lang.combat.log_healing_light);
+		window.logSkillEffect('Healing_Light');
         setTimeout(() => { nextTurn(); }, 1000);
     }
 },
@@ -1037,6 +1057,7 @@ const BARBARIAN_SKILLS = {
                 }
                 
                 writeLog(`🗣️ **${this.data.name}**: ${monster.name} zırhına güvenerek öfkelendi! (+${bonusAtk} Atak)`);
+				window.logSkillEffect('provoke');
             }
 
             // 3. REGEN (İyileşme): INT değerinin %100'ü kadar 2 tur yenilenme
@@ -1113,6 +1134,7 @@ const BARBARIAN_SKILLS = {
 
             // 3. Saldırıyı gerçekleştir
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'celestial_judgement';
             
             if (totalEffects > 0) {
                 writeLog(`⚡ **${this.data.name}**: ${totalEffects} kutsal/lanetli bağ sayesinde hasar %${totalEffects * 20} arttı!`);
@@ -1175,11 +1197,13 @@ const BARBARIAN_SKILLS = {
                     resetOnCombatEnd: true 
                 });
                 writeLog(`💥 **${this.data.name}**: ${buffCount} Kutsallığı feda ettin! Hasar %${buffCount * 30} arttı.`);
+				window.logSkillEffect('spiritual_apocalypse');
             }
 
             // 5. Görsel Efekt: Ekranı mor bir parlama sarsın
             animateMonsterSkill(); // Mor parlama efektini burada hero için kullanalım
             animateCustomAttack(dmgPack, null, this.data.name);
+			dmgPack.skillKey = 'spiritual_apocalypse';
             
             updateStats();
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'spiritual_apocalypse', turns: 9, maxTurns: 9, resetOnCombatEnd: true });

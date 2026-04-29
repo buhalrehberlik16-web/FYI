@@ -21,6 +21,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Magic_Arrow';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -42,6 +43,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Mana_Blast';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -72,6 +74,7 @@ const MAGUS_SKILLS = {
             hero.rage = Math.min(stats.maxRage, hero.rage + dmgPack.total);
             showFloatingText(document.getElementById('hero-display'), `+${dmgPack.total} Mana`, 'heal');
             
+			dmgPack.skillKey = 'Drain';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -101,6 +104,7 @@ const MAGUS_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Arcane_Acuity', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "ODAKLANDI!", 'heal');
+			window.logSkillEffect('Arcane_Acuity');
             // Hızlı aksiyon olduğu için turu bitirme, kontrolü oyuncuya ver
             setTimeout(() => { window.isHeroTurn = true; toggleSkillButtons(false); }, 300);
         }
@@ -123,6 +127,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Arcane_Explosion';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -149,6 +154,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Fire_Bolt';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -183,6 +189,7 @@ const MAGUS_SKILLS = {
                 resetOnCombatEnd: true 
             });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Zap', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+			dmgPack.skillKey = 'Zap';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -208,6 +215,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Water_Whip';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -229,6 +237,7 @@ const MAGUS_SKILLS = {
             const blockAmount = Math.floor(stats.mp_pow * 2);
             if(typeof addHeroBlock === 'function') addHeroBlock(blockAmount);
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Ice_Shield', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+			window.logSkillEffect('Ice_Shield', blockAmount);
             updateStats();
             setTimeout(nextTurn, 1000);
         }
@@ -253,6 +262,7 @@ const MAGUS_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Crystalised_Mana', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             updateStats();
             writeLog("💎 **Mana Kristali**: 2 tur sonra büyük miktarda mana açığa çıkacak.");
+			window.logSkillEffect('Crystalised_Mana');
             setTimeout(nextTurn, 1000);
         }
     },
@@ -278,6 +288,7 @@ const MAGUS_SKILLS = {
             // Düşman atağını %50 kır
             applyStatusEffect(monster, { id: 'debuff_enemy_atk', name: "Sıkışmış", value: 0.50, turns: 4, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Water_Snare', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+			dmgPack.skillKey = 'Water_Snare';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -313,6 +324,7 @@ const MAGUS_SKILLS = {
             dynamicScaling.elemental[targetType] = { stat: "mp_pow", statMult: 2.5 };
             
             const dmgPack = SkillEngine.calculate(hero, { scaling: dynamicScaling }, defender);
+			dmgPack.skillKey = 'Chaos_Rain';
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Chaos_Rain', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, null, this.data.name);
         }
@@ -344,6 +356,7 @@ const MAGUS_SKILLS = {
             updateStats();
             showFloatingText(document.getElementById('hero-display'), `+${manaGain} Mana`, 'heal');
             writeLog(`🧘 **Meditasyon**: ${manaGain} Mana kazanıldı.`);
+			window.logSkillEffect('Meditate', manaGain);
             setTimeout(nextTurn, 1000);
         }
     },
@@ -365,6 +378,7 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			dmgPack.skillKey = 'Thorn_Whip';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
@@ -386,7 +400,7 @@ const MAGUS_SKILLS = {
             // HP Regen (Stat id: regen) ve Mana Regen (Stat id: rage_regen_buff) uygula
             applyStatusEffect(hero, { id: 'regen', name: "Gençleşme", value: stats.int, turns: 4, resetOnCombatEnd: true });
             applyStatusEffect(hero, { id: 'rage_regen_buff', name: "Doğa Gücü", value: Math.floor(stats.int * 1.5), turns: 4, resetOnCombatEnd: true });
-            
+            window.logSkillEffect('Rejuvanate');
             updateStats();
             setTimeout(nextTurn, 1000);
         }
@@ -414,6 +428,7 @@ const MAGUS_SKILLS = {
             applyStatusEffect(defender, { id: 'debuff_enemy_atk', value: 0.5, turns: 4, resetOnCombatEnd: true });
             applyStatusEffect(defender, { id: 'debuff_enemy_def', value: 0.5, turns: 4, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Natures_Wrath', turns: 8, maxTurns: 8, resetOnCombatEnd: true });
+			dmgPack.skillKey = 'Natures_Wrath';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     }

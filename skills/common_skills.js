@@ -98,14 +98,7 @@ const COMMON_SKILLS = {
             isHeroDefending = true;
             updateStats();
             
-            // Log mesajını dilden alarak yazdır
-            const currentLang = window.gameSettings.lang || 'tr';
-            const skillName = window.LANGUAGES[currentLang].skills.guard.name;
-            const logGuard = lang.combat.log_guard_skill
-			.replace("$1", skillName)
-			.replace("$2", reductionValue)
-			.replace("$3", "2 " + lang.turn_suffix);
-				writeLog(logGuard);
+            window.logSkillEffect('guard', reductionValue);
             
             setTimeout(() => { nextTurn(); }, 1000);
         }
@@ -163,7 +156,8 @@ const COMMON_SKILLS = {
             const skillName = lang.skills.block.name;
             const logMsg = currentLang === 'tr' ? "kazandın." : "gained.";
             const blockLabel = lang.combat.f_block.replace('!', '');
-
+			
+			window.logSkillEffect('block', blockVal);
             writeLog(`🧱 **${skillName}**: ${blockVal} ${blockLabel} ${logMsg}`);
             
             setTimeout(() => { nextTurn(); }, 1000);
@@ -192,7 +186,7 @@ const COMMON_SKILLS = {
             updateStats(); 
             showFloatingText(document.getElementById('hero-display'), (hero.hp - oldHp), 'heal');
             animateHealingParticles();
-            writeLog(`💚 **${this.data.name}**: HP iyileşti.`);
+            window.logSkillEffect('minor_healing', (hero.hp - oldHp));
             setTimeout(() => { nextTurn(); }, 1500);
         }
     },
@@ -219,6 +213,7 @@ const COMMON_SKILLS = {
 			applyStatusEffect(defender, { id: 'debuff_enemy_def', name: 'Düşman Savunmasız', value: 0.50, turns: 3, waitForCombat: false, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "ZAYIFLADI!", 'damage');
+			window.logSkillEffect('distract');
             setTimeout(() => {  window.isHeroTurn = true; toggleSkillButtons(false); }, 300); 
         }
     },
@@ -279,6 +274,7 @@ const COMMON_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'sharpen', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('hero-display'), "KESKİNLEŞTİ!", 'heal');
+			window.logSkillEffect('sharpen');
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
@@ -302,6 +298,7 @@ const COMMON_SKILLS = {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'curse', turns: 10, maxTurns: 10, resetOnCombatEnd: true });
             updateStats();
             showFloatingText(document.getElementById('monster-display'), "LANETLENDİ!", 'damage'); 
+			window.logSkillEffect('curse');
             setTimeout(() => { nextTurn(); }, 1000); 
         }
     },
