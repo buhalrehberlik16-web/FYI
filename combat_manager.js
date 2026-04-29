@@ -233,6 +233,28 @@ window.refreshSkillExhaustionBadges = function() {
     }
 };
 
+// 1. Mevcut dili ve sözlüğü getiren kısaltma
+window.getCombatLang = () => window.LANGUAGES[window.gameSettings.lang || 'tr'];
+// 2. Yetenek ismini veya log şablonunu güvenli çeviren yardımcı
+window.getSkillTrans = (skillKey) => {
+    const lang = window.getCombatLang();
+    return (lang.skills && lang.skills[skillKey]) ? lang.skills[skillKey] : { name: skillKey, log: "" };
+};
+
+window.logSkillEffect = function(skillKey, val1 = "", val2 = "") {
+    const lang = window.getCombatLang();
+    const skillData = window.getSkillTrans(skillKey);
+    
+    // Eğer dil dosyasında bu yeteneğe özel bir 'log' şablonu varsa onu kullan
+    if (skillData.log) {
+        const msg = skillData.log.replace("$1", val1).replace("$2", val2);
+        writeLog(`✨ **${skillData.name}**: ${msg}`);
+    } else {
+        // Yoksa genel şablonu bas
+        writeLog(lang.combat.log_skill_generic.replace("$1", skillData.name).replace("$2", val1));
+    }
+};
+
 // --- EFEKTİF STAT HESAPLAMA (GÜNCEL SÜRÜM) ---
 window.getHeroEffectiveStats = function() {
     // 1. TEMEL DEĞERLERİ HAZIRLA
