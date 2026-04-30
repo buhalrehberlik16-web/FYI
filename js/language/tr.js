@@ -334,6 +334,14 @@ window.LANG_TR = {
 			"Kobold Devriye": "Kobold Devriye",
 			"Treant Sapling": "Ağaç Fidanı",
 			"Haydut Devriye": "Haydut Devriye",
+			"Goblin Şaman": "Goblin Şaman",
+			"Haydut Okçu": "Haydut Okçu",
+			"Boz Ayı": "Boz Ayı",
+			"Treant": "Treant",
+			"Canavar Tohum": "Canavar Tohum",
+			"Kadim Mantar": "Kadim Mantar",
+			"Ejderkelam": "Ejderkelam",
+			"Çamur Golem": "Çamur Golem",
         },
 		
 		enemy_effects: {

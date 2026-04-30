@@ -330,6 +330,14 @@ window.LANG_EN = {
 			"Kobold Devriye": "Kobold Patrol",
 			"Treant Sapling": "Treant Sapling",
 			"Haydut Devriye": "Highwayman Patrol",
+			"Goblin Şaman": "Goblin Shaman",
+			"Haydut Okçu": "Highwayman Archer",
+			"Boz Ayı": "Grizzly Bear",
+			"Treant": "Treant",
+			"Canavar Tohum": "Trap Seed",
+			"Kadim Mantar": "Ancient Shroom",
+			"Ejderkelam": "Dragonkin Speaker",
+			"Çamur Golem": "Clay Golem",
         },
 		
 		enemy_effects: {
