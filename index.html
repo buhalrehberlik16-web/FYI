@@ -239,6 +239,10 @@
 
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
+				<div id="battle-screen" ...>
+			<div id="combat-log-trigger" onclick="window.enableAndOpenCombatLog()">
+				<i class="fas fa-chevron-right"></i>
+			</div>
 				<div id="combat-log-wrapper" class="collapsed">
 			<div id="combat-log-header" onclick="toggleCombatLog()">
 				<span data-i18n="combat_log_title">SAVAŞ GÜNLÜĞÜ</span>
@@ -1091,6 +1095,14 @@
 			<label data-i18n="setting_show_notifs">BİLDİRİMLER</label>
 			<label class="switch">
 				<input type="checkbox" id="setting-notif-toggle" onchange="window.setNotificationToggle(this.checked)">
+				<span class="slider round"></span>
+			</label>
+		</div>
+		
+		<div class="setting-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+			<label data-i18n="setting_combat_log">SAVAŞ GÜNLÜĞÜ</label>
+			<label class="switch">
+				<input type="checkbox" id="setting-log-toggle" onchange="window.setCombatLogSetting(this.checked)">
 				<span class="slider round"></span>
 			</label>
 		</div>
