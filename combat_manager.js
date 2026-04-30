@@ -964,6 +964,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     }
 	
 	let scaling = 1.0;
+	const lang = window.getCombatLang();
     // Data-driven kontrol
     if (stats.isBoss) {
         scaling = window.EventManager.getModifier('boss_scaling');
@@ -1085,6 +1086,7 @@ window.nextTurn = function() {
     const globalLang = window.LANGUAGES[currentLangCode]; 
     const combatLang = globalLang.combat; 
     const classRules = CLASS_CONFIG[hero.class];
+	const lang = window.getCombatLang();
     
     if (window.isHeroTurn) {
 		const stats = getHeroEffectiveStats(); // Güncel çarpanları al
@@ -1161,7 +1163,9 @@ window.nextTurn = function() {
 
             const arenaCenter = document.getElementById('arena-center-notif');
             writeLog(globalLang.log_forced_rest.replace("$1", (exChange >= 0 ? "+" + exChange : exChange)));
-            setTimeout(showFloatingText(arenaCenter, globalLang.exhaustion_out_of_breath, 'damage'), 1500);
+            setTimeout(() => { 
+				showFloatingText(arenaCenter, globalLang.exhaustion_out_of_breath, 'damage');
+				}, 1500);
             
             updateStats();
             window.updateExhaustionUI();
@@ -1220,7 +1224,7 @@ window.nextTurn = function() {
                     hero.hp = Math.max(0, hero.hp - effect.value);
                     showFloatingText(heroDisplayContainer, effect.value, 'damage');
                     // --- GÜNCELLEME ---
-					const lang = window.getCombatLang();
+					//const lang = window.getCombatLang();
 					const icon = window.getDotIcon(effect.id);
 					const logMsg = lang.combat.log_dot_hit
 						.replace("$1", icon)
