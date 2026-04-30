@@ -5,10 +5,26 @@ window.gameSettings = {
     resolution: localStorage.getItem('game_res') || 'fit',
     // Varsayılan olarak true (açık) kabul et
     showNotifs: localStorage.getItem('game_notifs') !== 'false', 
-	showImpacts: localStorage.getItem('game_impacts') !== 'false'
+	showImpacts: localStorage.getItem('game_impacts') !== 'false',
+	showLog: localStorage.getItem('game_log_visible') !== 'false' // Varsayılan true
 };
 
 window.applySettings = function() {
+	
+	const logToggle = document.getElementById('setting-log-toggle');
+	if (logToggle) logToggle.checked = window.gameSettings.showLog;
+
+	const logWrapper = document.getElementById('combat-log-wrapper');
+	const logTrigger = document.getElementById('combat-log-trigger');
+
+	if (window.gameSettings.showLog) {
+		if(logWrapper) logWrapper.style.display = "block";
+		if(logTrigger) logTrigger.style.display = "none";
+	} else {
+		if(logWrapper) logWrapper.style.display = "none";
+		if(logTrigger) logTrigger.style.display = "flex"; // Kapalıysa ok görünsün
+	}
+	
     // 1. Dili Uygula
     localStorage.setItem('game_lang', window.gameSettings.lang);
     document.documentElement.lang = window.gameSettings.lang;
@@ -88,4 +104,25 @@ function updateUITexts() {
 window.setImpactEffectsToggle = function(val) {
     window.gameSettings.showImpacts = val;
     localStorage.setItem('game_impacts', val);
+};
+window.setCombatLogSetting = function(val) {
+    window.gameSettings.showLog = val;
+    localStorage.setItem('game_log_visible', val);
+    window.applySettings(); // UI'ı tazele
+};
+window.enableAndOpenCombatLog = function() {
+    // 1. Ayarı kalıcı olarak true yap (Settings'deki toggle da otomatik güncellenir)
+    window.setCombatLogSetting(true);
+    
+    // 2. Log kutusunun 'collapsed' sınıfını silerek açık gelmesini sağla
+    const wrapper = document.getElementById('combat-log-wrapper');
+    if (wrapper) {
+        wrapper.classList.remove('collapsed');
+    }
+    
+    const lang = window.getCombatLang();
+    
+    if (lang && lang.combat && lang.combat.log_combat_log_enabled) {
+        writeLog(lang.combat.log_combat_log_enabled);
+    }
 };
