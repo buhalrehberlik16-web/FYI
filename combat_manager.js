@@ -1033,9 +1033,11 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
 	if (isHalfTierFromMap) {
+		const lang = window.getCombatLang();
         writeLog(lang.combat.log_half_tier_buff);
     }
     if (isHardFromMap && !isHalfTierFromMap) {
+		const lang = window.getCombatLang();
         writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
     }
 	
