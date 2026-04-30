@@ -572,3 +572,26 @@
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
+#combat-log-trigger {
+    position: absolute;
+    left: 0;
+    top: 55px; /* Üst barın hizasında */
+    background: rgba(107, 92, 59, 0.8);
+    color: #f0e68c;
+    width: 30px;
+    height: 40px;
+    display: none; /* Başlangıçta gizli */
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    z-index: 1100;
+    border: 1px solid #6b5c3b;
+    border-left: none;
+    transition: all 0.2s;
+}
+
+#combat-log-trigger:hover {
+    background: #5d4a30;
+    width: 35px;
+}
