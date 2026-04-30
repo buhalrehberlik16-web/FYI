@@ -12,7 +12,9 @@ window.isHeroTurn = false;
 
 window.applyStatusEffect = function(target, newEffect) {
     const isTargetHero = (target === hero);
-	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr']; // Dili al
+	const currentLang = window.gameSettings.lang || 'tr';
+	const lang = window.getCombatLang();
+
     
     // --- KRİTİK FİX: İsim eksikse dil dosyasından tamamla ---
     if (!newEffect.name) {
@@ -27,13 +29,15 @@ window.applyStatusEffect = function(target, newEffect) {
         // (Buffları ve DoT hasar artışlarını engellememesi için id kontrolü yapılır)
         const debuffIds = ['stun', 'atk_half', 'debuff_webbed', 'poison', 'defense_zero', 'curse_damage'];
         if (hasImmunity && debuffIds.includes(newEffect.id)) {
-            writeLog(`🛡️ **Bağışıklık**: ${newEffect.name} etkisi savuşturuldu!`);
+            writeLog(lang.combat.log_immunity.replace("$1", newEffect.name));
             return; // Etkiyi uygulamadan çık
         }
     }
 	
     const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
 
+	const targetName = isTargetHero ? hero.class : window.getEnemyNameTrans(target.name);
+	
     if (existingIndex !== -1) {
         const existing = target.statusEffects[existingIndex];
         
@@ -41,7 +45,8 @@ window.applyStatusEffect = function(target, newEffect) {
         if (newEffect.id === 'poison') {
             existing.value += newEffect.value;
             existing.turns += newEffect.turns;
-            writeLog(`☣️ **${isTargetHero ? 'Zehir' : 'Düşman Zehiri'}** etkisi şiddetlendi! (Yeni Hasar: ${existing.value})`);
+            const pName = isTargetHero ? lang.status.poison : (lang.enemy_names.poison || "Poison");
+			writeLog(lang.combat.log_poison_intense.replace("$1", pName).replace("$2", existing.value));
         } 
         // --- SİPER: SADECE TAZELEME YAPAR (YENİ MANTIK) ---
         else if (newEffect.id === 'guard_active') {
@@ -51,7 +56,7 @@ window.applyStatusEffect = function(target, newEffect) {
             existing.value = newEffect.value; // Üzerine ekleme yapma, güncel formül değerini yaz
             existing.turns = newEffect.turns; // Süreyi de en baştan başlat (Tazele)
             
-            writeLog(`🛡️ **${existing.name}** etkisi yenilendi. (+${existing.value} Savunma)`);
+            writeLog(lang.combat.log_status_refresh.replace("$1", "").replace("$2", existing.name));
         }
         // --- DİĞER ETKİLER: MEVCUT MANTIĞI KORU ---
         else {
@@ -59,12 +64,13 @@ window.applyStatusEffect = function(target, newEffect) {
             if (newEffect.value !== undefined) {
                 existing.value = Math.max(existing.value, newEffect.value);
             }
-            writeLog(`✨ **${isTargetHero ? '' : target.name + ': '}** **${existing.name}** etkisi yenilendi.`);
+            const tName = isTargetHero ? "" : (window.getEnemyNameTrans(target.name) + ": ");
+			writeLog(lang.combat.log_status_refresh.replace("$1", `**${targetName}**`).replace("$2", existing.name));
         }
     } else {
         target.statusEffects.push(newEffect);
         if (target !== hero) {
-            const currentLang = window.gameSettings.lang || 'tr';
+            const lang = window.getCombatLang(); // Merkezi fonksiyonu kullan
             const statusName = window.LANGUAGES[currentLang].status[newEffect.id] || newEffect.id;
 			const langRoot = window.LANGUAGES[currentLang]; // Kök objeyi al
             const targetName = (langRoot.enemy_names || {})[target.name] || target.name;
@@ -239,6 +245,16 @@ window.getCombatLang = () => window.LANGUAGES[window.gameSettings.lang || 'tr'];
 window.getSkillTrans = (skillKey) => {
     const lang = window.getCombatLang();
     return (lang.skills && lang.skills[skillKey]) ? lang.skills[skillKey] : { name: skillKey, log: "" };
+};
+// --- EKLE: Bu fonksiyon eksik olduğu için hata alıyordun ---
+window.getEnemyNameTrans = (rawName) => {
+    const lang = window.getCombatLang();
+    const enemyL = lang.enemy_names || {};
+    return enemyL[rawName] || rawName;
+};
+window.getDotIcon = (effectId) => {
+    const icons = { poison: '☣️', fire: '🔥', bleed: '🩸', curse: '💀', cold: '❄️', lightning: '⚡' };
+    return icons[effectId] || '✨';
 };
 
 window.logSkillEffect = function(skillKey, val1 = "", val2 = "") {
@@ -608,7 +624,9 @@ window.handleSkillUse = function(skillKey) {
 
     // 1. Maliyet kontrolü
     if (hero.rage < (skillObj.data.rageCost || 0)) { 
-        writeLog(`❌ Yetersiz Öfke!`); return; 
+        const resName = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
+		writeLog(lang.combat.log_insufficient_resource.replace("$1", resName)); 
+		return; 
     }
 
     window.isHeroTurn = false; 
@@ -685,7 +703,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
 				
 				// --- YENİ: ZIRH DELME LOGU ---
 				if (hero.statusEffects.some(e => e.id === 'ignore_def' && !e.waitForCombat)) {
-				writeLog(`🔨 **Zırh Delme**: Düşmanın savunması yok sayıldı!`);
+				writeLog(lang.combat.log_armor_pierce);
 				}
 
                 // --- ÖFKE BİRLEŞTİRME VE HESAPLAMA (MERKEZİ) ---
@@ -730,7 +748,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                         hero.sessionLifeStolen = (hero.sessionLifeStolen || 0) + stolen;
                         
                         showFloatingText(heroDisplayContainer, stolen, 'heal');
-                        writeLog(`🩸 **Blood Mark**: ${stolen} can sömürdün! (Toplam: ${hero.sessionLifeStolen})`);
+                        writeLog(lang.combat.log_blood_mark_drain.replace("$1", stolen).replace("$2", hero.sessionLifeStolen));
                     }
                 }
                 
@@ -886,7 +904,9 @@ writeLog(logMsg);
 			if (window.monsterDefenseTurns === 0) {
 				window.isMonsterDefending = false;
 				window.monsterDefenseBonus = 0;
-				writeLog(`🛡️ **${monster.name}** savunma duruşunu bozdu.`);
+				const langInner = window.getCombatLang(); 
+				const mName = window.getEnemyNameTrans(monster.name);
+				writeLog(langInner.combat.log_shield_end.replace("$1", mName));
 			}
 		}
         
@@ -950,10 +970,10 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 		// Log Mesajı
     if (scaling > 1) {
         const percent = Math.round((scaling - 1) * 100);
-        writeLog(`⚠️ Boss Karanlık Zamanın Etkisiyle %${percent} GÜÇLENDİ!`);
+        writeLog(lang.combat.log_boss_buff.replace("$1", percent));
     } else if (scaling < 1) {
         const percent = Math.round((1 - scaling) * 100);
-        writeLog(`✨ Hazırlıksız Yakalandı! Boss normalden %${percent} daha ZAYIF.`);
+        writeLog(lang.combat.log_boss_weak.replace("$1", percent));
     }
     }
 	
@@ -1013,17 +1033,17 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
 	if (isHalfTierFromMap) {
-        writeLog(`⚠️ **Takviyeli Düşman**: Statlar %50 arttırıldı!`);
+        writeLog(lang.combat.log_half_tier_buff);
     }
     if (isHardFromMap && !isHalfTierFromMap) {
-        writeLog(`⚔️ **Güçlü Düşman**: ${monster.name} hasarı ve canı %25 arttı!`);
+        writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
     }
 	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
     const bonus = window.EventManager.getCombatBonus();
     hero.rage = Math.min(hero.maxRage, hero.rage + bonus.rage);
 
-    if (scaling > 1) writeLog(`⚠️ Boss Karanlık Zamanın Etkisiyle Güçlendi! (x${scaling.toFixed(2)})`);
+    if (scaling > 1) writeLog(lang.combat.log_boss_scaling.replace("$1", scaling.toFixed(2)));
 	
 	const classRules = CLASS_CONFIG[hero.class];
     monsterDisplayImg.style.filter = 'none'; 
@@ -1046,11 +1066,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     updateStats(); initializeSkillButtons();
     
     setTimeout(() => { 
+	const lang = window.getCombatLang(); // Güvenli tanım
         determineMonsterAction(); 
         showMonsterIntention(window.monsterNextAction); 
         window.isHeroTurn = true; 
         toggleSkillButtons(false); 
-        writeLog(`**Dövüş Başladı**: ${monster.name} ile karşı karşıyasın!`);
+        writeLog(lang.combat.log_battle_start.replace("$1", window.getEnemyNameTrans(monster.name)));
     }, 100);
 };
 
@@ -1075,7 +1096,7 @@ window.nextTurn = function() {
 				const logMsg = combatLang.log_mp_regen
 					.replace("$1", stats.rageRegen)
 					.replace("$2", resLabel);
-				writeLog(logMsg);
+				writeLog(`✨ ${hero.class}: ${logMsg}`);
 			}
 		}
 
@@ -1089,7 +1110,7 @@ window.nextTurn = function() {
         if (bm && window.combatTurnCount > 6) {
             bm.value = Math.max(0, bm.value - 0.05); 
             if (bm.value > 0) {
-                writeLog(`📉 **Blood Mark**: Kan damgası zayıflıyor... (Yeni Oran: %${Math.round(bm.value * 100)})`);
+                writeLog(lang.combat.log_blood_mark_decay.replace("$1", Math.round(bm.value * 100)));
             }
         }
 		
@@ -1156,7 +1177,7 @@ window.nextTurn = function() {
 			const resLabel = globalLang[`resource_${classRules.resourceName}`]; 
 			hero.rage = Math.min(stats.maxRage, hero.rage + crystalEffect.value);
 			showFloatingText(heroDisplayContainer, `+${crystalEffect.value} ${resLabel}`, 'heal');
-			writeLog(`💎 **${crystalEffect.name}**: ${crystalEffect.value} ${resLabel} açığa çıktı!`);
+			writeLog(lang.combat.log_crystal_burst.replace("$1", crystalEffect.name).replace("$2", crystalEffect.value).replace("$3", resLabel));
 			updateStats();
 		}
 		
@@ -1168,7 +1189,7 @@ window.nextTurn = function() {
             hero.hp = Math.min(stats.maxHp, hero.hp + healAmount); 
             if (hero.hp > oldHp) {
                 showFloatingText(heroDisplayContainer, (hero.hp - oldHp), 'heal'); 
-                writeLog(`✨ **${effect.name}**: ${hero.hp - oldHp} HP yenilendi.`);
+                writeLog(lang.combat.log_regen_tick.replace("$1", effect.name).replace("$2", hero.hp - oldHp));
             }
         });
 
@@ -1196,7 +1217,16 @@ window.nextTurn = function() {
                 setTimeout(() => {
                     hero.hp = Math.max(0, hero.hp - effect.value);
                     showFloatingText(heroDisplayContainer, effect.value, 'damage');
-                    writeLog(`${effect.name}: -${effect.value} HP`);
+                    // --- GÜNCELLEME ---
+					const lang = window.getCombatLang();
+					const icon = window.getDotIcon(effect.id);
+					const logMsg = lang.combat.log_dot_hit
+						.replace("$1", icon)
+						.replace("$2", hero.class) // Barbar, Magus vb.
+						.replace("$3", effect.name)
+						.replace("$4", effect.value);
+					writeLog(logMsg);
+					// ------------------
                     animateDamage(true); 
                     updateStats();
                 }, idx * 400);
@@ -1255,7 +1285,17 @@ window.nextTurn = function() {
                     setTimeout(() => {
                         monster.hp = Math.max(0, monster.hp - effect.value);
                         showFloatingText(document.getElementById('monster-display'), effect.value, 'damage');
-                        writeLog(`🩸 **${monster.name}**: ${effect.name} (-${effect.value} HP)`);
+                        // --- GÜNCELLEME ---
+						const lang = window.getCombatLang();
+						const icon = window.getDotIcon(effect.id);
+						const monsterName = window.getEnemyNameTrans(monster.name);
+						const logMsg = lang.combat.log_dot_hit
+							.replace("$1", icon)
+							.replace("$2", monsterName)
+							.replace("$3", effect.name)
+							.replace("$4", effect.value);
+						writeLog(logMsg);
+						// ------------------
                         updateStats();
                     }, index * 300); 
                 });
@@ -1338,7 +1378,10 @@ window.nextTurn = function() {
 										if (window.monsterDefenseTurns === 0) {
 										window.isMonsterDefending = false;
 										window.monsterDefenseBonus = 0;
-										writeLog(`🛡️ **${monster.name}** savunma duruşunu bozdu.`);
+										// --- HATA FİX: Dili burada tekrar tanımla ---
+										const langInner = window.getCombatLang(); 
+										const mName = window.getEnemyNameTrans(monster.name);
+										writeLog(langInner.combat.log_shield_end.replace("$1", mName));
 											}
 											}
                                     window.isHeroTurn = true;
@@ -1402,9 +1445,10 @@ window.animateMonsterSkill = function() {
 
 
 window.checkGameOver = function() {
+	const lang = window.getCombatLang(); // <-- BU SATIRI EKLE
     if (hero.hp <= 0) { 
 		const classRules = CLASS_CONFIG[hero.class];
-        writeLog("💀 **Yenilgi**: Canın tükendi...");
+        writeLog(lang.combat.log_defeat);
         hero.hp = 0; updateStats(); heroDisplayImg.src = classRules.visuals.dead; 
 		
 		// --- PERMADEATH: KAYDI SİL ---
@@ -1422,7 +1466,7 @@ window.checkGameOver = function() {
         return true; 
     }
     if (monster && monster.hp <= 0) {
-        writeLog(`🏆 **Zafer**: ${monster.name} alt edildi!`);
+        writeLog(lang.combat.log_victory.replace("$1", window.getEnemyNameTrans(monster.name)));
         monster.hp = 0; updateStats(); 
         monsterDisplayImg.src = `images/${monster.dead}`; 
         monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)'; 
@@ -1430,7 +1474,7 @@ window.checkGameOver = function() {
 		// EN YÜKSEK TIER GÜNCELLEME
     if (monster.tier > hero.highestTierDefeated) {
         hero.highestTierDefeated = monster.tier;
-        writeLog(`🌟 **Yeni Tehdit Seviyesi**: Dükkanlar artık Tier ${hero.highestTierDefeated} ürünler getirebilir!`);
+        writeLog(lang.combat.log_new_tier.replace("$1", hero.highestTierDefeated));
     }
         
         const rewards = window.LootManager.generateLoot(monster);
@@ -1438,7 +1482,7 @@ window.checkGameOver = function() {
 		// --- YENİ: EVENT BONUS ALTIN KONTROLÜ ---
         if (hero.eventBonusGold) {
             rewards.push({ type: 'gold', value: hero.eventBonusGold });
-            writeLog(`👦 Çocuk sana teşekkür ederek ${hero.eventBonusGold} altın verdi!`);
+            writeLog(lang.combat.log_event_gold.replace("$1", hero.eventBonusGold));
             hero.eventBonusGold = 0; // Bonusu sıfırla
         }
 		
@@ -1451,7 +1495,7 @@ window.checkGameOver = function() {
             
             if (hpReward > 0) {
                 hero.permanentHpBonus = (hero.permanentHpBonus || 0) + hpReward;
-                writeLog(`💎 **Ruh Hasadı**: Çaldığın kanın bir kısmı özüne karıştı! Kalıcı **+${hpReward} Max HP** kazandın.`);
+                writeLog(lang.combat.log_permanent_hp.replace("$1", hpReward));
                 
                 // Karakterin mevcut canını da artan Max HP kadar iyileştirebiliriz (Opsiyonel)
                 hero.hp += hpReward;
