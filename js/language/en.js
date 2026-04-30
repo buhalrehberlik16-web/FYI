@@ -115,6 +115,7 @@ window.LANG_EN = {
 		loot_full_msg:"There are rewards left on the ground! Are you sure you want to leave without them?",
 		setting_show_notifs: "POINT NOTIFICATIONS",
 		setting_impact_effects: "IMPACT EFFECTS",
+		setting_combat_log: "COMBAT LOG",
 		rest_alert_msg: "You rest through the night, and your exhaustion decreases by 60.",
 		drink_alert_msg: "You take a break and quench your thirst, your exhaustion decreases by 25.",
 
@@ -472,6 +473,7 @@ window.LANG_EN = {
 			log_new_tier: "🌟 **New Threat Level**: Shops can now stock Tier $1 items!",
 			log_event_gold: "👦 The child thanked you and gave you $1 gold!",
 			log_permanent_hp: "💎 **Soul Harvest**: Part of the blood you stole merged with your soul! Gained permanent **+$1 Max HP**.",
+			log_combat_log_enabled: "✨ **Combat Log**: Enabled via settings.",
         },
 		
 		status: {

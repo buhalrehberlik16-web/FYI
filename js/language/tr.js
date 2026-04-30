@@ -114,6 +114,7 @@ window.LANG_TR = {
 		loot_full_msg: "Yerde ödüllerin var! Onları almadan gitmek istediğine emin misin?",
 		setting_show_notifs: "PUAN BİLDİRİMLERİ",
 		setting_impact_effects: "VURUŞ EFEKTLERİ",
+		setting_combat_log: "SAVAŞ GÜNLÜĞÜ",
 		rest_alert_msg: "Gece boyu dinleniyorsun ve yorgunluk değerin 60 azalıyor.",
 		drink_alert_msg: "Biraz ara veriyorsun ve susuzluğunu gideriyorsun yorgunluk değerin 25 azalıyor.",
 
@@ -474,6 +475,7 @@ window.LANG_TR = {
 			log_new_tier: "🌟 **Yeni Tehdit Seviyesi**: Dükkanlar artık Seviye $1 ürünler getirebilir!",
 			log_event_gold: "👦 Çocuk sana teşekkür ederek $1 altın verdi!",
 			log_permanent_hp: "💎 **Ruh Hasadı**: Çaldığın kanın bir kısmı özüne karıştı! Kalıcı **+$1 Max HP** kazandın.",
+			log_combat_log_enabled: "✨ **Savaş Günlüğü**: Ayarlar üzerinden aktif edildi.",
         },
 		
 		status: {
