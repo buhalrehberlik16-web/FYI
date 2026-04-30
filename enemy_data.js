@@ -479,6 +479,172 @@ window.ENEMY_STATS = {
 			//Def Up
         ]
     },
+	"Goblin Şaman": { 
+        tribe: "Greenskins",
+        maxHp: 80, attack: 30, defense: 10, xp: 0, tier: 3, 
+        idle: 'enemies/goblin_shaman_idle.webp',
+        attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
+        dead: 'enemies/goblin_shaman_dead.webp',
+        skills: [ 
+			{ 
+                id: "spirit_mend", 
+                template: "self_buff", 
+                category: "buff",
+                subtype: "heal", 
+                value: 0.10, 
+                textKey: "regrow" 
+            },
+            { 
+                id: "totem_curse", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "curse", 
+                value: 5, 
+                duration: 3, 
+                textKey: "cursed" 
+            }
+		//No Basic, Curse&Lightning
+        ]
+    },
+	"Haydut Okçu": { 
+        tribe: "Humans",
+        maxHp: 80, attack: 30, defense: 13, xp: 0, tier: 3, 
+        idle: 'enemies/highwayman_archer.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/higwayman_archer_dead.webp',
+        skills: [
+			{ 
+                id: "dirty_strike", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 2.0 }, 
+                textKey: "dirty" 
+            }, 
+            { 
+                id: "smoke_bomb", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "atk_half", 
+                duration: 2, 
+                textKey: "smoke" 
+            },
+		//F Bomb türevi
+        ]
+	},
+	"Boz Ayı": { 
+        tribe: "B&M",
+        maxHp: 110, attack: 30, defense: 10, xp: 0, tier: 3, 
+        idle: 'enemies/grizzly_idle.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/grizzly_dead.webp',
+        skills: [
+		{ 
+                id: "trample", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "debuff_enemy_def", 
+                value: 0.5, 
+                duration: 1, 
+                textKey: "trampled" 
+            }, 
+            { 
+                id: "thick_hide", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 10, 
+                duration: 3, 
+                textKey: "hide" 
+            }
+        ]
+    },
+	"Treant": { 
+        tribe: "Plants",
+        maxHp: 90, attack: 28, defense: 18, xp: 0, tier: 3, 
+        idle: 'enemies/treant_idle.webp',
+        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
+        dead: 'enemies/treant_dead.webp',
+        skills: [
+		{ 
+                id: "thorn_prick", 
+                template: "stat_debuff", 
+                category: "debuff",
+                dotType: "poison",
+                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                duration: 3,
+                tickMult: 0.5,
+                textKey: "poison_hit" 
+            }
+        ]
+    },
+    "Canavar Tohum": { 
+        tribe: "Plants",
+        maxHp: 50, attack: 50, defense: 0, xp: 0, tier: 3, 
+        idle: 'enemies/trap_seed.webp',
+        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
+        dead: 'enemies/trap_seed_dead.webp',
+        skills: [
+		{ 
+                id: "thorn_prick", 
+                template: "stat_debuff", 
+                category: "debuff",
+                dotType: "poison",
+                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                duration: 3,
+                tickMult: 0.5,
+                textKey: "poison_hit" 
+            }
+		//Suicide bomber - Atk&Self dmg
+        ]
+    },
+    "Kadim Mantar": { 
+        tribe: "Plants",
+        specificResists: { poison: 20 },
+        maxHp: 110, attack: 20, defense: 20, xp: 0, tier: 3, 
+        idle: 'enemies/ancient_mushroom.webp',
+        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
+        dead: 'enemies/ancient_mushroom_dead.webp',
+        skills: [
+            { 
+                id: "spore_poison", 
+				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
+				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
+				subtype: "poison",       // EnemySkillEngine'e bunun bir zehir olduğunu söyler
+				damageSplit: { physical: 0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
+				dotType: "poison", 
+				duration: 3,
+				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
+				textKey: "poison_hit"  
+            },
+            { 
+                id: "fungal_regrow", 
+                template: "self_buff", 
+                category: "buff", // AI'nın tanıması için şart!
+                subtype: "heal", 
+                value: 0.20, 
+                textKey: "regrow" 
+            }
+        ]
+    },
+	"Ejderkelam": { 
+        tribe: "Dragonkind",
+        maxHp: 90, attack: 20, defense: 18, xp: 0, tier: 3, 
+        idle: 'enemies/dragonkin_speaker.webp',
+        attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
+        dead: 'enemies/dragonkin_speaker_dead.webp',
+        skills: [
+		//Fire, Buff, Debuff
+        ]
+    },
+	 "Çamur Golem": { 
+        tribe: "Magical Creatures",
+        maxHp: 120, attack: 22, defense: 20, xp: 0, tier: 3, 
+        idle: 'enemies/clay_golem.webp',
+        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
+        dead: 'enemies/clay_golem_dead.webp',
+        skills: [
+        ]
+    },
     "Yaban Domuzu": { 
         tribe: "B&M",
         specificResists: { cold: 10 },
@@ -622,7 +788,7 @@ window.ENEMY_STATS = {
 window.TIER_ENEMIES = {
     1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
     2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Çamur Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
     5: [], 
@@ -699,6 +865,15 @@ window.BIOME_WEIGHTS = {
     "Yaban Domuzu":   { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.1, mountain: 0.1, urban: 0.0 },
     "Goblin Savaşçısı": { forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
     "Kaya Golemi":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
+	"Haydut Devriye":   { forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
+	"Haydut Okçu":   { forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
+	"Goblin Şaman": { forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
+	"Kadim Mantar": { forest: 0.6, plains: 0.1, cave: 0.15, iceland: 0, mountain: 0.15, urban: 0.0 },
+	"Çamur Golem":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
+	"Ejderkelam": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
+	"Boz Ayı": 	  { forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
+	"Canavar Tohum":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
+	"Treant":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
     "İskelet Şövalye": { forest: 0.1, plains: 0.0, cave: 0.2, iceland: 0.0,  mountain: 0.1, urban: 0.6 },
     "Gulyabani":      { forest: 0.1,  plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.1, urban: 0.4 },
     "Orc Fedaisi":    { forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
