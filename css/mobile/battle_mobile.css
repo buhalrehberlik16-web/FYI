@@ -112,7 +112,8 @@
     /* Kapalı durumun mobilde sırıtmaması için ek önlem */
     #combat-log-wrapper.collapsed {
 		position: absolute;
-		left: 23cqw;
+		top: 4.5cqw !important;
+		left: 23cqw !important;
         width: 32cqw !important; /* Kapalıyken sadece başlık kadar daralsın */
     }
     
