@@ -326,7 +326,7 @@ window.LANG_TR = {
             "Yaban Domuzu": "Yaban Domuzu",
             "Goblin Savaşçısı": "Goblin Savaşçısı",
             "Kaya Golemi": "Kaya Golemi",
-            "Orc Fedaisi": "Orc Fedaisi",
+            "Ork Fedaisi": "Ork Fedaisi",
             "Goblin Şefi": "Goblin Şefi",
             "İskelet Şövalye": "İskelet Şövalye",
             "Gulyabani": "Gulyabani",

@@ -322,7 +322,7 @@ window.LANG_EN = {
             "Yaban Domuzu": "Wild Boar",
             "Goblin Savaşçısı": "Goblin Warrior",
             "Kaya Golemi": "Rock Golem",
-            "Orc Fedaisi": "Orc Bodyguard",
+            "Ork Fedaisi": "Orc Bodyguard",
             "Goblin Şefi": "Goblin Chief",
             "İskelet Şövalye": "Skeleton Knight",
             "Gulyabani": "Ghoul",
