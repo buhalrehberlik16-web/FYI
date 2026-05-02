@@ -771,7 +771,7 @@ window.ENEMY_STATS = {
             }
         ]
     },
-    "Orc Fedaisi": { 
+    "Ork Fedaisi": { 
         tribe: "Greenskins",
         specificResists: { cold: 10 },
         maxHp: 200, attack: 40, defense: 21, xp: 0, tier: 4, 
@@ -834,7 +834,7 @@ window.TIER_ENEMIES = {
     2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Çamur Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
-    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
+    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi"], 
     5: [], 
     6: [],
     "B2": [],
