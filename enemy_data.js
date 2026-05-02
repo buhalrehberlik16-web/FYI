@@ -14,6 +14,16 @@ window.TRIBE_BASES = {
 
 window.ENEMY_STATS = {
     // --- TIER 1 ---
+	"Gremlin": { 
+        tribe: "Greenskins",
+        maxHp: 25, attack: 5, defense: 4, xp: 0, tier: 1, 
+        idle: 'enemies/gremlin_idle.webp',
+        attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
+        dead: 'enemies/gremlin_dead.webp',
+        skills: [
+        //Doomsaying - Curse- atk*0.8dmg
+		]
+    },
     "Zehirli Mantar": { 
         tribe: "Plants",
         specificResists: { poison: 20 },
@@ -230,6 +240,40 @@ window.ENEMY_STATS = {
     },
 
     // --- TIER 2 ---
+	"Kemik Yürüyen": { 
+        tribe: "Undead",
+        specificResists: { poison: 20 },
+        maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
+        idle: 'enemies/bone_walker.webp',
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/bone_walker_dead.webp',
+        skills: [
+		{ 
+                id: "bone_shatter", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "defense_zero", 
+                duration: 2, 
+                textKey: "broken" 
+            }, 
+            { 
+                id: "undead_fortitude", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 4, 
+                duration: 2, 
+                textKey: "fortitude" 
+            }, 
+			{
+				id: "death_gaze",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {curse: 1.2},
+				textKey: "gaze"
+			}
+        ]
+    },
     "Goblin Devriyesi": { 
         tribe: "Greenskins",
         specificResists: { cold: 10 },
@@ -636,7 +680,7 @@ window.ENEMY_STATS = {
 		//Fire, Buff, Debuff
         ]
     },
-	 "Çamur Golem": { 
+	 "Kil Golem": { 
         tribe: "Magical Creatures",
         maxHp: 120, attack: 22, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/clay_golem.webp',
@@ -786,8 +830,8 @@ window.ENEMY_STATS = {
 
 // Düşman Havuzları
 window.TIER_ENEMIES = {
-    1: ["Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
-    2: ["Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
+    1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
+    2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Çamur Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Orc Fedaisi"], 
@@ -846,6 +890,7 @@ Object.assign(ENEMY_STATS, {
 
 window.BIOME_WEIGHTS = {
     // Düşman İsmi: { biyom_adi: ihtimal_orani }
+	"Gremlin": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
     "Zehirli Mantar": { forest: 0.6, plains: 0.1, cave: 0.15, iceland: 0, mountain: 0.15, urban: 0.0 },
     "Orman Örümceği": { forest: 0.5, plains: 0.1, cave: 0.3, iceland: 0, mountain: 0.1, urban: 0.0 },
     "Hırsız Kobold":  { forest: 0.2, plains: 0.5, cave: 0.0, iceland: 0, mountain: 0.1, urban: 0.2 },
@@ -853,6 +898,7 @@ window.BIOME_WEIGHTS = {
     "İskelet":        { forest: 0.1, plains: 0.1, cave: 0.3, iceland: 0.0, mountain: 0.1, urban: 0.4 },
 	"Serseri": 		  { forest: 0.1, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.4 },
     "Dikenli Çalı":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
+	"Kemik Yürüyen":        { forest: 0.1, plains: 0.1, cave: 0.3, iceland: 0.0, mountain: 0.1, urban: 0.4 },
     "Goblin Devriyesi": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
 	"Kobold Devriye": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
     "Kaçak Haydut":   { forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
@@ -869,7 +915,7 @@ window.BIOME_WEIGHTS = {
 	"Haydut Okçu":   { forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
 	"Goblin Şaman": { forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
 	"Kadim Mantar": { forest: 0.6, plains: 0.1, cave: 0.15, iceland: 0, mountain: 0.15, urban: 0.0 },
-	"Çamur Golem":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
+	"Kil Golem":    {  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
 	"Ejderkelam": { forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
 	"Boz Ayı": 	  { forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
 	"Canavar Tohum":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
