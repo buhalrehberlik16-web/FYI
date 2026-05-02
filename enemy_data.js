@@ -555,7 +555,7 @@ window.ENEMY_STATS = {
         maxHp: 80, attack: 30, defense: 13, xp: 0, tier: 3, 
         idle: 'enemies/highwayman_archer.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
-        dead: 'enemies/higwayman_archer_dead.webp',
+        dead: 'enemies/highwayman_archer_dead.webp',
         skills: [
 			{ 
                 id: "dirty_strike", 
