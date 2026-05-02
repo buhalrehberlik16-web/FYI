@@ -305,12 +305,14 @@ window.LANG_EN = {
 				"Dragonkind": "Dragonkind",
 				"Magical Creatures": "Magic Creatures",
 				
+			"Gremlin": "Gremlin",
             "Zehirli Mantar": "Poisonous Mushroom",
             "Orman Örümceği": "Forest Spider",
             "Hırsız Kobold": "Thief Kobold",
             "Kan Yarasası": "Blood Bat",
 			"Serseri": "Vagabond",
 			"Dikenli Çalı": "Thorny Shrub",
+			"Kemik Yürüyen": "Bone Walker",
             "Goblin Devriyesi": "Goblin Patrol",
             "Kaçak Haydut": "Outlaw Rogue",
             "Gri Kurt": "Grey Wolf",
@@ -337,7 +339,7 @@ window.LANG_EN = {
 			"Canavar Tohum": "Trap Seed",
 			"Kadim Mantar": "Ancient Shroom",
 			"Ejderkelam": "Dragonkin Speaker",
-			"Çamur Golem": "Clay Golem",
+			"Kil Golem": "Clay Golem",
         },
 		
 		enemy_effects: {

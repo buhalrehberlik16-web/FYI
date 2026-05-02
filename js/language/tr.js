@@ -308,13 +308,15 @@ window.LANG_TR = {
 				"Undead": "Ölümsüzler",
 				"Dragonkind": "Ejder Soyu",
 				"Magical Creatures": "Mistik Varlıklar",
-				
+			
+			"Gremlin": "Gremlin",
             "Zehirli Mantar": "Zehirli Mantar",
             "Orman Örümceği": "Orman Örümceği",
             "Hırsız Kobold": "Hırsız Kobold",
             "Kan Yarasası": "Kan Yarasası",
 			"Serseri": "Serseri",
 			"Dikenli Çalı": "Dikenli Çalı",
+			"Kemik Yürüyen": "Kemik Yürüyen",
             "Goblin Devriyesi": "Goblin Devriyesi",
             "Kaçak Haydut": "Kaçak Haydut",
             "Gri Kurt": "Gri Kurt",
@@ -341,7 +343,7 @@ window.LANG_TR = {
 			"Canavar Tohum": "Canavar Tohum",
 			"Kadim Mantar": "Kadim Mantar",
 			"Ejderkelam": "Ejderkelam",
-			"Çamur Golem": "Çamur Golem",
+			"Kil Golem": "Kil Golem",
         },
 		
 		enemy_effects: {
