@@ -542,7 +542,7 @@ window.ENEMY_STATS = {
                 value: 5, 
                 duration: 3, 
                 textKey: "cursed" 
-            }
+            },
 			{ 
             id: "attack1", // Normal attack2'yi eziyoruz!
                 template: "special_attack", 
