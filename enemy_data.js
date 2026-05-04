@@ -21,13 +21,14 @@ window.ENEMY_STATS = {
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/gremlin_dead.webp',
         skills: [
-		
+			{
 				id: "death_gaze",
 				template: "special_attack",
 				category: "attack",
 				damageSplit: {curse: 0.8},
-				textKey: "gaze"
+				textKey: "doomsaying"
         //Doomsaying - Curse- atk*0.8dmg
+			}
 		]
     },
     "Zehirli Mantar": { 
