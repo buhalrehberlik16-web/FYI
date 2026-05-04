@@ -26,7 +26,7 @@ window.ENEMY_STATS = {
 				template: "special_attack",
 				category: "attack",
 				damageSplit: {curse: 0.8},
-				textKey: "Doomsaying"
+				textKey: "gaze"
         //Doomsaying - Curse- atk*0.8dmg
 		]
     },
@@ -555,7 +555,7 @@ window.ENEMY_STATS = {
                 template: "special_attack", 
                 category: "attack",
                 damageSplit: { lightning: 1.0 }, 
-                textKey: "lightning_strike" 
+                textKey: "gaze" 
 			},
 		//No Basic, Curse&Lightning, iki yaratığa bölünebilir
         ]
