@@ -21,13 +21,19 @@ window.ENEMY_STATS = {
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/gremlin_dead.webp',
         skills: [
+		
+				id: "death_gaze",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {curse: 0.8},
+				textKey: "Doomsaying"
         //Doomsaying - Curse- atk*0.8dmg
 		]
     },
     "Zehirli Mantar": { 
         tribe: "Plants",
         specificResists: { poison: 20 },
-        maxHp: 36, attack: 4, defense: 2, xp: 0, tier: 1, 
+        maxHp: 36, attack: 3, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/zehirli_mantar.webp',
         attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
         dead: 'enemies/zehirli_mantar_dead.webp',
@@ -41,7 +47,7 @@ window.ENEMY_STATS = {
 				damageSplit: { physical: 0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
 				dotType: "poison", 
 				duration: 3,
-				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler
+				tickMult: 1,           // Her tur ne kadar vuracağını belirler
 				textKey: "poison_hit"  
             },
             { 
@@ -57,7 +63,7 @@ window.ENEMY_STATS = {
     "Orman Örümceği": { 
         tribe: "B&M",
         specificResists: { poison: 20 },
-        maxHp: 34, attack: 9, defense: 0, xp: 0, tier: 1, 
+        maxHp: 32, attack: 9, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/orman_orumcegi.webp',
         attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
         dead: 'enemies/orman_orumcegi_dead.webp',
@@ -76,7 +82,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 5, 
+                value: 4, 
                 duration: 3, 
                 textKey: "harden" 
             },
@@ -84,7 +90,7 @@ window.ENEMY_STATS = {
                 id: "poison_bite", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { physical: 0.5, poison: 1.2 }, 
+                damageSplit: { physical: 0.4, poison: 1.0 }, 
                 textKey: "poison_bite" 
             }, 
         ]
@@ -92,7 +98,7 @@ window.ENEMY_STATS = {
     "Hırsız Kobold": {
         tribe: "Dragonkind",
         specificResists: { fire: 10, curse: 10 },
-        maxHp: 36, attack: 7, defense: 0, xp: 0, tier: 1, 
+        maxHp: 34, attack: 7, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
@@ -160,7 +166,7 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 subtype: "rage_burn", 
-                value: 20, 
+                value: 30, 
                 textKey: "shriek" 
             }
         ]
@@ -221,7 +227,7 @@ window.ENEMY_STATS = {
 	"Dikenli Çalı": { 
         tribe: "Plants",
         specificResists: { poison: 5 },
-        maxHp: 30, attack: 8, defense: 2, xp: 0, tier: 1, 
+        maxHp: 28, attack: 6, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/thorn_idle.webp',
         attackFrames: ['enemies/thorn_attack1.webp', 'enemies/thorn_attack2.webp', 'enemies/thorn_attack3.webp'],
         dead: 'enemies/thorn_dead.webp',
@@ -231,9 +237,9 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 dotType: "poison",
-                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                damageSplit: { physical: 0.5, poison: 0.5 }, 
                 duration: 3,
-                tickMult: 0.5,
+                tickMult: 0.75,
                 textKey: "poison_hit" 
             }
         ]
@@ -243,7 +249,7 @@ window.ENEMY_STATS = {
 	"Kemik Yürüyen": { 
         tribe: "Undead",
         specificResists: { poison: 20 },
-        maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
+        maxHp: 52, attack: 12, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/bone_walker.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/bone_walker_dead.webp',
@@ -277,7 +283,7 @@ window.ENEMY_STATS = {
     "Goblin Devriyesi": { 
         tribe: "Greenskins",
         specificResists: { cold: 10 },
-        maxHp: 70, attack: 12, defense: 6, xp: 0, tier: 2, 
+        maxHp: 60, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
@@ -287,7 +293,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "atk_up", 
-                value: 7, 
+                value: 6, 
                 duration: 3, 
                 textKey: "yell" 
             }, 
@@ -296,7 +302,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 6, 
+                value: 4, 
                 duration: 2, 
                 textKey: "shield_wall" 
             }
@@ -305,7 +311,7 @@ window.ENEMY_STATS = {
 	
 	"Haydut Gözcü": { 
         tribe: "Humans",
-        maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
+        maxHp: 52, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/scout_bandit_idle.webp',
         attackFrames: ['enemies/scout_bandit_attack1.webp', 'enemies/scout_bandit_attack2.webp', 'enemies/scout_bandit_attack3.webp'],
         dead: 'enemies/scout_bandit_dead.webp',
@@ -324,7 +330,7 @@ window.ENEMY_STATS = {
     "Kaçak Haydut": { 
         tribe: "Humans",
         specificResists: { cold: 10 },
-        maxHp: 62, attack: 15, defense: 4, xp: 0, tier: 2, 
+        maxHp: 58, attack: 14, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
@@ -333,7 +339,7 @@ window.ENEMY_STATS = {
                 id: "dirty_strike", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { physical: 1.5 }, 
+                damageSplit: { physical: 1.4 }, 
                 textKey: "dirty" 
             }, 
             { 
@@ -348,7 +354,7 @@ window.ENEMY_STATS = {
                 id: "fire_bomb", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { fire: 1.0}, 
+                damageSplit: { fire: 0.8}, 
 				dotType: "fire", 
 				duration: 2,
 				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler  
@@ -359,18 +365,24 @@ window.ENEMY_STATS = {
 	
 	"Genç Ayı": { 
         tribe: "B&M",
-        maxHp: 80, attack: 16, defense: 6, xp: 0, tier: 2, 
+        maxHp: 70, attack: 16, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/young_bear_idle.webp',
         attackFrames: ['enemies/young_bear_attack1.webp', 'enemies/young_bear_attack2.webp', 'enemies/young_bear_attack3.webp'],
         dead: 'enemies/young_bear_dead.webp',
         skills: [
             { 
-                id: "bear_hug", 
+				id: "smoke_bomb", // roar
                 template: "stat_debuff", 
                 category: "debuff",
-                subtype: "stun", 
+                subtype: "atk_half", 
                 duration: 2, 
-                textKey: "stunned" 
+                textKey: "roar" 
+              //  id: "bear_hug", 
+              //  template: "stat_debuff", 
+              //  category: "debuff",
+              //  subtype: "stun", 
+              //  duration: 2, 
+              //  textKey: "stunned" 
             }
         ]
     },
@@ -378,7 +390,7 @@ window.ENEMY_STATS = {
 	
 	 "Şaman": { 
         tribe: "Humans",
-        maxHp: 55, attack: 12, defense: 6, xp: 0, tier: 2, 
+        maxHp: 50, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/shaman_idle.webp',
         attackFrames: ['enemies/shaman_attack1.webp', 'enemies/shaman_attack2.webp', 'enemies/shaman_attack3.webp'],
         dead: 'enemies/shaman_dead.webp',
@@ -415,10 +427,10 @@ window.ENEMY_STATS = {
                 id: "fire_bomb", 
                 template: "special_attack", 
                 category: "attack",
-                damageSplit: { fire: 1.0}, 
+                damageSplit: { fire: 0.6}, 
 				dotType: "fire", 
 				duration: 2,
-				tickMult: 0.5,           // Her tur ne kadar vuracağını belirler  
+				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler  
                 textKey: "f_bomb" 
 			}
         ]
@@ -426,7 +438,7 @@ window.ENEMY_STATS = {
     "Gri Kurt": { 
         tribe: "B&M",
         specificResists: { cold: 20 },
-        maxHp: 56, attack: 16, defense: 4, xp: 0, tier: 2, 
+        maxHp: 54, attack: 16, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/kurt_surusu.webp',
         attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
         dead: 'enemies/kurt_surusu_dead.webp',
@@ -459,7 +471,7 @@ window.ENEMY_STATS = {
     },
 	"Kobold Devriye": { 
         tribe: "Dragonkind",
-        maxHp: 65, attack: 15, defense: 6, xp: 0, tier: 2, 
+        maxHp: 62, attack: 15, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/kobold_patrol_idle.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kobold_patrol_dead.webp',
@@ -469,7 +481,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "atk_up", 
-                value: 7, 
+                value: 4, 
                 duration: 3, 
                 textKey: "yell" 
             }, 
@@ -478,7 +490,7 @@ window.ENEMY_STATS = {
 	"Treant Sapling": { 
         tribe: "Plants",
         specificResists: { poison: 20, curse: -10 },
-        maxHp: 62, attack: 13, defense: 8, xp: 0, tier: 2, 
+        maxHp: 58, attack: 13, defense: 8, xp: 0, tier: 2, 
         idle: 'enemies/treant_sapling_idle.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_sapling_dead.webp',
@@ -506,26 +518,9 @@ window.ENEMY_STATS = {
 	},
 
     // --- TIER 3 ---
-	"Haydut Devriye": { 
-        tribe: "Humans",
-        maxHp: 85, attack: 25, defense: 15, xp: 0, tier: 3, 
-        idle: 'enemies/highwayman_idle.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
-        dead: 'enemies/highwayman_dead.webp',
-        skills: [
-            { 
-                id: "dirty_strike", 
-                template: "special_attack", 
-                category: "attack",
-                damageSplit: { physical: 1.5 }, 
-                textKey: "dirty" 
-            }, 
-			//Def Up
-        ]
-    },
 	"Goblin Şaman": { 
         tribe: "Greenskins",
-        maxHp: 80, attack: 30, defense: 10, xp: 0, tier: 3, 
+        maxHp: 70, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/goblin_shaman_idle.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_shaman_dead.webp',
@@ -547,12 +542,71 @@ window.ENEMY_STATS = {
                 duration: 3, 
                 textKey: "cursed" 
             }
-		//No Basic, Curse&Lightning
+			{ 
+            id: "attack1", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { curse: 1.0 }, 
+                textKey: "curse" 
+			},
+			
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { lightning: 1.0 }, 
+                textKey: "lightning_strike" 
+			},
+		//No Basic, Curse&Lightning, iki yaratığa bölünebilir
+        ]
+    },	
+    "Goblin Savaşçısı": { 
+        tribe: "Greenskins",
+        specificResists: { cold: 10 },
+        maxHp: 90, attack: 30, defense: 15, xp: 0, tier: 3, 
+        idle: 'enemies/goblin_savascisi.webp',
+        attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
+        dead: 'enemies/goblin_savascisi_dead.webp',
+        skills: [
+            { 
+                id: "mace_bash", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "stun", 
+                duration: 2, 
+                textKey: "stunned" 
+            },
+            { 
+                id: "berserker_rage", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "atk_up", 
+                value: 15, 
+                duration: 3, 
+                textKey: "berserk" 
+            }
+        ]
+    },
+	"Haydut Devriye": { 
+        tribe: "Humans",
+        maxHp: 80, attack: 20, defense: 15, xp: 0, tier: 3, 
+        idle: 'enemies/highwayman_idle.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/highwayman_dead.webp',
+        skills: [
+            { 
+                id: "dirty_strike", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 1.4 }, 
+                textKey: "dirty" 
+            }, 
+			//Def Up
         ]
     },
 	"Haydut Okçu": { 
         tribe: "Humans",
-        maxHp: 80, attack: 30, defense: 13, xp: 0, tier: 3, 
+        maxHp: 75, attack: 25, defense: 13, xp: 0, tier: 3, 
         idle: 'enemies/highwayman_archer.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/highwayman_archer_dead.webp',
@@ -565,24 +619,53 @@ window.ENEMY_STATS = {
                 textKey: "dirty" 
             }, 
             { 
-                id: "smoke_bomb", 
-                template: "stat_debuff", 
-                category: "debuff",
-                subtype: "atk_half", 
-                duration: 2, 
-                textKey: "smoke" 
-            },
+                id: "cowardly_dash", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 8, 
+                duration: 1, 
+                textKey: "dash" 
+            }
 		//F Bomb türevi
         ]
 	},
 	"Boz Ayı": { 
         tribe: "B&M",
-        maxHp: 110, attack: 30, defense: 10, xp: 0, tier: 3, 
+        maxHp: 90, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/grizzly_idle.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/grizzly_dead.webp',
         skills: [
 		{ 
+                id: "trample", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "debuff_enemy_def", 
+                value: 0.5, 
+                duration: 1, 
+                textKey: "trampled" 
+            }, 
+            { 
+                id: "thick_hide", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 10, 
+                duration: 2, 
+                textKey: "hide" 
+            }
+        ]
+    },
+    "Yaban Domuzu": { 
+        tribe: "B&M",
+        specificResists: { cold: 10 },
+        maxHp: 105, attack: 25, defense: 12, xp: 0, tier: 3, 
+        idle: 'enemies/yaban_domuzu.webp',
+        attackFrames: ['enemies/yaban_domuzu_attack1.webp', 'enemies/yaban_domuzu_attack2.webp', 'enemies/yaban_domuzu_attack3.webp'],
+        dead: 'enemies/yaban_domuzu_dead.webp',
+        skills: [
+            { 
                 id: "trample", 
                 template: "stat_debuff", 
                 category: "debuff",
@@ -604,7 +687,7 @@ window.ENEMY_STATS = {
     },
 	"Treant": { 
         tribe: "Plants",
-        maxHp: 90, attack: 28, defense: 18, xp: 0, tier: 3, 
+        maxHp: 90, attack: 18, defense: 18, xp: 0, tier: 3, 
         idle: 'enemies/treant_idle.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
@@ -614,9 +697,9 @@ window.ENEMY_STATS = {
                 template: "stat_debuff", 
                 category: "debuff",
                 dotType: "poison",
-                damageSplit: { physical: 0.5, poison: 0.8 }, 
+                damageSplit: { physical: 0.4, poison: 0.6 }, 
                 duration: 3,
-                tickMult: 0.5,
+                tickMult: 0.75,
                 textKey: "poison_hit" 
             }
         ]
@@ -638,13 +721,13 @@ window.ENEMY_STATS = {
                 tickMult: 0.5,
                 textKey: "poison_hit" 
             }
-		//Suicide bomber - Atk&Self dmg
+		//Suicide bomber - bir tur boş (veya debuff verebilir, kör etme benzeri, etrafa spor/toz salma mantığıyla) geçer, ikinci tur patlar, Atk&Self dmg
         ]
     },
     "Kadim Mantar": { 
         tribe: "Plants",
         specificResists: { poison: 20 },
-        maxHp: 110, attack: 20, defense: 20, xp: 0, tier: 3, 
+        maxHp: 110, attack: 15, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/ancient_mushroom.webp',
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/ancient_mushroom_dead.webp',
@@ -677,77 +760,34 @@ window.ENEMY_STATS = {
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/dragonkin_speaker_dead.webp',
         skills: [
+			{ 
+            id: "attack1", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0 }, 
+			},
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0 }, 
+			},
 		//Fire, Buff, Debuff
         ]
     },
 	 "Kil Golem": { 
         tribe: "Magical Creatures",
-        maxHp: 120, attack: 22, defense: 20, xp: 0, tier: 3, 
+        maxHp: 100, attack: 22, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/clay_golem.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/clay_golem_dead.webp',
         skills: [
         ]
     },
-    "Yaban Domuzu": { 
-        tribe: "B&M",
-        specificResists: { cold: 10 },
-        maxHp: 120, attack: 25, defense: 12, xp: 0, tier: 3, 
-        idle: 'enemies/yaban_domuzu.webp',
-        attackFrames: ['enemies/yaban_domuzu_attack1.webp', 'enemies/yaban_domuzu_attack2.webp', 'enemies/yaban_domuzu_attack3.webp'],
-        dead: 'enemies/yaban_domuzu_dead.webp',
-        skills: [
-            { 
-                id: "trample", 
-                template: "stat_debuff", 
-                category: "debuff",
-                subtype: "debuff_enemy_def", 
-                value: 0.5, 
-                duration: 1, 
-                textKey: "trampled" 
-            }, 
-            { 
-                id: "thick_hide", 
-                template: "self_buff", 
-                category: "buff",
-                statusId: "def_up", 
-                value: 10, 
-                duration: 3, 
-                textKey: "hide" 
-            }
-        ]
-    },
-    "Goblin Savaşçısı": { 
-        tribe: "Greenskins",
-        specificResists: { cold: 10 },
-        maxHp: 100, attack: 30, defense: 15, xp: 0, tier: 3, 
-        idle: 'enemies/goblin_savascisi.webp',
-        attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
-        dead: 'enemies/goblin_savascisi_dead.webp',
-        skills: [
-            { 
-                id: "mace_bash", 
-                template: "stat_debuff", 
-                category: "debuff",
-                subtype: "stun", 
-                duration: 2, 
-                textKey: "stunned" 
-            },
-            { 
-                id: "berserker_rage", 
-                template: "self_buff", 
-                category: "buff",
-                statusId: "atk_up", 
-                value: 15, 
-                duration: 3, 
-                textKey: "berserk" 
-            }
-        ]
-    },
     "Kaya Golemi": { 
         tribe: "Magical Creatures",
         specificResists: { lightning: 10 },
-        maxHp: 150, attack: 18, defense: 23, xp: 0, tier: 3, 
+        maxHp: 110, attack: 18, defense: 23, xp: 0, tier: 3, 
         idle: 'enemies/kaya_golemi.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
@@ -771,10 +811,11 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	// --- Tier 4 ---
     "Ork Fedaisi": { 
         tribe: "Greenskins",
         specificResists: { cold: 10 },
-        maxHp: 200, attack: 40, defense: 21, xp: 0, tier: 4, 
+        maxHp: 150, attack: 35, defense: 21, xp: 0, tier: 4, 
         idle: 'enemies/orc_fedaisi.webp',
         attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
@@ -796,12 +837,34 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	"Ejderkelam": { 
+        tribe: "Dragonkind",
+        maxHp: 165, attack: 24, defense: 22, xp: 0, tier: 4, 
+        idle: 'enemies/dragonkin_speaker.webp',
+        attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
+        dead: 'enemies/dragonkin_speaker_dead.webp',
+        skills: [
+			{ 
+            id: "attack1", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0 }, 
+			},
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0 }, 
+			},
+		//Fire, Buff, Debuff
+        ]
+    },
 
     // --- BOSS ---
     "Goblin Şefi": { 
         tribe: "Greenskins",
         specificResists: { cold: 10 },
-        maxHp: 250, attack: 35, defense: 20, isBoss:true, tier: 4, 
+        maxHp: 200, attack: 30, defense: 20, isBoss:true, tier: 4, 
         idle: 'enemies/goblin_sef.webp',
         attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],
         dead: 'enemies/goblin_sef_dead.webp',
