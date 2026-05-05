@@ -11,19 +11,31 @@ window.gameSettings = {
 
 window.applySettings = function() {
 	
-	const logToggle = document.getElementById('setting-log-toggle');
-	if (logToggle) logToggle.checked = window.gameSettings.showLog;
+	// --- SAVAŞ GÜNLÜĞÜ GÖRÜNÜRLÜK MANTIĞI ---
+    const logWrapper = document.getElementById('combat-log-wrapper');
+    const logTrigger = document.getElementById('combat-log-trigger');
+    const logToggle = document.getElementById('setting-log-toggle');
 
-	const logWrapper = document.getElementById('combat-log-wrapper');
-	const logTrigger = document.getElementById('combat-log-trigger');
+    if (logToggle) logToggle.checked = window.gameSettings.showLog;
 
-	if (window.gameSettings.showLog) {
-		if(logWrapper) logWrapper.style.display = "block";
-		if(logTrigger) logTrigger.style.display = "none";
-	} else {
-		if(logWrapper) logWrapper.style.display = "none";
-		if(logTrigger) logTrigger.style.display = "flex"; // Kapalıysa ok görünsün
-	}
+    // --- YENİ 3'LÜ GÖRÜNÜRLÜK SİSTEMİ ---
+    if (!window.gameSettings.showLog) {
+        // DURUM 1: Ayarlardan KAPATILDI -> Her şeyi yok et
+        if(logWrapper) logWrapper.style.display = "none";
+        if(logTrigger) logTrigger.style.display = "none";
+    } 
+    else {
+        // DURUM 2: Ayarlardan AÇIK -> İç mekanizmaya bak (Minimized mı?)
+        if (window.isLogMinimized) {
+            // Savaş içinde başlığa tıklandı, log ok (>) modunda
+            if(logWrapper) logWrapper.style.display = "none";
+            if(logTrigger) logTrigger.style.display = "flex";
+        } else {
+            // Log tam ekran modunda
+            if(logWrapper) logWrapper.style.display = "block";
+            if(logTrigger) logTrigger.style.display = "none";
+        }
+    }
 	
     // 1. Dili Uygula
     localStorage.setItem('game_lang', window.gameSettings.lang);
@@ -105,24 +117,34 @@ window.setImpactEffectsToggle = function(val) {
     window.gameSettings.showImpacts = val;
     localStorage.setItem('game_impacts', val);
 };
+
+// Logun küçültülüp küçültülmediğini tutan değişken (Başlangıçta açık başlasın)
+window.isLogMinimized = false; 
+
+// 1. Log Başlığına (Header) Basınca: Ayarı bozma, sadece küçült (>)
+window.toggleCombatLog = function() {
+    window.isLogMinimized = true; // Sadece modu değiştir
+    window.applySettings(); // Görseli güncelle
+};
+
+// 2. Soldaki Ok (>) işaretine Basınca: Tekrar genişlet
+window.enableAndOpenCombatLog = function() {
+    window.isLogMinimized = false; // Küçültme modundan çık
+    window.applySettings(); // Görseli güncelle
+};
+
+// 3. Ayarlardaki Toggle Değişince (Master Switch)
 window.setCombatLogSetting = function(val) {
     window.gameSettings.showLog = val;
     localStorage.setItem('game_log_visible', val);
-    window.applySettings(); // UI'ı tazele
-};
-window.enableAndOpenCombatLog = function() {
-    // 1. Ayarı kalıcı olarak true yap (Settings'deki toggle da otomatik güncellenir)
-    window.setCombatLogSetting(true);
     
-    // 2. Log kutusunun 'collapsed' sınıfını silerek açık gelmesini sağla
-    const wrapper = document.getElementById('combat-log-wrapper');
-    if (wrapper) {
-        wrapper.classList.remove('collapsed');
-    }
-    
-    const lang = window.getCombatLang();
-    
-    if (lang && lang.combat && lang.combat.log_combat_log_enabled) {
-        writeLog(lang.combat.log_combat_log_enabled);
-    }
+    // Eğer ayarlardan tekrar açılırsa, otomatik olarak "geniş" modda gelsin
+    if (val) window.isLogMinimized = false; 
+	// Loga bilgi mesajı düş
+    //const lang = window.getCombatLang();
+    //if (lang && lang.combat.log_combat_log_enabled) {
+    //    writeLog(lang.combat.log_combat_log_enabled);
+    //}
+
+    window.applySettings(); 
 };
