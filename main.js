@@ -843,11 +843,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 };
 
-window.toggleCombatLog = function() {
-    const wrapper = document.getElementById('combat-log-wrapper');
-    if (wrapper) {
-        wrapper.classList.toggle('collapsed');
-    }
-};
-
 });
