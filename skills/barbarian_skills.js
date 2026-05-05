@@ -331,6 +331,7 @@ const BARBARIAN_SKILLS = {
                 
                 // Vuruş bittikten sonra (800ms) etkiyi göster
                 setTimeout(() => {
+					if (!window.monster || window.monster.hp <= 0) return;
                     if (selfBleedVal > 0 && hero.hp > 0) {
                         // Ekranda "KANAMA!" yazısını fırlat
                         showFloatingText(document.getElementById('hero-display'), lang.enemy_effects.vicious, 'damage');
