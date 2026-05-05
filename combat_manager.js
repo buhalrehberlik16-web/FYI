@@ -544,6 +544,22 @@ window.initializeSkillButtons = function() {
             const img = document.createElement('img');
             img.src = `images/${data.icon}`;
             slot.appendChild(img);
+			
+				// --- YENİ: RAGE/MANA MALİYET ROZETİ ---
+			// SADECE maliyet 0'dan büyükse gösterelim
+			if (data.rageCost > 0) {
+				const rageBadge = document.createElement('div');
+				rageBadge.className = 'skill-rage-badge';
+            
+				// Rozet rengini sınıfın kaynak rengine göre ayarla (Rage=Kırmızı, Mana=Mavi)
+				const classRules = CLASS_CONFIG[hero.class];
+				rageBadge.style.color = classRules.resourceColor;
+				rageBadge.style.borderColor = classRules.resourceColor; // Çerçeveyi de renklendirebiliriz
+            
+				rageBadge.textContent = data.rageCost;
+				slot.appendChild(rageBadge);
+			}
+			// --------------------------------------
 
             const overlay = document.createElement('div'); overlay.className = 'cooldown-overlay';
             const cdText = document.createElement('span'); cdText.className = 'cooldown-text';
@@ -928,6 +944,11 @@ window.determineMonsterAction = function() {
 };
 
 window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
+	// Eğer bir önceki odadan setTimeout ile sızmış bir etki varsa burada hepsini kovuyoruz.
+    if (hero.statusEffects) {
+        hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
+    }
+    // -----------------------------------------------
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	
 	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
