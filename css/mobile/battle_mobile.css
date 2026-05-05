@@ -127,6 +127,10 @@
         width: 5cqw;
         height: 10cqw;
     }
+	.skill-rage-badge, .skill-exhaust-badge {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
 }
 
 @media (max-height: 600px) {
