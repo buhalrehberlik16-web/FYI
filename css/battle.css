@@ -561,10 +561,6 @@
 #combat-log-area::-webkit-scrollbar { width: 4px; }
 #combat-log-area::-webkit-scrollbar-thumb { background: #6b5c3b; }
 
-/* Kapalı Durum */
-#combat-log-wrapper.collapsed #combat-log-area { height: 0; padding: 0; }
-#combat-log-wrapper.collapsed #combat-log-arrow { transform: rotate(-90deg); }
-
 .log-entry { 
     border-bottom: 1px solid rgba(255,255,255,0.05); 
     padding-bottom: 2px; 
@@ -575,21 +571,23 @@
 #combat-log-trigger {
     position: absolute;
     left: 0;
-    top: 55px; /* Üst barın hizasında */
-    background: rgba(107, 92, 59, 0.8);
+    top: 60px; /* Üst barın biraz altında */
+    background: rgba(107, 92, 59, 0.9);
     color: #f0e68c;
     width: 30px;
-    height: 40px;
-    display: none; /* Başlangıçta gizli */
+    height: 45px;
+    display: none; /* JS (applySettings) bunu flex yapacak */
     align-items: center;
     justify-content: center;
-    border-radius: 0 8px 8px 0;
-    cursor: pointer;
-    z-index: 1100;
-    border: 1px solid #6b5c3b;
+    border-radius: 0 10px 10px 0;
+    border: 1px solid #f0e68c;
     border-left: none;
-    transition: all 0.2s;
+    z-index: 1100;
+    cursor: pointer;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+    transition: width 0.2s;
 }
+#combat-log-trigger:hover { width: 40px; background: #5d4a30; }
 
 #combat-log-trigger:hover {
     background: #5d4a30;
