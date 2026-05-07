@@ -36,10 +36,11 @@ window.applyStatusEffect = function(target, newEffect) {
 	
     const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
 
-	const targetName = isTargetHero ? hero.class : window.getEnemyNameTrans(target.name);
+	const targetName = isTargetHero ? window.getHeroClassNameTrans() : window.getEnemyNameTrans(target.name);
 	
     if (existingIndex !== -1) {
         const existing = target.statusEffects[existingIndex];
+		const translatedStatusName = lang.status[newEffect.id] || existing.name;
         
         // --- ZEHİR: BİRİKMEYE DEVAM EDER (Log ve Mantık Korundu) ---
         if (newEffect.id === 'poison') {
@@ -56,7 +57,7 @@ window.applyStatusEffect = function(target, newEffect) {
             existing.value = newEffect.value; // Üzerine ekleme yapma, güncel formül değerini yaz
             existing.turns = newEffect.turns; // Süreyi de en baştan başlat (Tazele)
             
-            writeLog(lang.combat.log_status_refresh.replace("$1", "").replace("$2", existing.name));
+            writeLog(lang.combat.log_status_refresh.replace("$1", targetName).replace("$2", translatedStatusName));
         }
         // --- DİĞER ETKİLER: MEVCUT MANTIĞI KORU ---
         else {
@@ -65,7 +66,7 @@ window.applyStatusEffect = function(target, newEffect) {
                 existing.value = Math.max(existing.value, newEffect.value);
             }
             const tName = isTargetHero ? "" : (window.getEnemyNameTrans(target.name) + ": ");
-			writeLog(lang.combat.log_status_refresh.replace("$1", `**${targetName}**`).replace("$2", existing.name));
+			writeLog(lang.combat.log_status_refresh.replace("$1", targetName).replace("$2", translatedStatusName));
         }
     } else {
         target.statusEffects.push(newEffect);
@@ -100,6 +101,14 @@ window.addHeroBlock = function(amount) {
     updateStats(); 
 };
 
+window.getHeroClassNameTrans = () => {
+    const lang = window.getCombatLang();
+    // hero.class "Barbar" ise en.js'deki 'class_barbarian_name' anahtarına bak
+    if (hero.class === "Barbar") return lang.class_barbarian_name || "Barbarian";
+    if (hero.class === "Magus") return lang.class_magus_name || "Magus";
+    return hero.class; // Bilinmeyen bir sınıfsa olduğu gibi yaz
+};
+
 window.getExhaustionCost = function(skillData, usage) {
     let base = skillData.exhaustion || 0;
     
@@ -127,8 +136,39 @@ window.getExhaustionCost = function(skillData, usage) {
     return finalValue;
 };
 
+window.lastExhaustionThreshold = 0; // Oyuncunun en son hangi seviyede uyarıldığını tutar
 window.updateExhaustionUI = function() {
 	if (hero.exhaustion < 0) hero.exhaustion = 0;
+	
+	const val = Math.floor(hero.exhaustion);
+    const lang = window.getCombatLang();
+
+    // --- YORGUNLUK BİLDİRİM SİSTEMİ ---
+    // Her 10 puanlık artışta bir kez kontrol et
+    let currentLevel = Math.floor(val / 10) * 10; 
+
+    if (currentLevel > window.lastExhaustionThreshold) {
+        // Eğer oyuncu iyileşmediyse (dinlenmediyse) ve yeni bir eşiğe çıktıysa
+        if (currentLevel === 50) writeLog(lang.combat.log_exhaust_50);
+        else if (currentLevel === 60) writeLog(lang.combat.log_exhaust_60);
+        else if (currentLevel === 70) writeLog(lang.combat.log_exhaust_70);
+        else if (currentLevel === 80) writeLog(lang.combat.log_exhaust_80);
+        else if (currentLevel === 90) writeLog(lang.combat.log_exhaust_90);
+        else if (currentLevel === 100) writeLog(lang.combat.log_exhaust_100);
+        else if (currentLevel > 100 && currentLevel % 20 === 0) {
+            // 120, 140, 160 gibi kritik seviyelerde genel uyarı bas
+            writeLog(lang.combat.log_exhaust_crit);
+        }
+        
+        window.lastExhaustionThreshold = currentLevel; // Eşiği güncelle ki tekrar yazmasın
+    }
+    
+    // Eğer oyuncu dinlenirse eşiği aşağı çekelim ki tekrar yorulduğunda uyarı alsın
+    if (val < window.lastExhaustionThreshold - 10) {
+        window.lastExhaustionThreshold = currentLevel;
+    }
+    // ----------------------------------
+	
     // 1. Savaş Ekranı (Dikey)
     const sariDikey = document.getElementById('exhaustion-fill-sari');
     const morDikey = document.getElementById('exhaustion-fill-mor');
@@ -140,7 +180,7 @@ window.updateExhaustionUI = function() {
     const statText = document.getElementById('stat-exhaustion-text');
 
 	if (hero.exhaustion > 200) hero.exhaustion = 200;
-    const val = hero.exhaustion || 0;
+    //const val = hero.exhaustion || 0;
 
     // --- A. SAYISAL GÜNCELLEME VE RENK DEĞİŞİMİ ---
     if (valText) {
@@ -943,8 +983,9 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
+window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
+	window.lastExhaustionThreshold = Math.floor(hero.exhaustion / 10) * 10;
 	
 	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
     const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };
@@ -996,11 +1037,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 	
 	// --- DATA-DRIVEN TIER & HARD SCALE AYARI ---
     const HALF_TIER_SCALE = 1.5; // Yarım Tier (Elite) çarpanı
-    const HARD_SCALE = 1.25;      // isHard (Strong) çarpanı
+    const HARD_SCALE = 1.20;      // isHard (Strong) çarpanı
     
     let hpAtkMultiplier = 1.0 * scaling;
     if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; // x1.50
     if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
+	if (isWeakFromMap) hpAtkMultiplier *= 0.8; 
 
     // Defans ve Diğerleri için Çarpan (isHard hariç tutulur)
     let otherMultiplier = 1.0 * scaling;
@@ -1032,6 +1074,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         attack: scaleHPAtk(stats.attack), 
         defense: scaleOther(stats.defense), // Defans isHard'dan etkilenmez
         // --------------------------------------------------------------
+		isWeak: isWeakFromMap,
         isHard: isHardFromMap, 
         isBoss: stats.isBoss, 
         isHalfTier: isHalfTierFromMap,
@@ -1053,9 +1096,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 		const lang = window.getCombatLang();
         writeLog(lang.combat.log_half_tier_buff);
     }
-    if (isHardFromMap && !isHalfTierFromMap) {
+    if (isHardFromMap) {
 		const lang = window.getCombatLang();
         writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
+    }
+	if (isWeakFromMap) {
+        writeLog(lang.combat.log_weak_buff);
     }
 	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
@@ -1116,7 +1162,7 @@ window.nextTurn = function() {
 				const logMsg = combatLang.log_mp_regen
 					.replace("$1", stats.rageRegen)
 					.replace("$2", resLabel);
-				writeLog(`✨ ${hero.class}: ${logMsg}`);
+				writeLog(`✨ ${window.getHeroClassNameTrans()}: ${logMsg}`);
 			}
 		}
 
@@ -1244,7 +1290,7 @@ window.nextTurn = function() {
 					const icon = window.getDotIcon(effect.id);
 					const logMsg = lang.combat.log_dot_hit
 						.replace("$1", icon)
-						.replace("$2", hero.class) // Barbar, Magus vb.
+						.replace("$2", window.getHeroClassNameTrans()) // Barbar, Magus vb.
 						.replace("$3", effect.name)
 						.replace("$4", effect.value);
 					writeLog(logMsg);

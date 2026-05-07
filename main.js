@@ -348,6 +348,7 @@ function initGame() {
     hero.autoRestCount = 0;  // Zorunlu dinlenme ceza sayacını sıfırla
     hero.skillUsage = {};    // Yetenek kullanım sayılarını temizle (Maliyetler normale dönsün)
     // ------------------------------------------
+	window.lastExhaustionThreshold = 0;
 	
     hero.unlockedSkills = []; 
     hero.equippedSkills = [null, null, null, null, null, null]; 
@@ -713,6 +714,30 @@ window.bossayaklas = function() {
     updateStats();
     
     writeLog("🌀 **Hile**: Boss kapısına ışınlandın! Zaman dengelendi (25. Gün).");
+};
+
+window.haritayiAc = function() {
+    // 1. Hile bayrağını aktif et (Mekanik kilidi açar)
+    window.isCheatMapOpen = true;
+    window.isMapNodeProcessing = false; // Tıklama kilidi varsa aç
+
+    // 2. Tüm node butonlarını bul ve "Işınlanma" moduna sok
+    const nodes = document.querySelectorAll('.map-node');
+    nodes.forEach(btn => {
+        btn.disabled = false;           // Tıklanabilir yap
+        btn.classList.add('available'); // Görsel olarak aktif yap
+        
+        // Biyom resimlerini görünür yap (Sis perdesini kaldır)
+        // CSS'deki .available::before kuralı sayesinde otomatik görünürler
+    });
+
+    // 3. Dile duyarlı log bas
+    const lang = window.getCombatLang();
+    if (lang && lang.combat && lang.combat.log_cheat_map) {
+        writeLog(lang.combat.log_cheat_map);
+    }
+
+    console.log("🗺️ Harita Sırları Açıldı: Artık her odaya tıklayarak ışınlanabilirsin.");
 };
 
 document.addEventListener('touchstart', (e) => {

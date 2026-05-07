@@ -40,43 +40,67 @@ function pickEnemyForBiome(biome, targetTier) {
 
 // --- 2. YARDIMCI: Aşamaya ve Act'e Göre Tier Belirleyici ---
 function getTierAndDifficultyForStage(stage, act = 1) {
-    const baseTierOfAct = (act - 1) * 3 + 1; // Act 1->T1, Act 2->T4
-    
-    // Kaç tane köyü geride bıraktık?
+    const base = (act - 1) * 3; // Sonsuz Act döngüsü temeli (Act 1: 0, Act 2: 3...)
     const passedTowns = MAP_CONFIG.townStages.filter(t => t < stage).length;
+    const rand = Math.random();
     
-    // --- BOSS KONTROLÜ (Son Oda) ---
-    if (stage >= MAP_CONFIG.totalStages - 2) {
-        return { 
-            tier: "B" + act, // "B1", "B2" vb. döner
-            isHard: true, 
-            isHalfTier: false 
-        };
-    }
-	
-	// Şehir Odası Kontrolü (Stage 24 - Son oda)
+    // --- 1. ÖNCELİKLİ KONTROLLER: ŞEHİR VE BOSS ---
     if (stage === MAP_CONFIG.totalStages - 1) {
-        return { tier: base, isHard: false, isHalfTier: false };
+        return { tier: base + 3, isHard: false, isHalfTier: false, isOrange: false, isWeak: false };
+    }
+    if (stage === MAP_CONFIG.totalStages - 2) {
+        return { tier: "B" + act, isHard: true, isHalfTier: false, isOrange: false, isWeak: false };
     }
 
-    // --- NORMAL VE YARIM TIER MANTIĞI ---
-    // passedTowns'a göre Act içindeki ilerlemeyi buluruz
-    // 0 köy: T1 | 1 köy: T1.5/T2H | 2 köy: T2 | 3 köy: T2.5/T3H | 4 köy: T3
-    
-    let currentTier = baseTierOfAct + Math.floor(passedTowns / 2);
+    // --- 2. HİYERARŞİK BÖLGELER (Senin Yeni Kurgun) ---
 
-    if (passedTowns % 2 === 1) {
-        // GEÇİŞ BÖLGESİ (Köy 1 ve Köy 3 sonrası)
-        const isHard = Math.random() < 0.5;
-        return { 
-            tier: isHard ? currentTier + 1 : currentTier, 
-            isHard: isHard, 
-            isHalfTier: !isHard 
-        };
-    } else {
-        // STABİL BÖLGE (Başlangıç, Köy 2 ve Köy 4 sonrası)
-        return { tier: currentTier, isHard: false, isHalfTier: false };
+    // BÖLGE 0: Başlangıç -> Köy 1
+    if (passedTowns === 0) {
+        return { tier: base + 1, isHard: false, isHalfTier: false, isOrange: false, isWeak: false }; // T1 (Yeşil)
     }
+
+    // BÖLGE 1: Köy 1 -> Köy 2
+    if (passedTowns === 1) {
+        if (rand < 0.20) { // %20 İhtimal
+            return { tier: base + 2, isHard: true, isHalfTier: false, isOrange: false, isWeak: false }; // T2Buff (Kırmızı)
+        } else if (rand < 0.60) { // %40 İhtimal
+            return { tier: base + 2, isHard: false, isHalfTier: false, isOrange: true, isWeak: false }; // T2 (Turuncu)
+        } else { // %40 İhtimal
+            return { tier: base + 1, isHard: false, isHalfTier: true, isOrange: false, isWeak: false }; // T1.5 (Yeşil)
+        }
+    }
+
+    // BÖLGE 2: Köy 2 -> Köy 3
+    if (passedTowns === 2) {
+        if (rand < 0.20) { // %20 İhtimal
+            return { tier: base + 3, isHard: false, isHalfTier: false, isOrange: false, isWeak: true }; // T3Weak (Kırmızı)
+        } else { // %80 İhtimal
+            return { tier: base + 2, isHard: false, isHalfTier: false, isOrange: false, isWeak: false }; // T2 (Yeşil)
+        }
+    }
+
+    // BÖLGE 3: Köy 3 -> Köy 4
+    if (passedTowns === 3) {
+        if (rand < 0.20) { // %20 İhtimal
+            return { tier: base + 3, isHard: true, isHalfTier: false, isOrange: false, isWeak: false }; // T3Buff (Kırmızı)
+        } else if (rand < 0.60) { // %40 İhtimal
+            return { tier: base + 3, isHard: false, isHalfTier: false, isOrange: true, isWeak: false }; // T3 (Turuncu)
+        } else { // %40 İhtimal
+            return { tier: base + 2, isHard: false, isHalfTier: true, isOrange: false, isWeak: false }; // T2.5 (Yeşil)
+        }
+    }
+
+    // BÖLGE 4: Köy 4 -> Boss
+    if (passedTowns === 4) {
+        if (rand < 0.20) { // %20 İhtimal
+            return { tier: base + 4, isHard: false, isHalfTier: false, isOrange: false, isWeak: true }; // T4Weak (Kırmızı)
+        } else { // %80 İhtimal
+            return { tier: base + 3, isHard: false, isHalfTier: false, isOrange: false, isWeak: false }; // T3 (Yeşil)
+        }
+    }
+
+    // Failsafe
+    return { tier: base + 1, isHard: false, isHalfTier: false, isOrange: false, isWeak: false };
 }
 
 // --- 3. ANA FONKSİYON: Harita Üretimi ---
@@ -125,33 +149,61 @@ function generateMap() {
 
         let nodesInThisStage = [];
 
-        availableLanes.forEach(lane => {
-            const nodeType = determineNodeType(stage, lane);
-            let b = null, e = null, ih = false, t = 1, m = null, img = null; iht= false;
+			availableLanes.forEach(lane => {
+		const nodeType = determineNodeType(stage, lane);
+    
+		// --- DÜZELTME: diff döngünün başına alındı ---
+		const diff = getTierAndDifficultyForStage(stage, act);
+	
+		// --- YENİ: SAVAŞ KONTROLÜ ---
+        // Sadece bu tipler renk/buff alabilir
+        const isCombatNode = ['encounter', 'start', 'boss'].includes(nodeType);
+        // ----------------------------
+    
+		// Değişkenleri diff'ten güvenle çekiyoruz
+		let t = diff.tier;
+		let ih = diff.isHard;
+		let iht = diff.isHalfTier;
+		let io = diff.isOrange;
+		let iw = diff.isWeak;
+    
+		let b = null, e = null, m = null, img = null;
 
-            // Sadece Savaş odalarına Biyom ve Canavar ata
-            if (['encounter', 'start', 'boss'].includes(nodeType)) {
-                b = (nodeType === 'boss') ? 'urban' : biomes[Math.floor(Math.random() * biomes.length)];
-                const diff = getTierAndDifficultyForStage(stage, act);
-                t = diff.tier; ih = diff.isHard; iht = diff.isHalfTier;
-                e = (nodeType === 'boss') ? "Goblin Şefi" : pickEnemyForBiome(b, t);
-                const variation = Math.floor(Math.random() * 4);
-                img = variation === 0 ? `biome_${b}.webp` : `biome_${b}${variation}.webp`;
-            } 
-            else if (nodeType === 'town') {
-                const masters = ['blacksmith', 'alchemist', 'stable'];
-                m = masters[Math.floor(Math.random() * masters.length)];
-            }
+		// Sadece Savaş odalarına Biyom ve Canavar ata
+		if (['encounter', 'start', 'boss'].includes(nodeType)) {
+			b = (nodeType === 'boss') ? 'urban' : biomes[Math.floor(Math.random() * biomes.length)];
+       
+			// e (Düşman ismi) seçimi
+			e = (nodeType === 'boss') ? "Goblin Şefi" : pickEnemyForBiome(b, t);
+        
+			const variation = Math.floor(Math.random() * 4);
+			img = variation === 0 ? `biome_${b}.webp` : `biome_${b}${variation}.webp`;
+		} 
+		else if (nodeType === 'town') {
+			const masters = ['blacksmith', 'alchemist', 'stable'];
+			m = masters[Math.floor(Math.random() * masters.length)];
+		}
 
-            const node = {
-                id: nodeIdCounter++, stage: stage, lane: lane, type: nodeType,
-                biome: b, biomeImg: img, enemyName: e, isHard: ih, isHalfTier: iht, tier: t, masterNPC: m,
-                jitterX: (Math.random() * 6 - 3), 
-                jitterY: (Math.random() * 16 - 8) + (Math.sin(stage * 0.5) * 40), 
-                next: []
-            };
-            nodesInThisStage.push(node);
-        });
+		const node = {
+			id: nodeIdCounter++, 
+			stage: stage, 
+			lane: lane, 
+			type: nodeType,
+			biome: b, 
+			biomeImg: img, 
+			enemyName: e, 
+			isHard: isCombatNode ? diff.isHard : false,
+            isHalfTier: isCombatNode ? diff.isHalfTier : false,
+            isOrange: isCombatNode ? diff.isOrange : false,
+            isWeak: isCombatNode ? diff.isWeak : false,
+			tier: t, 
+			masterNPC: m,
+			jitterX: (Math.random() * 6 - 3), 
+			jitterY: (Math.random() * 16 - 8) + (Math.sin(stage * 0.5) * 40), 
+			next: []
+			};
+		nodesInThisStage.push(node);
+	});
 
         // Anti-Pacifist Mantığı (Savaşsız stage kalmasın)
         if (!isChokepoint && stage !== 0) {
@@ -159,10 +211,22 @@ function generateMap() {
             if (!hasCombat) {
                 const target = nodesInThisStage[Math.floor(Math.random() * nodesInThisStage.length)];
                 target.type = 'encounter';
-                // Biyom ve canavarı bu node için yeniden üret
-                target.biome = biomes[Math.floor(Math.random() * biomes.length)];
+                
+                // --- KRİTİK DÜZELTME BURASI ---
                 const diff = getTierAndDifficultyForStage(stage, act);
-                target.tier = diff.tier; target.isHard = diff.isHard;
+                target.tier = diff.tier; 
+                target.isHard = diff.isHard; 
+                target.isHalfTier = diff.isHalfTier;
+                
+                // SİLME YAPILMADI: Eksik olan yeni bayraklar eklendi
+                target.isOrange = diff.isOrange; // Artık Turuncu odayı tanıyacak
+                target.isWeak = diff.isWeak;     // Artık Zayıf odayı tanıyacak
+                // ------------------------------
+				
+				if (!target.biome) {
+                    target.biome = biomes[Math.floor(Math.random() * biomes.length)];
+                }
+				
                 target.enemyName = pickEnemyForBiome(target.biome, target.tier);
                 const v = Math.floor(Math.random() * 4);
                 target.biomeImg = v === 0 ? `biome_${target.biome}.webp` : `biome_${target.biome}${v}.webp`;
@@ -238,7 +302,13 @@ function renderMap() {
             else if (node.biome === 'mountain') createCloudParticles(btn);
         }
 
-        if (node.isHard) btn.classList.add('hard-encounter');
+        // --- DÜZELTME: Sadece savaş odaları renk sınıfı alabilir ---
+        if (node.type === 'encounter' || node.type === 'start' || node.type === 'boss') {
+            if (node.isHard) btn.classList.add('hard-encounter');
+            if (node.isOrange) btn.classList.add('orange-encounter');
+            if (node.isWeak) btn.classList.add('weak-encounter');
+        }
+        // -----------------------------------------------------------
 
         const baseLeft = (node.stage / (MAP_CONFIG.totalStages - 1)) * 92 + 4;
         let baseTop = 50;
@@ -416,6 +486,10 @@ function movePlayerMarkerToNode(nodeId, isInstant = false) {
 }
 
 function updateAvailableNodes() {
+	 // --- YENİ: HİLE KONTROLÜ ---
+    if (window.isCheatMapOpen) return; 
+    // SEBEP: Eğer harita hileyle açılmışsa, sistemin yolları tekrar kilitlemesini engeller.
+    // ---------------------------
     const allBtns = document.querySelectorAll('.map-node');
     allBtns.forEach(b => {
         b.disabled = true; 
@@ -501,7 +575,7 @@ function proceedWithNodeAction(node) {
             let enemy = node.enemyName;
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
-            startBattle(enemy, node.isHard, node.isHalfTier); 
+            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak); 
 
         } else if (node.type === 'town') {
             enterTown();
