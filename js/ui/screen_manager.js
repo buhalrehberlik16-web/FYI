@@ -65,6 +65,28 @@ window.switchScreen = function(targetScreen) {
             if (typeof drawAllConnections === 'function') drawAllConnections();
         }, 50); 
     }
+	
+	// --- YENİ: LOG GÖRÜNÜRLÜK FİLTRESİ ---
+    const logWrapper = document.getElementById('combat-log-wrapper');
+    const logTrigger = document.getElementById('combat-log-trigger');
+
+     const isGameOver = (targetScreen === window.gameOverScreen);
+    const isBattle = (targetScreen === window.battleScreen);
+
+    // 1. ÖLÜM MODU KONTROLÜ
+    if (isGameOver) {
+        logWrapper.classList.add('death-mode'); // Dev boyuta geç
+    } else {
+        logWrapper.classList.remove('death-mode'); // Normal boyuta dön
+    }
+
+    // 2. GÖRÜNÜRLÜK FİLTRESİ
+    if ((isGameOver || isBattle) && window.gameSettings.showLog) {
+        window.applySettings(); 
+    } else {
+        if(logWrapper) logWrapper.style.display = "none";
+        if(logTrigger) logTrigger.style.display = "none";
+    }
 };
 
 window.writeLog = function(message) {
