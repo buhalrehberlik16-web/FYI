@@ -118,6 +118,14 @@
         font-size: 9px;
         padding: 1px 4px;
     }
+	#combat-log-wrapper.death-mode {
+        width: 95% !important;
+        top: 75% !important;
+    }
+    #combat-log-wrapper.death-mode #combat-log-area {
+        height: 220px !important;
+        font-size: 0.85rem !important;
+    }
 }
 
 @media (max-height: 600px) {
