@@ -678,6 +678,43 @@ window.eventver = function(eventId) {
     }
 };
 
+window.bossayaklas = function() {
+    // 1. Hedef Aşamayı Belirle (Boss Stage - 2'dir, biz Stage - 3'e yani bir önüne gidiyoruz)
+    const targetStage = MAP_CONFIG.totalStages - 3; 
+    
+    // 2. O aşamadaki ilk uygun odayı bul
+    const targetNode = GAME_MAP.nodes.find(n => n.stage === targetStage);
+    
+    if (!targetNode) {
+        console.error("HATA: Hedef aşamada oda bulunamadı!");
+        return;
+    }
+
+    // 3. Karakteri Işınla
+    GAME_MAP.currentNodeId = targetNode.id;
+    
+    // Geçmişteki yolları "tamamlanmış" olarak işaretle (Çizgilerin kırılmaması için)
+    GAME_MAP.completedNodes = GAME_MAP.nodes
+        .filter(n => n.stage < targetStage)
+        .map(n => n.id);
+    GAME_MAP.completedNodes.push(targetNode.id);
+
+    // 4. Zamanı Boss için "Normal" seviyeye ayarla (25. Gün)
+    // Bu sayede Boss ne çok güçlü (penalty) ne çok zayıf (bonus) olur.
+    hero.calendar.daysPassed = 25;
+
+    // 5. UI ve Haritayı Güncelle
+    window.isMapNodeProcessing = false; // Kilit varsa aç
+    if (typeof movePlayerMarkerToNode === 'function') {
+        movePlayerMarkerToNode(targetNode.id, true); // Anında ışınla
+    }
+    
+    if (typeof renderMap === 'function') renderMap();
+    updateStats();
+    
+    writeLog("🌀 **Hile**: Boss kapısına ışınlandın! Zaman dengelendi (25. Gün).");
+};
+
 document.addEventListener('touchstart', (e) => {
     // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
     if (!e.target.closest('.item-slot') && !e.target.closest('.reward-item')) {
