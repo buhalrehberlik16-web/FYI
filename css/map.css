@@ -515,3 +515,22 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 /* İkon Resmi Küçültme Düzeltmesi */
 #player-marker { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px #f0e68c); }
+
+/* Turuncu Node (Güçlendirmesiz, sadece Seviye Atlamış) */
+.map-node.orange-encounter {
+    border-color: #ff9800 !important;
+    box-shadow: 0 0 15px rgba(255, 152, 0, 0.4) !important;
+}
+
+/* Kırmızı Node (Hem isHard hem isWeak için kullanılacak - Tehlike/Özel durum rengi) */
+.map-node.hard-encounter, .map-node.weak-encounter {
+    border-color: #ff4d4d !important;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.6) !important;
+    animation: pulse-red 2s infinite ease-in-out;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
