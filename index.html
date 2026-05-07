@@ -57,6 +57,19 @@
         </div>
 
         <div id="main-screen-area">
+		<!-- COMBAT LOG -->
+		<div id="combat-log-trigger" onclick="window.enableAndOpenCombatLog()">
+				<i class="fas fa-chevron-right"></i>
+			</div>
+				<div id="combat-log-wrapper" class="collapsed">
+			<div id="combat-log-header" onclick="toggleCombatLog()">
+				<span data-i18n="combat_log_title">SAVAŞ GÜNLÜĞÜ</span>
+				<i class="fas fa-chevron-down" id="combat-log-arrow"></i>
+			</div>
+			<div id="combat-log-area">
+				<!-- Loglar buraya akacak -->
+			</div>
+		 </div>
             
             <!-- 1. BAŞLANGIÇ EKRANI -->
 <div id="start-screen" class="screen active">
@@ -239,18 +252,6 @@
 
             <!-- 4. SAVAŞ EKRANI -->
             <div id="battle-screen" class="screen hidden">
-			<div id="combat-log-trigger" onclick="window.enableAndOpenCombatLog()">
-				<i class="fas fa-chevron-right"></i>
-			</div>
-				<div id="combat-log-wrapper" class="collapsed">
-			<div id="combat-log-header" onclick="toggleCombatLog()">
-				<span data-i18n="combat_log_title">SAVAŞ GÜNLÜĞÜ</span>
-				<i class="fas fa-chevron-down" id="combat-log-arrow"></i>
-			</div>
-			<div id="combat-log-area">
-				<!-- Loglar buraya akacak -->
-			</div>
-				</div>
 					<div id="turn-counter-box">
 					<span class="turn-label" data-i18n="turn_label">TUR</span>
 					<span id="turn-count-display">1</span>
@@ -396,6 +397,7 @@
             <div id="game-over-screen" class="screen hidden">
                 <h1 class="game-over-title" data-i18n="dead_title">ÖLDÜN!</h1>
                 <button id="return-to-menu-button" data-i18n="back_to_menu">Ana Menüye Dön</button>
+				<div id="death-log-anchor" style="margin-top: 30px; width: 100%; display: flex; justify-content: center;"></div>
             </div>
 
             <!-- 9. SKILL BOOK (YENİLENEN YAPI) -->
@@ -940,6 +942,14 @@
             <i class="fas fa-coins"></i> <span id="trade-screen-gold">0</span>
         </div>
         <h2 id="trade-title">TİCARET</h2>
+		<!-- YENİ: KOMPAKT EKİPMAN ÖNİZLEME PANELİ -->
+        <div id="trade-equipment-preview">
+            <div class="preview-label" data-i18n="current_equipment">KUŞANILMIŞ EŞYALAR</div>
+            <div id="trade-equip-row" class="compact-equip-row">
+                <!-- JS ile 6 slot (Küpe, Kolye, Yüzük, Kemer) buraya dolacak -->
+            </div>
+        </div>
+        <hr class="stat-separator" style="margin: 10px 0;">
         <div id="trade-grid" class="bag-grid" style="margin: 20px auto;"></div>
         <button class="npc-btn" onclick="closeMerchantTrade()" data-i18n="back" style="width:100px; margin:0 auto;">GERİ</button>
     </div>

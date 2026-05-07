@@ -545,7 +545,7 @@ window.initializeSkillButtons = function() {
             img.src = `images/${data.icon}`;
             slot.appendChild(img);
 			
-				// --- YENİ: RAGE/MANA MALİYET ROZETİ ---
+			// --- YENİ: RAGE/MANA MALİYET ROZETİ ---
 			// SADECE maliyet 0'dan büyükse gösterelim
 			if (data.rageCost > 0) {
 				const rageBadge = document.createElement('div');
@@ -944,11 +944,6 @@ window.determineMonsterAction = function() {
 };
 
 window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false) {
-	// Eğer bir önceki odadan setTimeout ile sızmış bir etki varsa burada hepsini kovuyoruz.
-    if (hero.statusEffects) {
-        hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd);
-    }
-    // -----------------------------------------------
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	
 	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
@@ -1485,6 +1480,15 @@ window.checkGameOver = function() {
         // ----------------------------
 		
         triggerDeathEffect(); 
+		// --- YENİ: ÖLÜM ANINDA LOGU GENİŞLET ---
+        window.isLogMinimized = false; // Ok modundan çıkar, tam ekran yap
+        window.applySettings(); // Değişikliği ekrana yansıt
+        
+        // Log alanını en aşağı kaydır (Zamanlama için kısa bir delay)
+        setTimeout(() => {
+            const logArea = document.getElementById('combat-log-area');
+            if(logArea) logArea.scrollTop = logArea.scrollHeight;
+        }, 100); 
         setTimeout(() => { switchScreen(gameOverScreen); resetDeathEffect(); 
 		// "Devam Et" butonunu ana menüde gizlemek için kontrolü tetikle
             const continueBtn = document.getElementById('btn-continue');
