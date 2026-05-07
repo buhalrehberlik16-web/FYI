@@ -219,6 +219,7 @@ window.LANG_TR = {
 		desc_boss: "BÖLÜM SONU CANAVARI! KAÇIŞIN YOK!",
 		log_enter_town: "🏰 Köye giriş yaptın.",
 		log_leave_town: "Köyden ayrıldın.",
+		log_days_passed: "📅 **Zaman**: Maceranda $1 gün geride kaldı.",
 		
 
 

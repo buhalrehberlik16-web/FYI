@@ -219,6 +219,7 @@ window.LANG_EN = {
 		desc_boss: "AREA BOSS! THERE IS NO ESCAPE!",
 		log_enter_town: "🏰 Entered the village.",
 		log_leave_town: "Left the village.",
+		log_days_passed: "📅 **Time**: $1 days have passed on your journey.",
 		
 
         // NPC Dialogues
