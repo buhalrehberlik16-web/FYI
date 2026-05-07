@@ -283,6 +283,7 @@ window.LANG_EN = {
 		scout_stage: "STAGE",
 		stable_rent: "Horse Rental(40G)",
 		stable_scout: "Scout(20G)",
+		current_equipment: "CURRENTLY EQUIPPED",
 		
 		// Exhaust
 		exhaustion_label: "Exhaustion",

@@ -286,6 +286,7 @@ window.LANG_TR = {
 		scout_stage: "AŞAMA",
 		stable_rent: "At Kirala  (40G)",
 		stable_scout: "Gözcü (20G)",
+		current_equipment: "KUŞANILMIŞ EŞYALAR",
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",
