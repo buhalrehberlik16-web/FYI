@@ -101,6 +101,11 @@ window.CalendarManager = {
             hero.rage = Math.min(stats.maxRage, hero.rage + (passed * classRules.resourcePerDay));
         }
         // -----------------------------------------------
+		
+	const currentLang = window.gameSettings.lang || 'tr';
+    const lang = window.LANGUAGES[currentLang];
+    // Tam sayı olarak geçen günü yazdır
+    console.log(lang.log_days_passed.replace("$1", Math.floor(window.hero.calendar.daysPassed)));
 
     this.updateTownUI();
 	if (typeof updateStats === 'function') updateStats(); // Barları anında güncelle
