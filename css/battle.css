@@ -593,6 +593,31 @@
     background: #5d4a30;
     width: 35px;
 }
+
+/* --- ÖLÜM EKRANI ÖZEL LOG STİLİ --- */
+#combat-log-wrapper.death-mode {
+    top: 75% !important; /* YOU DIED yazısının altına, ekranın ortasına yakın */
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 650px !important; /* Daha geniş */
+    max-width: 95% !important;
+    background: rgba(20, 5, 5, 0.98) !important; /* Hafif kırmızımsı koyu siyah */
+    border: 2px solid #8b0000 !important; /* Kan kırmızısı çerçeve */
+    box-shadow: 0 0 100px rgba(0, 0, 0, 1), 0 0 30px rgba(139, 0, 0, 0.3) !important;
+    z-index: 2000 !important;
+}
+
+#combat-log-wrapper.death-mode #combat-log-area {
+    height: 300px !important; /* Daha fazla satır göründün */
+    font-size: 1rem !important; /* Yazılar biraz daha büyüsün */
+    padding: 15px !important;
+}
+
+#combat-log-wrapper.death-mode #combat-log-header {
+    background: #500000 !important; /* Header kırmızısı */
+    color: #fff !important;
+}
+
 .skill-rage-badge {
     position: absolute;
     bottom: -5px; /* Sol alt köşe */
