@@ -70,16 +70,24 @@
     text-align: center;
 }
 }
-.map-node.hard-encounter {
-    border-color: #ff9800 !important; /* Turuncu Çerçeve */
-    box-shadow: 0 0 15px #ff9800 !important; /* Turuncu Parlama */
-    animation: pulse-orange 2s infinite ease-in-out;
-    z-index: 12; /* Diğerlerinden biraz üstte */
+
+/* Turuncu Node (Güçlendirmesiz, sadece Seviye Atlamış) */
+.map-node.orange-encounter {
+    border-color: #ff9800 !important;
+    box-shadow: 0 0 15px rgba(255, 152, 0, 0.4) !important;
 }
 
-/* Kırmızı Boss ile karışmasın diye özel animasyon */
-@keyframes pulse-orange {
-    0% { transform: scale(1); box-shadow: 0 0 10px #ff9800; }
-    50% { transform: scale(1.15); box-shadow: 0 0 25px #ff9800; }
-    100% { transform: scale(1); box-shadow: 0 0 10px #ff9800; }
+/* Kırmızı Node (Hem isHard hem isWeak için kullanılacak - Tehlike/Özel durum rengi) */
+.map-node.hard-encounter, .map-node.weak-encounter {
+    border-color: #ff4d4d !important;
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.6) !important;
+    animation: pulse-red 2s infinite ease-in-out;
 }
+
+@keyframes pulse-red {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+
