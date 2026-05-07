@@ -6,7 +6,7 @@ window.LootManager = {
         
         // 1. ELITE KONTROLÜ: Üst seviye (T+1) takı düşürme izni
         // Bosslar ve isHard (Turuncu çerçeveli) düşmanlar 'Elite' kabul edilir.
-        const isElite = (monster.isHard || monster.isBoss);
+        const isElite = (monster.isHard || monster.isWeak || monster.isBoss);
         
         // 2. TIER SAYISALLAŞTIRMA (B1 -> 4, B2 -> 8 gibi)
         let monsterTier = monster.tier;
@@ -31,9 +31,9 @@ window.LootManager = {
         let maxBudget = 2.7;
 
         // Bonusu hem alta hem üste ekle (isHard ve isBoss ayrık kontrol edilir)
-        if (monster.isHard) {
-            minBudget += 0.7; // 0.8 -> 1.5
-            maxBudget += 0.7; // 2.7 -> 3.4
+        if (monster.isHard || monster.isWeak) {
+            minBudget += 0.2; // 0.8 -> 1.0
+            maxBudget += 0.2; // 2.7 -> 2.9
         } else if (monster.isBoss) {
             minBudget += 1.4; // 0.8 -> 2.2
             maxBudget += 1.4; // 2.7 -> 4.1
