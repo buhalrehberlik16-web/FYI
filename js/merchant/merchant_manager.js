@@ -87,6 +87,37 @@ window.renderMerchantUI = function() {
     const goldDisplay = document.getElementById('trade-screen-gold');
     if (goldDisplay) goldDisplay.textContent = hero.gold;
     // ---------------------------------------
+	
+	// --- YENİ: TAKILI EKİPMANLARI ÇİZ ---
+    const equipRow = document.getElementById('trade-equip-row');
+    if (equipRow) {
+        equipRow.innerHTML = '';
+        // Gösterilecek slotlar
+        const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
+        
+        slotsToShow.forEach(slotKey => {
+            const item = hero.equipment[slotKey];
+            const slotDiv = document.createElement('div');
+            slotDiv.className = 'item-slot trade-preview-slot';
+            
+            if (item) {
+                const img = document.createElement('img');
+                img.src = `items/images/${item.icon}`;
+                slotDiv.appendChild(img);
+                slotDiv.innerHTML += window.getItemBadgeHTML(item);
+                
+                // Tooltip desteği (Karşılaştırma yapabilmek için)
+                slotDiv.onmouseenter = (e) => window.showItemTooltip(item, e);
+                slotDiv.onmouseleave = () => window.hideItemTooltip();
+                slotDiv.onmousemove = (e) => window.moveTooltip(e);
+            } else {
+                // Boş slot görseli (Opsiyonel: ikon koyabilirsin)
+                slotDiv.style.opacity = "0.3";
+            }
+            equipRow.appendChild(slotDiv);
+        });
+    }
+    // -----------------------------------
 
     if (window.currentTradeMode === 'buy') {
         title.textContent = lang.buy_btn || "BUY";
