@@ -164,3 +164,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     transform: translateY(-2px);
     filter: brightness(1.5);
 }
+.exhaust-text { 
+    color: #ffae00 !important; /* RPG Turuncusu */
+    text-shadow: 2px 2px 0px #000, 0 0 10px rgba(255, 174, 0, 0.5) !important;
+}
