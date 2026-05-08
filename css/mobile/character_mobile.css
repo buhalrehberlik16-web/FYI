@@ -135,4 +135,54 @@
         width: 40px !important;
         height: 40px !important;
     }
+	/* Eşya İsmi */
+    .tooltip-name {
+        font-size: 0.9rem !important; /* 1.2rem'den 0.9'a indi */
+        margin-bottom: 2px !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    /* Seviye/Tier Yazısı */
+    .tooltip-tier {
+        font-size: 0.65rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* Ayırıcı Çizgi */
+    .stat-separator {
+        margin: 4px 0 !important;
+    }
+
+    /* Stat Satırları (Str, Dex vb.) */
+    .tooltip-stat-row {
+        font-size: 0.7rem !important; /* Yazıları küçülttük */
+        line-height: 1.2 !important;
+        gap: 10px !important;
+    }
+
+    /* Stat Değerleri (Rakamlar) */
+    .tooltip-val {
+        font-size: 0.75rem !important;
+    }
+
+    /* Set Bonus Kutusu (Eğer varsa) */
+    .set-info-box {
+        padding: 5px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .set-header {
+        font-size: 0.6rem !important;
+    }
+
+    .set-bonus-text {
+        font-size: 0.55rem !important;
+    }
+
+    /* Broş uzmanlık metni */
+    .item-tooltip .brooch-specialty-text {
+        font-size: 8px !important;
+        padding: 3px !important;
+        margin-bottom: 5px !important;
+    }
 }
