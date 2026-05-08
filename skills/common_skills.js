@@ -24,6 +24,15 @@ const COMMON_SKILLS = {
             
             const usage = hero.skillUsage["rest"] || 1;
             const lastReduction = window.getExhaustionCost(this.data, usage - 1);
+			
+			// --- YENİ: GÖRSEL GERİ BİLDİRİM (FLOATING TEXT) ---
+			const heroDisplay = document.getElementById('hero-display');
+			if (heroDisplay) {
+            // Ekranda "-5 DİNLENİYORSUN" gibi turuncu bir yazı fırlatır
+            const text = `-${Math.abs(lastReduction)} ${lang.exhaustion_restS}`;
+            showFloatingText(heroDisplay, text, 'exhaust'); 
+			}
+			// --------------------------------------------------
             
             // Log metni (Mutlak değer kullanarak: -5 -> 5)
             writeLog(lang.log_rest_skill.replace("$1", Math.abs(lastReduction)));
