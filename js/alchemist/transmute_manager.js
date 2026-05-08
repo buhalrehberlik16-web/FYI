@@ -349,9 +349,38 @@ window.processTransmutation = async function() {
         pointsToDistribute--;
     }
 
-    const template = window.BASE_ITEMS[newItem.type][finalMainStat] || window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
-    newItem.nameKey = template.nameKey;
-    newItem.icon = template.icon;
+	// --- YENİ AKILLI İSİM VE İKON SİSTEMİ ---
+    const mainStatsPool = ['str', 'dex', 'int', 'vit', 'mp_pow'];
+    const isPrimaryMainStat = mainStatsPool.includes(finalMainStat);
+
+    if (isPrimaryMainStat) {
+        // DURUM A: Baskın stat temel statlardan biri (Normal davranış)
+        const template = window.BASE_ITEMS[newItem.type][finalMainStat] || window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
+        newItem.nameKey = template.nameKey;
+        newItem.icon = template.icon;
+    } 
+    else {
+        // DURUM B: Baskın stat bir Element (Blank görseli kullanılacak)
+        let imgPrefix = newItem.type;
+        if (imgPrefix === "necklace") imgPrefix = "neck";
+        if (imgPrefix === "earring") imgPrefix = "ear";
+        
+        newItem.icon = `accesories/${imgPrefix}_blank.webp`;
+
+        // İsimlendirme Önceliği:
+        // 1. Varsa diğer statlar içindeki ilk temel statın ismini al
+        let secondaryMainStat = newItem.propertyKeys.find(k => mainStatsPool.includes(k));
+        
+        if (secondaryMainStat) {
+            newItem.nameKey = window.BASE_ITEMS[newItem.type][secondaryMainStat].nameKey;
+        } else {
+            // 2. Eğer hiç temel stat yoksa (örn: fire + poison), baskın elementin ismini al
+            let typeKey = newItem.type === 'necklace' ? 'neck' : (newItem.type === 'earring' ? 'ear' : newItem.type);
+            newItem.nameKey = `item_${typeKey}_${finalMainStat}`;
+        }
+    }
+    // ----------------------------------------
+
 	
 	// --- YENİ: ZIRH MİRASI (ADIM 2) ---
     // Malzemelerdeki en yüksek implicitDef değerini bul (Upgrade olmaz, korunur)
