@@ -252,7 +252,7 @@ const COMMON_SKILLS = {
             // "10 Defansı Yok Sayar" mantığı: 
             // Eğer fiziksel hasar defansa takıldıysa (physRaw < def), aradaki kaybın 10 puanını geri verelim.
             let monsterDef = defender.defense + (window.isMonsterDefending ? (window.monsterDefenseBonus || 0) : 0);
-            const ignoredAmount = Math.min(monsterDef, 10);
+            const ignoredAmount = Math.min(monsterDef, 5);
             
             // Paketi el yordamıyla güncelleyelim (Sadece bu skile özel)
             dmgPack.total += ignoredAmount;
