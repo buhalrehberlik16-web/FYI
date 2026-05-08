@@ -291,6 +291,7 @@ window.LANG_EN = {
 		exhaustion_forced_rest: "FORCED REST",
 		exhaustion_extinct: "EXTINCT",
 		exhaustion_rest: "RESTING",
+		exhaustion_restS: "",
 		exhaustion_short: "Ex:",
 		log_exhaustion_damage: "😓 **Exhaustion**: Took $1 damage due to strain.",
 		log_forced_rest: "⚠️ **Forced Rest**: Insufficient resources! Exhaustion: $1",

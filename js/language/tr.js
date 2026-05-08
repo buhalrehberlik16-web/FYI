@@ -294,6 +294,7 @@ window.LANG_TR = {
 		exhaustion_forced_rest: "ZORUNLU DİNLENME",
 		exhaustion_extinct: "TÜKENİŞ",
 		exhaustion_rest: "DİNLENİYORSUN",
+		exhaustion_restS: "",
 		exhaustion_short: "Y:",
 		log_exhaustion_damage: "😓 **Yorgunluk**: Zorlanma yüzünden $1 hasar aldın.",
 		log_forced_rest: "⚠️ **Zorunlu Dinlenme**: Kaynak yetersiz! Yorgunluk: $1",
