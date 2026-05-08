@@ -616,7 +616,7 @@ window.LANG_EN = {
             block: { name: "Block", desc: "Gain Block equal to 80% of Dex. Block decays by 50% at turn end. <span style='color:cyan'>-10 Rage.</span>",  log: "Gained $1 Block." },
             minor_healing: { name: "Minor Healing", desc: "Quick bandage.<br><span style='color:#43FF64'>Flat 10 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Rage.</span>", log: "Restored $1 HP." },
             distract: { name: "Distract", desc: "<b style='color:green'>(Fast Action)</b><br>Enemy ATK reduced by 25% (1 Turn).<br>Enemy DEF reduced by 50% (2 Turns).<br><span style='color:cyan'>-50 Rage.</span>", log: "Enemy attack 25% and defense reduced by 50%." },
-            tactical_strike: { name: "Tactical Strike", desc: "Damage: <b style='color:orange'>Deals 1.3 x ATK.</b><br><span style='color:#b19cd9'>Ignores 10 Defense.</span><br><span style='color:cyan'>-15 Rage.</span>" },
+            tactical_strike: { name: "Tactical Strike", desc: "Damage: <b style='color:orange'>Deals 1.3 x ATK.</b><br><span style='color:#b19cd9'>Ignores 5 Defense.</span><br><span style='color:cyan'>-15 Rage.</span>" },
             hoarder: { name: "Hoarder", desc: "Passive Ability.<br><span style='color:gold'>+1 Brooch Slot</span> gained." },
             loot_junkie: { name: "Loot Junkie", desc: "Passive Ability.<br><span style='color:gold'>+2 Bag Slots</span> gained." },
             fired_up: { name: "Fired Up", desc: "Passive Ability.<br><span style='color:gold'>+1 Skill Slot</span> gained." },

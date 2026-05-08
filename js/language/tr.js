@@ -619,7 +619,7 @@ window.LANG_TR = {
             block: { name: "Blok", desc: "Dex değerinin %80'i kadar blok kazanır. Blok tur sonunda %50 azalır.<span style='color:cyan'>-10 Öfke.</span>", log: "$1 Blok kazandın." },
             minor_healing: { name: "Küçük İyileşme", desc: "Hızlı pansuman.<br><span style='color:#43FF64'>Sabit 10 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Öfke.</span>", log: "$1 HP iyileşti." },
             distract: { name: "Dikkat Dağıt", desc: "<b style= 'color:green'>(Hızlı Aksiyon)</b><br>Düşman ATK %25 azalır (1 Tur).<br>Düşman DEF %50 azalır (2 Tur).<br><span style='color:cyan'>-50 Öfke.</span>", log: "Düşman atağı %25 ve defansı %50 azaldı." },
-            tactical_strike: { name: "Taktiksel Vuruş", desc: "Hasar: <b style='color:orange'>1.3 x ATK.</b><br><span style='color:#b19cd9'>10 Defansı Yok Sayar.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
+            tactical_strike: { name: "Taktiksel Vuruş", desc: "Hasar: <b style='color:orange'>1.3 x ATK.</b><br><span style='color:#b19cd9'>5 Defansı Yok Sayar.</span><br><span style='color:cyan'>-15 Öfke.</span>" },
             hoarder: { name: "İstifçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Broş Slotu</span> kazandırır." },
             loot_junkie: { name: "Ganimetçi", desc: "Pasif Yetenek.<br><span style='color:gold'>+2 Çanta Slotu</span> kazandırır." },
             fired_up: { name: "Ateşli", desc: "Pasif Yetenek.<br><span style='color:gold'>+1 Yetenek Slotu</span> kazandırır." },
