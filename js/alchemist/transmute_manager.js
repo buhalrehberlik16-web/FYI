@@ -327,11 +327,12 @@ window.processTransmutation = async function() {
         if (newItem.propertyKeys.length === 0) {
             selectedStat = finalMainStat;
         } else {
-            if (Math.random() < 0.7) selectedStat = pickWeightedStat();
-            else {
-                const allOptions = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
-                selectedStat = allOptions[Math.floor(Math.random() * allOptions.length)];
-            }
+            // YENİ MANTIK: Her zaman oyuncunun verdiği eşyaların ağırlığına (statWeights) bak.
+            // Eğer 3 eşya da STR ise, pickWeightedStat() %100 ihtimalle STR döndürecektir.
+            selectedStat = pickWeightedStat();
+            
+            // Eğer şans eseri (veya hileyle) ağırlık listesi boşsa failsafe olarak ana statı seç
+            if (!selectedStat) selectedStat = finalMainStat;
         }
 
         if (!newItem.propertyKeys.includes(selectedStat) && newItem.propertyKeys.length >= 3) {
