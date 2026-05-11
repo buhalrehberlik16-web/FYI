@@ -168,3 +168,96 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     color: #ffae00 !important; /* RPG Turuncusu */
     text-shadow: 2px 2px 0px #000, 0 0 10px rgba(255, 174, 0, 0.5) !important;
 }
+
+/* --- ÖZEL KAPATMA BUTONU (GENEL BUTONLARDAN AYRI) --- */
+.close-btn-codex {
+    position: absolute;
+    top: -15px; /* Çerçevenin biraz dışına taşsın (Şık durur) */
+    right: -15px;
+    width: 40px;
+    height: 40px;
+    background: #3e2723; /* Çerçeve ile aynı ahşap rengi */
+    color: #f4e4bc; /* Parşömen rengi ikon */
+    border: 3px solid #8d6e63;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.close-btn-codex:hover {
+    background: #8b0000; /* Üzerine gelince kırmızı mühür rengi */
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
+}
+
+.close-btn-codex i {
+    font-size: 1.2rem;
+}
+
+.codex-window {
+    width: 800px;
+    height: 550px;
+    background: #f4e4bc; /* Parşömen rengi */
+    border: 15px solid #3e2723;
+    border-radius: 10px;
+    display: flex;
+    box-shadow: 0 0 50px #000;
+    position: relative;
+    font-family: 'Cinzel', serif;
+}
+
+.codex-sidebar {
+    width: 200px;
+    background: rgba(0,0,0,0.1);
+    border-right: 2px solid #8d6e63;
+    padding-top: 40px;
+}
+
+.codex-tab {
+    padding: 15px;
+    cursor: pointer;
+    color: #3e2723;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.3s;
+}
+
+.codex-tab.active { background: #d7ccc8; color: #8b0000; border-left: 5px solid #8b0000; }
+
+.codex-page {
+    flex: 1;
+    padding: 30px;
+    color: #3e2723;
+    overflow-y: auto;
+}
+
+.codex-page h3 {
+    color: #8b0000 !important; /* Kan kırmızısı/Bordo ana başlıklar */
+    border-bottom: 2px solid rgba(139, 0, 0, 0.2);
+    padding-bottom: 5px;
+    margin-top: 20px;
+    font-size: 1.4rem;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5); /* Parşömen üzerinde derinlik */
+}
+
+.codex-page b {
+    color: #5d4037; /* Koyu kahve/mürekkep tonu */
+    font-weight: 900;
+}
+
+.codex-divider { border: 0; height: 2px; background: #8d6e63; margin: 15px 0; }
+
+#codex-content h3 { color: #8b0000; margin-bottom: 10px; font-size: 1.2rem; }
+#codex-content p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px; }
+
+@media (max-width: 768px) {
+    .codex-window { width: 95vw; height: 90vh; flex-direction: column; }
+    .codex-sidebar { width: 100%; height: auto; display: flex; padding: 0; }
+    .codex-tab { flex: 1; font-size: 0.6rem; padding: 10px 2px; text-align: center; }
+	.close-btn-codex {top: 40px; right: 10px; width: 35px; height: 35px; }
+}
