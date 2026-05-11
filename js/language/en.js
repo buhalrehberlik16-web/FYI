@@ -296,6 +296,44 @@ window.LANG_EN = {
 		log_exhaustion_damage: "😓 **Exhaustion**: Took $1 damage due to strain.",
 		log_forced_rest: "⚠️ **Forced Rest**: Insufficient resources! Exhaustion: $1",
 		log_rest_skill: "🧘 **Rest**: Removed $1 Exhaustion.",
+		
+		nav_codex: "GUIDE (H)",
+		nav_map: "MAP (M)",
+		setting_guide: "GUIDE BUTTON",
+		
+	codex: {
+
+		title: "CODEX",
+		tab_world: "WORLD",
+		tab_craft: "CRAFT",
+		tab_gear: "GEAR",
+		tab_town: "TOWN",
+
+		combat_colors_title: "Combat Colors",
+		combat_colors_desc: "• <b style='color:#43FF64'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
+    
+		salvage_reforge_title: "Salvage & Reforge",
+		salvage_reforge_desc: "• <b>Salvage:</b> Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
+		transmute_synth_title: "Transmute & Synthesis",
+		transmute_synth_desc: "• <b>Transmute:</b> Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
+
+		brooch_title: "Mystic Brooches",
+		brooch_desc: "Brooches trigger every 1-3 turns:<br>• <b>Stat Burst:</b> Temporarily boosts your power.<br>• <b>Fixed Damage:</b> Direct hit (x2 dmg if specialty tribe matches).<br>• <b>Regen:</b> Grants HP or Resource on trigger.",
+		charms_title: "Charms",
+		charms_desc: "Charms provide passive power. Elemental bonuses and resistances directly impact your Attack and Defense calculation.",
+		defense_rule_title: "Jewelry Defense",
+		defense_rule_desc: "Defense stats start appearing at Tier 2+ with a 30% chance. Lower tiers do not grant base defense.",
+
+		inn_title: "Inn (Recovery)",
+		inn_desc: "• <b>Rest:</b> Full HP/Exhaustion recovery but advances 1 day. Boss may grow stronger!<br>• <b>Drink:</b> Reduces some Exhaustion without skipping time.",
+		stables_title: "Stables (Horse & Scout)",
+		stables_desc: "• <b>Swift Steed:</b> Journeys take 0.5 days for 4 nodes.<br>• <b>Scout:</b> Reveals the next 3 nodes and their events on the map.",
+		merchant_title: "Merchant (Trade)",
+		merchant_desc: "Buy the rarest artifacts here. Stock is refreshed whenever you enter a town. You can also sell unwanted items in your bag for gold.",
+		events_title: "Mysterious Events (?)",
+		events_desc: "Compass mark nodes on the map yield unpredictable results. Some events reward you, while others (like Scavenging Ruins) carry risks. Some might drag you directly into a battle (Lost Child).",
+	},
+		
 
         // Enemy Names
         enemy_names: {

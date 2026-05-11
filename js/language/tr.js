@@ -299,7 +299,46 @@ window.LANG_TR = {
 		log_exhaustion_damage: "😓 **Yorgunluk**: Zorlanma yüzünden $1 hasar aldın.",
 		log_forced_rest: "⚠️ **Zorunlu Dinlenme**: Kaynak yetersiz! Yorgunluk: $1",
 		log_rest_skill: "🧘 **Dinlen**: $1 Yorgunluk atıldı.",
+		
+		nav_codex: "REHBER (H)",
+		nav_map: "HARİTA (M)",
+		setting_guide: "REHBER BUTONU",
 
+		codex: {
+		title: "DİYAR ANSİKLOPEDİSİ",
+		tab_world: "DÜNYA",
+		tab_craft: "ZANAAT",
+		tab_gear: "EKİPMAN",
+		tab_town: "HİZMETLER",
+
+		// Dünya Sayfası
+		combat_colors_title: "Savaş Renkleri",
+		combat_colors_desc: "• <b style='color:#43FF64'>Yeşil:</b> Standart veya bir önceki seviyenin %50 güçlüsü düşmanlar.<br>• <b style='color:#ff9800'>Turuncu:</b> Seviyesi yüksek ama ek güçlendirme almamış düşmanlar.<br>• <b style='color:#ff4d4d'>Kırmızı:</b> Ya %20 Güçlü (Strong) ya da %20 Güçsüz üst seviye (Weak) rakipler.",
+    
+		// Zanaat Sayfası
+		salvage_reforge_title: "Parçalama ve Yeniden Döv",
+		salvage_reforge_desc: "• <b>Parçalama:</b> Gereksiz takıları parçalayarak 'Takı Parçaları' elde edersin.<br>• <b>Yeniden Döv:</b> Eşyadaki bir özelliği silip yerine yenisini ekler. Parşömenler hedefi belirlerken, Direnç Taşları o elemente odaklanmanı sağlar.",
+		transmute_synth_title: "Dönüşüm ve Sentez",
+		transmute_synth_desc: "• <b>Dönüşüm:</b> 3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
+
+		// Ekipman Sayfası
+		brooch_title: "Mistik Broşlar",
+		brooch_desc: "Broşlar her 1-3 turda bir otomatik tetiklenir:<br>• <b>Stat Patlaması:</b> Gücünü kısa süreliğine devleştirir.<br>• <b>Anlık Hasar:</b> Düşmana sabit hasar vurur (Uzmanlık türüne denk gelirse x2 hasar).<br>• <b>Yenileme:</b> Sana her tetiklendiğinde HP veya Öfke/Mana verir.",
+		charms_title: "Tılsımlar (Charms)",
+		charms_desc: "Tılsımlar pasif güç sağlar. Verdikleri Element Bonusu ve Dirençler, doğrudan Atak ve Defans hesaplamalarına dahil edilerek seni kalıcı olarak güçlendirir.",
+		defense_rule_title: "Takılarda Savunma",
+		defense_rule_desc: "Takılarda sabit Defans özelliği Tier 2 ve üzeri eşyalarda %30 şansla belirmeye başlar. Düşük seviyeli takılarda defans aranmaz.",
+
+		// Hizmetler Sayfası
+		inn_title: "Han (Dinlenme)",
+		inn_desc: "• <b>Dinlen:</b> HP ve Yorgunluğu fuller ancak takvimde 1 tam gün ilerletir. Boss güçlenebilir!<br>• <b>İçecek:</b> Gün geçirmeden bir miktar Yorgunluk azaltır.",
+		stables_title: "Ahır (At ve Ulak)",
+		stables_desc: "• <b>Hızlı At:</b> 4 oda boyunca günün 0.5 hızında akmasını sağlar.<br>• <b>Keşif Ulağı:</b> Önündeki 3 odayı ve içindeki olayları (biyom, düşman tipi vb.) haritada görünür kılar.",
+		merchant_title: "Tüccar (Ticaret)",
+		merchant_desc: "Diyarın en nadide parçalarını buradan satın alabilirsin. Stoklar her köye girdiğinde yenilenir. Ayrıca envanterindeki gereksiz eşyaları burada altına çevirebilirsin.",
+		events_title: "Gizemli Olaylar (?)",
+		events_desc: "Haritadaki pusula düğümleri tahmin edilemez sonuçlar doğurur. Bazı olaylar seni ödüllendirirken, bazıları (Yıkıntılar gibi) risk barındırır. Bazı olaylar ise seni doğrudan bir savaşa sürükleyebilir (Kayıp Çocuk).",
+	},
 
         // --- DÜŞMANLAR (ENEMY NAMES) ---
         enemy_names: {
