@@ -40,6 +40,12 @@
 			</div>
 			<!-- Orta: Menü Butonları (YENİ) -->
     <div id="top-nav-menu">
+		<button id="btn-open-codex" class="nav-btn" title="Rehber (H)" onclick="window.openCodex()">
+		<i class="fas fa-question-circle"></i> <span class="nav-text" data-i18n="nav_codex"></span>
+		</button>
+		<button id="btn-open-map" class="nav-btn" title="Harita (M)" onclick="window.toggleMapPreview()">
+		<i class="fas fa-map-marked-alt"></i> <span class="nav-text" data-i18n="nav_map"></span>
+		</button>
 		<!-- YENİ AYARLAR BUTONU -->
 		<button id="btn-top-settings" class="nav-btn" title="Ayarlar (ESC)" onclick="openInGameSettings()">
         <i class="fas fa-cog"></i> <span class="nav-text" data-i18n="nav_settings">AYARLAR</span>
@@ -236,6 +242,10 @@
 
             <!-- 3. HARİTA -->
 <div id="map-screen" class="screen hidden">
+	<!-- YENİ: Harita Kapatma Butonu (Sadece preview modunda anlamlıdır) -->
+    <div id="close-map-preview" class="close-btn-codex" style="top: 20px; right: 20px; position: absolute; display: none;" onclick="window.toggleMapPreview()">
+        <i class="fas fa-times"></i>
+    </div>
     <!-- DIŞ KUTU (Pencere) -->
     <div id="map-display">
         <!-- İÇERİK KUTUSU (Geniş Harita - Scroll edilecek olan bu) -->
@@ -1068,6 +1078,40 @@
         <div id="transmute-bag-grid" class="bag-grid" style="margin: 0 auto;"></div>
     </div>
 </div>
+<!-- Eldoria Ansiklopedisi (Codex) Modalı -->
+<div id="codex-modal" class="npc-modal hidden" style="z-index: 9999;">
+    <div class="codex-window">
+        <!-- Kapatma Butonu -->
+        <button class="close-btn-codex" onclick="document.getElementById('codex-modal').classList.add('hidden')">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <!-- Sol Sekme Menüsü (Tablar) -->
+        <div class="codex-sidebar">
+            <div class="codex-tab" data-tab="world" onclick="window.switchCodexTab('world')">
+                <i class="fas fa-globe-europe"></i> <span data-i18n="codex.tab_world"></span>
+            </div>
+            <div class="codex-tab" data-tab="craft" onclick="window.switchCodexTab('craft')">
+                <i class="fas fa-hammer"></i> <span data-i18n="codex.tab_craft"></span>
+            </div>
+            <div class="codex-tab" data-tab="gear" onclick="window.switchCodexTab('gear')">
+                <i class="fas fa-shield-alt"></i> <span data-i18n="codex.tab_gear"></span>
+            </div>
+            <div class="codex-tab" data-tab="town" onclick="window.switchCodexTab('town')">
+                <i class="fas fa-store"></i> <span data-i18n="codex.tab_town"></span>
+            </div>
+        </div>
+
+        <!-- Sağ Sayfa (İçerik) -->
+        <div class="codex-page">
+            <h2 id="codex-main-title" data-i18n="codex.title"></h2>
+            <hr class="codex-divider">
+            <div id="codex-content-area">
+                <!-- Burası JavaScript ile dolacak -->
+            </div>
+        </div>
+    </div>
+</div>
 			<!--AYARLAR (SETTINGS) -->
 			<div id="settings-modal" class="npc-modal hidden">
     <div class="stat-window" style="width: 400px; text-align: center;">
@@ -1114,6 +1158,13 @@
 				<input type="checkbox" id="setting-log-toggle" onchange="window.setCombatLogSetting(this.checked)">
 				<span class="slider round"></span>
 			</label>
+		</div>
+		<div class="setting-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+			<label data-i18n="setting_guide">REHBER BUTONU</label>
+			<label class="switch">
+				<input type="checkbox" id="setting-guide-toggle" onchange="window.setGuideSetting(this.checked)">
+				<span class="slider round"></span>
+		</label>
 		</div>
 
         <button onclick="closeSettings()" style="margin-top:20px; width:100%;" data-i18n="back">GERİ</button>

@@ -1,5 +1,51 @@
 // main.js - FİNAL VE HATASIZ SÜRÜM
 
+window.openCodex = function() {
+    document.getElementById('codex-modal').classList.remove('hidden');
+    window.switchCodexTab('world'); // İlk sayfayı aç
+};
+
+window.switchCodexTab = function(tabId) {
+    const lang = window.getCombatLang();
+    const contentArea = document.getElementById('codex-content-area');
+    const c = lang.codex;
+
+    let html = "";
+
+    if (tabId === 'world') {
+        html = `<h3><i class="fas fa-swords" style="margin-right:10px;"></i>${c.combat_colors_title}</h3>
+                <p>${c.combat_colors_desc}</p>
+				<h3><i class="fas fa-question-circle" style="margin-right:10px;"></i>${c.events_title}</h3>
+                <p>${c.events_desc}</p>`;
+    } else if (tabId === 'craft') {
+        html = `<h3><i class="fas fa-hammer" style="margin-right:10px;"></i>${c.salvage_reforge_title}</h3>
+                <p>${c.salvage_reforge_desc}</p>
+                <h3><i class="fas fa-magic" style="margin-right:10px;"></i>${c.transmute_synth_title}</h3>
+                <p>${c.transmute_synth_desc}</p>`;
+    } else if (tabId === 'gear') {
+        html = `<h3><i class="fas fa-gem" style="margin-right:10px;"></i>${c.brooch_title}</h3>
+                <p>${c.brooch_desc}</p>
+                <h3><i class="fas fa-scroll" style="margin-right:10px;"></i>${c.charms_title}</h3>
+                <p>${c.charms_desc}</p>
+                <h3><i class="fas fa-shield-alt" style="margin-right:10px;"></i>${c.defense_rule_title}</h3>
+                <p>${c.defense_rule_desc}</p>`;
+    } else if (tabId === 'town') {
+        html = `<h3><i class="fas fa-bed" style="margin-right:10px;"></i>${c.inn_title}</h3>
+                <p>${c.inn_desc}</p>
+                <h3><i class="fas fa-horse" style="margin-right:10px;"></i>${c.stables_title}</h3>
+                <p>${c.stables_desc}</p>
+				<h3><i class="fas fa-coins" style="margin-right:10px;"></i>${c.merchant_title}</h3>
+                <p>${c.merchant_desc}</p>`;
+    }
+
+    contentArea.innerHTML = html;
+
+    // Tab aktiflik görselini güncelle (Zaten vardı ama garanti olsun)
+    document.querySelectorAll('.codex-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.tab === tabId);
+    });
+};
+
 window.starterCityProgress = {
     classChosen: false,
     skillsChosen: false
@@ -15,7 +61,7 @@ window.openStarterActivity = function(type) {
     } else if (type === 'elder') {
         if (!window.starterCityProgress.classChosen) {
             // Hardcoded alert yerine dilden çekiyoruz
-            alert(lang.choose_class_first || "Önce kışladan bir sınıf seçmelisin!");
+            window.showAlert(lang.choose_class_first, lang.warning_title);
             return;
         }
         openBasicSkillSelection(); 
@@ -494,7 +540,10 @@ document.addEventListener('keydown', (e) => {
     }
 
     const key = e.key.toLowerCase();
-
+	
+	// CODEX
+	if(e.key==='h') window.openCodex();
+	
     // Savaş Kısayolları
     if (battleScreen.classList.contains('active') && isHeroTurn) {
         // A ve D (Tıklamayı simüle et)
