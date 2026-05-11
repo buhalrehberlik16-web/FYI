@@ -6,44 +6,19 @@ window.gameSettings = {
     // Varsayılan olarak true (açık) kabul et
     showNotifs: localStorage.getItem('game_notifs') !== 'false', 
 	showImpacts: localStorage.getItem('game_impacts') !== 'false',
-	showLog: localStorage.getItem('game_log_visible') !== 'false' // Varsayılan true
+	showLog: localStorage.getItem('game_log_visible') !== 'false',
+	showGuide: localStorage.getItem('game_guide_visible') !== 'false' // Varsayılan true
 };
 
 window.applySettings = function() {
 	
-	// --- SAVAŞ GÜNLÜĞÜ GÖRÜNÜRLÜK MANTIĞI ---
-    const logWrapper = document.getElementById('combat-log-wrapper');
-    const logTrigger = document.getElementById('combat-log-trigger');
-    const logToggle = document.getElementById('setting-log-toggle');
-
-    if (logToggle) logToggle.checked = window.gameSettings.showLog;
-
-    // --- YENİ 3'LÜ GÖRÜNÜRLÜK SİSTEMİ ---
-    if (!window.gameSettings.showLog) {
-        // DURUM 1: Ayarlardan KAPATILDI -> Her şeyi yok et
-        if(logWrapper) logWrapper.style.display = "none";
-        if(logTrigger) logTrigger.style.display = "none";
-    } 
-    else {
-        // DURUM 2: Ayarlardan AÇIK -> İç mekanizmaya bak (Minimized mı?)
-        if (window.isLogMinimized) {
-            // Savaş içinde başlığa tıklandı, log ok (>) modunda
-            if(logWrapper) logWrapper.style.display = "none";
-            if(logTrigger) logTrigger.style.display = "flex";
-        } else {
-            // Log tam ekran modunda
-            if(logWrapper) logWrapper.style.display = "block";
-            if(logTrigger) logTrigger.style.display = "none";
-        }
-    }
-	
-    // 1. Dili Uygula
+	// 1. Dili Uygula
     localStorage.setItem('game_lang', window.gameSettings.lang);
     document.documentElement.lang = window.gameSettings.lang;
     document.body.className = `lang-${window.gameSettings.lang}`;
     updateUITexts();
 
-    // 2. Çözünürlüğü Uygula
+    // 2. Çözünürlük Uygula (Mevcut kodun aynı kalıyor)
     const container = document.getElementById('game-container');
     localStorage.setItem('game_res', window.gameSettings.resolution);
     if (window.gameSettings.resolution === 'fit') {
@@ -57,18 +32,38 @@ window.applySettings = function() {
         container.style.maxWidth = 'none';
     }
 
-    // 3. Toggle Durumunu UI'da Güncelle (Checkbox'ı işaretle/kaldır)
+    // 3. Toggle Checkboxlarını Güncelle
+    const logToggle = document.getElementById('setting-log-toggle');
+    if (logToggle) logToggle.checked = window.gameSettings.showLog;
+
     const notifToggle = document.getElementById('setting-notif-toggle');
-    if (notifToggle) {
-        notifToggle.checked = window.gameSettings.showNotifs;
-    }
+    if (notifToggle) notifToggle.checked = window.gameSettings.showNotifs;
 	
-	// Ayarları uygulama fonksiyonuna (applySettings) şu satırı ekle:
 	const impactToggle = document.getElementById('setting-impact-toggle');
 	if (impactToggle) impactToggle.checked = window.gameSettings.showImpacts;
+	
+	// 4.
+	const guideToggle = document.getElementById('setting-guide-toggle');
+	if (guideToggle) guideToggle.checked = window.gameSettings.showGuide;
 
-    // Değişiklikten sonra bildirimleri hemen güncelle
+	const guideBtn = document.getElementById('btn-open-codex');
+	if (guideBtn) {
+    // Ayar kapalıysa butonu komple yok et, açıysa göster
+    guideBtn.style.display = window.gameSettings.showGuide ? "flex" : "none";
+	}
+
+    // --- YENİ: MERKEZİ GÖRÜNÜRLÜK KONTROLÜNÜ ÇAĞIR ---
+    if (typeof window.updateLogVisibility === 'function') {
+        window.updateLogVisibility();
+    }
+
     if (typeof updateStats === 'function') updateStats();
+};
+
+window.setGuideSetting = function(val) {
+    window.gameSettings.showGuide = val;
+    localStorage.setItem('game_guide_visible', val);
+    window.applySettings(); // Ayarları anında uygula (updateUITexts ve buton gizleme tetiklenir)
 };
 
 window.setNotificationToggle = function(val) {
@@ -98,16 +93,24 @@ function updateUITexts() {
     
     // HTML'deki tüm data-i18n niteliklerini tara ve değiştir
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
+        const path = el.dataset.i18n;
         
-        // Eğer anahtar düz bir anahtarsa (örn: invest_gold_hint)
-        if (lang[key]) {
-            el.textContent = lang[key];
-        } 
-        // Eğer anahtar items içindeyse (Opsiyonel: data-i18n="items.name" yaparsan)
-        else if (key.includes('.') && lang.items) {
-             const subKey = key.split('.')[1];
-             if(lang.items[subKey]) el.textContent = lang.items[subKey];
+        /// --- YENİ AKILLI ARAMA MANTIĞI ---
+        // "codex.title" yazısını parçalar ve lang["codex"]["title"] değerine ulaşır
+        const keys = path.split('.');
+        let translatedText = lang;
+
+        keys.forEach(key => {
+            if (translatedText) translatedText = translatedText[key];
+        });
+
+        if (translatedText) {
+            // Eğer element bir input ise placeholder'ını, değilse textContent'ini değiştir
+            if (el.tagName === 'INPUT' && el.type === 'text') {
+                el.placeholder = translatedText;
+            } else {
+                el.textContent = translatedText;
+            }
         }
     });
 }

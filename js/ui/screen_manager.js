@@ -65,27 +65,44 @@ window.switchScreen = function(targetScreen) {
             if (typeof drawAllConnections === 'function') drawAllConnections();
         }, 50); 
     }
+	const mapCloseBtn = document.getElementById('close-map-preview');
+	if (mapCloseBtn) {
+    // Sadece previousScreenBeforeMap doluysa (yani bir yerden bakmaya geldiysek) X görünsün
+    mapCloseBtn.style.display = (targetScreen === window.mapScreen && window.previousScreenBeforeMap) ? "flex" : "none";
+	}
 	
-	// --- YENİ: LOG GÖRÜNÜRLÜK FİLTRESİ ---
+	window.updateLogVisibility();
+};
+
+window.updateLogVisibility = function() {
     const logWrapper = document.getElementById('combat-log-wrapper');
     const logTrigger = document.getElementById('combat-log-trigger');
+    if (!logWrapper || !logTrigger) return;
 
-     const isGameOver = (targetScreen === window.gameOverScreen);
-    const isBattle = (targetScreen === window.battleScreen);
+    // Şu an aktif olan ekranı bul
+    const activeScreen = document.querySelector('.screen.active');
+    const isGameOver = (activeScreen === window.gameOverScreen);
+    const isBattle = (activeScreen === window.battleScreen);
 
-    // 1. ÖLÜM MODU KONTROLÜ
-    if (isGameOver) {
-        logWrapper.classList.add('death-mode'); // Dev boyuta geç
-    } else {
-        logWrapper.classList.remove('death-mode'); // Normal boyuta dön
-    }
+    // 1. ÖLÜM MODU TASARIM KONTROLÜ
+    if (isGameOver) logWrapper.classList.add('death-mode');
+    else logWrapper.classList.remove('death-mode');
 
-    // 2. GÖRÜNÜRLÜK FİLTRESİ
-    if ((isGameOver || isBattle) && window.gameSettings.showLog) {
-        window.applySettings(); 
-    } else {
-        if(logWrapper) logWrapper.style.display = "none";
-        if(logTrigger) logTrigger.style.display = "none";
+    // 2. GÖRÜNÜRLÜK KARAR MEKANİZMASI
+    if (!window.gameSettings.showLog || (!isGameOver && !isBattle)) {
+        // Durum A: Ayarlardan kapalı VEYA Savaş/Ölüm dışında bir ekrandayız (Örn: Harita)
+        logWrapper.style.display = "none";
+        logTrigger.style.display = "none";
+    } 
+    else {
+        // Durum B: Ayarlardan açık VE doğru ekrandayız
+        if (window.isLogMinimized) {
+            logWrapper.style.display = "none";
+            logTrigger.style.display = "flex"; // Ok işareti (>) modunda
+        } else {
+            logWrapper.style.display = "block"; // Tam boy log modunda
+            logTrigger.style.display = "none";
+        }
     }
 };
 
@@ -141,6 +158,32 @@ window.saveAndExitToMenu = function() {
     writeLog("Ana menüye dönüldü.");
 };
 
+window.previousScreenBeforeMap = null; // Haritaya bakmadan önceki ekranı tutar
+
+window.toggleMapPreview = function() {
+    const activeScreen = document.querySelector('.screen.active');
+    
+    // Eğer şu an haritadaysak ve daha önce bir yerden geldiysek: Geri dön
+    if (activeScreen === window.mapScreen) {
+        if (window.previousScreenBeforeMap) {
+            window.switchScreen(window.previousScreenBeforeMap);
+            window.previousScreenBeforeMap = null;
+        }
+    } 
+    // Haritada değilsek: Mevcut ekranı kaydet ve haritayı aç
+    else {
+        // Savaş ekranındayken haritaya bakmayı engelleyebiliriz (opsiyonel)
+        if (activeScreen === window.battleScreen) return;
+
+        window.previousScreenBeforeMap = activeScreen;
+        window.switchScreen(window.mapScreen);
+        
+        // Loga bilgi ver
+        const lang = window.getCombatLang();
+        writeLog(`🗺️ ${lang.combat.log_map_preview || "Haritaya göz atılıyor..."}`);
+    }
+};
+
 // ESC Tuşuna basınca menüyü aç/kapat (Kullanım kolaylığı)
 document.addEventListener('keydown', (e) => {
     if (e.key === "Escape") {
@@ -161,5 +204,15 @@ document.addEventListener('keydown', (e) => {
                 closeInGameSettings();
             }
         }
+    }
+	const key = e.key.toLowerCase();
+	// M tuşu ile haritaya bak (Savaşta değilsek)
+    if (key === 'm') {
+    window.toggleMapPreview();
+	}
+
+    // H tuşu ile Rehberi aç
+    if (key === 'h' && isCharacterUIAllowed()) {
+        window.openCodex();
     }
 });
