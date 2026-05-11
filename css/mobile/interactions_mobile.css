@@ -468,8 +468,9 @@
     }
 
     #event-result-area .menu-main-btn {
-        width: 100% !important;
-        height: 45px !important;
-        margin-top: 15px !important;
-    }
+    display: block !important;
+    /* SİLİNDİ: width: 250px; (Genişliği koruyabiliriz ama margin'i düzeltmeliyiz) */
+    margin: 30px auto 0 auto !important; /* auto değerleri butonu tam yatay merkezde tutar */
+    float: none !important; /* Eğer float varsa iptal eder */
+	}
 }

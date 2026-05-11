@@ -30,4 +30,29 @@
     margin-left: 0 !important; /* components.css'den gelen margin'i sıfırla */
     min-width: 100px;
 }
+#top-nav-menu {
+        gap: 4px !important; /* Butonlar arası boşluğu daralt */
+    }
+
+    .nav-btn {
+        padding: 5px 6px !important; /* Buton iç boşluğunu azalt */
+        min-width: 30px;
+        justify-content: center;
+    }
+
+    /* Mobilde yazıların (Rehber, Harita vb.) hepsini gizle, sadece ikon kalsın */
+    /* Bu sayede 6 buton da tek sıraya sığar */
+    .nav-text {
+        display: none !important; 
+    }
+
+    .nav-btn i {
+        font-size: 1.1rem !important; /* İkonları bir tık büyüt ki basması kolay olsun */
+        margin: 0 !important;
+    }
+
+    /* Üst barın toplam yüksekliğini sabit tut */
+    #top-info-bar {
+        padding: 0 10px;
+    }
 }
