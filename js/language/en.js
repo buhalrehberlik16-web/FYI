@@ -311,11 +311,13 @@ window.LANG_EN = {
 
 		combat_colors_title: "Combat Colors",
 		combat_colors_desc: "• <b style='color:#1b5e20'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
+		damage_system_title: "Damage & Defense Mechanics",
+		damage_system_desc: "In battle, every strike passes through two layers:<br><br>• <b>Physical Stage:</b> Your Attack power clashes with enemy Defense. If armor is stronger than the hit, physical damage becomes 0.<br>• <b>Leftover Armor (Mitigation):</b> Armor that blocks physical force is still resilient! After stopping physical damage, <u>half of the remaining Defense</u> attempts to block incoming magical (Elemental) damage.<br>• <b>Elemental Stage:</b> Effects like Fire, Ice, or Poison are first weakened by your Resistances, then pass through any mitigation from leftover armor.<br>• <b>Power of Charms:</b> Charms don't just boost Attack and Defense; they provide a 'Net Damage' advantage in these calculations, making it easier to bypass heavy armor.",
     
 		salvage_reforge_title: "Salvage & Reforge",
-		salvage_reforge_desc: "• <b>Salvage:</b>Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
+		salvage_reforge_desc: "• <b>Salvage:</b> Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
 		transmute_synth_title: "Transmute & Synthesis",
-		transmute_synth_desc: "• <b>Transmute:</b>Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
+		transmute_synth_desc: "• <b>Transmute:</b> Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
 
 		brooch_title: "Mystic Brooches",
 		brooch_desc: "Brooches trigger every 1-3 turns:<br>• <b>Stat Burst:</b> Temporarily boosts your power.<br>• <b>Fixed Damage:</b> Direct hit (x2 dmg if specialty tribe matches).<br>• <b>Regen:</b> Grants HP or Resource on trigger.",
@@ -336,7 +338,7 @@ window.LANG_EN = {
 		master_blacksmith: "MASTER BLACKSMITH",
 		master_alchemist: "ALCHEMIST MASTER",
 		master_stable: "STABLE MASTER",
-		events_title: "Mysterious Events (?)",
+		events_title: "Mysterious Events",
 		events_desc: "Compass mark nodes on the map yield unpredictable results. Some events reward you, while others (like Scavenging Ruins) carry risks. Some might drag you directly into a battle (Lost Child).",
 	},
 		

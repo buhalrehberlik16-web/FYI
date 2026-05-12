@@ -314,12 +314,14 @@ window.LANG_TR = {
 		// Dünya Sayfası
 		combat_colors_title: "Savaş Renkleri",
 		combat_colors_desc: "• <b style='color:#1b5e20'>Yeşil:</b> Standart veya bir önceki seviyenin %50 güçlüsü düşmanlar.<br>• <b style='color:#ff9800'>Turuncu:</b> Seviyesi yüksek ama ek güçlendirme almamış düşmanlar.<br>• <b style='color:#ff4d4d'>Kırmızı:</b> Ya %20 Güçlü (Strong) ya da %20 Güçsüz üst seviye (Weak) rakipler.",
+		damage_system_title: "Hasar ve Savunma Mekaniği",
+		damage_system_desc: "Savaşta her darbe iki katmandan geçer:<br><br>• <b>Fiziksel Aşama:</b> Saldırı gücün düşman zırhıyla (Defans) çarpışır. Eğer zırh hasardan güçlüyse fiziksel hasar 0 olur.<br>• <b>Kalan Zırh (Sönümleme):</b> Fiziksel darbeyi durduran zırh hala dirençlidir! Zırhın fiziksel hasarı durdurduktan sonra <u>geriye kalan miktarının yarısı</u>, gelen büyüsel (Elemental) hasarı da engellemeye çalışır.<br>• <b>Elemental Aşama:</b> Ateş, Buz, Zehir gibi etkiler önce senin Dirençlerinle (Resist) zayıflatılır, sonra varsa kalan zırh sönümlemesinden geçer.<br>• <b>Tılsımların Önemi:</b> Tılsımlar (Charms) sadece Atak ve Defansını artırmakla kalmaz, aynı zamanda bu hesaplamalarda sana 'Net Hasar' avantajı sağlayarak zırhı aşmanı kolaylaştırır.",
     
 		// Zanaat Sayfası
 		salvage_reforge_title: "Parçalama ve Yeniden Döv",
-		salvage_reforge_desc: "• <b>Parçalama:</b>Gereksiz takıları parçalayarak 'Takı Parçaları' elde edersin.<br>• <b>Yeniden Döv:</b> Eşyadaki bir özelliği silip yerine yenisini ekler. Parşömenler hedefi belirlerken, Direnç Taşları o elemente odaklanmanı sağlar.",
+		salvage_reforge_desc: "• <b>Parçalama:</b> Gereksiz takıları parçalayarak 'Takı Parçaları' elde edersin.<br>• <b>Yeniden Döv:</b> Eşyadaki bir özelliği silip yerine yenisini ekler. Parşömenler hedefi belirlerken, Direnç Taşları o elemente odaklanmanı sağlar.",
 		transmute_synth_title: "Dönüşüm ve Sentez",
-		transmute_synth_desc: "• <b>Dönüşüm:</b>3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
+		transmute_synth_desc: "• <b>Dönüşüm:</b> 3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
 
 		// Ekipman Sayfası
 		brooch_title: "Mistik Broşlar",
@@ -342,7 +344,7 @@ window.LANG_TR = {
 		master_blacksmith: "DEMİRCİ USTASI",
 		master_alchemist: "SİMYA ÜSTADI",
 		master_stable: "AHIR REİSİ",
-		events_title: "Gizemli Olaylar (?)",
+		events_title: "Gizemli Olaylar",
 		events_desc: "Haritadaki pusula düğümleri tahmin edilemez sonuçlar doğurur. Bazı olaylar seni ödüllendirirken, bazıları (Yıkıntılar gibi) risk barındırır. Bazı olaylar ise seni doğrudan bir savaşa sürükleyebilir (Kayıp Çocuk).",
 	},
 
