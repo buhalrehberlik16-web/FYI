@@ -269,7 +269,7 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 }
 
 .codex-page p {
-    text-align: justify; /* Yazıları iki yana yaslar, kitap gibi durur */
+    text-align: left; /* Yazıları iki yana yaslar, kitap gibi durur */
     margin-bottom: 20px;
     opacity: 0.9;
 }
