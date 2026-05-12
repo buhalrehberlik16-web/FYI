@@ -983,9 +983,24 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false) {
+window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	window.lastExhaustionThreshold = Math.floor(hero.exhaustion / 10) * 10;
+	
+	// --- GÜNCELLEME: ARKA PLAN DEĞİŞTİRME ---
+    const battleScreenEl = document.getElementById('battle-screen');
+    
+    if (battleScreenEl && biome && bgNum) {
+        // Biyom ismini küçük harfe çeviriyoruz ki 'Cave1.webp' yerine 'cave1.webp' arasın
+        const safeBiomeName = biome.toLowerCase(); 
+        const bgPath = `images/utils/battlebg/${safeBiomeName}${bgNum}.webp`;
+        
+        battleScreenEl.style.backgroundImage = `url('${bgPath}')`;
+        console.log("🖼️ Savaş Arka Planı Atandı:", bgPath);
+    } else {
+        battleScreenEl.style.backgroundImage = `url('images/utils/colony_zone_bg.webp')`;
+    }
+    // ---------------------------------------
 	
 	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
     const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };

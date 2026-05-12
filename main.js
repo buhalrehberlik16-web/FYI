@@ -30,11 +30,13 @@ window.switchCodexTab = function(tabId) {
                 <h3><i class="fas fa-shield-alt" style="margin-right:10px;"></i>${c.defense_rule_title}</h3>
                 <p>${c.defense_rule_desc}</p>`;
     } else if (tabId === 'town') {
-        html = `<h3><i class="fas fa-bed" style="margin-right:10px;"></i>${c.inn_title}</h3>
+        html = `<h3><i class="fas fa-crown" style="margin-right:10px;"></i>${c.master_system_title}</h3>
+                <p>${c.master_system_desc}</p>
+                <h3><i class="fas fa-bed" style="margin-right:10px;"></i>${c.inn_title}</h3>
                 <p>${c.inn_desc}</p>
                 <h3><i class="fas fa-horse" style="margin-right:10px;"></i>${c.stables_title}</h3>
                 <p>${c.stables_desc}</p>
-				<h3><i class="fas fa-coins" style="margin-right:10px;"></i>${c.merchant_title}</h3>
+                <h3><i class="fas fa-coins" style="margin-right:10px;"></i>${c.merchant_title}</h3>
                 <p>${c.merchant_desc}</p>`;
     }
 

@@ -172,6 +172,11 @@ function generateMap() {
 		// Sadece Savaş odalarına Biyom ve Canavar ata
 		if (['encounter', 'start', 'boss'].includes(nodeType)) {
 			b = (nodeType === 'boss') ? 'urban' : biomes[Math.floor(Math.random() * biomes.length)];
+			
+			// --- YENİ: BATTLE ARKA PLANI ATAMASI ---
+            // 1-4 arası rastgele bir numara seçiyoruz
+            bBg = Math.floor(Math.random() * 4) + 1; 
+            // ---------------------------------------
        
 			// e (Düşman ismi) seçimi
 			e = (nodeType === 'boss') ? "Goblin Şefi" : pickEnemyForBiome(b, t);
@@ -190,6 +195,7 @@ function generateMap() {
 			lane: lane, 
 			type: nodeType,
 			biome: b, 
+			battleBgNum: bBg,
 			biomeImg: img, 
 			enemyName: e, 
 			isHard: isCombatNode ? diff.isHard : false,
@@ -575,7 +581,7 @@ function proceedWithNodeAction(node) {
             let enemy = node.enemyName;
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
-            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak); 
+            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum); 
 
         } else if (node.type === 'town') {
             enterTown();
@@ -584,7 +590,7 @@ function proceedWithNodeAction(node) {
             triggerRandomEvent();
 
         } else if (node.type === 'boss') {
-            startBattle("Goblin Şefi");
+            startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum);
         }
         else if (node.type === 'city') {
             writeLog("🏆 " + lang.desc_city);
@@ -608,6 +614,21 @@ function enterTown() {
     // ------------------------------
 	window.refreshMerchantStock(8); 
 	window.hasRentedInThisTown = false; // <--- YENİ: Her yeni kasabada kısıtlamayı kaldır
+	// --- YENİ: USTA BANNER'INI GÜNCELLE ---
+    const banner = document.getElementById('town-master-banner');
+    const langu = window.getCombatLang(); // tr/en çeker
+    
+    if (banner && window.currentTownMaster) {
+        // window.currentTownMaster: 'blacksmith', 'alchemist' veya 'stable' döner
+        const masterTypeTrans = langu.codex[`master_${window.currentTownMaster}`];
+        
+        // Örn: "KASABA USTASI: SİMYA ÜSTADI"
+        banner.textContent = `${langu.codex.master_label}: ${masterTypeTrans}`;
+        banner.classList.remove('hidden');
+    } else if (banner) {
+        banner.classList.add('hidden');
+    }
+    // --------------------------------------
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     refreshMerchantStock();
     switchScreen(townScreen);
