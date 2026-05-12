@@ -231,9 +231,47 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 
 .codex-page {
     flex: 1;
-    padding: 30px;
-    color: #3e2723;
+    padding: 40px 40px 20px 40px;
+    padding-bottom: 80px; /* Alttaki gölge yazıyı kapatmasın diye boşluk bıraktık */
+    color: #2b1d1a;
     overflow-y: auto;
+    font-family: 'Cinzel', serif;
+    position: relative; /* İçindeki efektlerin hizalanması için */
+
+    /* Scrollbar gizleme kuralları (Zaten eklemiştik, koruyoruz) */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.codex-page::-webkit-scrollbar {
+    display: none;
+}
+
+#codex-modal .codex-page::after {
+    content: "";
+    position: sticky; /* Yazıyla birlikte kaymaz, altta bekler */
+    bottom: -80px;    /* Pencerenin tam altına yapıştır */
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 80px;     /* Gölge boyutu */
+    
+    /* Parşömen renginden (#f4e4bc) şeffafa geçiş */
+    background: linear-gradient(to top, #f4e4bc 30%, transparent 100%);
+    
+    pointer-events: none; /* Tıklamayı engellemez */
+    margin-top: -80px;    /* Yazının üzerine binmemesi için negatif margin */
+    z-index: 100;
+}
+
+#codex-content-area {
+    padding-bottom: 60px; 
+}
+
+.codex-page p {
+    text-align: justify; /* Yazıları iki yana yaslar, kitap gibi durur */
+    margin-bottom: 20px;
+    opacity: 0.9;
 }
 
 .codex-page h3 {
