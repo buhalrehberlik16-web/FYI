@@ -313,13 +313,13 @@ window.LANG_TR = {
 
 		// Dünya Sayfası
 		combat_colors_title: "Savaş Renkleri",
-		combat_colors_desc: "• <b style='color:#43FF64'>Yeşil:</b> Standart veya bir önceki seviyenin %50 güçlüsü düşmanlar.<br>• <b style='color:#ff9800'>Turuncu:</b> Seviyesi yüksek ama ek güçlendirme almamış düşmanlar.<br>• <b style='color:#ff4d4d'>Kırmızı:</b> Ya %20 Güçlü (Strong) ya da %20 Güçsüz üst seviye (Weak) rakipler.",
+		combat_colors_desc: "• <b style='color:#1b5e20'>Yeşil:</b> Standart veya bir önceki seviyenin %50 güçlüsü düşmanlar.<br>• <b style='color:#ff9800'>Turuncu:</b> Seviyesi yüksek ama ek güçlendirme almamış düşmanlar.<br>• <b style='color:#ff4d4d'>Kırmızı:</b> Ya %20 Güçlü (Strong) ya da %20 Güçsüz üst seviye (Weak) rakipler.",
     
 		// Zanaat Sayfası
 		salvage_reforge_title: "Parçalama ve Yeniden Döv",
-		salvage_reforge_desc: "• <b>Parçalama:</b> Gereksiz takıları parçalayarak 'Takı Parçaları' elde edersin.<br>• <b>Yeniden Döv:</b> Eşyadaki bir özelliği silip yerine yenisini ekler. Parşömenler hedefi belirlerken, Direnç Taşları o elemente odaklanmanı sağlar.",
+		salvage_reforge_desc: "• <b>Parçalama:</b>Gereksiz takıları parçalayarak 'Takı Parçaları' elde edersin.<br>• <b>Yeniden Döv:</b> Eşyadaki bir özelliği silip yerine yenisini ekler. Parşömenler hedefi belirlerken, Direnç Taşları o elemente odaklanmanı sağlar.",
 		transmute_synth_title: "Dönüşüm ve Sentez",
-		transmute_synth_desc: "• <b>Dönüşüm:</b> 3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
+		transmute_synth_desc: "• <b>Dönüşüm:</b>3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
 
 		// Ekipman Sayfası
 		brooch_title: "Mistik Broşlar",
@@ -336,6 +336,12 @@ window.LANG_TR = {
 		stables_desc: "• <b>Hızlı At:</b> 4 oda boyunca günün 0.5 hızında akmasını sağlar.<br>• <b>Keşif Ulağı:</b> Önündeki 3 odayı ve içindeki olayları (biyom, düşman tipi vb.) haritada görünür kılar.",
 		merchant_title: "Tüccar (Ticaret)",
 		merchant_desc: "Diyarın en nadide parçalarını buradan satın alabilirsin. Stoklar her köye girdiğinde yenilenir. Ayrıca envanterindeki gereksiz eşyaları burada altına çevirebilirsin.",
+		master_system_title: "Kasaba Ustaları",
+		master_system_desc: "Her kasabanın kendine has bir <b>Usta Zanaatkarı</b> vardır. Bu usta, haritada o kasaba düğümünün üzerinde bir silüet olarak görünür. Ustalar; Yeniden Döv (Demirci), Sentez (Simyacı) veya Özel Kiralama (Ahır) gibi nadir hizmetlerini sadece kendi kasabalarında sunarlar.",
+		master_label: "KASABA USTASI",
+		master_blacksmith: "DEMİRCİ USTASI",
+		master_alchemist: "SİMYA ÜSTADI",
+		master_stable: "AHIR REİSİ",
 		events_title: "Gizemli Olaylar (?)",
 		events_desc: "Haritadaki pusula düğümleri tahmin edilemez sonuçlar doğurur. Bazı olaylar seni ödüllendirirken, bazıları (Yıkıntılar gibi) risk barındırır. Bazı olaylar ise seni doğrudan bir savaşa sürükleyebilir (Kayıp Çocuk).",
 	},

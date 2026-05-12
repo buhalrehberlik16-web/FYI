@@ -310,12 +310,12 @@ window.LANG_EN = {
 		tab_town: "TOWN",
 
 		combat_colors_title: "Combat Colors",
-		combat_colors_desc: "• <b style='color:#43FF64'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
+		combat_colors_desc: "• <b style='color:#1b5e20'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
     
 		salvage_reforge_title: "Salvage & Reforge",
-		salvage_reforge_desc: "• <b>Salvage:</b> Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
+		salvage_reforge_desc: "• <b>Salvage:</b>Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
 		transmute_synth_title: "Transmute & Synthesis",
-		transmute_synth_desc: "• <b>Transmute:</b> Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
+		transmute_synth_desc: "• <b>Transmute:</b>Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
 
 		brooch_title: "Mystic Brooches",
 		brooch_desc: "Brooches trigger every 1-3 turns:<br>• <b>Stat Burst:</b> Temporarily boosts your power.<br>• <b>Fixed Damage:</b> Direct hit (x2 dmg if specialty tribe matches).<br>• <b>Regen:</b> Grants HP or Resource on trigger.",
@@ -330,6 +330,12 @@ window.LANG_EN = {
 		stables_desc: "• <b>Swift Steed:</b> Journeys take 0.5 days for 4 nodes.<br>• <b>Scout:</b> Reveals the next 3 nodes and their events on the map.",
 		merchant_title: "Merchant (Trade)",
 		merchant_desc: "Buy the rarest artifacts here. Stock is refreshed whenever you enter a town. You can also sell unwanted items in your bag for gold.",
+		master_system_title: "Town Masters",
+		master_system_desc: "Each town features a unique <b>Master Craftsman</b>. Their silhouette appears on the map node. Masters offer rare services like Reforge (Blacksmith), Synthesis (Alchemist), or Special Rentals (Stables) exclusively in their own towns.",
+		master_label: "TOWN MASTER",
+		master_blacksmith: "MASTER BLACKSMITH",
+		master_alchemist: "ALCHEMIST MASTER",
+		master_stable: "STABLE MASTER",
 		events_title: "Mysterious Events (?)",
 		events_desc: "Compass mark nodes on the map yield unpredictable results. Some events reward you, while others (like Scavenging Ruins) carry risks. Some might drag you directly into a battle (Lost Child).",
 	},
