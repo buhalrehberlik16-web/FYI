@@ -28,7 +28,16 @@ window.ENEMY_STATS = {
 				damageSplit: {curse: 0.8},
 				textKey: "doomsaying"
         //Doomsaying - Curse- atk*0.8dmg
-			}
+			},
+			{ 
+                id: "goblin_yell", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "atk_up", 
+                value: 3, 
+                duration: 3, 
+                textKey: "yell" 
+            }, 
 		]
     },
     "Zehirli Mantar": { 
@@ -221,7 +230,15 @@ window.ENEMY_STATS = {
                 subtype: "atk_half", 
                 duration: 2, 
                 textKey: "blinded" 
-            }
+            },
+			{
+				id: "vaga_rush",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {physical: 1.4},
+				textKey: "vaga_rush"
+			}
+			
         ]
     },
 	
@@ -242,7 +259,18 @@ window.ENEMY_STATS = {
                 duration: 3,
                 tickMult: 0.75,
                 textKey: "poison_hit" 
-            }
+            },
+            { 
+				id: "thorn_scratch", 
+                template: "special_attack", 
+                category: "attack",
+                dotType: "bleed",
+                damageSplit: { physical: 0.5 }, 
+                duration: 3,
+                tickMult: 0.5,
+                textKey: "vicious"
+			}
+			
         ]
     },
 
@@ -324,7 +352,18 @@ window.ENEMY_STATS = {
                 subtype: "atk_half", 
                 duration: 2, 
                 textKey: "smoke" 
-            }
+            },
+			{ 
+                id: "arrow_rain", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { poison: 0.8}, 
+				dotType: "poison", 
+				duration: 4,
+				tickMult: 0.2,           // Her tur ne kadar vuracağını belirler  
+                textKey: "poison_bite" 
+			}
+			
         ]
     },
 	
@@ -602,6 +641,15 @@ window.ENEMY_STATS = {
                 damageSplit: { physical: 1.4 }, 
                 textKey: "dirty" 
             }, 
+			{ 
+                id: "shield_wall", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 4, 
+                duration: 2, 
+                textKey: "shield_wall" 
+            }
 			//Def Up
         ]
     },
