@@ -411,7 +411,7 @@ window.ENEMY_STATS = {
         dead: 'enemies/young_bear_dead.webp',
         skills: [
             { 
-				id: "smoke_bomb", // roar
+				id: "roar", // roar
                 template: "stat_debuff", 
                 category: "debuff",
                 subtype: "atk_half", 
@@ -472,7 +472,17 @@ window.ENEMY_STATS = {
 				duration: 2,
 				tickMult: 0.75,           // Her tur ne kadar vuracağını belirler  
                 textKey: "f_bomb" 
-			}
+			},
+			{ 
+                id: "curse_bomb", 
+				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
+				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
+				damageSplit: { curse: 1.0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
+				dotType: "curse", 
+				duration: 4,
+				tickMult: 0.1,           // Her tur ne kadar vuracağını belirler
+				textKey: "c_bomb"  
+            }
         ]
     },
     "Gri Kurt": { 
@@ -489,7 +499,7 @@ window.ENEMY_STATS = {
                 category: "debuff",
                 subtype: "rage_burn", 
                 value: 30, 
-                textKey: "vicious" 
+                textKey: "roar" 
             }, 
             { 
                 id: "alpha_howl", 
@@ -525,6 +535,13 @@ window.ENEMY_STATS = {
                 duration: 3, 
                 textKey: "yell" 
             }, 
+			{ 
+                id: "lizard_tail", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { physical: 1.2 }, 
+                textKey: "tail" 
+            } 
         ]
     },
 	"Treant Sapling": { 
@@ -760,7 +777,7 @@ window.ENEMY_STATS = {
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/trap_seed_dead.webp',
         skills: [
-		{ 
+			{ 
                 id: "thorn_prick", 
                 template: "stat_debuff", 
                 category: "debuff",
@@ -769,7 +786,7 @@ window.ENEMY_STATS = {
                 duration: 3,
                 tickMult: 0.5,
                 textKey: "poison_hit" 
-            }
+            },
 		//Suicide bomber - bir tur boş (veya debuff verebilir, kör etme benzeri, etrafa spor/toz salma mantığıyla) geçer, ikinci tur patlar, Atk&Self dmg
         ]
     },
