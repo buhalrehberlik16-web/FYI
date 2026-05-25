@@ -521,7 +521,7 @@ window.ENEMY_STATS = {
     },
 	"Kobold Devriye": { 
         tribe: "Dragonkind",
-        maxHp: 62, attack: 15, defense: 6, xp: 0, tier: 2, 
+        maxHp: 62, attack: 13, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/kobold_patrol_idle.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kobold_patrol_dead.webp',
