@@ -534,3 +534,60 @@ input:checked + .slider:before { transform: translateX(20px); }
     50% { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(1); opacity: 0.8; }
 }
+/* --- KIRMIZI NODE ŞİMŞEK EFEKTİ --- */
+.map-node.hard-encounter::after, 
+.map-node.weak-encounter::after {
+    content: "";
+    position: absolute;
+    top: -50px; /* Node'un üzerinden başlasın */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 60px;
+    /* Şimşek rengi: Beyazdan Maviye/Sarıya giden parlak gradyan */
+    background: linear-gradient(to bottom, transparent, #fff, #4de8ff);
+    box-shadow: 0 0 10px #fff, 0 0 20px #00ccff;
+    opacity: 0; /* Normalde gizli */
+    z-index: 100;
+    pointer-events: none;
+    /* 5 saniyede bir düzensiz şekilde çakacak */
+    animation: lightning-strike 5s infinite !important;
+}
+
+/* Şimşek Çakma Animasyonu (Düzensiz ve Hızlı) */
+@keyframes lightning-strike {
+    0%, 94%, 100% { 
+        opacity: 0; 
+        height: 0;
+    }
+    95% { 
+        opacity: 1; 
+        height: 70px;
+        filter: brightness(2);
+    }
+    96% { 
+        opacity: 0.2; 
+        height: 60px;
+    }
+    97% { 
+        opacity: 1; 
+        height: 80px;
+        filter: brightness(3);
+    }
+    98% { 
+        opacity: 0; 
+        height: 0;
+    }
+}
+
+/* Kırmızı node'un kendisinin de çakma anında parlaması için ek cila */
+.map-node.hard-encounter.available, 
+.map-node.weak-encounter.available {
+    /* Mevcut pulse-red animasyonuna ek olarak flaş efekti */
+    animation: pulse-red 2s infinite ease-in-out, lightning-flash 5s infinite !important;
+}
+
+@keyframes lightning-flash {
+    0%, 94%, 100% { filter: brightness(1); }
+    95%, 97% { filter: brightness(2) saturate(1.5); } /* Şimşek çaktığında node parlar */
+}

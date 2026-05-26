@@ -689,3 +689,29 @@
     85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -40%) scale(0.9); }
 }
+.skill-damage-preview {
+    position: absolute;
+    top: -22px; /* Slotun hemen üstü */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(20, 0, 0, 0.9);
+    color: #ff4d4d; /* Hasar kırmızısı */
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 1px 6px;
+    border: 1px solid #8b0000;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 50;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    animation: fadeIn 0.3s ease;
+}
+
+/* Hasar 0 ise etiketi gri yapalım (Zırh delinemiyor uyarısı) */
+.skill-damage-preview.no-damage {
+    color: #777;
+    border-color: #444;
+    background: rgba(10, 10, 10, 0.9);
+}
