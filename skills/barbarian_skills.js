@@ -101,6 +101,7 @@ const BARBARIAN_SKILLS = {
             type: 'attack',
             category: 'brutal',
             tier: 2,
+			ignoreDefPercent: 0.50,
             scaling: { 
                 physical: { atkMult: 1.25, stat: "str", statMult: 0.4 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
@@ -111,14 +112,7 @@ const BARBARIAN_SKILLS = {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'pierce_through';
             
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
-            
-            let monsterDef = defender.defense + (window.isMonsterDefending ? (window.monsterDefenseBonus || 0) : 0);
-            const ignoredDef = Math.floor(monsterDef * 0.50);
-            
-            // Defansın yarısını fiziksel hasara iade et
-            dmgPack.total += ignoredDef;
-            dmgPack.phys += ignoredDef;
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'pierce_through', turns: 2, maxTurns: 2, resetOnCombatEnd: true });         
 
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack2.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }

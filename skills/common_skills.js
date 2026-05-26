@@ -239,6 +239,7 @@ const COMMON_SKILLS = {
             category: 'common', 
             tier: 2,
             pointCost: 1,
+			ignoreDef: 5,
             scaling: { 
                 physical: { atkMult: 1.3, stat: "dex", statMult: 0.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
@@ -248,15 +249,6 @@ const COMMON_SKILLS = {
             // Önce normal paketimizi hesaplayalım
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'tactical_strike';
-            
-            // "10 Defansı Yok Sayar" mantığı: 
-            // Eğer fiziksel hasar defansa takıldıysa (physRaw < def), aradaki kaybın 10 puanını geri verelim.
-            let monsterDef = defender.defense + (window.isMonsterDefending ? (window.monsterDefenseBonus || 0) : 0);
-            const ignoredAmount = Math.min(monsterDef, 5);
-            
-            // Paketi el yordamıyla güncelleyelim (Sadece bu skile özel)
-            dmgPack.total += ignoredAmount;
-            dmgPack.phys += ignoredAmount;
             
             animateCustomAttack(dmgPack, null, this.data.name); 
         }

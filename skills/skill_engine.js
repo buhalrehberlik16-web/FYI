@@ -40,6 +40,16 @@ const SkillEngine = {
 
         // Savunma bonuslarını ekle (Siper/Blok değil, saf defans değeri)
         let effectiveDef = targetStats.def || 0;
+		// --- 1. ZIRH DELME (Yüzdesel ve Sabit) ---
+        // A. Yüzdesel Delme (Delip Geç: %50)
+        if (skillData.ignoreDefPercent) {
+            effectiveDef *= (1 - skillData.ignoreDefPercent);
+        }
+        // B. Sabit Delme (Taktiksel Vuruş: 5 Puan)
+        if (skillData.ignoreDef) {
+            effectiveDef = Math.max(0, effectiveDef - skillData.ignoreDef);
+        }
+        // -----------------------------------------
 		const defUpEffect = target.statusEffects.find(e => e.id === 'def_up' && !e.waitForCombat);
 		if (defUpEffect) {
 			// Eğer varsa (örn: +8 veya +25), bunu baz defansa ekle
@@ -152,10 +162,15 @@ const SkillEngine = {
 
         // --- 6. YÜZDESEL KORUMALAR (Guard Active vb.) ---
         let totalHasar = physNet + elemNet;
-        //const guardEffect = (target === hero) ? hero.statusEffects.find(e => e.id === 'guard_active' && !e.waitForCombat) : null;
-        //if (guardEffect) {
-        //    totalHasar = Math.max(0, totalHasar - guardEffect.value); 
-        //}
+        // --- 2. LANET VE SON ÇARPANLAR ---
+        let finalDamageMultiplier = 1.0;
+
+        // Hedefin (Düşmanın) üzerindeki "Lanet" etkisini kontrol et
+        const curseEffect = target.statusEffects.find(e => e.id === 'curse_damage' && !e.waitForCombat);
+        if (curseEffect) {
+            // Eğer Lanet varsa hasarı %20 (0.20) artır
+            finalDamageMultiplier += curseEffect.value; 
+        }
 
         // Nihai paket (Tüm sayılar tam sayı)
         return {
