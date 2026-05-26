@@ -83,6 +83,12 @@
     flex-direction: column-reverse; /* Alttan üste dolar */
 }
 
+.room-event-banner {
+	top: 20%;
+    left: 50%;
+    font-size: 0.8rem;
+}
+
 #combat-log-wrapper {
 	    position: absolute;
         width: 92% !important;
