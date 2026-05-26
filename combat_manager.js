@@ -335,31 +335,6 @@ window.getHeroEffectiveStats = function() {
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 	const colorCounts = {}; 
 	
-	 // --- YENİ: YORGUNLUK DEBUFF HESAPLAYICI ---
-    let exhaustionPenaltyMult = 1.0;
-    let flatExhaustDefPenalty = 0; // 50+ sonrası statik defans kaybı
-    let flatExhaustAtkPenalty = 0; // 100+ sonrası statik atak kaybı
-
-    if (hero.exhaustion >= 50) {
-        exhaustionPenaltyMult = 0.9;
-        // 50'den sonra her 10 yorgunlukta defans kaybı artar: 50 -> -3, 60 -> -4, 70 -> -5...
-        flatExhaustDefPenalty = 3 + Math.floor((hero.exhaustion - 50) / 10);
-    }
-    
-    if (hero.exhaustion >= 70) {
-        exhaustionPenaltyMult = 0.8;
-    }
-    
-    if (hero.exhaustion >= 100) {
-        exhaustionPenaltyMult = 0.7;
-        // 100'den sonra her 10 yorgunlukta atak kaybı: 100 -> -1, 110 -> -2, 120 -> -3...
-        flatExhaustAtkPenalty = 1 + Math.floor((hero.exhaustion - 100) / 10);
-    }
-
-    totalAtkMult *= exhaustionPenaltyMult;
-    totalDefMult *= exhaustionPenaltyMult;
-    // ------------------------------------------
-	
     // 2. EKİPMANLARI VE CHARMLARI TARA
      const allItems = [
         ...Object.values(hero.equipment), 
@@ -478,13 +453,39 @@ window.getHeroEffectiveStats = function() {
     // REGEN Hesabı
     const finalRageRegen = Math.floor((s[sc.regen.stat] * sc.regen.mult) * totalRegenMult);
 
-    // ATAK: Önce çarpanı uygula, sonra Exhaustion statik cezasını çıkar
-    let rawAtk = (hero.baseAttack || 10) + flatAtkBonus + Math.floor(s[sc.atk.stat] * sc.atk.mult);
-    let finalAtk = Math.floor(rawAtk * totalAtkMult) - flatExhaustAtkPenalty;
+    // 1. Önce Yorgunluk Hariç Her Şeyi (Ekipman + Skill Buffları) hesapla
+    let preExhaustAtk = Math.floor(((hero.baseAttack || 10) + flatAtkBonus + Math.floor(s[sc.atk.stat] * sc.atk.mult)) * totalAtkMult);
+    let preExhaustDef = Math.floor(((hero.baseDefense || 0) + flatDefBonus + Math.floor(s[sc.def.stat] * sc.def.mult)) * totalDefMult);
 
-    // DEFANS: Önce çarpanı uygula, sonra Exhaustion statik cezasını çıkar
-    let baseDefCalc = (hero.baseDefense || 0) + flatDefBonus + Math.floor(s[sc.def.stat] * sc.def.mult);
-    let finalDef = Math.floor(baseDefCalc * totalDefMult) - flatExhaustDefPenalty;
+    let finalAtk = preExhaustAtk;
+    let finalDef = preExhaustDef;
+    const ex = hero.exhaustion;
+
+    // 2. YORGUNLUK CEZASI SEÇİCİ (DEFANS - 50+)
+    if (ex >= 50) {
+        // Yüzdesel Kayıp: 50'de %10, 70'te %20, 100'de %30
+        let pct = (ex >= 100) ? 0.30 : (ex >= 70 ? 0.20 : 0.10);
+        let lossPercent = Math.floor(preExhaustDef * pct);
+        
+        // Statik Kayıp: 50'de 3, sonra her 10'da +1
+        let lossStatic = 3 + Math.floor((ex - 50) / 10);
+
+        // HANGİSİ DAHA ÇOK GÖTÜRÜYORSA ONU ÇIKAR
+        finalDef = preExhaustDef - Math.max(lossPercent, lossStatic);
+    }
+
+    // 3. YORGUNLUK CEZASI SEÇİCİ (ATAK - 100+)
+    if (ex >= 100) {
+        // Atakta yüzdesel ceza hep %30 kalsın
+        let lossPercent = Math.floor(preExhaustAtk * 0.30);
+        
+        // Statik Kayıp: 100'de 1, sonra her 10'da +1
+        let lossStatic = 1 + Math.floor((ex - 100) / 10);
+
+        // HANGİSİ DAHA ÇOK GÖTÜRÜYORSA ONU ÇIKAR
+        finalAtk = preExhaustAtk - Math.max(lossPercent, lossStatic);
+    }
+    // ---------------------------
 
 
     // BLOK Hesabı
