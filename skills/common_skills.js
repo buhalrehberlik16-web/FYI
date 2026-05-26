@@ -92,14 +92,14 @@ const COMMON_SKILLS = {
 			const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
             // --- YENİ HESAPLAMA SİSTEMİ ---
             const stats = getHeroEffectiveStats(); // Güncel INT değerini almak için stats'ı çağırıyoruz
-            const reductionValue = Math.floor(stats.int * 0.25); // 0.25 x INT hesaplaması
+            const reductionValue = Math.floor(stats.int * 0.34); // 0.25 x INT hesaplaması
             
             // guard_active etkisini 2 tur sürecek şekilde ve yeni değerle ekliyoruz
             applyStatusEffect(hero, { 
                 id: 'guard_active', 
                 name: 'Koruma', 
                 value: reductionValue,
-                turns: 2, 
+                turns: 3, 
                 waitForCombat: false, 
                 resetOnCombatEnd: true 
             });
