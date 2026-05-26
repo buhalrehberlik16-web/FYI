@@ -111,6 +111,11 @@ window.getHeroClassNameTrans = () => {
 
 window.getExhaustionCost = function(skillData, usage) {
     let base = skillData.exhaustion || 0;
+	
+	// YENİ: Yenileyici Rüzgar Etkisi
+    if (window.monster && window.monster.roomEvent === "wind" && base > 0) {
+        base = Math.max(1, base - 1); // 4 ise 3 yapar, 1'in altına düşürmez
+    }
     
     // --- 1. DİNLEN (REST) ÖZEL KURALI: -5, -4, -3, -2, -1, 0 ---
     if (skillData.name === 'Dinlen') {
@@ -976,6 +981,9 @@ writeLog(logMsg);
 }
 
 window.determineMonsterAction = function() {
+	// --- KRİTİK GÜVENLİK: Canavar yoksa veya ölüyse dur ---
+    if (!window.monster || monster.hp <= 0) return;
+    // ---------------------------------------------------
     // AIManager'ı çağırıp sonucu alıyoruz
     window.monsterNextAction = AIManager.determineAction(monster, hero, window.combatTurnCount);
     
@@ -983,8 +991,9 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum) {
+window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum, roomEventFromMap = "none") {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
+	const lang = window.getCombatLang(); 
 	window.lastExhaustionThreshold = Math.floor(hero.exhaustion / 10) * 10;
 	
 	// --- GÜNCELLEME: ARKA PLAN DEĞİŞTİRME ---
@@ -1036,7 +1045,6 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     }
 	
 	let scaling = 1.0;
-	const lang = window.getCombatLang();
     // Data-driven kontrol
     if (stats.isBoss) {
         scaling = window.EventManager.getModifier('boss_scaling');
@@ -1102,17 +1110,59 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 		
 	};
 	
+	monster.roomEvent = roomEventFromMap; // Haritadan gelen eventi canavara çivile
+	
+	// --- BİYOM - ELEMENT EŞLEŞTİRME SİSTEMİ ---
+    const biomeEls = { forest:'poison', plains:'fire', cave:'curse', iceland:'cold', mountain:'lightning', urban:'fire' };
+    let roomElement = biomeEls[biome?.toLowerCase()] || 'fire';
+    // Urban ise rastgele bir element seç
+    if (biome?.toLowerCase() === 'urban') roomElement = ['fire','cold','lightning','poison','curse'][Math.floor(Math.random()*5)];
+    monster.roomElement = roomElement; // Canavarın üzerine hangi elementin odasında olduğunu yazdık
+	
+	window.showRoomEventBanner(roomEventFromMap);
+
+    // 1. Magical Reinforcement: +1-5 Atak VEYA Element Hasarı (Hem Hero hem Monster)
+    if (monster.roomEvent === "reinforcement") {
+        const bonusVal = Math.floor(Math.random() * 5) + 1;
+        const isElemental = Math.random() > 0.5;
+
+        if (!isElemental) {
+            // FİZİKSEL ATAK BONUSU
+            monster.attack += bonusVal;
+            applyStatusEffect(hero, { id: 'atk_up', value: bonusVal, turns: 99, resetOnCombatEnd: true });
+        } else {
+            // ELEMENTAL HASAR BONUSU
+            // Kahramana ilgili elementin hasarını ekle
+            hero.elementalDamage[roomElement] += bonusVal;
+            // Canavara da element gücü vermek için atağını artırıyoruz (SplitDamage bunu elemente dönüştürecek)
+            monster.attack += bonusVal; 
+        }
+        writeLog(lang.combat.log_room_event.replace("$1", lang.room_events.event_reinforcement));
+    }
+
+    // 2. Biome Storm: Kırmızı Enemyler için +3 Resist ve +3 Element Hasarı
+    if (monster.roomEvent === "storm" && (monster.isHard || monster.isWeak)) {
+        // Canavarın o odadaki element direnci ve atağı artar
+        monster.resists[roomElement] = (monster.resists[roomElement] || 0) + 3;
+        monster.attack += 3;
+        writeLog(lang.combat.log_room_event_storm);
+    }
+	
+	// 3. King's Path: Girişte artan günü geri al (-1)
+    if (monster.roomEvent === "kings_path") {
+        hero.calendar.daysPassed = Math.max(0, hero.calendar.daysPassed - 1);
+        writeLog(lang.combat.log_kings_path);
+    }
+	
 	monsterDisplayImg.src = `images/${monster.idle}`;
     monsterDisplayImg.style.filter = 'none'; 
     monsterDisplayImg.style.opacity = '1';
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
 	if (isHalfTierFromMap) {
-		const lang = window.getCombatLang();
         writeLog(lang.combat.log_half_tier_buff);
     }
     if (isHardFromMap) {
-		const lang = window.getCombatLang();
         writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
     }
 	if (isWeakFromMap) {
@@ -1185,6 +1235,9 @@ window.nextTurn = function() {
         window.combatTurnCount++;
         writeLog(`--- Tur ${window.combatTurnCount} ---`);
         if(turnCountDisplay) turnCountDisplay.textContent = window.combatTurnCount;
+		
+		const dotTypes = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
+        const activeDots = hero.statusEffects.filter(e => dotTypes.includes(e.id) && !e.waitForCombat);
 		
 		// --- BLOOD MARK SÖNÜMLEME MANTIĞI (KORUNDU) ---
         const bm = hero.statusEffects.find(e => e.id === 'blood_mark_active');
@@ -1277,7 +1330,7 @@ window.nextTurn = function() {
         });
 
 		// --- 2. BROŞLARI SIRALI TETİKLE (Kümülatif Gecikme) ---
-        let currentBroochDelay = 500; 
+        let currentBroochDelay = 300; 
         hero.brooches.forEach((brooch) => {
             if (!brooch) return;
             if (!hero.broochCooldowns) hero.broochCooldowns = {};
@@ -1286,14 +1339,14 @@ window.nextTurn = function() {
 
             if (hero.broochCooldowns[bIndex] <= 0) {
                 window.executeBroochEffects(brooch, currentBroochDelay);
-                currentBroochDelay += 800; 
+                currentBroochDelay += 350; 
                 hero.broochCooldowns[bIndex] = brooch.frequency;
             }
             hero.broochCooldowns[bIndex]--;
         });
 
         // --- 3. DoT İŞLEME (Tüm broşlar bittikten sonra başlar) ---
-        const dotStartTime = currentBroochDelay + 400; 
+        const dotStartTime = currentBroochDelay + 200; 
         setTimeout(() => {
             const dotTypes = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
             hero.statusEffects.filter(e => dotTypes.includes(e.id) && !e.waitForCombat).forEach((effect, idx) => {
@@ -1312,51 +1365,116 @@ window.nextTurn = function() {
 					// ------------------
                     animateDamage(true); 
                     updateStats();
-                }, idx * 400);
+                }, idx * 300);
             });
         }, dotStartTime);
+		
+        // --- 3.5 BİYOM FIRTINASI HASARI (DİRENÇ GARANTİLİ) ---
+        if (monster && monster.roomEvent === "storm") {
+            const stormBasePower = (window.stormDmgCheat !== undefined) 
+                ? window.stormDmgCheat 
+                : (hero.currentAct - 1) * 4; 
+            
+            if (stormBasePower > 0) {
+                const lang = window.getCombatLang();
+                const curElement = monster.roomElement;
+                const elementName = lang.status[curElement] || curElement;
 
-        // --- 4. TUR SONU VE KONTROLLER (Gecikmeli) ---
-        const dotCount = hero.statusEffects.filter(e => ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'].includes(e.id)).length;
-        const totalWaitTime = dotStartTime + (dotCount * 450) + 200;
+                // --- KRİTİK HESAPLAMA DÜZELTMESİ ---
+                // SkillEngine yerine doğrudan direnç kontrolü yapıyoruz (Daha güvenli)
+                const calculateStormNet = (target) => {
+                    const stats = (target === hero) ? getHeroEffectiveStats() : { resists: target.resists };
+                    const resist = stats.resists[curElement] || 0;
+                    // Formül: Ham Güç - Direnç (Minimum 0)
+                    return Math.max(0, stormBasePower - resist);
+                };
 
+                const heroNetDmg = calculateStormNet(hero);
+                const monsterNetDmg = calculateStormNet(monster);
+				const stormDelay = dotStartTime + (activeDots.length * 300) + 300;
+                
+                setTimeout(() => {
+                    if (window.monster) { // Failsafe
+                        const heroName = window.getHeroClassNameTrans();
+                        const mName = window.getEnemyNameTrans(monster.name);
+                        const elementName = lang.status[curElement] || curElement;
+
+                        if (heroNetDmg > 0) {
+                            hero.hp = Math.max(0, hero.hp - heroNetDmg);
+                            showFloatingText(heroDisplayContainer, heroNetDmg, 'damage');
+                            writeLog(lang.combat.log_storm_tick.replace("$1", heroName).replace("$2", heroNetDmg).replace("$3", elementName));
+                        }
+                        if (monsterNetDmg > 0) {
+                            monster.hp = Math.max(0, monster.hp - monsterNetDmg);
+                            showFloatingText(document.getElementById('monster-display'), monsterNetDmg, 'damage');
+                            writeLog(lang.combat.log_storm_tick.replace("$1", mName).replace("$2", monsterNetDmg).replace("$3", elementName));
+                        } else {
+                            writeLog(lang.combat.log_storm_monster_resist.replace("$1", mName).replace("$2", elementName));
+                        }
+                        updateStats();
+                        if (monster.hp <= 0) checkGameOver();
+                    }
+                }, stormDelay);
+            }
+        }
+		// ----------------------------------------------------      
+        // Temel bekleme: DoT'ların bitiş süresi
+        let finalWaitTime = dotStartTime + (activeDots.length * 300) + 300;
+
+        // EĞER fırtına varsa, bekleme süresine 600ms daha ekle (Yazılar okunsun)
+        if (monster && monster.roomEvent === "storm") {
+            finalWaitTime += 600;
+        }
+
+        // --- 5. SIRAYI DEVRET VE DURUM KONTROLLERİ ---
         setTimeout(() => {
             if (checkGameOver()) return; 
 
-            // --- STUN KONTROLÜ (GÜNCELLEME: Intention buraya eklendi) ---
+            // 1. ÖNCE STUN (SERSEMLEME) KONTROLÜ YAP
             const stunEffect = hero.statusEffects.find(e => e.id === 'stun' && !e.waitForCombat);
+            const lang = window.getCombatLang(); // Dili tazele
+
             if (stunEffect) {
-                writeLog(combatLang.log_stun_skip);
-                showFloatingText(heroDisplayContainer, stunEffect.name, 'damage'); 
+                // OYUNCU SERSEMLEMİŞSE:
+                writeLog(lang.combat.log_stun_skip);
+                showFloatingText(heroDisplayContainer, lang.status.stun, 'damage'); 
                 
+                // Durum sürelerini azalt (Sersemken de süreler akar)
                 hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
                 hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
                 
-                window.isHeroTurn = false; 
-                determineMonsterAction(); // Düşman ne yapacağını seçer
-                showMonsterIntention(window.monsterNextAction); // Niyeti gösterir (Kılıç/Yetenek vb.)
+                window.isHeroTurn = false; // Sırayı canavara ver
+                determineMonsterAction(); 
+                showMonsterIntention(window.monsterNextAction); 
                 
                 updateStats();
-                setTimeout(nextTurn, 1000); // Sırayı canavara devreder
-                return;
+                // 1 saniye sonra canavarın hamlesi başlasın
+                setTimeout(nextTurn, 1000); 
+                return; // Fonksiyondan çık (Butonları açma!)
             }
 
-            // Normal durum süre azaltması
+            // 2. EĞER SERSEMLEME YOKSA (NORMAL AKIŞ):
             hero.statusEffects.forEach(e => { if (!e.waitForCombat) e.turns--; });
             hero.statusEffects = hero.statusEffects.filter(e => e.turns > 0);
             
             determineMonsterAction(); 
             showMonsterIntention(window.monsterNextAction); 
+            
+            // --- HIZLI TEPKİ ---
+            // Oyuncunun butonlarını tekrar aktif et
+            window.isHeroTurn = true; 
             toggleSkillButtons(false); 
+            
             updateStats();
-        }, Math.max(2000, totalWaitTime));
+        }, finalWaitTime);
 
     } else {
 		const enemyL = globalLang.enemy_names || {};
 		const monsterNameTranslated = enemyL[monster.name] || monster.name;
         // --- CANAVAR SIRASI ---
-        toggleSkillButtons(true); 
-        showMonsterIntention(null); 
+        if (window.monster && monster.hp > 0) {
+            toggleSkillButtons(true); 
+            showMonsterIntention(null); 
 		
 		/// KRİTİK: DoT işlemlerini ve hamleyi setTimeout içine alıyoruz
         setTimeout(() => {
@@ -1469,14 +1587,15 @@ window.nextTurn = function() {
 											}
                                     window.isHeroTurn = true;
                                     setTimeout(nextTurn, 500);
-                                }
-                            }
-                        }
-                    }
-                }, 500); 
-            }
-        }, 600); 
-    }
+									}
+								}
+							}
+						}
+					}, 500); 
+				}
+			}, 600); 
+		}
+	}
 };
 
 
@@ -1512,6 +1631,42 @@ function handleMonsterDefend(attacker) {
         nextTurn();
     }, 100); 
 }
+
+window.showRoomEventBanner = function(eventKey) {
+    const safeKey = eventKey || "none"; 
+    const banner = document.getElementById('room-event-banner');
+    const indicator = document.getElementById('active-room-event-indicator'); // Küçük gösterge
+    const lang = window.getCombatLang();
+    
+    let eventName = (lang.room_events && lang.room_events[`event_${safeKey}`]) 
+                    ? lang.room_events[`event_${safeKey}`] 
+                    : safeKey;
+					
+	 // --- YENİ: FIRTINA TÜRÜNÜ EKLE ---
+    if (safeKey === "storm" && window.monster && monster.roomElement) {
+        const elementTrans = lang.status[monster.roomElement] || monster.roomElement;
+        // Örn: "Biyom Fırtınası (Zehir)"
+        eventName += ` (${elementTrans})`;
+    }
+    // ---------------------------------
+
+
+    // 1. BÜYÜK BANNER (Geçici)
+    if (banner) {
+        banner.textContent = String(eventName).toUpperCase();
+        banner.classList.remove('hidden', 'banner-animate');
+        void banner.offsetWidth; 
+        banner.classList.add('banner-animate');
+        setTimeout(() => { banner.classList.add('hidden'); }, 2600);
+    }
+
+    // 2. KÜÇÜK GÖSTERGE (Kalıcı)
+    if (indicator) {
+        indicator.textContent = eventName;
+        // 'none' değilse parlasın
+        indicator.classList.toggle('active-event', safeKey !== 'none');
+    }
+};
 
 
 window.animateMonsterSkill = function() {
@@ -1558,6 +1713,15 @@ window.checkGameOver = function() {
         return true; 
     }
     if (monster && monster.hp <= 0) {
+		// YENİ: Horde Dirilme Mantığı
+        if (monster.roomEvent === "horde" && !monster.hasRevived) {
+            monster.hp = Math.floor(monster.maxHp * 0.5);
+            monster.hasRevived = true;
+            monster.isHordeBonus = true; // Ganimet için işaret
+            writeLog(lang.combat.log_horde_revive);
+            updateStats();
+            return false; // Savaşı bitirme, devam et
+        }
         writeLog(lang.combat.log_victory.replace("$1", window.getEnemyNameTrans(monster.name)));
         monster.hp = 0; updateStats(); 
         monsterDisplayImg.src = `images/${monster.dead}`; 
@@ -1597,8 +1761,14 @@ window.checkGameOver = function() {
         }
         // ----------------------------------------
 
-        // Bosslar ve Hard (Turuncu çerçeveli) odalar 5 XP, normal odalar 4 XP verir
-        const xpGainAmount = (monster.isHard || monster.isBoss) ? 5 : 4;
+        // --- GÜNCELLEME: XP HESAPLAMA MANTIĞI ---      
+        let xpGainAmount = 4; // Varsayılan 4 XP
+        
+        // EĞER Boss, Hard oda VEYA Horde (Sürü) odasındaysak kesinlikle 5 XP ver
+        if (monster.isHard || monster.isBoss || monster.isHordeBonus) {
+            xpGainAmount = 5;
+        }
+        // ----------------------------------------
         gainXP(xpGainAmount);
         hero.statusEffects = hero.statusEffects.filter(e => !e.resetOnCombatEnd); 
         window.heroBlock = 0; 

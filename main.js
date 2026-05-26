@@ -793,6 +793,56 @@ window.haritayiAc = function() {
     console.log("🗺️ Harita Sırları Açıldı: Artık her odaya tıklayarak ışınlanabilirsin.");
 };
 
+window.olayVer = function(eventKey) {
+    if (!window.monster) {
+        console.error("HATA: Sadece savaş sırasında oda olayı tetiklenebilir!");
+        return;
+    }
+
+    const lang = window.getCombatLang();
+    const possibleEvents = ["none", "reinforcement", "wind", "horde", "kings_path", "storm"];
+    
+    if (!possibleEvents.includes(eventKey)) {
+        console.warn("Geçersiz Olay! Şunları deneyin:", possibleEvents.join(", "));
+        return;
+    }
+
+    // 1. Mevcut Oda Olayını Güncelle
+    monster.roomEvent = eventKey;
+
+    // 2. UI ve Banner'ı Tetikle
+    window.showRoomEventBanner(eventKey);
+
+    // 3. ANLIK MEKANİK TETİKLEYİCİLERİ
+    if (eventKey === "reinforcement") {
+        const bonus = Math.floor(Math.random() * 5) + 1;
+        monster.attack += bonus;
+        applyStatusEffect(hero, { id: 'atk_up', name: 'Takviye', value: bonus, turns: 99, resetOnCombatEnd: true });
+        writeLog("🪄 **Hile**: Büyüsel Takviye anında uygulandı.");
+    } 
+    else if (eventKey === "kings_path") {
+        hero.calendar.daysPassed = Math.max(0, hero.calendar.daysPassed - 1);
+        updateStats();
+        writeLog("👑 **Hile**: Kral Yolu bulundu, zaman 1 gün geri sarıldı.");
+    }
+
+    writeLog(`🛠️ **Cheat**: Oda olayı '${eventKey}' olarak değiştirildi.`);
+};
+
+window.stormDmgCheat = undefined; // Başlangıçta hile kapalı
+
+window.firtinaGucu = function(val) {
+    // val: vurmasını istediğin ham hasar miktarı (Örn: 10)
+    window.stormDmgCheat = val;
+    
+    if (val > 0) {
+        writeLog(`🛠️ **Hile**: Biyom fırtınası gücü '${val}' olarak ayarlandı. (Zırhınla düşecektir)`);
+    } else {
+        window.stormDmgCheat = undefined; // 0 yazarsan hileyi kapatır, Act kuralına döner
+        writeLog(`🛠️ **Hile**: Fırtına gücü normale (Act bazlı) döndürüldü.`);
+    }
+};
+
 document.addEventListener('touchstart', (e) => {
     // Eğer dokunulan yer bir item-slot değilse tooltip'i kapat
     if (!e.target.closest('.item-slot') && !e.target.closest('.reward-item')) {

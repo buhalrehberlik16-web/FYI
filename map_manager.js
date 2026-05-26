@@ -152,13 +152,39 @@ function generateMap() {
 			availableLanes.forEach(lane => {
 		const nodeType = determineNodeType(stage, lane);
     
-		// --- DÜZELTME: diff döngünün başına alındı ---
 		const diff = getTierAndDifficultyForStage(stage, act);
-	
-		// --- YENİ: SAVAŞ KONTROLÜ ---
-        // Sadece bu tipler renk/buff alabilir
         const isCombatNode = ['encounter', 'start', 'boss'].includes(nodeType);
-        // ----------------------------
+        const isRed = (diff.isHard || diff.isWeak); // Kırmızı oda kontrolü
+
+        // --- YENİ: ROOM EVENT GENERATOR ---
+        let roomEvent = "none";
+        if (isCombatNode && nodeType !== 'start') {
+            const r = Math.random();
+            const weights = [
+                { id: "reinforcement", w: 0.1 },
+                { id: "wind", w: 0.1 },
+                { id: "horde", w: 0.1 },
+                { id: "kings_path", w: 0.1 },
+                { id: "storm", w: 0.1 },
+                { id: "none", w: 0.5 }
+            ];
+
+            // Kırmızı Oda Kısıtlamaları
+            let pool = weights;
+            if (isRed) {
+                // Kırmızıda 'none' ve 'horde' olamaz
+                pool = weights.filter(ev => ev.id !== "none" && ev.id !== "horde");
+                // Storm sadece Act 1 kırmızılarda çıkabilir kuralı (zaten pool içinde)
+            }
+
+            let sum = 0;
+            const totalW = pool.reduce((s, x) => s + x.w, 0);
+            const roll = Math.random() * totalW;
+            for (let ev of pool) {
+                sum += ev.w;
+                if (roll <= sum) { roomEvent = ev.id; break; }
+            }
+        }
     
 		// Değişkenleri diff'ten güvenle çekiyoruz
 		let t = diff.tier;
@@ -198,6 +224,7 @@ function generateMap() {
 			battleBgNum: bBg,
 			biomeImg: img, 
 			enemyName: e, 
+			roomEvent: roomEvent, 
 			isHard: isCombatNode ? diff.isHard : false,
             isHalfTier: isCombatNode ? diff.isHalfTier : false,
             isOrange: isCombatNode ? diff.isOrange : false,
@@ -413,6 +440,11 @@ function clearTrails() {
 
 // --- OYUNCU İLERLEME ---
 function handleNodeClick(node) {
+	if (window.previousScreenBeforeMap) {
+        console.log("📍 Bilgi: Önizleme modunda odalara giriş yapılamaz.");
+        return; 
+    }
+	
     // --- KRİTİK KİLİT: Eğer işlem sürüyorsa veya buton devre dışıysa basılmasın ---
     if (window.isMapNodeProcessing) return;
     window.isMapNodeProcessing = true; 
@@ -581,7 +613,7 @@ function proceedWithNodeAction(node) {
             let enemy = node.enemyName;
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
-            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum); 
+            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum, node.roomEvent); 
 
         } else if (node.type === 'town') {
             enterTown();
@@ -590,7 +622,7 @@ function proceedWithNodeAction(node) {
             triggerRandomEvent();
 
         } else if (node.type === 'boss') {
-            startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum);
+            startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum, node.roomEvent);
         }
         else if (node.type === 'city') {
             writeLog("🏆 " + lang.desc_city);
