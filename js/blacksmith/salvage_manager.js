@@ -184,5 +184,5 @@ window.processSalvage = function() {
         const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
         window.showAlert(lang.bag_full_msg);
     }
-	window.CalendarManager.passDay();
+	//window.CalendarManager.passDay();
 };
