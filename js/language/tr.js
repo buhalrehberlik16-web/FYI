@@ -310,6 +310,29 @@ window.LANG_TR = {
 		tab_craft: "ZANAAT",
 		tab_gear: "EKİPMAN",
 		tab_town: "HİZMETLER",
+		tab_hero: "KAHRAMAN",
+		
+		room_events_title: "Oda Olayları (Ortam Etkileri)",
+		room_events_desc: "Savaş odalarında rastgele beliren atmosferik olaylar:<br>" +
+        "• <b>Büyüsel Takviye:</b> Her iki taraf da +1-5 Atak veya Element hasarı kazanır.<br>" +
+        "• <b>Yenileyici Rüzgar:</b> Yeteneklerin yorgunluk bedeli 1 azalır.<br>" +
+        "• <b>Sürü (Horde):</b> Düşman ölünce %50 Can ile dirilir. Ödül: 5 XP ve x2 Ganimet.<br>" +
+        "• <b>Kral Yolu:</b> Gizli geçit sayesinde gün ilerlemez.<br>" +
+        "• <b>Biyom Fırtınası:</b> Her tur element hasarı vurur. Kırmızı odalarda düşman +3 güçlenir.",
+
+		stats_title: "Stat Matematikleri",
+		stats_barbarian: "<b style='color:#ff4d4d'>BARBAR:</b><br>" +
+        "• 2 GÜÇ (STR) = 1 Atak<br>" +
+        "• 2 ÇEVİKLİK (DEX) = 1 Defans & 1.2 Blok<br>" +
+        "• 1 CANLILIK (VIT) = 5 HP<br>" +
+        "• 2 BÜYÜ GÜCÜ (MP) = 1 Öfke Yenileme<br>"+
+		"• 1 ZEKA (INT) = 5 Maks Öfke",
+		stats_magus: "<b style='color:#3498db'>MAGUS:</b><br>" +
+        "• 1.25 GÜÇ (STR) = 1 Atak<br>" +
+        "• 5 ÇEVİKLİK (DEX) = 1 Defans & 4 Blok<br>" +
+        "• 1 CANLILIK (VIT) = 4 HP<br>" +
+        "• 1 BÜYÜ GÜCÜ (MP) = 1 Mana Yenileme<br>"+
+		"• 1 ZEKA (INT) = 5 Maks Mana",
 
 		// Dünya Sayfası
 		combat_colors_title: "Savaş Renkleri",
@@ -663,10 +686,17 @@ window.LANG_TR = {
 				desc: "Ormanda ağlayan bir çocuk sesi geliyor... Onu korkunç bir yaratık köşeye sıkıştırmış!",
 				opt1: "Yardım Et (Savaş)", opt1_b: "Ödül: Ekstra Altın", opt1_d: "Tier 1 Düşman",
 				opt2: "Görmezden Gel", opt2_b: "", opt2_d: ""
-		},
+			},
+			brooch_peddler: {
+				title: "Broş İşportacısı", 
+				desc: "Kucağında parıldayan kutularla bir cüce sana yaklaşıyor. 'Mistik broşlarda dev kampanya!' diye bağırıyor.",
+				opt1: "Kutuları Aç", opt1_b: "4 Broş / %50 İndirim", opt1_d: "",
+				opt2: "İlgilenme", opt2_b: "", opt2_d: ""
+			},
             flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
             flee_debuff: "-10 HP"
-        },
+		},
+			
 		
 		event_result_title: "SONUÇ",
 		event_continue_btn: "DEVAM ET",

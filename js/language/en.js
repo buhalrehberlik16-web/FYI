@@ -308,6 +308,29 @@ window.LANG_EN = {
 		tab_craft: "CRAFT",
 		tab_gear: "GEAR",
 		tab_town: "TOWN",
+		tab_hero: "HERO",
+		
+		room_events_title: "Room Events (Environment)",
+		room_events_desc: "Atmospheric events that randomly appear in combat rooms:<br>" +
+        "• <b>Magical Reinforcement:</b> Both sides gain +1-5 Attack or Element damage.<br>" +
+        "• <b>Rejuvenating Wind:</b> Skill exhaustion cost is reduced by 1.<br>" +
+        "• <b>Horde:</b> Enemy revives once with 50% HP. Reward: 5 XP and 2x Loot.<br>" +
+        "• <b>King's Path:</b> Secret path prevents time from advancing.<br>" +
+        "• <b>Biome Storm:</b> Deals elemental damage every turn. Red nodes buff enemies by +3.",
+
+		stats_title: "Stat Mathematics",
+		stats_barbarian: "<b style='color:#ff4d4d'>BARBARIAN:</b><br>" +
+        "• 2 STRENGTH (STR) = 1 Attack<br>" +
+        "• 2 DEXTERITY (DEX) = 1 Defense & 1.2 Block<br>" +
+        "• 1 VITALITY (VIT) = 5 HP<br>" +
+        "• 2 MAGIC POWER (MP) = 1 Rage Regen<br>"+
+		"• 1 INTELLIGENCE (INT) = 5 Max Rage",
+		stats_magus: "<b style='color:#3498db'>MAGUS:</b><br>" +
+        "• 1.25 STRENGTH (STR) = 1 Attack<br>" +
+        "• 5 DEXTERITY (DEX) = 1 Defense & 4 Block<br>" +
+        "• 1 VITALITY (VIT) = 4 HP<br>" +
+        "• 1 MAGIC POWER (MP) = 1 Mana Regen<br>"+
+		"• 1 INTELLIGENCE (INT) = 5 Max Mana",
 
 		combat_colors_title: "Combat Colors",
 		combat_colors_desc: "• <b style='color:#1b5e20'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
@@ -660,9 +683,16 @@ window.LANG_EN = {
 				opt1: "Help (Battle)", opt1_b: "Reward: Extra Gold", opt1_d: "Tier 1 Enemy",
 				opt2: "Ignore", opt2_b: "", opt2_d: ""
 			},
+			brooch_peddler: {
+				title: "Brooch Peddler", 
+				desc: "A dwarf approaches you with glowing boxes. 'Mystic brooches! Half price for a weary traveler!' he shouts.",
+				opt1: "Open Boxes", opt1_b: "4 Brooches / 50% Off", opt1_d: "",
+				opt2: "Ignore", opt2_b: "", opt2_d: ""
+			},
             flee_option: "Flee In Fear",
             flee_debuff: "-10 HP"
-        },
+		},
+			
 		
 		event_result_title: "RESULT",
 		event_continue_btn: "CONTINUE",
