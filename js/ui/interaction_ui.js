@@ -79,6 +79,10 @@ window.openRewardScreen = function(rewards) {
             const qty = reward.amount || 1;
             const isMaterial = (item.type === 'material' || item.type === 'stat_scroll' || item.type === 'type_scroll');
             const tierLabel = isMaterial ? lang.items.material_label : `${lang.items.tier_label} ${item.tier}`;
+			// --- YENİ: MİKTAR GÖRÜNÜRLÜK KONTROLÜ ---
+            // Eğer eşya bir materyal/parşömen ise miktar yazısını oluştur, değilse boş bırak
+            const amountHtml = isMaterial ? `<span class="reward-item-amount">x${qty}</span>` : "";
+            // ----------------------------------------
 			
 			// --- GÜNCELLEME: KURAL KONTROLÜ (ÇOKLU KONTROL) ---
             // Önce subtype'a bak, yoksa type'a bak, o da yoksa jewelry kuralını al
@@ -112,7 +116,7 @@ window.openRewardScreen = function(rewards) {
                 <div class="reward-item-text">
                     <div class="reward-item-header">
                         <span class="reward-item-name tier-${isMaterial ? '' : item.tier}">${itemName}</span>
-                        <span class="reward-item-amount">x${qty}</span>
+                        ${amountHtml} <!-- Sadece materyallerde x5, x10 gibi görünecek -->
                     </div>
                     <span class="reward-item-tier ${isMaterial ? 'tier-craft' : 'tier-' + item.tier}">${tierLabel}</span>
                 </div>`;

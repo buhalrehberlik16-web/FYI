@@ -71,6 +71,18 @@ window.switchScreen = function(targetScreen) {
     mapCloseBtn.style.display = (targetScreen === window.mapScreen && window.previousScreenBeforeMap) ? "flex" : "none";
 	}
 	
+	// --- YENİ: HARİTA BUTONU GÖRÜNÜRLÜK FİLTRESİ ---
+    const mapBtn = document.getElementById('btn-open-map');
+    
+    // Sadece Town (Köy) veya City (Şehir) ekranındaysak butonu göster
+    const isAllowedToSeeMapBtn = (targetScreen === window.townScreen || targetScreen === window.cityScreen);
+
+    if (mapBtn) {
+        // Not: 'flex' veya 'none' yaparak butonun varlığını kontrol ediyoruz
+        mapBtn.style.display = isAllowedToSeeMapBtn ? "flex" : "none";
+    }
+    // ----------------------------------------------
+	
 	window.updateLogVisibility();
 };
 
@@ -115,7 +127,7 @@ window.writeLog = function(message) {
     if (!combatLogArea) return;
 
     // Sadece bu ikonlarla başlayan mesajları UI'a bas
-    const allowedIcons = ['⚔️', '⚠️', '✨', '📿', '🛡️', '🧪', '💥', '💀', '☣️', '🔥', '🩸', '🧘', '🩹', '💚', '💫', '😓', '😫', '😱']; 
+    const allowedIcons = ['⚔️', '⚠️', '✨', '📿', '🛡️', '🧪', '💥', '💀', '☣️', '🔥', '🩸', '🧘', '🩹', '💚', '💫', '😓', '😫', '😱', '⛈️']; 
 
     // Mesajın bu ikonlardan biriyle başlayıp başlamadığını kontrol et
     const shouldDisplay = allowedIcons.some(icon => message.trim().startsWith(icon));
@@ -163,26 +175,27 @@ window.previousScreenBeforeMap = null; // Haritaya bakmadan önceki ekranı tuta
 window.toggleMapPreview = function() {
     const activeScreen = document.querySelector('.screen.active');
     
-    // Eğer şu an haritadaysak ve daha önce bir yerden geldiysek: Geri dön
+    // Haritadaysak: Geri dön
     if (activeScreen === window.mapScreen) {
         if (window.previousScreenBeforeMap) {
-            window.switchScreen(window.previousScreenBeforeMap);
-            window.previousScreenBeforeMap = null;
+            const lastScreen = window.previousScreenBeforeMap;
+            window.previousScreenBeforeMap = null; // Önce sıfırla ki kilit kalksın
+            window.switchScreen(lastScreen);
         }
     } 
-    // Haritada değilsek: Mevcut ekranı kaydet ve haritayı aç
+    // Haritada değilsek: Sadece Town ve City'den girişe izin ver
     else {
-        // Savaş ekranındayken haritaya bakmayı engelleyebiliriz (opsiyonel)
-        if (activeScreen === window.battleScreen) return;
-
-        window.previousScreenBeforeMap = activeScreen;
-        window.switchScreen(window.mapScreen);
-        
-        // Loga bilgi ver
+        const allowedSources = [window.townScreen, window.cityScreen];
+        if (allowedSources.includes(activeScreen)) {
+            window.previousScreenBeforeMap = activeScreen;
+            window.switchScreen(window.mapScreen);
+        }
+		// Loga bilgi ver
         const lang = window.getCombatLang();
         writeLog(`🗺️ ${lang.combat.log_map_preview || "Haritaya göz atılıyor..."}`);
     }
 };
+      
 
 // ESC Tuşuna basınca menüyü aç/kapat (Kullanım kolaylığı)
 document.addEventListener('keydown', (e) => {
