@@ -41,6 +41,16 @@ window.LootManager = {
 
         // Rastgele bütçe üretimi
         let lpBudget = (Math.random() * (maxBudget - minBudget)) + minBudget;
+		
+		// --- GÜNCELLEME: HORDE LOGU EKLEME ---
+        if (monster.isHordeBonus) {
+            const oldBudget = lpBudget.toFixed(2); // Karşılaştırma için eskiyi tut
+            lpBudget *= 2; // Bütçeyi ikiye katla
+            
+            // Logu dile duyarlı yapabiliriz veya şimdilik kontrol için şu şekilde yazabiliriz:
+            writeLog(`**Horde Bonus**: Sürü temizlendiği için ganimet bütçesi ikiye katlandı! (${oldBudget} LP -> ${lpBudget.toFixed(2)} LP)`);
+        }
+        // -------------------------------------
 
         // Başlangıç Logu
         writeLog(`💰 **GANİMET SİSTEMİ**: ${monster.name} (T${monsterTier})`);
