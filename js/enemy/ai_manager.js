@@ -4,6 +4,9 @@ window.AIManager = {
     lastAction: null,
 
     determineAction: function(monster, hero, turn) {
+		// --- KRİTİK GÜVENLİK: Canavar silindiyse (savaş bittiyse) dur ---
+        if (!monster) return null;
+        // -------------------------------------------------------------
         const stats = ENEMY_STATS[monster.name];
         if (turn === 1 && stats.firstTurnAction) return this.saveAndReturn(stats.firstTurnAction);
 
