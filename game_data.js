@@ -278,7 +278,19 @@ const EVENT_POOL = [
             } 
         },
         option2: { text: "Ignore", action: () => {} }
-    }
+    },
+	{
+        id: "brooch_peddler", 
+        type: "neutral", 
+        option1: { 
+            text: "Look", 
+            action: () => { window.openBroochMerchant(); } 
+        },
+        option2: { 
+            text: "Leave", 
+            action: () => {} 
+        }
+    },
 
 ];
 

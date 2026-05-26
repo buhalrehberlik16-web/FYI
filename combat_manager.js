@@ -1063,9 +1063,17 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     const HARD_SCALE = 1.20;      // isHard (Strong) çarpanı
     
     let hpAtkMultiplier = 1.0 * scaling;
-    if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; // x1.50
-    if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         // x1.25 (Yeni Eklendi!)
-	if (isWeakFromMap) hpAtkMultiplier *= 0.8; 
+	
+    // --- KRİTİK DÜZELTME: BOSS FİLTRESİ ---
+    // Eğer canavar Boss DEĞİLSE harita zorluklarını uygula
+    if (!stats.isBoss) {
+        if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; 
+        if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         
+        if (isWeakFromMap) hpAtkMultiplier *= 0.8; 
+    }
+    // NOT: Eğer Boss ise, sadece yukarıdaki 'scaling' (zaman bazlı) değerini kullanır.
+    // Haritadaki isHard (Kırmızı oda) bilgisi Boss'un canını/atağını bir daha artırmaz.
+    // --------------------------------------
 
     // Defans ve Diğerleri için Çarpan (isHard hariç tutulur)
     let otherMultiplier = 1.0 * scaling;
@@ -1142,9 +1150,10 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 
     // 2. Biome Storm: Kırmızı Enemyler için +3 Resist ve +3 Element Hasarı
     if (monster.roomEvent === "storm" && (monster.isHard || monster.isWeak)) {
-        // Canavarın o odadaki element direnci ve atağı artar
-        monster.resists[roomElement] = (monster.resists[roomElement] || 0) + 3;
-        monster.attack += 3;
+        monster.attack += 3; // Elemental hasar gücünü artırır
+        for (let res in monster.resists) {
+        monster.resists[res] += 3; // Kendi elementine daha dirençli olur
+		}
         writeLog(lang.combat.log_room_event_storm);
     }
 	
@@ -1159,14 +1168,16 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     monsterDisplayImg.style.opacity = '1';
 	
 	// --- LOGLAMA VE GÖRSEL HAZIRLIKLAR ---
-	if (isHalfTierFromMap) {
-        writeLog(lang.combat.log_half_tier_buff);
-    }
-    if (isHardFromMap) {
-        writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
-    }
-	if (isWeakFromMap) {
-        writeLog(lang.combat.log_weak_buff);
+	 if (!monster.isBoss) {
+        if (isHalfTierFromMap) {
+            writeLog(lang.combat.log_half_tier_buff);
+        }
+        if (isHardFromMap) {
+            writeLog(lang.combat.log_hard_buff.replace("$1", window.getEnemyNameTrans(monster.name)));
+        }
+        if (isWeakFromMap) {
+            writeLog(lang.combat.log_weak_buff);
+        }
     }
 	
 	// Savaş başlangıcı bonusu (Örn: Stormreach ayında +10 öfke)
@@ -1371,9 +1382,21 @@ window.nextTurn = function() {
 		
         // --- 3.5 BİYOM FIRTINASI HASARI (DİRENÇ GARANTİLİ) ---
         if (monster && monster.roomEvent === "storm") {
-            const stormBasePower = (window.stormDmgCheat !== undefined) 
-                ? window.stormDmgCheat 
-                : (hero.currentAct - 1) * 4; 
+            // --- YENİ MATEMATİKSEL KURGU ---
+            let stormBasePower = (hero.currentAct - 1) * 4; // Act 2: 4, Act 3: 8...
+            const isRed = (monster.isHard || monster.isWeak);
+
+            if (hero.currentAct === 1) {
+                // Act 1 kuralı: Sadece kırmızılarda 3 vurur
+                if (isRed) stormBasePower = 3;
+            } else {
+                // Act 2+ kuralı: Kırmızı ise Act hasarına +3 ekle
+                if (isRed) stormBasePower += 3;
+            }
+
+            // Hile kodu varsa hepsini ezer
+            if (window.stormDmgCheat !== undefined) stormBasePower = window.stormDmgCheat;
+            // ---------------------------------
             
             if (stormBasePower > 0) {
                 const lang = window.getCombatLang();
@@ -1666,6 +1689,51 @@ window.showRoomEventBanner = function(eventKey) {
         // 'none' değilse parlasın
         indicator.classList.toggle('active-event', safeKey !== 'none');
     }
+};
+
+window.updateSkillDamagePreviews = function() {
+    // Savaşta değilsek veya canavar yoksa temizle ve çık
+    if (!window.monster || monster.hp <= 0 || !battleScreen.classList.contains('active')) {
+        document.querySelectorAll('.skill-damage-preview').forEach(el => el.remove());
+        return;
+    }
+
+    const slots = document.querySelectorAll('.skill-slot');
+    
+    slots.forEach(slot => {
+        const skillKey = slot.dataset.skillKey;
+        if (!skillKey) return;
+
+        const skillObj = SKILL_DATABASE[skillKey];
+        // Sadece saldırı türündeki (scaling barındıran) yetenekler için hesapla
+        if (skillObj && skillObj.data && skillObj.data.scaling) {
+            
+            // --- MOTORU ÇALIŞTIR ---
+            // Mevcut kahraman statları ve canavarın o anki (savunma dahil) durumuna göre hesapla
+            const dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
+            
+            // Etiketi oluştur veya güncelle
+            let previewEl = slot.querySelector('.skill-damage-preview');
+            if (!previewEl) {
+                previewEl = document.createElement('div');
+                previewEl.className = 'skill-damage-preview';
+                slot.appendChild(previewEl);
+            }
+
+            previewEl.textContent = dmgPack.total;
+            
+            // Hasar 0 ise görseli değiştir
+            if (dmgPack.total <= 0) {
+                previewEl.classList.add('no-damage');
+            } else {
+                previewEl.classList.remove('no-damage');
+            }
+        } else {
+            // Saldırı olmayan yeteneklerde etiketi kaldır (Heal, Buff vb.)
+            const existing = slot.querySelector('.skill-damage-preview');
+            if (existing) existing.remove();
+        }
+    });
 };
 
 

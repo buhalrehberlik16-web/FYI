@@ -156,10 +156,9 @@ function generateMap() {
         const isCombatNode = ['encounter', 'start', 'boss'].includes(nodeType);
         const isRed = (diff.isHard || diff.isWeak); // Kırmızı oda kontrolü
 
-        // --- YENİ: ROOM EVENT GENERATOR ---
+        // --- YENİ: ROOM EVENT GENERATOR (GELİŞMİŞ) ---
         let roomEvent = "none";
-        if (isCombatNode && nodeType !== 'start') {
-            const r = Math.random();
+        if (isCombatNode && nodeType !== 'start' && nodeType !== 'boss') {
             const weights = [
                 { id: "reinforcement", w: 0.1 },
                 { id: "wind", w: 0.1 },
@@ -169,14 +168,32 @@ function generateMap() {
                 { id: "none", w: 0.5 }
             ];
 
-            // Kırmızı Oda Kısıtlamaları
-            let pool = weights;
+            let pool;
+
+            // 1. DURUM: Kırmızı Odalar (isHard veya isWeak) - Tüm Actlar için
             if (isRed) {
-                // Kırmızıda 'none' ve 'horde' olamaz
-                pool = weights.filter(ev => ev.id !== "none" && ev.id !== "horde");
-                // Storm sadece Act 1 kırmızılarda çıkabilir kuralı (zaten pool içinde)
+                // Kırmızıda 'none' ve 'horde' olamaz. 
+                // Geriye: reinforcement, wind, kings_path, storm kalır.
+                pool = weights.filter(ev => !["none", "horde"].includes(ev.id));
+            } 
+            // 2. DURUM: Act 1 Normal Odalar (Yeşil/Turuncu)
+            else if (act === 1) {
+                // Act 1 normal odalarda 'storm' olamaz.
+                // Clear Skies %50, diğerleri kalan %50'den eşit pay (%12.5 her biri)
+                pool = [
+                    { id: "none", w: 0.5 },
+                    { id: "reinforcement", w: 0.125 },
+                    { id: "wind", w: 0.125 },
+                    { id: "horde", w: 0.125 },
+                    { id: "kings_path", w: 0.125 }
+                ];
+            } 
+            // 3. DURUM: Act 2+ Normal Odalar
+            else {
+                pool = weights; // Normal dağılım
             }
 
+            // Seçim yap
             let sum = 0;
             const totalW = pool.reduce((s, x) => s + x.w, 0);
             const roll = Math.random() * totalW;

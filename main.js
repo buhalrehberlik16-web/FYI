@@ -13,12 +13,21 @@ window.switchCodexTab = function(tabId) {
     let html = "";
 
     if (tabId === 'world') {
+        // Renkler + Oda Olayları + Hasar Mekaniği
         html = `<h3><i class="fas fa-swords" style="margin-right:10px;"></i>${c.combat_colors_title}</h3>
                 <p>${c.combat_colors_desc}</p>
-				<h3><i class="fas fa-question-circle" style="margin-right:10px;"></i>${c.events_title}</h3>
-                <p>${c.events_desc}</p>
-				<h3><i class="fas fa-calculator" style="margin-right:10px;"></i>${c.damage_system_title}</h3>
-                <p>${c.damage_system_desc}</p>`;
+                <h3><i class="fas fa-cloud-bolt" style="margin-right:10px;"></i>${c.room_events_title}</h3>
+                <p>${c.room_events_desc}</p>
+                <h3><i class="fas fa-calculator" style="margin-right:10px;"></i>${c.damage_system_title}</h3>
+                <p>${c.damage_system_desc}</p>
+                <h3><i class="fas fa-question-circle" style="margin-right:10px;"></i>${c.events_title}</h3>
+                <p>${c.events_desc}</p>`;
+    } 
+    else if (tabId === 'hero') {
+        // Stat Dağılımları (Barbar ve Magus)
+        html = `<h3><i class="fas fa-chart-line" style="margin-right:10px;"></i>${c.stats_title}</h3>
+                <p>${c.stats_barbarian}</p>
+                <p>${c.stats_magus}</p>`;
     } else if (tabId === 'craft') {
         html = `<h3><i class="fas fa-hammer" style="margin-right:10px;"></i>${c.salvage_reforge_title}</h3>
                 <p>${c.salvage_reforge_desc}</p>

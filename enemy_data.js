@@ -961,7 +961,7 @@ window.ENEMY_STATS = {
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
     2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Çamur Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi"], 
     5: [], 
@@ -1051,7 +1051,7 @@ window.BIOME_WEIGHTS = {
 	"Treant":   { forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
     "İskelet Şövalye": { forest: 0.1, plains: 0.0, cave: 0.2, iceland: 0.0,  mountain: 0.1, urban: 0.6 },
     "Gulyabani":      { forest: 0.1,  plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.1, urban: 0.4 },
-    "Orc Fedaisi":    { forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
+    "Ork Fedaisi":    { forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
     "Kemik Golemi":   { forest: 0.0, plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.2, urban: 0.4 },
     "Goblin Şefi":    { forest: 0.0, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.7 }
 };
