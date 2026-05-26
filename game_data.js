@@ -119,10 +119,10 @@ const EVENT_POOL = [
         id: "berserk_brew", type: "turn_based", title: "Öfke İksiri", desc: "Yerde fokurdayan kırmızı bir şişe buldun.",
         option1: {
             text: "İç (Riskli Güç)",
-            buff: "3 Tur: <span class='buff'>+15 Saldırı</span>",
+            buff: "3 Tur: <span class='buff'>+5 Saldırı</span>",
             debuff: "3 Tur: <span class='debuff'>TÜM İyileşmeler Kilitli</span>",
             action: (hero) => {
-                hero.statusEffects.push({ id: 'atk_up', name: 'Öfke', turns: 3, value: 15, waitForCombat: true });
+                hero.statusEffects.push({ id: 'atk_up', name: 'Öfke', turns: 3, value: 5, waitForCombat: true });
                 hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true });
             }
         },
