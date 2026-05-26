@@ -516,6 +516,27 @@ window.openSmallMerchant = function() {
     writeLog("🎒 Gizemli bir gezgin sana mallarını indirimle sunuyor!");
 };
 
+window.openBroochMerchant = function() {
+    // 1. İndirimi aktif et (%50)
+    window.currentMerchantDiscount = 0.5; 
+    
+    // 2. Stoğu temizle ve 4 tane rastgele broş üret
+    window.merchantStock = [];
+    const progress = hero.highestTierDefeated || 1;
+    
+    for (let i = 0; i < 4; i++) {
+        // generateRandomBrooch fonksiyonunu kullanarak güncel tier'da broşlar üret
+        window.merchantStock.push(generateRandomBrooch(progress));
+    }
+    
+    // 3. Ticaret ekranını aç
+    window.openMerchantTrade('buy');
+    
+    // 4. Log bas
+    const lang = window.getCombatLang();
+    writeLog("📿 **İşportacı**: Nadir broşlarını sana yarı fiyatına sunuyor!");
+};
+
 document.addEventListener('click', e => {
     // 1. Eğer tıklanan yer 'close-npc' sınıfına sahipse (NPC çıkış butonu) kapat
     if (e.target.classList.contains('close-npc')) {

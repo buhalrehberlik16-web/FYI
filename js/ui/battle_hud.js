@@ -189,6 +189,10 @@ window.updateStats = function() {
 	if (hero.hp > 0 && typeof window.updateExhaustionUI === 'function') {
         window.updateExhaustionUI();
     }
+	// --- YENİ: HASAR ÖNGÖRÜSÜNÜ GÜNCELLE ---
+    if (typeof window.updateSkillDamagePreviews === 'function') {
+        window.updateSkillDamagePreviews();
+    }
 };
 
 // Biriktirme için global değişkenler
@@ -317,6 +321,11 @@ window.showMonsterIntention = function(action) {
     void monsterIntentionOverlay.offsetWidth; // Reflow
     monsterIntentionOverlay.classList.add('active');
     monsterIntentionOverlay.style.opacity = "1";
+	
+	// --- YENİ: Canavar niyetini değiştirdiğinde (savunma gibi) hasar rakamlarını hemen güncelle ---
+    if (typeof window.updateSkillDamagePreviews === 'function') {
+        window.updateSkillDamagePreviews();
+    }
 };
 
 window.animateHealingParticles = function() {
