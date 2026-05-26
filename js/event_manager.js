@@ -20,7 +20,7 @@ window.EventManager = {
                 return (activeEvent === 'EVENT_XP_BOOST') ? 1.2 : 1.0;
 
             case 'boss_scaling':
-    const gracePeriod = 25; // Kritik Eşik (Gün)
+    const gracePeriod = 30; // Kritik Eşik (Gün)
     const days = hero.calendar.daysPassed;
 
     if (days > gracePeriod) {
