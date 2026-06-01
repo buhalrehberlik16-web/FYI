@@ -159,6 +159,17 @@ window.updateStats = function() {
         skillNotif.classList.toggle('hidden', !isAllowedBySettings || !(hero.skillPoints > 0));
     }
     // -------------------------------------------
+	
+	// Scout Butonu Görünürlüğü
+    const scoutBtn = document.getElementById('btn-open-scout');
+    if (scoutBtn) {
+        // Kalan oda sayısı 0'dan büyükse göster
+        if (hero.scoutedNodesLeft > 0) {
+            scoutBtn.classList.remove('hidden');
+        } else {
+            scoutBtn.classList.add('hidden');
+        }
+    }
 
     updateStatusIcons(hero, heroStatusContainer); // Hero ikonları
     updateGoldUI();
