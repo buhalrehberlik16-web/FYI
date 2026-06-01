@@ -625,6 +625,15 @@ function proceedWithNodeAction(node) {
     drawAllConnections();
     // ----------------------------------------------
 	
+	// --- YENİ: SCOUT SAYACINI DÜŞÜR ---
+    if (hero.scoutedNodesLeft > 0) {
+        hero.scoutedNodesLeft--;
+        if (hero.scoutedNodesLeft === 0) {
+            hero.scoutStartStage = undefined; // Veriyi temizle
+            writeLog("🦉 **Gözcü**: Rapor süresi doldu, ulak geri döndü.");
+        }
+    }
+	
     setTimeout(() => {
         if (node.type === 'encounter' || node.type === 'start') {
             let enemy = node.enemyName;
