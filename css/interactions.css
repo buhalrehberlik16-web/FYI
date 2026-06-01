@@ -104,7 +104,7 @@
 .city-title {
     color: #ffd700; /* Parlak Altın */
     font-family: 'Georgia', serif;
-    font-size: 3.5em; /* Büyük ve heybetli */
+    font-size: 1.5em; /* Büyük ve heybetli */
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 10px;
@@ -119,7 +119,7 @@
 
 .city-subtitle {
     color: #43FF64; /* Başarı Rengi: Yeşil */
-    font-size: 1.2em;
+    font-size: 0.7em;
     letter-spacing: 4px;
     margin-top: 5px;
     text-transform: uppercase;
@@ -165,7 +165,7 @@
 }
 
 /* Şehir Bina Yerleşimleri */
-#city-palace { top: 35%; left: 50%; }
+#city-palace { top: 20%; left: 63%; }
 #city-vault  { top: 60%; left: 25%; }
 #city-arena  { top: 65%; right: 25%; }
 #city-market { top: 75%; left: 50%; }
@@ -175,8 +175,8 @@
    ============================================================ */
 .next-act-container {
     position: absolute;
-    bottom: 8%; /* En alttan biraz yukarıda */
-    width: 100%;
+    bottom: 0%; /* En alttan biraz yukarıda */
+    width: 179%;
     display: flex;
     justify-content: center;
     z-index: 100;
@@ -186,8 +186,8 @@
     background: linear-gradient(to bottom, #ffd700, #b8860b) !important;
     color: #000 !important;
     border: 3px solid #fff !important;
-    padding: 15px 50px !important;
-    font-size: 1.4em !important;
+    padding: 10px 30px !important;
+    font-size: 1em !important;
     font-weight: 900 !important;
     cursor: pointer;
     border-radius: 10px;
