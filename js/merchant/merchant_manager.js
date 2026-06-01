@@ -5,18 +5,39 @@ window.currentTradeMode = 'buy';
 window.currentMerchantDiscount = 1.0; // Varsayılan: İndirim yok
 
 // 1. STOK YENİLEME
-window.refreshMerchantStock = function(count = 8) { // Varsayılan değer 8 yapıldı
+window.refreshMerchantStock = function(count = 8) {
     console.log(`🛒 Tüccar stokları yenileniyor (${count} eşya)...`);
     window.merchantStock = [];
     const progress = (window.hero && window.hero.highestTierDefeated) ? window.hero.highestTierDefeated : 1;
 
-    // Eşya üretme döngüsü - count parametresine göre döner
     for (let i = 0; i < count; i++) {
-        // Eğer gezgin tüccarsa (count 4 ise) sadece takı üret
+        // --- 1. GEZGİN TÜCCAR (4 Eşya) ---
         if (count === 4) {
             window.merchantStock.push(generateRandomItem(progress));
         } 
-        // Normal tüccarsa (count 8 ise) senin orijinal 4 takı + 2 parşömen + 2 rastgele mantığını çalıştır
+        // --- 2. ŞEHİR TÜCCARI (12 Eşya - YENİ) ---
+        else if (count === 12) {
+            if (i < 4) {
+                // İlk 4 slot: Kesin Takı
+                window.merchantStock.push(generateRandomItem(progress));
+            } else if (i < 6) {
+                // Sonraki 2 slot: Kesin Parşömen
+                const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
+                window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
+            } else if (i === 6) {
+                // 7. Slot: BROŞ WILDCARD (Kesin 1 Broş)
+                window.merchantStock.push(generateRandomBrooch(progress));
+            } else {
+                // Kalan 5 slot: Karışık (Takı veya Özel Eşyalar)
+                if (Math.random() < 0.3) {
+                    window.merchantStock.push(generateRandomItem(progress));
+                } else {
+                    const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
+                    window.merchantStock.push({ ...baseItem });
+                }
+            }
+        }
+        // --- 3. KASABA TÜCCARI (8 Eşya) ---
         else {
             if (i < 4) {
                 window.merchantStock.push(generateRandomItem(progress));
@@ -24,7 +45,6 @@ window.refreshMerchantStock = function(count = 8) { // Varsayılan değer 8 yap�
                 const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
                 window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
             } else {
-                // Rastgele 2 slot
                 if (Math.random() < 0.2) {
                     window.merchantStock.push(generateRandomItem(progress));
                 } else {
@@ -34,7 +54,7 @@ window.refreshMerchantStock = function(count = 8) { // Varsayılan değer 8 yap�
             }
         }
     }
-    console.log("✅ Stok hazır.");
+    console.log("✅ Yeni stok hazır.");
 };
 
 
