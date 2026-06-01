@@ -108,7 +108,7 @@ window.updateStats = function() {
     heroRageText.textContent = `${hero.rage} / ${currentMaxRage} ${resourceLabel}`;
 	}
 	
-    if(heroNameDisplay) heroNameDisplay.innerHTML = `${hero.playerName} <span style="color:#ffffff; font-size:0.8em; opacity:0.8;">(${hero.class})</span>`;
+    if(heroNameDisplay) heroNameDisplay.textContent = hero.playerName;
     
     // --- KRİTİK GÜVENLİK: Sadece Canavar Varsa Güncelle ---
     if (window.monster) { 
