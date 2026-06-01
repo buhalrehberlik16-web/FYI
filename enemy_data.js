@@ -1,15 +1,15 @@
 // --- START OF FILE enemy_data.js ---
 
 window.TRIBE_BASES = {
-	// Ortalamada her triba +6, sadece dragonkind +10 ile daha dayanıklı
-    "Greenskins": { fire: 2, cold: 2, lightning: -2, poison: 2, curse: 2 },
-    "Humans": { fire: 3, cold: 3, lightning: 3, poison: 1, curse: -4 },
+	// Ortalamada her triba +6, sadece dragonkind +10 ile daha dayanıklı. Her Elemental Type'ın toplamı 9 olmalı.
+    "Greenskins": 			{ fire: 2, cold: 1, lightning: -2, poison: 2, curse: 3 },
+    "Humans": 				{ fire: 3, cold: -1, lightning: 3, poison: 1, curse: 0 },
     //"Beasts&Monstrosities"
-    "B&M": { fire: -1, cold: 5, lightning: 2, poison: 0, curse: 0 },
-    "Plants": { fire: -2, cold: 0, lightning: 0, poison: 6, curse: 2 },
-    "Undead": { fire: -2, cold: 2, lightning: -2, poison: 8, curse: 0 },
-    "Dragonkind": { fire: 3, cold: 3, lightning: 2, poison: 1, curse: 1 },
-    "Magical Creatures": { fire: 4, cold: 4, lightning: 4, poison: 0, curse: -6 }
+    "B&M": 					{ fire: 0, cold: 3, lightning: 2, poison: -2, curse: 3 },
+    "Plants": 				{ fire: -2, cold: -2, lightning: 2, poison: 6, curse: 2 },
+    "Undead": 				{ fire: -2, cold: 2, lightning: -2, poison: 4, curse: 4 },
+    "Dragonkind": 			{ fire: 4, cold: 2, lightning: 2, poison: 0, curse: 2 },
+    "Magical Creatures": 	{ fire: 4, cold: 4, lightning: 4, poison: -1, curse: -5 }
 };
 
 window.ENEMY_STATS = {
