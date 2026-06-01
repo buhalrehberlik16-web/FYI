@@ -10,6 +10,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>",
             rageCost: 15,
             levelReq: 1,
+			exhaustion: 3,
 			cooldown: 0,
             icon: 'skills/magus/arcane/magic_arrow.webp',
             type: 'attack',
@@ -32,6 +33,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
+			exhaustion: 5,
 			cooldown: 0,
             icon: 'skills/magus/arcane/arcane_mana_blast.webp',
             type: 'attack',
@@ -54,6 +56,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>",
             rageCost: 35,
             levelReq: 8,
+			exhaustion: 8,
 			cooldown: 3,
             icon: 'skills/magus/arcane/drain.webp',
             type: 'attack',
@@ -81,10 +84,12 @@ const MAGUS_SKILLS = {
 
 	Arcane_Acuity: {
 		data: {
+		// bu skill x tur boyunca her tur exhaust düşürecek (belki 3-4?) şekilde değiştirilebilir. 
 			name: "Arcane Acuity",
             menuDescription: "<b>(Hızlı Aksiyon)</b><br><span style='color:#43FF64'>4 Tur: Her tur +INT kadar Mana.</span><br><span style='color:cyan'>-20 Mana. Tur harcamaz.</span>",
             rageCost: 20,
             levelReq: 8,
+			exhaustion: 10,
 			cooldown: 5,
             icon: 'skills/magus/arcane/arcane_acuity.webp',
             type: 'utility',
@@ -116,6 +121,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Fiziksel)</b>.<br><span style='color:cyan'>-75 Mana.</span>",
             rageCost: 75,
             levelReq: 15,
+			exhaustion: 14,
 			cooldown: 0,
             icon: 'skills/magus/arcane/arcane_explosion.webp',
             type: 'attack',
@@ -140,6 +146,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 1,
+			exhaustion: 3,
 			cooldown: 0,
             icon: 'skills/magus/elemental/fire_bolt.webp',
             type: 'attack',
@@ -165,6 +172,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>0.8xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 1,
+			exhaustion: 3,
 			cooldown: 2,
             icon: 'skills/magus/elemental/zap.webp',
             type: 'attack',
@@ -200,6 +208,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 1.0xMP (Buz)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
+			exhaustion: 6,
 			cooldown: 0,
             icon: 'skills/magus/elemental/water_whip.webp',
             type: 'attack',
@@ -226,6 +235,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Buzdan kalkan.<br><span style='color:#3498db'>Kazanılan Blok: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>",
             rageCost: 40,
             levelReq: 5,
+			exhaustion: 5,
 			cooldown: 2,
             icon: 'skills/magus/elemental/ice_shield.webp',
             type: 'defense',
@@ -249,6 +259,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Manayı yoğunlaştırır.<br><span style='color:#43FF64'>2 Tur sonra +50 Mana kazanılır.</span><br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
+			exhaustion: 8,
 			cooldown: 2,
             icon: 'skills/magus/elemental/crystal_mana.webp',
             type: 'utility',
@@ -273,6 +284,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK %50 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 8,
+			exhaustion: 6,
 			cooldown: 5,
             icon: 'skills/magus/elemental/water_snare.webp',
             type: 'attack',
@@ -299,6 +311,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>",
             rageCost: 75,
             levelReq: 15,
+			exhaustion: 12,
 			cooldown: 6,
             icon: 'skills/magus/elemental/chaos_rain.webp',
             type: 'attack',
@@ -338,13 +351,14 @@ const MAGUS_SKILLS = {
             menuDescription: "<b>(Hızlı Meditasyon)</b><br><span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>",
             rageCost: 0,
             levelReq: 1,
-			cooldown: 2,
+			exhaustion: -6,
+			cooldown: 3,
             icon: 'skills/magus/nature/meditate.webp',
             type: 'utility',
             category: 'nature', 
             tier: 1
 		},
-		// Mana gain
+		// Mana gain. Belki kayıp HP kısmı veya INT kısmı kaldırılabilir. 
         onCast: function() {
             const stats = getHeroEffectiveStats();
             const lostHp = hero.maxHp - hero.hp;
@@ -367,6 +381,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
+			exhaustion: 2,
 			cooldown: 0,
             icon: 'skills/magus/nature/thorn_whip.webp',
             type: 'attack',
@@ -389,6 +404,7 @@ const MAGUS_SKILLS = {
             menuDescription: "<span style='color:#43FF64'>4 Tur: Her tur +INT HP ve +1.5xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>",
             rageCost: 75,
             levelReq: 8,
+			exhaustion: 0,
 			cooldown: 0,
             icon: 'skills/magus/nature/rejuvanate.webp',
             type: 'defense',
@@ -397,7 +413,7 @@ const MAGUS_SKILLS = {
 		},
         onCast: function() {
             const stats = getHeroEffectiveStats();
-            // HP Regen (Stat id: regen) ve Mana Regen (Stat id: rage_regen_buff) uygula
+            // HP Regen (Stat id: regen) ve Mana Regen (Stat id: rage_regen_buff) uygula. Mana Regen'i muhtemelen 0.25 çarpana indirip Exhaust iyileştirme verilmeli. Belki Mana Regen'i tamamen kaldırıp Int tabanlı -Exhaust? 0.2*int gibi?  
             applyStatusEffect(hero, { id: 'regen', name: "Gençleşme", value: stats.int, turns: 4, resetOnCombatEnd: true });
             applyStatusEffect(hero, { id: 'rage_regen_buff', name: "Doğa Gücü", value: Math.floor(stats.int * 1.5), turns: 4, resetOnCombatEnd: true });
             window.logSkillEffect('Rejuvanate');
@@ -412,6 +428,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>",
             rageCost: 120,
             levelReq: 15,
+			exhaustion: 20,
 			cooldown: 7,
             icon: 'skills/magus/nature/natures_wrath.webp',
             type: 'attack',
