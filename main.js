@@ -999,22 +999,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Oyunu yükle (Değişkenleri doldur)
     if (window.loadGame()) {
-        // 3. Konum kontrolü yap
-        if (saveData.isInsideTown) {
-            // Eğer köydeyse: Usta bilgisini geri yükle ve köye sok
-            window.currentTownMaster = saveData.currentTownMaster;
-            if (typeof enterTown === 'function') {
-                enterTown(); 
-            } else {
-                switchScreen(window.townScreen);
+            // 1. Durum: Köyde miydi?
+            if (saveData.isInsideTown) {
+                window.currentTownMaster = saveData.currentTownMaster;
+                if (typeof enterTown === 'function') {
+                    enterTown(); 
+                } else {
+                    switchScreen(window.townScreen);
+                }
+                writeLog("🏰 Köyde dinlenmeye devam ediyorsun...");
+            } 
+            // --- YENİ 2. Durum: Şehirde miydi? ---
+            else if (saveData.isInsideCity) {
+                if (typeof enterCity === 'function') {
+                    enterCity(); // Şehir fonksiyonunu tetikle
+                } else {
+                    switchScreen(window.cityScreen);
+                }
+                writeLog("🏛️ Başkent Eldoria'da dinlenmeye devam ediyorsun...");
             }
-            writeLog("🏰 Köyde dinlenmeye devam ediyorsun...");
-        } else {
-            // Eğer köyde değilse: Normal harita ekranına git
-            switchScreen(window.mapScreen);
-            writeLog("📂 Macera kaldığı yerden devam ediyor...");
+            // -------------------------------------
+            // 3. Durum: Haritadaydı
+            else {
+                switchScreen(window.mapScreen);
+                writeLog("📂 Macera kaldığı yerden devam ediyor...");
+            }
         }
-    }
-};
+    };
 
 });

@@ -9,6 +9,11 @@ window.saveGame = function() {
 		const townEl = document.getElementById('town-screen');
         const isTownVisible = townEl && (townEl.classList.contains('active') || townEl.style.display === 'flex');
 		
+		// --- YENİ: ŞEHİR GÖRÜNÜRLÜK KONTROLÜ ---
+        const cityEl = document.getElementById('city-screen');
+        const isCityVisible = cityEl && (cityEl.classList.contains('active') || cityEl.style.display === 'flex');
+        // ---------------------------------------
+		
         const saveData = {
 			
             hero: window.hero,
@@ -16,6 +21,7 @@ window.saveGame = function() {
             saveDate: new Date().toISOString(),
             version: "0.0.5", // Oyun versiyonun
 			isInsideTown: isTownVisible, // Artık daha garantili
+			isInsideCity: isCityVisible,
             currentTownMaster: window.currentTownMaster 
         };
         

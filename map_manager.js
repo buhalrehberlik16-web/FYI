@@ -706,7 +706,12 @@ function enterTown() {
 }
 window.enterCity = function() {
 	window.currentMerchantDiscount = 1.0; // Şehirde indirim yok
-    window.refreshMerchantStock(8); // Tam stok
+    window.refreshMerchantStock(12); // Tam stok
+	// --- YENİ: Şehre girerken takvimi güncelle ---
+    if (window.CalendarManager) {
+        window.CalendarManager.updateTownUI();
+    }
+    // ----------------------------------------------
     switchScreen(window.cityScreen);
 	if(window.saveGame) window.saveGame();
 	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
