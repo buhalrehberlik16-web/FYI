@@ -279,13 +279,15 @@ window.LANG_TR = {
 		stable_scout_success: "Ulak yola çıktı, ilerideki tehlikeleri artık biliyorsun.",
 		stable_steed_dialogue: "Bu asil kısrak seni rüzgar gibi taşıyacak.",
 		stable_scout_dialogue: "Kuşlarım senin için ilerideki yolları gözlüyor.",
+		nav_scout: "GÖZCÜ (S)",
+		scout_report_title: "AKTİF KEŞİF RAPORU",
 		scout_report: "Keşif Raporu",
 		stable_steed_popup_title: "HIZLI YOLCULUK",
 		stable_steed_popup_text: "Asil bir binek kiraladın! Önündeki 4 bölge boyunca seyahatlerin normalden iki kat daha hızlı sürecek. (Her adım 0.5 gün).",
 		stable_scout_popup_title: "KEŞİF RAPORU",
 		scout_stage: "AŞAMA",
 		stable_rent: "At Kirala  (40G)",
-		stable_scout: "Gözcü (20G)",
+		stable_scout: "Gözcü (15G)",
 		current_equipment: "KUŞANILMIŞ EŞYALAR",
 		
 		// Exhaust

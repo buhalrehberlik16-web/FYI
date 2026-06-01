@@ -276,13 +276,15 @@ window.LANG_EN = {
 		stable_scout_success: "The scout is on the way, you now know the dangers ahead.",
 		stable_steed_dialogue: "This noble mare will carry you like the wind.",
 		stable_scout_dialogue: "My birds are watching the roads ahead for you.",
+		nav_scout: "SCOUT (S)",
+		scout_report_title: "ACTIVE SCOUT REPORT",
 		scout_report: "Scout Report",
 		stable_steed_popup_title: "SWIFT JOURNEY",
 		stable_steed_popup_text: "You rented a noble steed! For the next 4 nodes, your travel speed will be doubled. (0.5 days per step).",
 		stable_scout_popup_title: "SCOUT REPORT",
 		scout_stage: "STAGE",
 		stable_rent: "Horse Rental(40G)",
-		stable_scout: "Scout(20G)",
+		stable_scout: "Scout(15G)",
 		current_equipment: "CURRENTLY EQUIPPED",
 		
 		// Exhaust
