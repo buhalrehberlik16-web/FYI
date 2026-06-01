@@ -113,11 +113,20 @@ window.CalendarManager = {
 },
 
     updateTownUI: function() {
-        const dateArea = document.getElementById('town-date-display');
-        if (dateArea) {
-            dateArea.textContent = this.getFormattedDate();
-            // Görünürlüğü zorla (eğer CSS engelliyorsa)
-            dateArea.style.display = "block";
+        const dateStr = this.getFormattedDate();
+        
+        // 1. Köy Tarih Alanı
+        const townDate = document.getElementById('town-date-display');
+        if (townDate) {
+            townDate.textContent = dateStr;
+            townDate.style.display = "block";
+        }
+
+        // 2. Şehir Tarih Alanı (YENİ)
+        const cityDate = document.getElementById('city-date-display');
+        if (cityDate) {
+            cityDate.textContent = dateStr;
+            cityDate.style.display = "block";
         }
     }
 };
