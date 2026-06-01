@@ -33,26 +33,27 @@ window.StableManager = {
 
     // 2. KEŞİF ULAĞI TUT
     hireScout: function() {
-        const cost = 20;
+        const cost = 15;
         const currentLang = window.gameSettings.lang || 'tr';
         const lang = window.LANGUAGES[currentLang];
-		
-		if (hero.gold < cost) {
-        window.showAlert(lang.not_enough_msg);
-        return;
-		}
+		if (hero.gold < cost) { window.showAlert(lang.not_enough_msg); return; }
 
         if (hero.gold >= cost) {
             hero.gold -= cost;
             hero.scoutedNodesLeft = 3;
+
+            // --- YENİ: KİRALAMA ANINDAKİ STAGE'İ KAYDET ---
+            // Neden?: Raporun 3 oda boyunca hep aynı yerleri göstermesi için başlangıç noktasını çiviliyoruz.
+            const currentNode = window.GAME_MAP.nodes.find(n => n.id === window.GAME_MAP.currentNodeId);
+            hero.scoutStartStage = currentNode ? currentNode.stage : -1;
+            // ----------------------------------------------
+
             updateGoldUI();
-            
-            // RAPOR OLUŞTURMA
-            const reportHtml = this.generateScoutReport();
+            // Butonun (Nav-bar) anında görünmesi için updateStats'ı tetikle
+            if (typeof updateStats === 'function') updateStats(); 
             
             // Pop-up'ı Göster
-            this.showInfoPopup(lang.stable_scout_popup_title, reportHtml, "#00ccff");
-            
+            this.showInfoPopup(lang.stable_scout_popup_title, this.generateScoutReport(), "#00ccff");
             if (typeof renderMap === 'function') renderMap(); 
         } else {
             this.updateStableDialogue(lang.rest_fail);
@@ -61,61 +62,73 @@ window.StableManager = {
 
     // 3. RAPOR OLUŞTURUCU
     generateScoutReport: function() {
-    const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang];
-    
-    const currentStage = (window.GAME_MAP && window.GAME_MAP.currentNodeId !== null) 
-        ? window.GAME_MAP.nodes.find(n => n.id === window.GAME_MAP.currentNodeId).stage 
-        : -1;
-
-    let report = `<div style="text-align: left; font-family: 'Cinzel', serif;">`;
-
-    for (let i = 1; i <= 3; i++) {
-        const targetStage = currentStage + i;
-        const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === targetStage);
+        const currentLang = window.gameSettings.lang || 'tr';
+        const lang = window.LANGUAGES[currentLang];
         
-        if (nodesInStage.length > 0) {
-            report += `<div style="margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
-                        <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
+        // --- YENİ: KAYITLI STAGE'İ KULLAN ---
+        // Eğer scout tutulmuşsa kaydedilen stage'den başla, yoksa (hile vb) canlıstage kullan.
+        const startStage = hero.scoutStartStage !== undefined ? hero.scoutStartStage : -1;
+
+        let report = `<div style="text-align: left; font-family: 'Cinzel', serif;">`;
+
+        for (let i = 1; i <= 3; i++) {
+            const targetStage = startStage + i;
+            const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === targetStage);
             
-            nodesInStage.forEach(node => {
-                let displayTitle = lang[`node_${node.type}`] || node.type;
-                let color = "#bbb";
+            if (nodesInStage.length > 0) {
+                report += `<div style="margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px;">
+                            <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
+                
+                nodesInStage.forEach(node => {
+                    // --- YENİ: GEÇİLEN ODA KONTROLÜ (LINE-THROUGH) ---
+                    // Eğer oyuncu bu odayı tamamladıysa (completedNodes içindeyse) üzerini çiz.
+                    const isVisited = window.GAME_MAP.completedNodes.includes(node.id);
+                    const strikeStyle = isVisited ? "text-decoration: line-through; opacity: 0.5;" : "";
+                    // -------------------------------------------------
 
-                // --- EVENT ÖN-TANIMLAMA MANTIĞI ---
-                if (node.type === 'choice') {
-                    // Eğer bu odaya henüz bir event atanmamışsa, şimdi ata (Scout keşfetti!)
-                    if (!node.eventId) {
-                        const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-                        node.eventId = randomEvt.id;
+                    let displayTitle = lang[`node_${node.type}`] || node.type;
+                    let color = isVisited ? "#777" : "#bbb"; // Gezilenler gri, gezilmeyenler açık renk
+
+                    // EVENT ÖN-TANIMLAMA (Mevcut kodun, dokunmadım)
+                    if (node.type === 'choice') {
+                        if (!node.eventId) {
+                            const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+                            node.eventId = randomEvt.id;
+                        }
+                        const eventData = lang.events[node.eventId];
+                        displayTitle = eventData ? eventData.title : node.eventId;
+                        if (!isVisited) color = "#3498db";
                     }
-                    // Çeviriden event başlığını al
-                    const eventData = lang.events[node.eventId];
-                    displayTitle = eventData ? eventData.title : node.eventId;
-                    color = "#3498db"; // Olaylar mavi görünsün
-                }
-                // ----------------------------------
 
-                if (node.type === 'encounter') {
-                    const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
-                    displayTitle = enemyName;
-                    color = "#ff4d4d"; // Düşmanlar kırmızı
-                }
+                    if (node.type === 'encounter') {
+                        const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
+                        displayTitle = enemyName;
+                        if (!isVisited) color = "#ff4d4d";
+                    }
 
-                let biomeInfo = "";
-                if (node.biome) {
-                    const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
-                    biomeInfo = ` <span style="color: #43FF64; font-size: 0.8em;">(${biomeLabel})</span>`;
-                }
+                    let biomeInfo = "";
+                    if (node.biome) {
+                        const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+                        biomeInfo = ` <span style="color: ${isVisited ? '#555' : '#43FF64'}; font-size: 0.8em;">(${biomeLabel})</span>`;
+                    }
+                    
+                    let roomEventInfo = "";
+                    const isCombat = (node.type === 'encounter' || node.type === 'boss' || node.type === 'start');
+                    if (isCombat) {
+                        const eventKey = node.roomEvent || "none";
+                        const eventLabel = lang.room_events[`event_${eventKey}`] || eventKey;
+                        roomEventInfo = ` <span style="color: ${isVisited ? '#555' : '#df9cff'}; font-size: 0.8em;">[${eventLabel}]</span>`;
+                    }
 
-                report += `<span style="font-size: 0.85em; margin-left: 10px; color: ${color};">• ${displayTitle}${biomeInfo}</span><br>`;
-            });
-            report += `</div>`;
+                    // Satırı birleştirirken strikeStyle ve dinamik renkleri uygula
+                    report += `<span style="font-size: 0.85em; margin-left: 10px; color: ${color}; ${strikeStyle}">• ${displayTitle}${biomeInfo}${roomEventInfo}</span><br>`;
+                });
+                report += `</div>`;
+            }
         }
-    }
-    report += `</div>`;
-    return report;
-},
+        report += `</div>`;
+        return report;
+    },
 
     // 4. POP-UP GÖSTERİCİ
     showInfoPopup: function(title, content, color) {
@@ -145,4 +158,10 @@ window.StableManager = {
             }, 3000);
         }
     }
+};
+// --- EKLEME: ÜST BAR BUTONU İÇİN TETİKLEYİCİ ---
+// index.html'deki butonun çalışması için bu global fonksiyon şarttır.
+window.openScoutReport = function() {
+    const lang = window.getCombatLang();
+    window.showGameInfo(lang.scout_report_title, window.StableManager.generateScoutReport(), "#00ccff");
 };
