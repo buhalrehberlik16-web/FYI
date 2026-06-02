@@ -692,7 +692,7 @@ window.LANG_TR = {
 			brooch_peddler: {
 				title: "Broş İşportacısı", 
 				desc: "Kucağında parıldayan kutularla bir cüce sana yaklaşıyor. 'Mistik broşlarda dev kampanya!' diye bağırıyor.",
-				opt1: "Kutuları Aç", opt1_b: "4 Broş / %50 İndirim", opt1_d: "",
+				opt1: "Kutuları Aç", opt1_b: "4 Broş", opt1_d: "",
 				opt2: "İlgilenme", opt2_b: "", opt2_d: ""
 			},
             flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
@@ -722,7 +722,7 @@ window.LANG_TR = {
             curse: { name: "Lanet", desc: "<span style='color:#b19cd9'>5 Tur: Düşman %20 Fazla Hasar Alır.</span><br><span style='color:cyan'>-20 Öfke.</span>", log: "Düşman 5 tur %20 fazla hasar alacak." },
             willful_strike: { name: "İradeli Vuruş", desc: "Mevcut <b>TÜM ÖFKEYİ</b> harcar.<br>Hasar:<b style='color:orange'> ATK x (1 + Harcanan Öfke%).</b>" },
             slash: { name: "Kesik", desc: "Hasar: <b style='color:orange'>1 x ATK + 0.25 x Str.</b><br><span style='color:cyan'>-20 Öfke.</span>" },
-            reckless_strike: { name: "Pervasız Vuruş", desc: "Vahşi bir saldırı yapar.<br>Hasar: <b style='color:orange'>1.5 x ATK</b><br><span style='color:#b19cd9'>2 Tur: Defansın 0 olur.</span><br><span style='color:#ff4d4d'>%50 ihtimalle hasarın %50'si kadar kanama alırsın.</span><br><span style='color:cyan'>-20 Öfke.</span>" },
+            reckless_strike: { name: "Pervasız Vuruş", desc: "Vahşi bir saldırı yapar.<br>Hasar: <b style='color:orange'>1.5 x ATK</b><br><span style='color:#b19cd9'>2 Tur: Defansın 0 olur.</span><br><span style='color:#ff4d4d'>%50 ihtimalle hasarın %25'i kadar kanama alırsın.</span><br><span style='color:cyan'>-20 Öfke.</span>" },
             wind_up: { name: "Kurulma", desc: "Sonraki saldırın <b style='color:orange'>+1 x STR</b> fazla vurur.<br><span style='color:cyan'>+15 Öfke.</span>", log: "+1 STR, $1 Öfke kazanıldı." },
             bash: { name: "Balyoz", desc: "Hasar: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>%30 Şansla Sersemletir (1 Tur).</span><br><span style='color:cyan'>-30 Öfke.</span>", },
             pierce_through: { name: "Delip Geç", desc: "Hasar: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>Düşman Defansının %50'sini yok sayar.</span><br><span style='color:cyan'>-30 Öfke.</span>" },

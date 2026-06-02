@@ -688,7 +688,7 @@ window.LANG_EN = {
 			brooch_peddler: {
 				title: "Brooch Peddler", 
 				desc: "A dwarf approaches you with glowing boxes. 'Mystic brooches! Half price for a weary traveler!' he shouts.",
-				opt1: "Open Boxes", opt1_b: "4 Brooches / 50% Off", opt1_d: "",
+				opt1: "Open Boxes", opt1_b: "4 Brooches", opt1_d: "",
 				opt2: "Ignore", opt2_b: "", opt2_d: ""
 			},
             flee_option: "Flee In Fear",
@@ -718,7 +718,7 @@ window.LANG_EN = {
             curse: { name: "Curse", desc: "<span style='color:#b19cd9'>5 Turns: Enemy takes 20% more damage.</span><br><span style='color:cyan'>-20 Rage.</span>", log: "Enemy will take 20% more damage for 5 turns." },
             willful_strike: { name: "Willful Strike", desc: "Consumes <b>ALL CURRENT RAGE</b>.<br>Damage:<b style='color:orange'> ATK x (1 + Consumed Rage%).</b>" },
             slash: { name: "Slash", desc: "Damage: <b style='color:orange'>ATK + 0.25 x STR</b><br><span style='color:cyan'>-20 Rage.</span>" },
-            reckless_strike: { name: "Reckless Strike", desc: "A wild attack with high risk.<br>Damage: <b style='color:orange'>1.5 x ATK</b><br><span style='color:#b19cd9'>2 Turns: Defense becomes 0.</span><br><span style='color:#ff4d4d'>50% chance to take 50% of damage as self-bleed.</span><br><span style='color:cyan'>-20 Rage.</span>" },
+            reckless_strike: { name: "Reckless Strike", desc: "A wild attack with high risk.<br>Damage: <b style='color:orange'>1.5 x ATK</b><br><span style='color:#b19cd9'>2 Turns: Defense becomes 0.</span><br><span style='color:#ff4d4d'>50% chance to take 25% of damage as self-bleed.</span><br><span style='color:cyan'>-20 Rage.</span>" },
             wind_up: { name: "Wind Up", desc: "Next attack deals <b style='color:orange'>+1 x STR</b> extra damage.<br><span style='color:cyan'>+15 Rage.</span>", log: "Gained +1 STR and $1 Rage." },
             bash: { name: "Bash", desc: "Damage: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>30% Chance to Stun (1 Turn).</span><br><span style='color:cyan'>-30 Rage.</span>",},
             pierce_through: { name: "Pierce Through", desc: "Damage: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>Ignores 50% of Enemy Defense.</span><br><span style='color:cyan'>-30 Rage.</span>" },
