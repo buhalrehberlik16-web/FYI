@@ -1693,46 +1693,93 @@ window.showRoomEventBanner = function(eventKey) {
 };
 
 window.updateSkillDamagePreviews = function() {
-    // Savaşta değilsek veya canavar yoksa temizle ve çık
+    // Savaşta değilsek tüm kutuları sil ve çık
     if (!window.monster || monster.hp <= 0 || !battleScreen.classList.contains('active')) {
-        document.querySelectorAll('.skill-damage-preview').forEach(el => el.remove());
+        document.querySelectorAll('.skill-damage-preview, .skill-def-preview, .skill-heal-preview').forEach(el => el.remove());
         return;
     }
 
     const slots = document.querySelectorAll('.skill-slot');
-    
+    const stats = getHeroEffectiveStats();
+
     slots.forEach(slot => {
         const skillKey = slot.dataset.skillKey;
         if (!skillKey) return;
 
         const skillObj = SKILL_DATABASE[skillKey];
-        // Sadece saldırı türündeki (scaling barındıran) yetenekler için hesapla
-        if (skillObj && skillObj.data && skillObj.data.scaling) {
-            
-            // --- MOTORU ÇALIŞTIR ---
-            // Mevcut kahraman statları ve canavarın o anki (savunma dahil) durumuna göre hesapla
-            const dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
-            
-            // Etiketi oluştur veya güncelle
-            let previewEl = slot.querySelector('.skill-damage-preview');
-            if (!previewEl) {
-                previewEl = document.createElement('div');
-                previewEl.className = 'skill-damage-preview';
-                slot.appendChild(previewEl);
-            }
+        if (!skillObj) return;
 
-            previewEl.textContent = dmgPack.total;
-            
-            // Hasar 0 ise görseli değiştir
-            if (dmgPack.total <= 0) {
-                previewEl.classList.add('no-damage');
-            } else {
-                previewEl.classList.remove('no-damage');
+        // --- A. HASAR ÖNGÖRÜSÜ (Kırmızı) ---
+        let currentDmgTotal = 0;
+        if (skillObj.data.scaling) {
+            const dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
+            currentDmgTotal = dmgPack.total; // Diğer hesaplamalarda kullanmak için tutuyoruz
+            let pEl = slot.querySelector('.skill-damage-preview');
+            if (!pEl) {
+                pEl = document.createElement('div');
+                pEl.className = 'skill-damage-preview';
+                slot.appendChild(pEl);
             }
+            pEl.textContent = dmgPack.total;
+            pEl.classList.toggle('no-damage', dmgPack.total <= 0);
+        }
+
+        // --- B. SAVUNMA / BLOK ÖNGÖRÜSÜ (Mavi) ---
+        let defVal = 0;
+        switch(skillKey) {
+            case 'guard': defVal = Math.floor(stats.int * 0.25); break;
+            case 'block': defVal = stats.blockPower; break;
+            case 'Ice_Shield': defVal = Math.floor(stats.mp_pow * 2); break;
+            case 'blood_shield': defVal = Math.floor(Math.ceil(hero.hp * 0.20) * 1.5); break;
+            case 'scales_of_fate': 
+                if ((hero.hp / stats.maxHp) > (monster.hp / monster.maxHp)) {
+                    defVal = Math.floor(stats.maxHp * ((hero.hp / stats.maxHp) - (monster.hp / monster.maxHp)) * 0.5);
+                }
+                break;
+        }
+
+        if (defVal > 0) {
+            let dEl = slot.querySelector('.skill-def-preview');
+            if (!dEl) {
+                dEl = document.createElement('div');
+                dEl.className = 'skill-def-preview';
+                slot.appendChild(dEl);
+            }
+            dEl.textContent = defVal;
         } else {
-            // Saldırı olmayan yeteneklerde etiketi kaldır (Heal, Buff vb.)
-            const existing = slot.querySelector('.skill-damage-preview');
-            if (existing) existing.remove();
+            const existingDef = slot.querySelector('.skill-def-preview');
+            if (existingDef) existingDef.remove();
+        }
+
+        // --- C. İYİLEŞME ÖNGÖRÜSÜ (Yeşil - YENİ) ---
+        let healVal = 0;
+        switch(skillKey) {
+            case 'minor_healing': 
+                healVal = 10 + Math.floor(stats.int * 0.5); 
+                break;
+            case 'Cauterize': 
+                healVal = 25; // instant kısmı
+                break;
+            case 'Healing_Light': 
+                healVal = Math.floor(hero.maxHp * 0.20); // instant %20
+                break;
+            case 'blood_lust':
+                // Vurulacak hasarın %50'si kadar anlık iyileşme (Yukarıdaki dmgPack'ten alır)
+                healVal = Math.floor(currentDmgTotal * 0.50);
+                break;
+        }
+
+        if (healVal > 0) {
+            let hEl = slot.querySelector('.skill-heal-preview');
+            if (!hEl) {
+                hEl = document.createElement('div');
+                hEl.className = 'skill-heal-preview';
+                slot.appendChild(hEl);
+            }
+            hEl.textContent = healVal;
+        } else {
+            const existingHeal = slot.querySelector('.skill-heal-preview');
+            if (existingHeal) existingHeal.remove();
         }
     });
 };

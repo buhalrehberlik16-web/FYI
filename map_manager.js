@@ -667,6 +667,7 @@ function proceedWithNodeAction(node) {
 // -- EKRAN FONKSİYONLARI (KÖY GİRİŞİ DÜZELTİLDİ) --
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
+	window.isBroochTrade = false;
 	// --- YENİ: İNDİRİMİ SIFIRLA ---
     window.currentMerchantDiscount = 1.0; // Köydeki tüccar tam fiyattan satar
     // ------------------------------
