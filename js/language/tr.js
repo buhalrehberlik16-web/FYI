@@ -626,7 +626,7 @@ window.LANG_TR = {
             berserk_brew: { 
                 title: "Öfke İksiri", 
                 desc: "Yerde fokurdayan kırmızı bir şişe buldun.",
-                opt1: "İç (Riskli Güç)", opt1_b: "3 Tur: +15 Saldırı", opt1_d: "3 Tur: TÜM İyileşmeler Kilitli",
+                opt1: "İç (Riskli Güç)", opt1_b: "3 Tur: +5 Saldırı", opt1_d: "3 Tur: TÜM İyileşmeler Kilitli",
                 opt2: "Dök (Güvenli)", opt2_b: "+XP", opt2_d: ""
             },
             stone_skin: { 
@@ -647,12 +647,21 @@ window.LANG_TR = {
                 opt1: "Meyveyi Ye", opt1_b: "2 Oda: +20 Max HP", opt1_d: "Etki Bitince: -30 Can Kaybı",
                 opt2: "Sakla", opt2_b: "+10 HP", opt2_d: ""
             },
-            blood_pact: { 
-                title: "Kan Anlaşması", 
-                desc: "Kadim bir varlık fısıldıyor.",
-                opt1: "Anlaşmayı Kabul Et", opt1_b: "Kalıcı: +5 STR", opt1_d: "Anında: Canın %50'si Gider",
-                opt2: "Reddet", opt2_b: "", opt2_d: ""
-            },
+            blood_pact_str: { 
+				title: "Kudret Anlaşması", desc: "Kadim bir varlık fiziksel güç fısıldıyor...",
+				opt1: "Kabul Et", opt1_b: "Kalıcı: +3 STR", opt1_d: "Bedel: Canın %50'si",
+				opt2: "Reddet", opt2_b: "", opt2_d: ""
+			},
+			blood_pact_int: { 
+				title: "Bilgelik Anlaşması", desc: "Kadim bir varlık zihinsel keskinlik fısıldıyor...",
+				opt1: "Kabul Et", opt1_b: "Kalıcı: +3 INT", opt1_d: "Bedel: Canın %50'si",
+				opt2: "Reddet", opt2_b: "", opt2_d: ""
+			},
+			blood_pact_mp: { 
+				title: "Mistik Anlaşma", desc: "Kadim bir varlık ruhani enerji fısıldıyor...",
+				opt1: "Kabul Et", opt1_b: "Kalıcı: +3 MP", opt1_d: "Bedel: Canın %50'si",
+				opt2: "Reddet", opt2_b: "", opt2_d: ""
+			},
             gambler: { 
                 title: "Kumarbazın Ruhu", 
                 desc: "Önünde iki kadeh var.",
@@ -674,7 +683,7 @@ window.LANG_TR = {
 			caravan_rest: {
 				title: "Kervan Kampı", 
 				desc: "Dost canlısı bir tüccar kervanı mola vermiş. Ateşleri hala tütüyor.",
-				opt1: "Konakla", opt1_b: "-10 Yorgunluk / +1 Gün Geçer", opt1_d: "",
+				opt1: "Konakla", opt1_b: "-35 Yorgunluk / +1 Gün Geçer", opt1_d: "",
 				opt2: "Yola Devam", opt2_b: "+5 Altın Buldun", opt2_d: ""
 			},
 			scavenge_ruins: {
@@ -859,6 +868,7 @@ window.LANG_TR = {
 	eff_elemDmg: "Element Bonusu",
 	scavenge_success_text: "Yıkıntıların arasından değerli bir parça çıkardın!",
 	scavenge_fail_text: "Tavan çöktü! Enkazdan kaçarken $1 hasar aldın.",
+	brooches_label: "TAKILI BROŞLAR & TILSIMLAR",
 	
 	
 	// SET Görüntü İsimleri

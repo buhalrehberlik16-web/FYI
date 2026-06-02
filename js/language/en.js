@@ -623,7 +623,7 @@ window.LANG_EN = {
             berserk_brew: { 
                 title: "Berserk Brew", 
                 desc: "You found a bubbling red bottle on the ground.",
-                opt1: "DRINK (RISKY Power)", opt1_b: "3 Turns: +15 Attack", opt1_d: "3 Turns: ALL HEALING Locked",
+                opt1: "DRINK (RISKY Power)", opt1_b: "3 Turns: +5 Attack", opt1_d: "3 Turns: ALL HEALING Locked",
                 opt2: "Pour Out (Safe)", opt2_b: "+XP", opt2_d: ""
             },
             stone_skin: { 
@@ -644,12 +644,21 @@ window.LANG_EN = {
                 opt1: "Eat FRUIT", opt1_b: "2 Rooms: +20 Max HP", opt1_d: "After Effect: -30 HP Loss",
                 opt2: "Stash It", opt2_b: "+10 HP", opt2_d: ""
             },
-            blood_pact: { 
-                title: "Blood Pact", 
-                desc: "An ancient entity whispers.",
-                opt1: "Accept Pact", opt1_b: "Permanent: +5 STR", opt1_d: "Instant: Lose 50% HP",
-                opt2: "Refuse", opt2_b: "", opt2_d: ""
-            },
+            blood_pact_str: { 
+				title: "Pact of Might", desc: "An ancient entity whispers of physical power...",
+				opt1: "Accept", opt1_b: "Permanent: +3 STR", opt1_d: "Cost: 50% HP",
+				opt2: "Refuse", opt2_b: "", opt2_d: ""
+			},
+			blood_pact_int: { 
+				title: "Pact of Wisdom", desc: "An ancient entity whispers of mental sharpness...",
+				opt1: "Accept", opt1_b: "Permanent: +3 INT", opt1_d: "Cost: 50% HP",
+				opt2: "Refuse", opt2_b: "", opt2_d: ""
+			},
+			blood_pact_mp: { 
+				title: "Pact of Arcana", desc: "An ancient entity whispers of spiritual energy...",
+				opt1: "Accept", opt1_b: "Permanent: +3 MP", opt1_d: "Cost: 50% HP",
+				opt2: "Refuse", opt2_b: "", opt2_d: ""
+			},
             gambler: { 
                 title: "Gambler's Soul", 
                 desc: "Two chalices are before you.",
@@ -671,7 +680,7 @@ window.LANG_EN = {
 			caravan_rest: {
 				title: "Caravan Camp", 
 				desc: "A friendly merchant caravan has stopped for a break. Their fire is still smoking.",
-				opt1: "Stay Over", opt1_b: "-10 Exhaustion / +1 Day Passes", opt1_d: "",
+				opt1: "Stay Over", opt1_b: "-35 Exhaustion / +1 Day Passes", opt1_d: "",
 				opt2: "Move On", opt2_b: "Found +5 Gold", opt2_d: ""
 			},
 			scavenge_ruins: {
@@ -855,6 +864,7 @@ window.LANG_EN = {
 	eff_elemDmg: "Elemental Bonus",
 	scavenge_success_text: "You pulled a valuable piece from the ruins!",
 	scavenge_fail_text: "The ceiling collapsed! You took $1 damage while escaping.",
+	brooches_label: "EQUIPPED BROOCHES & CHARMS",
 	
 	// Set Items
 	set_piece_label: "SET PIECE",
