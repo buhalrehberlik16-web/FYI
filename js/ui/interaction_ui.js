@@ -505,6 +505,7 @@ window.triggerRandomEvent = function(forcedEvent = null) {
 };
 
 window.openSmallMerchant = function() {
+	window.isBroochTrade = false; // Normal takı modu
     // 1. İndirimi aç
     window.currentMerchantDiscount = 0.5; 
     
@@ -517,24 +518,26 @@ window.openSmallMerchant = function() {
 };
 
 window.openBroochMerchant = function() {
-    // 1. İndirimi aktif et (%50)
-    window.currentMerchantDiscount = 0.5; 
-    
-    // 2. Stoğu temizle ve 4 tane rastgele broş üret
+	window.isBroochTrade = true; // Broş önizleme modu AKTİF
+    window.currentMerchantDiscount = 1.0; 
     window.merchantStock = [];
+    
+    // --- GÜNCELLEME: AYNI DENGELİ TIER MANTIĞI ---
     const progress = hero.highestTierDefeated || 1;
+    const base = progress / 2;
     
     for (let i = 0; i < 4; i++) {
-        // generateRandomBrooch fonksiyonunu kullanarak güncel tier'da broşlar üret
-        window.merchantStock.push(generateRandomBrooch(progress));
+        // Buçuklu ise %50 ihtimalle seç
+        let currentTier = (base % 1 === 0) ? base : (Math.random() < 0.5 ? Math.floor(base) : Math.ceil(base));
+        currentTier = Math.max(1, currentTier);
+        
+        window.merchantStock.push(generateRandomBrooch(currentTier));
     }
+    // ----------------------------------------------
     
-    // 3. Ticaret ekranını aç
     window.openMerchantTrade('buy');
-    
-    // 4. Log bas
     const lang = window.getCombatLang();
-    writeLog("📿 **İşportacı**: Nadir broşlarını sana yarı fiyatına sunuyor!");
+    writeLog("📿 **İşportacı**: Nadir broşlarını sana sunuyor!");
 };
 
 document.addEventListener('click', e => {

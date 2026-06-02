@@ -277,10 +277,10 @@ window.showItemTooltip = function(item, event) {
         }
 
         // Alt Başlık (Mistik Aksesuar)
-        const subLabel = document.createElement('div');
-        subLabel.className = 'brooch-sub-label'; // CSS kontrolü için sınıf ekledim
-        subLabel.textContent = lang.items.brooch_label;
-        statsEl.appendChild(subLabel);
+        //const subLabel = document.createElement('div');
+        //subLabel.className = 'brooch-sub-label'; // CSS kontrolü için sınıf ekledim
+        //subLabel.textContent = lang.items.brooch_label;
+        //statsEl.appendChild(subLabel);
 
         // Efektleri Listeleme (Daha önceki yaptığımız uzmanlık parantezi dahil)
         item.effects.forEach(eff => {
@@ -398,7 +398,7 @@ window.moveTooltip = function(e) {
     const tooltip = document.getElementById('item-tooltip');
     if (tooltip) {
         tooltip.style.left = (e.clientX + 15) + 'px';
-        tooltip.style.top = (e.clientY + 15) + 'px';
+        tooltip.style.top = (e.clientY - 15) + 'px';
     }
 }// --- EŞYA TAKMA / ÇIKARMA MANTIĞI ---
 
