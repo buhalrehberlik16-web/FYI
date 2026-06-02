@@ -715,3 +715,47 @@
     border-color: #444;
     background: rgba(10, 10, 10, 0.9);
 }
+
+.skill-def-preview {
+    position: absolute;
+    top: -22px; /* Hasar kutusuyla aynı hizada */
+    right: -2px; /* Sağ köşeye yasla */
+    background: rgba(0, 20, 40, 0.9); /* Lacivert/Mavi tonu */
+    color: #3498db; /* Defans mavisi */
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 1px 5px;
+    border: 1px solid #1a5276;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 55;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+    animation: fadeIn 0.3s ease;
+}
+
+.skill-heal-preview {
+    position: absolute;
+    top: -22px;
+    left: -2px; /* Sol köşeye yasla */
+    background: rgba(0, 40, 20, 0.9); /* Koyu Yeşil tonu */
+    color: #43FF64; /* İyileşme yeşili */
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 1px 5px;
+    border: 1px solid #145a32;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 55;
+    box-shadow: 0 0 8px rgba(67, 255, 100, 0.4);
+    animation: fadeIn 0.3s ease;
+}
+
+.skill-heal-preview::before {
+    content: "💚";
+    font-size: 0.6rem;
+    margin-right: 3px;
+}

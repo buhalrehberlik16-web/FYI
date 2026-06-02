@@ -420,6 +420,7 @@
     box-shadow: 0 5px 20px rgba(0,0,0,0.8);
     color: #fff;
     font-family: 'Cinzel', serif;
+	transform: translateY(-100%); 
 }
 .tooltip-name { color: #ffd700; font-weight: bold; margin-bottom: 4px; font-family: 'Cinzel', serif; text-transform: uppercase; letter-spacing: 1px; font-size: 1.2rem;}
 .tooltip-tier { color: #888; font-size: 0.85em; font-family: 'Cinzel', serif;font-style: normal; letter-spacing: 1px; }

@@ -24,7 +24,7 @@
     font-size: 1.8rem;
     font-weight: 700;
     text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 2px #000;
-    z-index: 9999;
+    z-index: 5;
     pointer-events: none;
     background: linear-gradient(to right, transparent, rgba(0,0,0,0.7), transparent);
     padding: 10px 30px;
