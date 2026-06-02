@@ -122,8 +122,8 @@ const EVENT_POOL = [
             buff: "3 Tur: <span class='buff'>+5 Saldırı</span>",
             debuff: "3 Tur: <span class='debuff'>TÜM İyileşmeler Kilitli</span>",
             action: (hero) => {
-                hero.statusEffects.push({ id: 'atk_up', name: 'Öfke', turns: 3, value: 5, waitForCombat: true });
-                hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true });
+                hero.statusEffects.push({ id: 'atk_up', name: 'Öfke', turns: 3, value: 5, waitForCombat: true, resetOnCombatEnd: true });
+                hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true, resetOnCombatEnd: true });
             }
         },
         option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+XP</span>", debuff: "", action: (hero) => { gainXP(1); } }
@@ -175,9 +175,19 @@ const EVENT_POOL = [
         }
     },
     {
-        id: "blood_pact", type: "permanent", title: "Kan Anlaşması", desc: "Kadim bir varlık fısıldıyor.",
-        option1: { text: "Anlaşmayı Kabul Et", buff: "Kalıcı: <span class='buff'>+5 STR</span>", debuff: "Anında: <span class='debuff'>Canın %50'si Gider</span>", action: (hero) => { hero.str += 5; hero.hp = Math.floor(hero.hp / 2); } },
-        option2: { text: "Reddet", action: (hero) => {} }
+        id: "blood_pact_str", type: "permanent",
+        option1: { action: (hero) => { hero.str += 3; hero.hp = Math.floor(hero.hp / 2); } },
+        option2: { action: () => {} }
+    },
+    {
+        id: "blood_pact_int", type: "permanent",
+        option1: { action: (hero) => { hero.int += 3; hero.hp = Math.floor(hero.hp / 2); } },
+        option2: { action: () => {} }
+    },
+    {
+        id: "blood_pact_mp", type: "permanent",
+        option1: { action: (hero) => { hero.mp_pow += 3; hero.hp = Math.floor(hero.hp / 2); } },
+        option2: { action: () => {} }
     },
     {
         id: "gambler", type: "permanent", title: "Kumarbazın Ruhu", desc: "Önünde iki kadeh var.",
@@ -233,7 +243,7 @@ const EVENT_POOL = [
         option1: { 
             text: "Stay", 
             action: (hero) => { 
-                hero.exhaustion = Math.max(0, hero.exhaustion - 11);
+                hero.exhaustion = Math.max(0, hero.exhaustion - 36);
                 window.CalendarManager.passDay(); 
                 writeLog("🔥 Kervanla bir gece geçirdin ve dinlendin.");
             } 
