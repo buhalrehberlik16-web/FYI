@@ -8,45 +8,65 @@ window.currentMerchantDiscount = 1.0; // Varsayılan: İndirim yok
 window.refreshMerchantStock = function(count = 8) {
     console.log(`🛒 Tüccar stokları yenileniyor (${count} eşya)...`);
     window.merchantStock = [];
+    
+    // 1. İLERLEME HESAPLAMA (Senin formülün)
     const progress = (window.hero && window.hero.highestTierDefeated) ? window.hero.highestTierDefeated : 1;
+    
+    // Tier hesaplama fonksiyonu: highestTier / 2
+    const getBalancedTier = () => {
+        const base = progress / 2;
+        let targetTier = 1;
+
+        if (base % 1 === 0) {
+            // Tam sayı ise (Örn: T2 kestiyse 2/2 = 1) direkt o tier
+            targetTier = base;
+        } else {
+            // Buçuklu ise (Örn: T3 kestiyse 3/2 = 1.5) %50 alt, %50 üst tier
+            targetTier = (Math.random() < 0.5) ? Math.floor(base) : Math.ceil(base);
+        }
+        
+        // Failsafe: Tier en az 1 olmalı (T0 diye bir eşya yok)
+        return Math.max(1, targetTier);
+    };
+    // -----------------------------------
 
     for (let i = 0; i < count; i++) {
-        // --- 1. GEZGİN TÜCCAR (4 Eşya) ---
+        // Her döngüde yeni hesaplanmış dengeli tier'ı çağır
+        const currentTier = getBalancedTier();
+
         if (count === 4) {
-            window.merchantStock.push(generateRandomItem(progress));
+            // Gezgin Tüccar
+            window.merchantStock.push(generateRandomItem(currentTier));
         } 
-        // --- 2. ŞEHİR TÜCCARI (12 Eşya - YENİ) ---
         else if (count === 12) {
+            // Şehir Tüccarı
             if (i < 4) {
-                // İlk 4 slot: Kesin Takı
-                window.merchantStock.push(generateRandomItem(progress));
+                window.merchantStock.push(generateRandomItem(currentTier));
             } else if (i < 6) {
-                // Sonraki 2 slot: Kesin Parşömen
                 const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
                 window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
             } else if (i === 6) {
-                // 7. Slot: BROŞ WILDCARD (Kesin 1 Broş)
-                window.merchantStock.push(generateRandomBrooch(progress));
+                // Şehirdeki garantili broş da bu dengeli tier'dan gelir
+                window.merchantStock.push(generateRandomBrooch(currentTier));
             } else {
-                // Kalan 5 slot: Karışık (Takı veya Özel Eşyalar)
                 if (Math.random() < 0.3) {
-                    window.merchantStock.push(generateRandomItem(progress));
+                    window.merchantStock.push(generateRandomItem(currentTier));
                 } else {
                     const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
                     window.merchantStock.push({ ...baseItem });
                 }
             }
         }
-        // --- 3. KASABA TÜCCARI (8 Eşya) ---
         else {
+            // Normal Kasaba Tüccarı
             if (i < 4) {
-                window.merchantStock.push(generateRandomItem(progress));
+                window.merchantStock.push(generateRandomItem(currentTier));
             } else if (i < 6) {
                 const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
                 window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
             } else {
                 if (Math.random() < 0.2) {
-                    window.merchantStock.push(generateRandomItem(progress));
+                    window.merchantStock.push(generateRandomItem(currentTier));
                 } else {
                     const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
                     window.merchantStock.push({ ...baseItem });
@@ -54,7 +74,7 @@ window.refreshMerchantStock = function(count = 8) {
             }
         }
     }
-    console.log("✅ Yeni stok hazır.");
+    console.log("✅ Dengeli stok hazır.");
 };
 
 
@@ -110,32 +130,29 @@ window.renderMerchantUI = function() {
 	
 	// --- YENİ: TAKILI EKİPMANLARI ÇİZ ---
     const equipRow = document.getElementById('trade-equip-row');
+	const previewLabel = document.querySelector('.preview-label'); // Başlık etiketi
     if (equipRow) {
         equipRow.innerHTML = '';
         // Gösterilecek slotlar
-        const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
-        
-        slotsToShow.forEach(slotKey => {
-            const item = hero.equipment[slotKey];
-            const slotDiv = document.createElement('div');
-            slotDiv.className = 'item-slot trade-preview-slot';
+        // --- YENİ DİNAMİK ÖNİZLEME MANTIĞI ---
+        if (window.isBroochTrade) {
+            // DURUM A: Broş Satıcısındayız -> Broş Slotlarını Göster
+            if(previewLabel) previewLabel.textContent = lang.items.brooches_label || "TAKILI BROŞLAR";
             
-            if (item) {
-                const img = document.createElement('img');
-                img.src = `items/images/${item.icon}`;
-                slotDiv.appendChild(img);
-                slotDiv.innerHTML += window.getItemBadgeHTML(item);
-                
-                // Tooltip desteği (Karşılaştırma yapabilmek için)
-                slotDiv.onmouseenter = (e) => window.showItemTooltip(item, e);
-                slotDiv.onmouseleave = () => window.hideItemTooltip();
-                slotDiv.onmousemove = (e) => window.moveTooltip(e);
-            } else {
-                // Boş slot görseli (Opsiyonel: ikon koyabilirsin)
-                slotDiv.style.opacity = "0.3";
-            }
-            equipRow.appendChild(slotDiv);
-        });
+            // Kahramanın tüm broş slotlarını (6 slot) tara
+            hero.brooches.forEach(item => {
+                createPreviewSlot(item, equipRow);
+            });
+        } 
+        else {
+            // DURUM B: Normal Tüccardayız -> Takı Slotlarını Göster
+            if(previewLabel) previewLabel.textContent = lang.current_equipment;
+            
+            const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
+            slotsToShow.forEach(slotKey => {
+                createPreviewSlot(hero.equipment[slotKey], equipRow);
+            });
+        }
     }
     // -----------------------------------
 
@@ -159,6 +176,25 @@ window.renderMerchantUI = function() {
         });
     }
 };
+
+function createPreviewSlot(item, parent) {
+    const slotDiv = document.createElement('div');
+    slotDiv.className = 'item-slot trade-preview-slot';
+    
+    if (item) {
+        const img = document.createElement('img');
+        img.src = `items/images/${item.icon}`;
+        slotDiv.appendChild(img);
+        slotDiv.innerHTML += window.getItemBadgeHTML(item);
+        
+        slotDiv.onmouseenter = (e) => window.showItemTooltip(item, e);
+        slotDiv.onmouseleave = () => window.hideItemTooltip();
+        slotDiv.onmousemove = (e) => window.moveTooltip(e);
+    } else {
+        slotDiv.style.opacity = "0.2";
+    }
+    parent.appendChild(slotDiv);
+}
 
 // 4. SLOT OLUŞTURMA
 function createTradeSlot(item, action, isBuying) {
@@ -366,12 +402,54 @@ window.showTradeConfirm = function(msg, item, onConfirm, mode = 'sell') { // mod
 
     updateModalDisplay();
 
-    // 5. Statlar (Aynı kalıyor)
+    // 5. STATLAR VE ÖZELLİKLER (DETAYLI GÖSTERİM)
     statsEl.innerHTML = '';
-    if (item.stats && item.subtype !== 'material') {
-        for (const [statKey, value] of Object.entries(item.stats)) {
-            const statName = window.getStatDisplayName(statKey);
-            statsEl.innerHTML += `<div>${statName}: <span class="tooltip-val">+${value}</span></div>`;
+    if (item.subtype !== 'material') {
+        
+        // A. Sabit Defans (Zırh) Kontrolü
+        if (item.implicitDef && item.implicitDef > 0) {
+            const defLabel = window.getStatDisplayName('def');
+            statsEl.innerHTML += `<div style="color:#3498db;">${defLabel}: <span class="tooltip-val">+${item.implicitDef}</span></div>`;
+        }
+
+        // B. Standart Statlar (STR, INT vb.)
+        if (item.stats) {
+            for (const [statKey, value] of Object.entries(item.stats)) {
+                if (value > 0) {
+                    const statName = window.getStatDisplayName(statKey);
+                    statsEl.innerHTML += `<div>${statName}: <span class="tooltip-val">+${value}</span></div>`;
+                }
+            }
+        }
+
+        // C. Broş Etkileri (Eğer bir Broş ise)
+        if (item.effects) {
+            item.effects.forEach(eff => {
+                let effectName = lang.items['eff_' + eff.id] || eff.id;
+                // Uzmanlık kabilesini de ekleyelim
+                if (eff.id === "fixed_dmg" && item.specialtyTribe) {
+                    const tribeName = (lang.enemy_names || {})[item.specialtyTribe] || item.specialtyTribe;
+                    effectName += ` (${tribeName})`;
+                }
+                
+                let displayVal = (eff.value < 1 && eff.value > 0) 
+                    ? `%${Math.round(eff.value * 100)}` 
+                    : `+${eff.value}`;
+                
+                statsEl.innerHTML += `<div style="color:#df9cff;">${effectName}: <span class="tooltip-val">${displayVal}</span></div>`;
+            });
+        }
+
+        // D. Tılsım Bonusları (Eğer bir Tılsım ise)
+        if (item.bonuses) {
+            item.bonuses.forEach(b => {
+                if (b.type === 'elemDmg') {
+                    statsEl.innerHTML += `<div style="color:#f0e68c;">${lang.items.eff_elemDmg}: <span class="tooltip-val">+${b.value}</span></div>`;
+                } else if (b.type === 'tribe_mod') {
+                    statsEl.innerHTML += `<div style="color:#ff4d4d;">${lang.items.eff_skill_dmg}: <span class="tooltip-val">+${b.skillDmg}</span></div>`;
+                    statsEl.innerHTML += `<div style="color:#3498db;">${lang.items.eff_tribe_def}: <span class="tooltip-val">+${b.defense}</span></div>`;
+                }
+            });
         }
     }
 
