@@ -321,7 +321,7 @@ const BARBARIAN_SKILLS = {
 
             // --- YENİ: %50 İHTİMALLE KENDİNE HASAR VERME (RECOIL) ---
             if (Math.random() < 0.50) {
-                const selfBleedVal = Math.floor(dmgPack.total * 0.50);
+                const selfBleedVal = Math.floor(dmgPack.total * 0.25);
                 
                 // Vuruş bittikten sonra (800ms) etkiyi göster
                 setTimeout(() => {
