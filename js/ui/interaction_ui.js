@@ -540,6 +540,188 @@ window.openBroochMerchant = function() {
     writeLog("📿 **İşportacı**: Nadir broşlarını sana sunuyor!");
 };
 
+window.openVeteranMaster = function() {
+	// --- YENİ: ANA ÇIKIŞ BUTONUNU GÖSTER ---
+    const mainExitBtn = document.getElementById('btn-veteran-main-exit');
+    if (mainExitBtn) mainExitBtn.classList.remove('hidden');
+    // ---------------------------------------
+    const modal = document.getElementById('modal-veteran');
+    const list = document.getElementById('veteran-skill-list');
+    const lang = window.getCombatLang();
+    
+    if (document.getElementById('veteran-master-title')) 
+        document.getElementById('veteran-master-title').textContent = lang.veteran_master_title;
+    if (document.getElementById('veteran-dialogue')) 
+        document.getElementById('veteran-dialogue').textContent = lang.veteran_master_hello;
+
+    list.innerHTML = '';
+    
+    const unlocked = hero.unlockedSkills.filter(key => {
+        const s = SKILL_DATABASE[key];
+        return s && s.data.tier > 0 && !(s.data.category === 'common' && s.data.tier === 1);
+    });
+
+    if (unlocked.length === 0) {
+        list.innerHTML = `<p style="color:#777;">${lang.veteran_empty}</p>`;
+    } else {
+        // --- 1. TABLO BAŞLIĞINI OLUŞTUR ---
+        const header = document.createElement('div');
+        header.className = 'veteran-header-row';
+        header.innerHTML = `
+            <div class="v-col-name">${lang.veteran_header_skill}</div>
+            <div class="v-col-btn">${lang.veteran_header_swap}</div>
+            <div class="v-col-btn">${lang.veteran_header_forget}</div>
+        `;
+        list.appendChild(header);
+
+        // --- 2. YETENEK SATIRLARINI OLUŞTUR ---
+        unlocked.forEach(key => {
+            const skill = SKILL_DATABASE[key];
+            const swapCost = skill.data.tier * 7;
+            const refundCost = skill.data.tier * 12;
+            const div = document.createElement('div');
+            div.className = 'veteran-skill-row';
+            
+            const skillName = lang.skills[key]?.name || skill.data.name;
+
+            div.innerHTML = `
+                <div class="v-col-name">
+                    <img src="images/${skill.data.icon}" class="v-skill-icon">
+                    <span class="v-skill-text">${skillName} (T${skill.data.tier})</span>
+                </div>
+                <div class="v-col-btn">
+                    <button class="npc-btn v-action-btn" onclick="prepareVeteranSwap('${key}')">
+                        -${swapCost}G
+                    </button>
+                </div>
+                <div class="v-col-btn">
+                    <button class="npc-btn v-action-btn btn-danger" onclick="processVeteranRefund('${key}')">
+                        -${refundCost}G
+                    </button>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    modal.classList.remove('hidden');
+    updateNPCStatsDisplay();
+};
+
+// 1. SWAP AŞAMASI: Alternatifleri Göster
+window.prepareVeteranSwap = function(oldSkillKey) {
+	// --- YENİ: ANA ÇIKIŞ BUTONUNU GİZLE ---
+    const mainExitBtn = document.getElementById('btn-veteran-main-exit');
+    if (mainExitBtn) mainExitBtn.classList.add('hidden');
+    // ---------------------------------------
+    const list = document.getElementById('veteran-skill-list');
+    const skill = SKILL_DATABASE[oldSkillKey];
+    const lang = window.getCombatLang();
+    
+    document.getElementById('veteran-dialogue').textContent = lang.veteran_select_title;
+    list.innerHTML = '';
+
+    // Aynı Tab ve aynı Tier'daki DİĞER skilleri bul
+    const alternatives = Object.keys(SKILL_DATABASE).filter(k => 
+        SKILL_DATABASE[k].data.category === skill.data.category && 
+        SKILL_DATABASE[k].data.tier === skill.data.tier && 
+        k !== oldSkillKey
+    );
+
+    alternatives.forEach(newKey => {
+        const newSkill = SKILL_DATABASE[newKey];
+        const div = document.createElement('div');
+        div.className = 'reforge-prop-card';
+        div.style.border = "1px solid #43FF64";
+        
+        div.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="images/${newSkill.data.icon}" style="width:30px; height:30px; border-radius:4px;">
+                <span>${lang.skills[newKey].name}</span>
+            </div>
+            <button class="npc-btn" onclick="executeVeteranSwap('${oldSkillKey}', '${newKey}')">${lang.select}</button>
+        `;
+        list.appendChild(div);
+    });
+
+    // Vazgeçme butonu
+    const backBtn = document.createElement('button');
+    backBtn.className = "npc-btn";
+    backBtn.style.marginTop = "10px";
+    backBtn.textContent = lang.back;
+    backBtn.onclick = openVeteranMaster;
+    list.appendChild(backBtn);
+};
+
+// 2. SWAP UYGULAMA
+window.executeVeteranSwap = function(oldKey, newKey) {
+    const lang = window.getCombatLang();
+    const oldSkill = SKILL_DATABASE[oldKey];
+    
+    // Eğer yetenek bir slot değiştiriciyse onay al
+    const isSlotSkill = ['loot_junkie', 'hoarder', 'fired_up'].includes(oldKey);
+
+    const performSwap = () => {
+        const newSkill = SKILL_DATABASE[newKey];
+        const cost = oldSkill.data.tier * 7;
+        if (hero.gold < cost) { window.showAlert(lang.not_enough_msg); return; }
+
+        if (oldSkill.data.onRemove) oldSkill.data.onRemove();
+        if (newSkill.data.onAcquire) newSkill.data.onAcquire();
+
+        hero.gold -= cost;
+        hero.unlockedSkills = hero.unlockedSkills.filter(k => k !== oldKey);
+        hero.unlockedSkills.push(newKey);
+        
+        const equipIdx = hero.equippedSkills.indexOf(oldKey);
+        if (equipIdx !== -1) hero.equippedSkills[equipIdx] = newKey;
+
+        writeLog(lang.combat.log_skill_swapped.replace("$1", lang.skills[oldKey].name).replace("$2", lang.skills[newKey].name));
+        updateGoldUI(); updateStats(); openVeteranMaster();
+        renderInventory(); // Çantayı tazele
+        if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+    };
+
+    if (isSlotSkill) {
+        window.showConfirm(lang.veteran_slot_warning, performSwap);
+    } else {
+        performSwap();
+    }
+};
+
+// 3. REFUND (UNUTMA) UYGULAMA
+window.processVeteranRefund = function(skillKey) {
+    const lang = window.getCombatLang();
+    const skill = SKILL_DATABASE[skillKey];
+    const isSlotSkill = ['loot_junkie', 'hoarder', 'fired_up'].includes(skillKey);
+
+    const performRefund = () => {
+        const cost = skill.data.tier * 12;
+        if (hero.gold < cost) { window.showAlert(lang.not_enough_msg); return; }
+
+        if (skill.data.onRemove) skill.data.onRemove();
+
+        hero.gold -= cost;
+        const spRefund = skill.data.pointCost || skill.data.tier;
+        hero.skillPoints += spRefund;
+        hero.unlockedSkills = hero.unlockedSkills.filter(k => k !== skillKey);
+        
+        const equipIdx = hero.equippedSkills.indexOf(skillKey);
+        if (equipIdx !== -1) hero.equippedSkills[equipIdx] = null;
+
+        writeLog(lang.combat.log_skill_refunded.replace("$1", lang.skills[skillKey].name).replace("$2", cost).replace("$3", spRefund));
+        updateGoldUI(); updateStats(); openVeteranMaster();
+        renderInventory(); // Çantayı tazele
+        if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
+    };
+
+    if (isSlotSkill) {
+        window.showConfirm(lang.veteran_slot_warning, performRefund);
+    } else {
+        performRefund();
+    }
+};
+
 document.addEventListener('click', e => {
     // 1. Eğer tıklanan yer 'close-npc' sınıfına sahipse (NPC çıkış butonu) kapat
     if (e.target.classList.contains('close-npc')) {
