@@ -50,7 +50,7 @@ const CLASS_CONFIG = {
         baseDefense: 1,
 		resourceName: "mana",
         resourceColor: "#3498db",
-		resourcePerDay: 10, // 1 Tam günde 10 Mana kazanır
+		resourcePerDay: 0.10, // 1 Tam günde 10 Mana kazanır
 		skillTabs: ["arcane", "elemental", "nature"],
 		// --- YENİ: MERKEZİ STAT ÇARPANLARI ---
         scaling: {
