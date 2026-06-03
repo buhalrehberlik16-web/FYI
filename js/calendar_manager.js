@@ -93,14 +93,22 @@ window.CalendarManager = {
             window.updateExhaustionUI();
         }
 
-        // --- YENİ: SINIF BAZLI KAYNAK (MANA) YENİLEME ---
-        const classRules = CLASS_CONFIG[hero.class];
-        if (classRules && classRules.resourcePerDay) {
-            const stats = getHeroEffectiveStats(); // Max sınırı için
-            // Geçen gün * Günlük çarpan (1.0 * 10 veya 0.5 * 10)
-            hero.rage = Math.min(stats.maxRage, hero.rage + (passed * classRules.resourcePerDay));
-        }
-        // -----------------------------------------------
+        // --- YÜZDESEL KAYNAK (MANA) YENİLEME ---
+		const classRules = CLASS_CONFIG[hero.class];
+		if (classRules && classRules.resourcePerDay) {
+			const stats = getHeroEffectiveStats(); 
+        
+			// HESAPLAMA: Sonucu Math.floor() ile tam sayıya zorluyoruz.
+			// Örn: 155 Max Mana * 0.10 = 15.5 -> Sonuç kesinlikle 15 olur.
+			// Atlı yolculukta: 0.5 * 15.5 = 7.75 -> Sonuç kesinlikle 7 olur.
+			const gainAmount = Math.floor(passed * (stats.maxRage * classRules.resourcePerDay));
+
+			if (gainAmount > 0) {
+				hero.rage = Math.min(stats.maxRage, hero.rage + gainAmount);
+				console.log(`✨ ${hero.class} Meditasyonu: +${gainAmount} Mana kazanıldı.`);
+			}
+		}
+		// -----------------------------------------------
 		
 	const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
