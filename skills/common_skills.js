@@ -320,8 +320,27 @@ const COMMON_SKILLS = {
             onAcquire: function() {
                 hero.inventory.push(null, null);
                 writeLog("🎒 Çanta kapasitesi arttı! (+2 Slot)");
+            },
+            // --- EKLE: YETENEK SİLİNDİĞİNDE ÇALIŞACAK ---
+            onRemove: function() {
+            // Son iki slotu boşaltmayı dene
+            for(let i = 0; i < 2; i++) {
+                let lastIdx = hero.inventory.length - 1;
+                let item = hero.inventory[lastIdx];
+                if (item) {
+                    // Eşyayı daha üstteki boş bir slota taşımaya çalış
+                    let emptyIdx = hero.inventory.findIndex((slot, idx) => slot === null && idx < lastIdx);
+                    if (emptyIdx !== -1) {
+                        hero.inventory[emptyIdx] = item;
+                        writeLog(`📦 ${getTranslatedItemName(item)} çantanın üst sıralarına taşındı.`);
+                    } else {
+                        writeLog(`❌ ${getTranslatedItemName(item)} sığmadığı için yere düştü (silindi)!`);
+                    }
+                }
+                hero.inventory.pop(); // Slotu fiziksel olarak sil
             }
         }
+    }
     },
 
 	// --- TIER 4 ---
@@ -341,8 +360,22 @@ const COMMON_SKILLS = {
             onAcquire: function() {
                 hero.brooches.push(null);
                 writeLog("📿 Broş kapasitesi arttı! (+1 Slot)");
+            },
+            onRemove: function() {
+            let lastIdx = hero.brooches.length - 1;
+            let brooch = hero.brooches[lastIdx];
+            if (brooch) {
+                let emptyIdx = hero.inventory.indexOf(null);
+                if (emptyIdx !== -1) {
+                    hero.inventory[emptyIdx] = brooch;
+                    writeLog(`📿 ${getTranslatedItemName(brooch)} çantana geri döndü.`);
+                } else {
+                    writeLog(`❌ ${getTranslatedItemName(brooch)} çantan dolu olduğu için kayboldu!`);
+                }
             }
+            hero.brooches.pop();
         }
+    }
     },
 
     fired_up: {
@@ -363,6 +396,10 @@ const COMMON_SKILLS = {
                 writeLog("⚔️ Savaş kapasitesi arttı! (+1 Skill Slotu)");
                 if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
                 if (typeof renderEquippedSlotsInBook === 'function') renderEquippedSlotsInBook();
+            },
+            onRemove: function() {
+                hero.equippedSkills.splice(-1);
+                writeLog("⚔️ Savaş kapasitesi azaldı. (-1 Skill Slotu)");
             }
         }
     },
