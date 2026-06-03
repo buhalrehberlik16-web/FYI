@@ -659,6 +659,24 @@
         <div class="city-building" id="city-market" onclick="openBuilding('merchant')">
             <span class="city-label-text" data-i18n="city_market">BÜYÜK PAZAR</span>
         </div>
+		<div class="city-building" id="city-veteran" onclick="openVeteranMaster()">
+			<span class="city-label-text" data-i18n="city_veteran">GAZİ ÜSTAD</span>
+		</div>
+		
+		<!-- Gazi Üstad Modalı -->
+		<div id="modal-veteran" class="npc-modal hidden" style="z-index: 6000;">
+		<div class="stat-window" style="width: 550px; background-image: url('images/npc/veteran_bg.webp'); background-size: cover; text-align: center;">
+        <h2 id="veteran-master-title" data-i18n="veteran_master_title"></h2>
+        <p id="veteran-dialogue" data-i18n="veteran_master_hello" style="font-style: italic; color: #ccc; margin-bottom: 20px;"></p>
+        
+        <!-- Öğrenilen Skillerin Listesi -->
+        <div id="veteran-skill-list">
+		<!-- Burası JS ile dolacak -->
+		</div>
+
+        <button id="btn-veteran-main-exit" class="npc-btn" onclick="document.getElementById('modal-veteran').classList.add('hidden')" data-i18n="back" style="margin-top: 20px;">AYRIL</button>
+			</div>
+		</div>
 
         <!-- Bir Sonraki Perdeye Geçiş Butonu -->
         <div class="next-act-container">
