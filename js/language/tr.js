@@ -187,6 +187,15 @@ window.LANG_TR = {
         city_arena: "ARENA",
         city_market: "BÜYÜK PAZAR",
         start_act2: "2. PERDEYE YELKEN AÇ",
+		city_veteran: "GAZİ ÜSTAD",
+		veteran_master_title: "GAZİ ÜSTAD",
+		veteran_master_hello: "Kılıcın ve zihnin yorulmuş görünüyor evlat. Geçmişteki seçimlerini değiştirmek mi istiyorsun?",
+		veteran_header_skill: "YETENEK",
+		veteran_header_swap: "DEĞİŞTİR",
+		veteran_header_forget: "UNUT / YP İADE",
+		veteran_select_title: "Yeni Yeteneğini Seç",
+		veteran_empty: "Henüz bir yetenek öğrenmemişsin.",
+		veteran_slot_warning: "⚠️DİKKAT: Bu yeteneği değiştirmek kapasiteni azaltacak. Son slotlardaki eşyalar (varsa) silinebilir veya yer değiştirebilir. Devam etmek istediğine emin misin?",
 		
 		//BIOMES
 		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Şehir Yıkıntıları", biome_plains: "Ova",
@@ -576,6 +585,9 @@ window.LANG_TR = {
 			log_storm_monster_resist: "🛡️ **$1**: Fırtınanın ($2) etkisine direndi.",
 			log_storm_monster_tick: "⛈️ **$1**: Fırtınadan $2 hasar aldı.",
 			log_room_event_storm: "⛈️ Düşman Fırtınadan güç alıyor",
+			log_skill_swapped: "🔄 **Üstad**: $1 yeteneği, $2 ile değiştirildi.",
+			log_skill_forgotten: "🧹 **Üstad**: $1 yeteneği unutuldu, $2 altın kazanıldı.",
+			log_skill_refunded: "🧹 **Üstad**: $1 yeteneği unutuldu. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
         },
 		
 		room_events: {

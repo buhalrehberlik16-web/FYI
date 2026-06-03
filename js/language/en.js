@@ -190,6 +190,16 @@ window.LANG_EN = {
         city_arena: "ARENA",
         city_market: "GRAND MARKET",
         start_act2: "SAIL TO ACT 2",
+		city_veteran: "FORLORN VETERAN",
+		veteran_master_title: "THE VETERAN MASTER",
+		veteran_master_hello: "Your blade and mind look weary, child. Do you wish to rewrite your past choices?",
+		veteran_header_skill: "SKILL",
+		veteran_header_swap: "SWAP",
+		veteran_header_forget: "FORGET / SP REFUND",
+		veteran_select_title: "Select New Skill",
+		veteran_empty: "You haven't learned any skills yet.",
+		veteran_slot_warning: "⚠️WARNING: Removing this skill will reduce your capacity. Items in the last slots (if any) might be lost or moved. Are you sure?",
+		
 
         // Inventory & Settings
         inventory_title: "INVENTORY",
@@ -573,6 +583,9 @@ window.LANG_EN = {
 			log_storm_monster_resist: "🛡️ **$1**: Resisted the effect of the ($2) storm.",
 			log_storm_monster_tick: "⛈️ **$1**: Took $2 damage from the storm.",
 			log_room_event_storm: "⛈️ Enemy is getting stronger",
+			log_skill_swapped: "🔄 **Master**: $1 swapped for $2.",
+			log_skill_forgotten: "🧹 **Master**: $1 was forgotten, gained $2 gold.",
+			log_skill_refunded: "🧹 **Master**: $1 forgotten. Spent $2 Gold, $3 Skill Points refunded.",			
         },
 		
 		room_events: {
