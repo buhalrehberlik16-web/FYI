@@ -169,6 +169,7 @@
 #city-vault  { top: 60%; left: 25%; }
 #city-arena  { top: 65%; right: 25%; }
 #city-market { top: 75%; left: 50%; }
+#city-veteran { top: 45%; left: 80%; } /* Şehrin sağ tarafında sakin bir yer */
 
 /* ============================================================
    2. GEÇİŞ BUTONU (NEXT ACT)

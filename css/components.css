@@ -293,9 +293,34 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 #codex-content h3 { color: #8b0000; margin-bottom: 10px; font-size: 1.2rem; }
 #codex-content p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px; }
 
+/* Gazi Üstad (Veteran) Yetenek Kartları */
+.reforge-prop-card span {
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Kart içindeki isim grubunun yerleşimini sabitleyelim */
+.reforge-prop-card div:first-child {
+    flex: 1;           /* İsmin bulunduğu alan esneyebilir */
+    min-width: 0;      /* Ellipsis (üç nokta) çalışması için şarttır */
+    display: flex;
+    align-items: center;
+}
+
 @media (max-width: 768px) {
     .codex-window { width: 95vw; height: 90vh; flex-direction: column; }
     .codex-sidebar { width: 100%; height: auto; display: flex; padding: 0; }
     .codex-tab { flex: 1; font-size: 0.6rem; padding: 10px 2px; text-align: center; }
 	.close-btn-codex {top: 40px; right: 10px; width: 35px; height: 35px; }
+	/* Gazi Üstad Mobil Başlıkları */
+    .reforge-prop-card span {
+        max-width: 110px !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* Butonların olduğu grubun isme baskı yapmasını engellemek için */
+    .reforge-prop-card div:last-child {
+        flex-shrink: 0; /* Butonlar asla küçülmesin */
+    }
 }

@@ -222,6 +222,93 @@
     text-shadow: 2px 2px 4px #000;
 }
 
+/* --- GAZİ ÜSTAD  --- */
+#veteran-skill-list {
+    max-height: 300px;
+    overflow-y: auto;          /* Kaydırma özelliği aktif */
+    display: flex;             /* İçeriği kutu modeline sokar */
+    flex-direction: column;    /* Kartları alt alta dizer */
+    gap: 10px;                 /* Kartlar arası boşluk */
+    padding: 10px;             /* İç kenar boşluğu */
+
+    /* --- KAYDIRMA ÇUBUĞUNU GİZLEME KURALLARI --- */
+    scrollbar-width: none;     /* Firefox */
+    -ms-overflow-style: none;  /* IE / Edge */
+}
+
+/* Chrome, Safari ve Yeni Edge (Webkit) için çubuk gizleme */
+#veteran-skill-list::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- GAZİ ÜSTAD TABLO TASARIMI --- */
+.veteran-header-row {
+    display: flex;
+    padding: 10px 5px;
+    border-bottom: 1px solid #6b5c3b;
+    margin-bottom: 10px;
+    font-size: 0.7rem;
+    color: #a89373;
+    font-weight: bold;
+    text-align: center;
+}
+
+.veteran-skill-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 5px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #3e3221;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    transition: background 0.2s;
+}
+
+/* SÜTUN GENİŞLİKLERİ */
+.v-col-name {
+    flex: 2.5; /* İsme daha fazla yer ayır */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+    min-width: 0; /* Ellipsis için şart */
+}
+
+.v-col-btn {
+    flex: 1; /* Butonlar eşit genişlikte */
+    display: flex;
+    justify-content: center;
+}
+
+/* İsim ve İkon Ayarları */
+.v-skill-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid #000;
+}
+
+.v-skill-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffd700;
+    font-size: 0.85rem;
+}
+
+/* Buton Ayarları */
+.v-action-btn {
+    width: 75px !important;
+    height: 32px !important;
+    font-size: 0.75rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.v-action-btn.btn-danger {
+    border-color: #8b0000 !important;
+}
+
 /* --- MOBİL UYUMLULUK --- */
 @media (max-width: 768px) {
     .town-calendar-text {
@@ -267,6 +354,16 @@
 	
 	#building-barracks { top: 40%; left: 38.5%; transform: translate(-50%, -50%) rotate(353deg) scale(0.8)}
 	#building-elder { top: 35%; left: 66%; transform: scale(0.8)}
+	
+	.veteran-header-row {
+        font-size: 0.55rem !important;
+    }
+    .v-col-name { flex: 1.5; } /* Mobilde ismi biraz daha daralt */
+    .v-col-btn { flex: 1; }
+    
+    .v-skill-text { font-size: 0.7rem !important; max-width: 90px; }
+    .v-action-btn { width: 60px !important; font-size: 0.65rem !important; }
+}
 	
 }
 
