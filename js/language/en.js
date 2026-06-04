@@ -440,6 +440,8 @@ window.LANG_EN = {
 			"Kadim Mantar": "Ancient Shroom",
 			"Ejderkelam": "Dragonkin Speaker",
 			"Kil Golem": "Clay Golem",
+			"Göçebe Savaşçı": "Nomad Warrior",
+			"Göçebe": "Nomad"
         },
 		
 		enemy_effects: {

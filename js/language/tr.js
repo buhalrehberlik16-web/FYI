@@ -442,6 +442,8 @@ window.LANG_TR = {
 			"Kadim Mantar": "Kadim Mantar",
 			"Ejderkelam": "Ejderkelam",
 			"Kil Golem": "Kil Golem",
+			"Göçebe": "Göçebe",
+			"Göçebe Savaşçı": "Göçebe Savaşçı"
         },
 		
 		enemy_effects: {
