@@ -559,15 +559,20 @@
 /*#city-market { top: 75%; left: 50%; }*/
 
 /* Bina Konumları (Sub-Screen bazlı) */
-#city-blacksmith { top: 40%; left: 20%; }
-#city-alchemist { top: 35%; left: 50%; }
-#city-grand-merchant { top: 60%; left: 80%; }
+#city-blacksmith { top: 13%; left: 30%; }
+#city-alchemist { top: 16%; left: 79%; }
+#city-grand-merchant { top: 35%; left: 48%; }
 
-#city-veteran-master { top: 40%; left: 30%; }
-#city-chronicler { top: 50%; left: 70%; }
+#city-grand-merchant .city-label-text { transform: translate(-50%, -50%) rotate(0deg); font-size: 0.4em; }
+#city-alchemist .city-label-text { font-size: 0.5em; }
+#city-blacksmith .city-label-text { font-size: 0.5em; }
+#city-chronicler .city-label-text { font-size: 0.5em;  }
+#city-veteran-master .city-label-text { font-size: 0.5em; }
+
+#city-veteran-master { top: 40%; left: 33%; }
+#city-chronicler { top: 48%; left: 72%; }
 
 #city-district-craft .city-label-text {
-    font-size: 0.8rem;
     padding: 5px 12px;
 }
 
@@ -591,6 +596,13 @@
 .city-nav-arrow.left { left: 0; border-radius: 0 15px 15px 0; }
 .city-nav-arrow.right {right: 0;border-radius: 15px 0 0 15px;}
 .city-nav-arrow:hover { background: #3e2723; color: #fff; padding: 8px 2px; }
+
+.district-hint {
+    font-size: 1.1cqw;
+    writing-mode: vertical-rl; /* Yazıyı dikey yapar, çok havalı durur */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 
 /* ============================================================
    2. GEÇİŞ BUTONU (NEXT ACT)
