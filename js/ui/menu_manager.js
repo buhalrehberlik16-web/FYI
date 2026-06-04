@@ -466,7 +466,8 @@ window.equipItem = function(inventoryIndex) {
         hero.inventory[inventoryIndex] = oldItem; 
         writeLog(`🎒 ${getTranslatedItemName(item)} kuşanıldı.`);
     }
-
+	
+	StatsManager.trackItem(item); 
     renderInventory();
     updateStats();
  });

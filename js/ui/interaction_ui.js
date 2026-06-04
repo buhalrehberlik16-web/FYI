@@ -197,8 +197,6 @@ window.openBuilding = function(type) {
     const modalId = `modal-${type}`;
     const modal = document.getElementById(modalId);
 	
-	
-	
 	 // EVENT KONTROLÜ
     if (window.EventManager.isSystemLocked(type)) {
     const currentLang = window.gameSettings.lang || 'tr';
@@ -207,18 +205,26 @@ window.openBuilding = function(type) {
     window.showAlert(lang.system_locked_msg, lang.warning_title); // Yeni Alert
     return;
 	}
+	
+	 // --- YENİ: ŞEHİR VE MASTER KONTROLÜ ---
+    const cityScreen = document.getElementById('city-screen');
+    const isInsideCity = cityScreen && cityScreen.classList.contains('active');
     
     if (modal) {
 		if (type === 'blacksmith') {
             const reforgeBtn = document.getElementById('btn-reforge-master');
+			// EĞER şehirdeysek VEYA o kasabanın ustası blacksmith ise butonu GÖSTER
+            const shouldShow = isInsideCity || window.currentTownMaster === 'blacksmith';
             // Eğer bu kasabanın ustası blacksmith değilse butonu gizle
-            if (reforgeBtn) reforgeBtn.classList.toggle('hidden', window.currentTownMaster !== 'blacksmith');
+             if (reforgeBtn) reforgeBtn.classList.toggle('hidden', !shouldShow);
         }
 
         if (type === 'alchemist') {
             const synthesisBtn = document.getElementById('btn-synthesis-master');
+			// EĞER şehirdeysek VEYA o kasabanın ustası alchemist ise butonu GÖSTER
+            const shouldShow = isInsideCity || window.currentTownMaster === 'alchemist';
             // Eğer bu kasabanın ustası alchemist değilse butonu gizle
-            if (synthesisBtn) synthesisBtn.classList.toggle('hidden', window.currentTownMaster !== 'alchemist');
+            if (synthesisBtn) synthesisBtn.classList.toggle('hidden', !shouldShow);
         }
 
         if (type === 'stable') {
@@ -410,6 +416,8 @@ window.triggerRandomEvent = function(forcedEvent = null) {
     }
 	}
     // ------------------------------------------------------
+	
+	//StatsManager.trackEvent(evt.id);
 
     const t = lang.events[evt.id];
 	// --- GÜNCELLEME: BAŞLIK VE AÇIKLAMAYI FİLTRELE ---
@@ -444,14 +452,15 @@ window.triggerRandomEvent = function(forcedEvent = null) {
         b.onclick = () => {
             if (isEventProcessing) return; // Çift tıklama kilidi
             isEventProcessing = true;
+			// 1. Aksiyonu çalıştır ve sonucu al
+            const actionResult = opt.action(hero); 
+            
+            // 2. Tarihçiye kaydet (Event ID, Buton Metni, Sonuç)
+            StatsManager.trackEvent(evt.id, btnText, actionResult, optKey);
 
             // 1. BUTONLARI ANINDA SİL (Görsel ve mantıksal olarak tıklamayı bitirir)
             container.innerHTML = '';
-            document.getElementById('event-main-area').classList.add('hidden');
-
-            // 2. Aksiyonu Uygula
-            // --- GÜNCELLEME: Aksiyondan dönen sonucu yakala ---
-            const actionResult = opt.action(hero); 
+            document.getElementById('event-main-area').classList.add('hidden'); 
             
             // 3. UI'ı Güncelle
             updateStats();
@@ -692,33 +701,290 @@ window.executeVeteranSwap = function(oldKey, newKey) {
 // 3. REFUND (UNUTMA) UYGULAMA
 window.processVeteranRefund = function(skillKey) {
     const lang = window.getCombatLang();
-    const skill = SKILL_DATABASE[skillKey];
-    const isSlotSkill = ['loot_junkie', 'hoarder', 'fired_up'].includes(skillKey);
+    const targetSkill = SKILL_DATABASE[skillKey];
+    if (!targetSkill) return;
+
+    const category = targetSkill.data.category;
+    const tier = targetSkill.data.tier;
+
+    const dependentSkills = hero.unlockedSkills.filter(k => {
+        const s = SKILL_DATABASE[k];
+        return s && s.data.category === category && s.data.tier > tier;
+    }).sort((a, b) => SKILL_DATABASE[b].data.tier - SKILL_DATABASE[a].data.tier);
+
+    const allToDelete = [skillKey, ...dependentSkills];
+    
+    let totalGoldCost = 0;
+    let totalSPRefund = 0;
+    let skillNamesList = [];
+
+    allToDelete.forEach(k => {
+        const s = SKILL_DATABASE[k];
+        totalGoldCost += s.data.tier * 12;
+        totalSPRefund += (s.data.pointCost || s.data.tier);
+        if (k !== skillKey) skillNamesList.push(lang.skills[k]?.name || k);
+    });
 
     const performRefund = () => {
-        const cost = skill.data.tier * 12;
-        if (hero.gold < cost) { window.showAlert(lang.not_enough_msg); return; }
+        if (hero.gold < totalGoldCost) { window.showAlert(lang.not_enough_msg); return; }
 
-        if (skill.data.onRemove) skill.data.onRemove();
+        const currentLang = window.getCombatLang();
+        const combatL = currentLang.combat || {};
 
-        hero.gold -= cost;
-        const spRefund = skill.data.pointCost || skill.data.tier;
-        hero.skillPoints += spRefund;
-        hero.unlockedSkills = hero.unlockedSkills.filter(k => k !== skillKey);
-        
-        const equipIdx = hero.equippedSkills.indexOf(skillKey);
-        if (equipIdx !== -1) hero.equippedSkills[equipIdx] = null;
+        hero.gold -= totalGoldCost;
+        hero.skillPoints += totalSPRefund;
 
-        writeLog(lang.combat.log_skill_refunded.replace("$1", lang.skills[skillKey].name).replace("$2", cost).replace("$3", spRefund));
-        updateGoldUI(); updateStats(); openVeteranMaster();
-        renderInventory(); // Çantayı tazele
+        allToDelete.forEach(k => {
+            const s = SKILL_DATABASE[k];
+            if (s.data.onRemove) s.data.onRemove();
+            hero.unlockedSkills = hero.unlockedSkills.filter(unlocked => unlocked !== k);
+            const equipIdx = hero.equippedSkills.indexOf(k);
+            if (equipIdx !== -1) hero.equippedSkills[equipIdx] = null;
+        });
+
+        if (combatL.log_skill_chain_refunded) {
+            const branchName = currentLang[`tab_${category}`] || category;
+            writeLog(combatL.log_skill_chain_refunded.replace("$1", branchName).replace("$2", totalGoldCost).replace("$3", totalSPRefund));
+        }
+
+        updateGoldUI(); updateStats(); renderInventory(); openVeteranMaster();
         if (typeof initializeSkillButtons === 'function') initializeSkillButtons();
     };
 
-    if (isSlotSkill) {
-        window.showConfirm(lang.veteran_slot_warning, performRefund);
+    // --- ONAY PENCERESİ MANTIĞI ---
+    if (dependentSkills.length > 0) {
+        // DURUM 1: Zincirleme silme (Kendi renklendirdiğin mesaj)
+        const namesStr = skillNamesList.join(", ");
+        const warningMsg = lang.veteran_tree_warning
+            .replace("$1", namesStr)
+            .replace("$2", totalGoldCost)
+            .replace("$3", totalSPRefund);
+        window.showConfirm(warningMsg, performRefund);
     } else {
-        performRefund();
+        // DURUM 2: Tekil silme (Artık bu da onay istiyor)
+        const simpleWarning = lang.veteran_forget_simple_warning
+            .replace("$1", totalGoldCost)
+            .replace("$2", totalSPRefund);
+        window.showConfirm(simpleWarning, performRefund);
+    }
+};
+
+window.currentCompendiumTab = 'enemies';
+
+window.openCompendium = function() {
+    document.getElementById('compendium-modal').classList.remove('hidden');
+    switchCompendiumTab('enemies');
+};
+
+window.switchCompendiumTab = function(tabId) {
+    window.currentCompendiumTab = tabId;
+    
+    // Tab butonlarını görsel olarak güncelle
+    document.querySelectorAll('#compendium-modal .tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabId));
+    });
+
+    renderCompendiumList();
+};
+
+window.renderCompendiumList = function() {
+    const list = document.getElementById('compendium-list');
+    const lang = window.getCombatLang();
+    const data = StatsManager.currentRun;
+    list.innerHTML = '';
+
+    if (currentCompendiumTab === 'enemies') {
+        // Kabilelere göre grupla
+        const tribes = ["Greenskins", "Humans", "B&M", "Plants", "Undead", "Dragonkind", "Magical Creatures"];
+        tribes.forEach(tribe => {
+            const tribeEnemies = data.seenEnemies.filter(e => ENEMY_STATS[e.name].tribe === tribe);
+            if (tribeEnemies.length > 0) {
+                const groupTitle = document.createElement('h3');
+                groupTitle.className = 'compendium-group-title';
+                groupTitle.textContent = lang.enemy_names[tribe] || tribe;
+                list.appendChild(groupTitle);
+
+                tribeEnemies.forEach(e => {
+                    const card = document.createElement('div');
+                    card.className = 'skill-book-item compendium-card';
+                    // --- TIER VE VARYASYON ETİKETİ HESAPLAMA ---
+                    let variantLabel = `T${e.tier}`;
+                    if (e.isBoss) {
+					// --- BOSS ÖZEL ETİKETİ ---
+					const diffPercent = Math.round((e.bossScaling - 1) * 100);
+					const sign = diffPercent >= 0 ? "+" : "";
+					variantLabel = `<span style="color:#ffd700;">BOSS</span> <span style="color:${diffPercent >= 0 ? '#ff4d4d' : '#43FF64'}">${sign}${diffPercent}%</span>`;
+				} else {
+					if (e.isHalfTier) variantLabel += ".5";
+					if (e.isHard) variantLabel += " <span style='color:#ff4d4d'>+20%</span>";
+					if (e.isWeak) variantLabel += " <span style='color:#43FF64'>-20%</span>";
+				}
+                    // -------------------------------------------
+
+                    card.innerHTML = `
+                        <div class="comp-img-box"><img src="images/${e.idle}"></div>
+                        <div class="skill-info" style="flex-grow:1;">
+                            <h4>${lang.enemy_names[e.name] || e.name} <small style="color:#aaa;">(${variantLabel})</small></h4>
+                            <div class="comp-stats-grid" style="color:#43FF64;">
+                                <span>❤️ HP: ${e.hp}</span>
+                                <span>⚔️ ATK: ${e.atk}</span>
+                                <span>🛡️ DEF: ${e.def}</span>
+                            </div>
+                        </div>`;
+                    list.appendChild(card);
+                });
+            }
+        });
+    } 
+    else if (currentCompendiumTab === 'items') {
+        if (!data.seenItems || data.seenItems.length === 0) {
+            list.innerHTML = `<p style="color:#777; text-align:center; padding:20px;">${lang.items_empty}</p>`;
+        } else {
+            data.seenItems.forEach(item => {
+                if (!item || !item.stats && !item.effects && !item.bonuses) return; 
+
+                const card = document.createElement('div');
+                card.className = 'skill-book-item compendium-item-card';
+                
+                let detailsHtml = "";
+
+                // 1. ZIRH (DEFANS)
+                if (item.implicitDef > 0) {
+                    detailsHtml += `<div style="color:#3498db; font-size:0.7rem;">🛡️ DEF: +${item.implicitDef}</div>`;
+                }
+
+                // 2. STANDART STATLAR
+                if (item.stats) {
+                    Object.entries(item.stats).forEach(([sKey, val]) => {
+                        if (val > 0) detailsHtml += `<div style="font-size:0.7rem;">${window.getStatDisplayName(sKey)}: +${val}</div>`;
+                    });
+                }
+
+                // 3. BROŞ EFEKTLERİ VE FREKANS
+                if (item.effects) {
+                    item.effects.forEach(eff => {
+                        let effectName = lang.items['eff_' + eff.id] || eff.id;
+                        let displayVal = (eff.value < 1 && eff.value > 0) ? `%${Math.round(eff.value * 100)}` : `+${eff.value}`;
+                        detailsHtml += `<div style="color:#df9cff; font-size:0.7rem;">✨ ${effectName}: ${displayVal}</div>`;
+                    });
+                    // BROŞ COOLDOWN (FREKANS)
+                    if (item.frequency) {
+                        const freqText = (lang.items.brooch_freq || "Her $1 Turda").replace("$1", item.frequency);
+                        detailsHtml += `<div style="color:#3498db; font-size:0.65rem; width:100%; margin-top:2px;">⌛ ${freqText}</div>`;
+                    }
+                }
+
+                // 4. TILSIM BONUSLARI (HASAR VE SAVUNMA)
+                if (item.bonuses) {
+                    item.bonuses.forEach(b => {
+                        if (b.type === 'elemDmg') {
+                            detailsHtml += `<div style="color:#f0e68c; font-size:0.7rem;">🔥 ${lang.items.eff_elemDmg}: +${b.value}</div>`;
+                        } else if (b.type === 'tribe_mod') {
+                            detailsHtml += `<div style="color:#ff4d4d; font-size:0.7rem;">⚔️ ${lang.items.eff_skill_dmg}: +${b.skillDmg}</div>`;
+                            // --- EKLE: TILSIM SAVUNMA BONUSU ---
+                            if (b.defense > 0) {
+                                detailsHtml += `<div style="color:#3498db; font-size:0.7rem;">🛡️ ${lang.items.eff_tribe_def}: +${b.defense}</div>`;
+                            }
+                        }
+                    });
+                }
+
+                // TIER BADGE'İ GÖRSELİN ÜSTÜNE EKLEDİK
+                card.innerHTML = `
+                    <div class="comp-img-box">
+                        <img src="items/images/${item.icon}">
+                        <span class="item-tier-badge badge-${item.tier}">T${item.tier}</span>
+                    </div>
+                    <div class="skill-info" style="flex-grow:1;">
+                        <h4 class="tier-${item.tier}">${lang.items[item.nameKey] || item.nameKey}</h4>
+                        <div class="comp-item-stats-grid" style="display:flex; flex-wrap:wrap; gap:8px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">
+                            ${detailsHtml}
+                        </div>
+                    </div>`;
+                list.appendChild(card);
+            });
+        }
+    }
+    else if (currentCompendiumTab === 'events') {
+        // En yeni seçimler en üstte görünsün diye ters çeviriyoruz
+        [...data.seenEvents].reverse().forEach(entry => {
+            const eventData = lang.events[entry.id];
+            if (!eventData) return;
+
+            const card = document.createElement('div');
+            card.className = 'skill-book-item compendium-event-card';
+            
+            let resultHtml = "";
+            const res = entry.result;
+
+            if (res && res.type !== 'nothing') {
+                // 1. EŞYA KAZANIMI (Büyük İkonlu Özel Kutu)
+                if (res.type === 'item') {
+                    const item = res.value;
+                    const itemName = lang.items[item.nameKey] || item.nameKey;
+                    resultHtml = `
+                        <div class="comp-event-item-display">
+                            <img src="items/images/${item.icon}">
+                            <div class="comp-event-item-info">
+                                <span style="color:#43FF64; font-size:0.65rem; text-transform:uppercase;">🎁 ${lang.items.gained}</span>
+                                <span class="comp-event-item-name">${itemName}</span>
+                                <span class="tier-${item.tier}" style="font-size:0.75rem;">${lang.items.tier_label} ${item.tier}</span>
+                            </div>
+                        </div>`;
+                }
+                // 2. HASAR ALINDIĞINDA
+                else if (res.type === 'damage') {
+                    resultHtml = `<div style="color:#ff4d4d; font-size:0.85rem; margin-top:10px; font-weight:bold;">💔 ${lang.items.lost}: ${res.value} HP</div>`;
+                }
+                // 3. ALTIN KAZANILDIĞINDA
+                else if (res.type === 'gold') {
+                    resultHtml = `<div style="color:#ffd700; font-size:0.85rem; margin-top:10px; font-weight:bold;">💰 ${lang.items.gained}: ${res.value} ${lang.gold_text}</div>`;
+                }
+                // 4. TECRÜBE (XP) KAZANILDIĞINDA
+                else if (res.type === 'xp') {
+                    resultHtml = `<div style="color:#9b59b6; font-size:0.85rem; margin-top:10px; font-weight:bold;">✨ ${lang.items.gained}: ${res.value} XP</div>`;
+                }
+                // 5. BUFF/ETKİ UYGULANDIĞINDA (Dil Dosyasından Çekilen Dinamik Metin)
+                else if (res.type === 'buff') {
+                    const eData = lang.events[entry.id];
+                    if (eData && entry.optKey) {
+                        const buffTxt = eData[entry.optKey + "_b"] || "";
+                        const debuffTxt = eData[entry.optKey + "_d"] || "";
+                        const fullDesc = (buffTxt && debuffTxt) ? `${buffTxt} / ${debuffTxt}` : (buffTxt || debuffTxt);
+                        resultHtml = `<div style="color:#3498db; font-size:0.85rem; margin-top:10px; font-style:italic;">📜 ${fullDesc}</div>`;
+                    } else {
+                        resultHtml = `<div style="color:#3498db; font-size:0.85rem; margin-top:10px;">📜 ${lang.items.applied_effect}</div>`;
+                    }
+                }
+                // 6. ŞİFA VEYA KAYNAK (Rage/Mana) KAZANIMI
+                else if (res.type === 'heal' || res.type === 'rage') {
+                    const displayVal = (typeof res.value === 'number') ? `+${res.value}` : res.value;
+                    const color = (res.type === 'heal') ? "#43FF64" : "#ffd700";
+                    
+                    // Kaynak ismini dile göre belirle (Öfke/Mana)
+                    let label = "HP";
+                    if (res.type === 'rage') {
+                        const resKey = CLASS_CONFIG[hero.class].resourceName;
+                        label = lang[`resource_${resKey}`];
+                    }
+
+                    resultHtml = `<div style="color:${color}; font-size:0.85rem; margin-top:10px; font-weight:bold;">✨ ${lang.items.gained}: ${displayVal} ${label}</div>`;
+                }
+            }
+
+            card.innerHTML = `
+                <div class="skill-info" style="width:100%;">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid rgba(240,230,140,0.2); padding-bottom:5px;">
+                        <h4 style="color:#f0e68c; margin:0;">${eventData.title}</h4>
+                    </div>
+                    <p style="font-size:0.75rem; color:#aaa; margin:8px 0 0 0;">
+                        <i class="fas fa-hand-pointer" style="color:#a89373; font-size:0.6rem;"></i> 
+                        <b style="color:#a89373;">${lang.compendium_choice_made}:</b> ${entry.choice}
+                    </p>
+                    ${resultHtml}
+                </div>`;
+            list.appendChild(card);
+        });
     }
 };
 
