@@ -190,6 +190,13 @@ window.LANG_EN = {
         city_arena: "ARENA",
         city_market: "GRAND MARKET",
         start_act2: "SAIL TO ACT 2",
+		confirm_act2: "Are you sure you want to sail to Act 2? The map will reset and enemies will grow stronger!",
+		confirm_next_act: "Are you sure you want to sail to the next act?",
+		city_district_main: "THE GOLDEN PLAZA",
+		city_district_craft: "CRAFTING ALLEY",
+		city_district_legends: "LEGENDS' REST",
+		city_chronicler: "THE CHRONICLER",
+		items_empty: "You didn't equipped any items yet.",
 		city_veteran: "FORLORN VETERAN",
 		veteran_master_title: "THE VETERAN MASTER",
 		veteran_master_hello: "Your blade and mind look weary, child. Do you wish to rewrite your past choices?",
@@ -199,6 +206,8 @@ window.LANG_EN = {
 		veteran_select_title: "Select New Skill",
 		veteran_empty: "You haven't learned any skills yet.",
 		veteran_slot_warning: "⚠️WARNING: Removing this skill will reduce your capacity. Items in the last slots (if any) might be lost or moved. Are you sure?",
+		veteran_tree_warning: "⚠️CHAIN EFFECT: If you forget this skill, you will also lose all higher-tier skills ($1) in this branch. <b style='color:#ff4d4d'>Total Cost: $2 Gold.</b> Points Refund: $3 SP. \n\nYou can use 'Swap' if you only want to change this specific tier. Proceed?",
+		veteran_forget_simple_warning: "Are you sure you want to forget this skill? <br><span style='color:#ff4d4d'>Cost: $1 Gold. Refund: $2 Skill Points.</span>",
 		
 
         // Inventory & Settings
@@ -230,6 +239,13 @@ window.LANG_EN = {
 		log_enter_town: "🏰 Entered the village.",
 		log_leave_town: "Left the village.",
 		log_days_passed: "📅 **Time**: $1 days have passed on your journey.",
+		
+		//Compendium
+		compendium_title: "RECORDS OF THE REALM",
+		compendium_tab_enemies: "ENEMIES",
+		compendium_tab_items: "GEAR",
+		compendium_tab_events: "EVENTS",
+		compendium_choice_made: "Path Chosen",
 		
 
         // NPC Dialogues
@@ -585,7 +601,8 @@ window.LANG_EN = {
 			log_room_event_storm: "⛈️ Enemy is getting stronger",
 			log_skill_swapped: "🔄 **Master**: $1 swapped for $2.",
 			log_skill_forgotten: "🧹 **Master**: $1 was forgotten, gained $2 gold.",
-			log_skill_refunded: "🧹 **Master**: $1 forgotten. Spent $2 Gold, $3 Skill Points refunded.",			
+			log_skill_refunded: "🧹 **Master**: $1 forgotten. Spent $2 Gold, $3 Skill Points refunded.",
+			log_skill_chain_refunded: "🧹 **Master**: All skills in the $1 branch were cleared. Spent $2 Gold, $3 Skill Points refunded.",			
         },
 		
 		room_events: {
@@ -878,6 +895,10 @@ window.LANG_EN = {
 	scavenge_success_text: "You pulled a valuable piece from the ruins!",
 	scavenge_fail_text: "The ceiling collapsed! You took $1 damage while escaping.",
 	brooches_label: "EQUIPPED BROOCHES & CHARMS",
+	gained: "Gained",
+	lost: "Lost",
+	applied_effect: "Effect Applied",
+	nothing_happened: "Nothing happened",
 	
 	// Set Items
 	set_piece_label: "SET PIECE",

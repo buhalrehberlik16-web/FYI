@@ -187,6 +187,13 @@ window.LANG_TR = {
         city_arena: "ARENA",
         city_market: "BÜYÜK PAZAR",
         start_act2: "2. PERDEYE YELKEN AÇ",
+		confirm_act2: "2. Perdeye geçmek istediğine emin misin? Harita sıfırlanacak ve düşmanlar güçlenecek!",
+		confirm_next_act: "Bir sonraki perdeye yelken açmak istediğine emin misin?",
+		city_district_main: "ALTIN MEYDAN",
+		city_district_craft: "ZANAATKARLAR ÇIKMAZI",
+		city_district_legends: "EFSANELER MEYDANI",
+		city_chronicler: "TARİHÇİ",
+		items_empty: "Herhangi bir takı kuşanılmamış",
 		city_veteran: "GAZİ ÜSTAD",
 		veteran_master_title: "GAZİ ÜSTAD",
 		veteran_master_hello: "Kılıcın ve zihnin yorulmuş görünüyor evlat. Geçmişteki seçimlerini değiştirmek mi istiyorsun?",
@@ -196,6 +203,8 @@ window.LANG_TR = {
 		veteran_select_title: "Yeni Yeteneğini Seç",
 		veteran_empty: "Henüz bir yetenek öğrenmemişsin.",
 		veteran_slot_warning: "⚠️DİKKAT: Bu yeteneği değiştirmek kapasiteni azaltacak. Son slotlardaki eşyalar (varsa) silinebilir veya yer değiştirebilir. Devam etmek istediğine emin misin?",
+		veteran_tree_warning: "⚠️ZİNCİRLEME ETKİ: Bu yeteneği unutursan, bu daldaki tüm üst seviye yeteneklerini de ($1) kaybedeceksin.<span style='color:#ff4d4d'>Toplam Bedel: $2 Altın. Puan İadesi: $3 YP.</span> \n\nSadece bu yeteneği değiştirmek istersen 'Değiştir' seçeneğini kullanabilirsin. Devam edilsin mi?",
+		veteran_forget_simple_warning: "Bu yeteneği unutmak istediğine emin misin? <br><span style='color:#ff4d4d'>Bedel: $1 Altın. İade: $2 Yetenek Puanı.</span>",
 		
 		//BIOMES
 		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Şehir Yıkıntıları", biome_plains: "Ova",
@@ -230,7 +239,12 @@ window.LANG_TR = {
 		log_leave_town: "Köyden ayrıldın.",
 		log_days_passed: "📅 **Zaman**: Maceranda $1 gün geride kaldı.",
 		
-
+		//Compendium
+		compendium_title: "DİYAR KAYITLARI",
+		compendium_tab_enemies: "DÜŞMANLAR",
+		compendium_tab_items: "EKİPMAN",
+		compendium_tab_events: "OLAYLAR",
+		compendium_choice_made: "Seçilen Yol",
 
         // NPC Dialogları
         innkeeper_title: "HANCI",
@@ -588,6 +602,7 @@ window.LANG_TR = {
 			log_skill_swapped: "🔄 **Üstad**: $1 yeteneği, $2 ile değiştirildi.",
 			log_skill_forgotten: "🧹 **Üstad**: $1 yeteneği unutuldu, $2 altın kazanıldı.",
 			log_skill_refunded: "🧹 **Üstad**: $1 yeteneği unutuldu. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
+			log_skill_chain_refunded: "🧹 **Üstad**: $1 dalındaki tüm yetenekler temizlendi. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
         },
 		
 		room_events: {
@@ -881,6 +896,10 @@ window.LANG_TR = {
 	scavenge_success_text: "Yıkıntıların arasından değerli bir parça çıkardın!",
 	scavenge_fail_text: "Tavan çöktü! Enkazdan kaçarken $1 hasar aldın.",
 	brooches_label: "TAKILI BROŞLAR & TILSIMLAR",
+	gained: "Kazanıldı",
+	lost: "Kaybedildi",
+	applied_effect: "Etki Uygulandı",
+	nothing_happened: "Bir şey olmadı",
 	
 	
 	// SET Görüntü İsimleri
