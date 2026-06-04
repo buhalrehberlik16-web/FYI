@@ -172,12 +172,18 @@
 /* #city-veteran { top: 45%; left: 80%; } /* Şehrin sağ tarafında sakin bir yer */
 
 /* Bina Konumları (Sub-Screen bazlı) */
-#city-blacksmith { top: 40%; left: 20%; }
-#city-alchemist { top: 35%; left: 50%; }
-#city-grand-merchant { top: 60%; left: 80%; }
+#city-blacksmith { top: 15%; left: 28%; }
+#city-alchemist { top: 17%; left: 79%; }
+#city-grand-merchant { top: 37%; left: 48%; }
 
-#city-veteran-master { top: 40%; left: 30%; }
-#city-chronicler { top: 50%; left: 70%; }
+#city-grand-merchant .city-label-text { transform: translate(-50%, -50%) rotate(0deg); font-size: 0.5em; }
+#city-alchemist .city-label-text { transform: translate(-50%, -50%) rotate(2deg); }
+#city-blacksmith .city-label-text { transform: translate(-50%, -50%) rotate(-3deg); }
+#city-chronicler .city-label-text { transform: translate(-50%, -50%) rotate(-5deg);  }
+#city-veteran-master .city-label-text { transform: translate(-50%, -50%) rotate(3deg); }
+
+#city-veteran-master { top: 40%; left: 32.3%; }
+#city-chronicler { top: 48%; left: 71.4%; }
 
 .city-sub-screen {
     position: absolute;
