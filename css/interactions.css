@@ -59,9 +59,16 @@
 }
 .town-building:hover .town-label-text, 
 .city-building:hover .city-label-text {
-    color: #ffd700; /* Altın rengine dön */
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 2px 2px 0 #000;
-    transform: translate(-50%, -50%) scale(1.15); /* Hafif büyüme */
+    /* SİLİNEN: background: #ffd700; (Siyah kutuyu oluşturan buydu) */
+    /* SİLİNEN: color: #000; (Yazıyı siyaha çeviriyordu) */
+
+    background: rgba(0, 0, 0, 0.7); /* Orijinal şeffaf siyah arka planı koru */
+    color: #ffd700; /* Sadece yazı rengini altın sarısı yap */
+    
+    transform: translate(-50%, -50%) scale(1.1); /* Hafif büyüme kalsın */
+    
+    /* Çirkin siyah gölge yerine sadece altın bir parlama (glow) verelim */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); 
 }
 
 /* TOWN KOORDİNATLARI (Orijinal Açı ve Yerleşim) */
@@ -157,19 +164,55 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-.city-building:hover .city-label-text {
-    background: #ffd700;
-    color: #000;
-    transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 20px #ffd700;
-}
-
 /* Şehir Bina Yerleşimleri */
 #city-palace { top: 20%; left: 63%; }
 #city-vault  { top: 60%; left: 25%; }
 #city-arena  { top: 65%; right: 25%; }
-#city-market { top: 75%; left: 50%; }
-#city-veteran { top: 45%; left: 80%; } /* Şehrin sağ tarafında sakin bir yer */
+/*#city-market { top: 75%; left: 50%; }
+/* #city-veteran { top: 45%; left: 80%; } /* Şehrin sağ tarafında sakin bir yer */
+
+/* Bina Konumları (Sub-Screen bazlı) */
+#city-blacksmith { top: 40%; left: 20%; }
+#city-alchemist { top: 35%; left: 50%; }
+#city-grand-merchant { top: 60%; left: 80%; }
+
+#city-veteran-master { top: 40%; left: 30%; }
+#city-chronicler { top: 50%; left: 70%; }
+
+.city-sub-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0; left: 0;
+}
+
+/* OKLARIN TASARIMI */
+.city-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    color: #ffd700;
+    padding: 20px 10px;
+    cursor: pointer;
+    z-index: 200;
+    border: 1px solid #6b5c3b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+.city-nav-arrow.left { left: 0; border-radius: 0 15px 15px 0; }
+.city-nav-arrow.right { right: 0; border-radius: 15px 0 0 15px; }
+.city-nav-arrow:hover { background: #3e2723; color: #fff; padding: 20px 20px; }
+
+.district-hint {
+    font-size: 0.6rem;
+    writing-mode: vertical-rl; /* Yazıyı dikey yapar, çok havalı durur */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
 
 /* ============================================================
    2. GEÇİŞ BUTONU (NEXT ACT)
@@ -982,6 +1025,97 @@
 .trade-preview-slot:hover {
     opacity: 1;
     border-color: #ffd700 !important;
+}
+
+.compendium-group-title {
+    color: #ffd700;
+    font-size: 0.9rem;
+    margin: 15px 0 10px 10px;
+    border-left: 3px solid #ffd700;
+    padding-left: 10px;
+}
+
+.compendium-card {
+    background: linear-gradient(90deg, rgba(30,30,30,0.9), transparent) !important;
+}
+
+.comp-img-box {
+    width: 60px; height: 60px;
+    background: #000; border: 1px solid #444;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.comp-img-box img { max-width: 100%; max-height: 100%; }
+
+.comp-item-stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    color: #43FF64; /* Özellikler yeşil tonlarda olsun */
+    opacity: 0.9;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 5px;
+}
+
+.compendium-item-card h4 {
+    margin-bottom: 2px !important;
+}
+.compendium-window .close-btn {
+    left: auto !important;
+    right: 15px !important;
+    top: 15px !important;
+    position: absolute !important;
+    display: flex !important;
+}
+
+.comp-img-box {
+    position: relative; /* Badge'in yapışması için şart */
+    width: 65px; height: 65px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid #444;
+    display: flex; justify-content: center; align-items: center;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.comp-img-box .item-tier-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 0.6rem;
+    padding: 1px 3px;
+    border-radius: 2px 0 3px 0;
+}
+.comp-event-item-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #43FF64;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+}
+
+.comp-event-item-display img {
+    width: 54px !important; /* İkonu büyüttük */
+    height: 54px !important;
+    border: 2px solid #6b5c3b;
+    border-radius: 6px;
+    background: #000;
+}
+
+.comp-event-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.comp-event-item-name {
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9rem;
 }
 
 
