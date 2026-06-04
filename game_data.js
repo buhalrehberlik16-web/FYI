@@ -124,9 +124,10 @@ const EVENT_POOL = [
             action: (hero) => {
                 hero.statusEffects.push({ id: 'atk_up', name: 'Öfke', turns: 3, value: 5, waitForCombat: true, resetOnCombatEnd: true });
                 hero.statusEffects.push({ id: 'block_type', name: 'İyileşme Kilitli', turns: 3, blockedType: 'defense', waitForCombat: true, resetOnCombatEnd: true });
+                return { type: 'buff', value: 'Berserk' }; // <--- SONUÇ KAYDI
             }
         },
-        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+XP</span>", debuff: "", action: (hero) => { gainXP(1); } }
+        option2: { text: "Dök (Güvenli)", buff: "<span class='buff'>+XP</span>", debuff: "", action: (hero) => { gainXP(1); return { type: 'xp', value: 1 }; } }
     },
     {
         id: "stone_skin", type: "turn_based", title: "Taşlaşma Büyüsü", desc: "Eski bir parşömen.",
@@ -137,6 +138,7 @@ const EVENT_POOL = [
             action: (hero) => {
                 hero.statusEffects.push({ id: 'def_up', name: 'Taş Deri', turns: 5, value: 10, waitForCombat: true });
                 hero.statusEffects.push({ id: 'atk_half', name: 'Hantal', turns: 5, waitForCombat: true }); 
+                return { type: 'buff', value: 'Stone Skin' }; // <--- SONUÇ KAYDI
             }
         },
         option2: { 
@@ -145,13 +147,14 @@ const EVENT_POOL = [
             action: (hero) => { 
                 const stats = getHeroEffectiveStats();
                 hero.rage = Math.min(stats.maxRage, hero.rage + 5); 
+                return { type: 'rage', value: 5 }; // <--- SONUÇ KAYDI
             } 
         }
     },
     {
         id: "cursed_gold", type: "node_based", title: "Yorgunluk Laneti", desc: "Lanetli olduğu belli olan bir altın yığını.",
-        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+2 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(2); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); } },
-        option2: { text: "Uzaklaş", action: (hero) => { } }
+        option1: { text: "Altınları Al", buff: "Anında: <span class='buff'>+2 XP</span>", debuff: "2 Oda: <span class='debuff'>%60 Hasar</span>", action: (hero) => { gainXP(2); hero.mapEffects.push({ id: 'map_atk_weak', name: 'Yorgunluk', nodesLeft: 2, value: 0.6 }); return { type: 'xp', value: 2 }; } },
+        option2: { text: "Uzaklaş", action: (hero) => { return { type: 'nothing' }; } }
     },
     {
         id: "adrenaline", type: "node_based", title: "Adrenalin Meyvesi", desc: "Çok nadir bir meyve.",
@@ -160,9 +163,9 @@ const EVENT_POOL = [
             buff: "2 Oda: <span class='buff'>+20 Max HP</span>", 
             debuff: "Etki Bitince: <span class='debuff'>-30 Can Kaybı</span>", 
             action: (hero) => {
-                // Not: maxHp harita etkilerinde geçici artar, hero.hp'yi de artırıyoruz
                 hero.hp += 20; 
                 hero.mapEffects.push({ id: 'map_hp_boost', name: 'Adrenalin', nodesLeft: 2, val: 20 }); 
+                return { type: 'buff', value: 'Adrenaline' }; // <--- SONUÇ KAYDI
             } 
         },
         option2: { 
@@ -171,23 +174,24 @@ const EVENT_POOL = [
             action: (hero) => {
                 const stats = getHeroEffectiveStats();
                 hero.hp = Math.min(stats.maxHp, hero.hp + 10); 
+                return { type: 'heal', value: 10 }; // <--- SONUÇ KAYDI
             } 
         }
     },
     {
         id: "blood_pact_str", type: "permanent",
-        option1: { action: (hero) => { hero.str += 3; hero.hp = Math.floor(hero.hp / 2); } },
-        option2: { action: () => {} }
+        option1: { action: (hero) => { hero.str += 3; hero.hp = Math.floor(hero.hp / 2); return { type: 'stat', value: 3 }; } },
+        option2: { action: () => { return { type: 'nothing' }; } }
     },
     {
         id: "blood_pact_int", type: "permanent",
-        option1: { action: (hero) => { hero.int += 3; hero.hp = Math.floor(hero.hp / 2); } },
-        option2: { action: () => {} }
+        option1: { action: (hero) => { hero.int += 3; hero.hp = Math.floor(hero.hp / 2); return { type: 'stat', value: 3 }; } },
+        option2: { action: () => { return { type: 'nothing' }; } }
     },
     {
         id: "blood_pact_mp", type: "permanent",
-        option1: { action: (hero) => { hero.mp_pow += 3; hero.hp = Math.floor(hero.hp / 2); } },
-        option2: { action: () => {} }
+        option1: { action: (hero) => { hero.mp_pow += 3; hero.hp = Math.floor(hero.hp / 2); return { type: 'stat', value: 3 }; } },
+        option2: { action: () => { return { type: 'nothing' }; } }
     },
     {
         id: "gambler", type: "permanent", title: "Kumarbazın Ruhu", desc: "Önünde iki kadeh var.",
@@ -196,18 +200,21 @@ const EVENT_POOL = [
             buff: "%50: <span class='buff'>Canı Fulle</span>", 
             debuff: "%50: <span class='debuff'>Canı 1'e İndir</span>", 
             action: (hero) => { 
-                const stats = getHeroEffectiveStats(); // stats tanımlandı
+                const stats = getHeroEffectiveStats();
                 if (Math.random() > 0.5) { 
                     hero.hp = stats.maxHp; 
                     writeLog("Şanslısın! Canın fullendi."); 
+                    return { type: 'heal', value: 'Full' }; // <--- KAZANÇ KAYDI
                 } 
                 else { 
+                    const lost = hero.hp - 1;
                     hero.hp = 1; 
                     writeLog("Zehir! Canın 1'e düştü."); 
+                    return { type: 'damage', value: lost }; // <--- KAYIP KAYDI
                 } 
             } 
         },
-        option2: { text: "Masadan Kalk", action: (hero) => {} }
+        option2: { text: "Masadan Kalk", action: (hero) => { return { type: 'nothing' }; } }
     },
     {
         id: "random_campfire", 
@@ -221,6 +228,7 @@ const EVENT_POOL = [
                 const stats = getHeroEffectiveStats();
                 hero.hp = Math.min(stats.maxHp, hero.hp + 25); 
                 writeLog(`🔥 Ateş başında dinlendin (+25 HP).`);
+                return { type: 'heal', value: 25 }; // <--- SONUÇ KAYDI
             } 
         },
         option2: { 
@@ -229,14 +237,15 @@ const EVENT_POOL = [
             action: (hero) => { 
                 gainXP(3); 
                 writeLog(`⚔️ Ateş ışığında gölge dövüşü yaptın (+3 XP).`);
+                return { type: 'xp', value: 3 }; // <--- SONUÇ KAYDI
             } 
         }
     },
 
     {
         id: "traveling_merchant", type: "neutral", 
-        option1: { text: "Look", action: () => { window.openSmallMerchant(); } },
-        option2: { text: "Leave", action: () => {} }
+        option1: { text: "Look", action: () => { window.openSmallMerchant(); return { type: 'shop' }; } },
+        option2: { text: "Leave", action: () => { return { type: 'nothing' }; } }
     },
     {
         id: "caravan_rest", type: "node_based",
@@ -246,9 +255,10 @@ const EVENT_POOL = [
                 hero.exhaustion = Math.max(0, hero.exhaustion - 36);
                 window.CalendarManager.passDay(); 
                 writeLog("🔥 Kervanla bir gece geçirdin ve dinlendin.");
+                return { type: 'buff', value: 'Restored' }; // <--- SONUÇ KAYDI
             } 
         },
-        option2: { text: "Move", action: (hero) => { hero.gold += 5; updateGoldUI(); } }
+        option2: { text: "Move", action: (hero) => { hero.gold += 5; updateGoldUI(); return { type: 'gold', value: 5 }; } }
     },
     {
         id: "scavenge_ruins", type: "permanent",
@@ -261,14 +271,10 @@ const EVENT_POOL = [
                     if (lootTier < 1) lootTier = 1;
                     const item = generateRandomItem(lootTier);
                     addItemToInventory(item);
-                    
-                    // --- YENİ: UI'a yakalaması için obje döndür ---
                     return { type: 'item', value: item };
                 } else {
                     const dmg = 15;
                     hero.hp = Math.max(1, hero.hp - dmg);
-                    
-                    // --- YENİ: UI'a yakalaması için obje döndür ---
                     return { type: 'damage', value: dmg };
                 }
             } 
@@ -280,27 +286,26 @@ const EVENT_POOL = [
         option1: { 
             text: "Rescue", 
             action: (hero) => { 
-                hero.eventBonusGold = 10; // Savaş sonu için bayrak as
-                // Tier 1 havuzundan rastgele bir canavar çağır
+                hero.eventBonusGold = 10; 
                 const t1Pool = window.TIER_ENEMIES[1];
                 const enemy = t1Pool[Math.floor(Math.random() * t1Pool.length)];
                 startBattle(enemy); 
+                return { type: 'battle', value: enemy }; // <--- SAVAŞ KAYDI
             } 
         },
-        option2: { text: "Ignore", action: () => {} }
+        option2: { text: "Ignore", action: () => { return { type: 'nothing' }; } }
     },
 	{
         id: "brooch_peddler", 
         type: "neutral", 
         option1: { 
             text: "Look", 
-            action: () => { window.openBroochMerchant(); } 
+            action: () => { window.openBroochMerchant(); return { type: 'shop' }; } 
         },
         option2: { 
             text: "Leave", 
-            action: () => {} 
+            action: () => { return { type: 'nothing' }; } 
         }
-    },
-
+    }
 ];
 

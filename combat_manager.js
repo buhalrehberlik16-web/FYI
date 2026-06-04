@@ -994,6 +994,7 @@ window.determineMonsterAction = function() {
 
 window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum, roomEventFromMap = "none") {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
+	//StatsManager.trackEnemy(enemyType);
 	const lang = window.getCombatLang(); 
 	window.lastExhaustionThreshold = Math.floor(hero.exhaustion / 10) * 10;
 	
@@ -1059,6 +1060,12 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     }
     }
 	
+	if (stats.isBoss) {
+    window.currentBossScaling = window.EventManager.getModifier('boss_scaling');
+	} else {
+    window.currentBossScaling = 1.0;
+	}
+	
 	// --- DATA-DRIVEN TIER & HARD SCALE AYARI ---
     const HALF_TIER_SCALE = 1.5; // Yarım Tier (Elite) çarpanı
     const HARD_SCALE = 1.20;      // isHard (Strong) çarpanı
@@ -1118,6 +1125,10 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         statusEffects: [], 
 		
 	};
+	
+	// --- GÜNCELLEME: Canavarı tüm statlarıyla Compendium'a gönder ---
+    StatsManager.trackEnemy(monster); 
+    // ---------------------------------------------------------------
 	
 	monster.roomEvent = roomEventFromMap; // Haritadan gelen eventi canavara çivile
 	

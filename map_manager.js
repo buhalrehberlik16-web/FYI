@@ -713,7 +713,16 @@ window.enterCity = function() {
         window.CalendarManager.updateTownUI();
     }
     // ----------------------------------------------
+	 // --- YENİ: ŞEHİR BÖLGESİNİ SIFIRLA ---
+    window.currentCityDistrict = 0; // Her zaman 'Altın Meydan'dan başlasın
+    // -------------------------------------
     switchScreen(window.cityScreen);
+	// --- YENİ: GÖRSEL BÖLGEYİ TETİKLE ---
+    // Bu çağrı, okları ve başlığı dile göre günceller
+    if (typeof window.changeCityDistrict === 'function') {
+        window.changeCityDistrict(0); 
+    }
+    // -------------------------------------
 	if(window.saveGame) window.saveGame();
 	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     writeLog(lang.desc_city);
@@ -846,64 +855,53 @@ function createCloudParticles(parentEl) {
 }
 
 window.startNextAct = function() {
-    // 1. Dil Desteğini Alalım (Çeviri için)
-    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+    const lang = window.getCombatLang();
     
-    // 2. Onay Al (Birinci versiyondaki gibi, kazara basılmayı önler)
-    // confirm içindeki mesajı da dilden çekebiliriz veya şimdilik böyle kalabilir
-    const confirmMsg = hero.currentAct === 1 ? 
-        (window.gameSettings.lang === 'tr' ? "2. Perdeye geçmek istediğine emin misin? Harita yenilenecek!" : "Are you sure you want to sail to Act 2? The map will be reset!") :
-        (window.gameSettings.lang === 'tr' ? "Sonraki perdeye geçilsin mi?" : "Proceed to next act?");
+    // Mesajı belirle (1. Perdede ise özel mesaj, değilse genel mesaj)
+    const confirmMsg = hero.currentAct === 1 ? lang.confirm_act2 : lang.confirm_next_act;
 
-    if (!confirm(confirmMsg)) return;
-
-    console.log("DEBUG: startNextAct tetiklendi!");
-
-    // 3. Act Değerini Artır
-    if (!hero.currentAct) hero.currentAct = 1; 
-    hero.currentAct++;
-    console.log("DEBUG: Yeni Act:", hero.currentAct);
-
-    // 4. Kahramanı Tazele (Birinci versiyondaki ödül mantığı)
-    hero.hp = hero.maxHp;
-    hero.rage = hero.maxRage;
-
-    // 5. Harita Verilerini Sıfırla
-    window.GAME_MAP.currentNodeId = null;
-    window.GAME_MAP.completedNodes = [];
-    console.log("DEBUG: Harita verileri sıfırlandı.");
-
-    // 6. Haritayı Yeniden Üret (Düşmanlar ve görseller Act 2'ye göre seçilecek)
-    if (typeof generateMap === 'function') {
-        generateMap();
-        console.log("DEBUG: Harita yeniden üretildi.");
-    } else {
-        console.error("HATA: generateMap fonksiyonu bulunamadı!");
-    }
-
-    // 7. Ekranı Haritaya Çevir
-    if (typeof switchScreen === 'function') {
-        switchScreen(window.mapScreen); 
-        console.log("DEBUG: mapScreen'e geçiş yapıldı.");
-    } else {
-        console.error("HATA: switchScreen fonksiyonu bulunamadı!");
-    }
-
-    // 8. UI Güncelleme ve Log Yazma (Log mesajını dilden alıyoruz)
-    updateStats();
-    
-    const logMsg = window.gameSettings.lang === 'tr' ? 
-        `🚢 Perde Değişti: **${hero.currentAct}. PERDE**` : 
-        `🚢 Act Changed: **ACT ${hero.currentAct}**`;
+    // --- GÜNCELLEME: Browser confirm SİLİNDİ, Oyun içi showConfirm GELDİ ---
+    window.showConfirm(confirmMsg, () => {
+        // Bu blok sadece oyuncu 'EVET' dediğinde çalışır
         
-    writeLog(`⚔️ ${logMsg} ⚔️`);
-    
-    // 9. Haritayı başa sar
-    const mapDisp = document.getElementById('map-display');
-    if(mapDisp) mapDisp.scrollLeft = 0;
+        console.log("DEBUG: Perde geçişi onaylandı!");
 
-    // 10. OTOMATİK KAYIT (Yeni perdeye geçtiğini unutmasın)
-    if(window.saveGame) window.saveGame();
+        if (!hero.currentAct) hero.currentAct = 1; 
+        hero.currentAct++;
+
+        // Kahramanı tazele
+        hero.hp = hero.maxHp;
+        hero.rage = hero.maxRage;
+		hero.exhaustion = 0;
+
+        // Harita verilerini temizle
+        window.GAME_MAP.currentNodeId = null;
+        window.GAME_MAP.completedNodes = [];
+
+        // Yeni haritayı üret
+        if (typeof generateMap === 'function') {
+            generateMap();
+        }
+
+        // Haritaya dön
+        switchScreen(window.mapScreen); 
+        
+        // --- KRİTİK: İstatistikleri ve Yorgunluk Barını Güncelle ---
+        updateStats(); 
+        if (window.updateExhaustionUI) window.updateExhaustionUI();
+        // ----------------------------------------------------------
+        
+        // Perde değişim logu
+        const logMsg = window.gameSettings.lang === 'tr' ? 
+            `🚢 Perde Değişti: **${hero.currentAct}. PERDE**` : 
+            `🚢 Act Changed: **ACT ${hero.currentAct}**`;
+        writeLog(`⚔️ ${logMsg} ⚔️`);
+        
+        const mapDisp = document.getElementById('map-display');
+        if(mapDisp) mapDisp.scrollLeft = 0;
+
+        if(window.saveGame) window.saveGame();
+    });
 };
 
 // Haritayı fareyle tutup kaydırma (Drag to Scroll)

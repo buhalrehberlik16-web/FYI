@@ -635,33 +635,61 @@
 <div id="city-screen" class="screen hidden">
 	<div id="city-date-display" class="town-calendar-text"></div> <!-- YENİ SATIR -->
     <div class="city-container">
-        <img src="images/utils/city_bg.webp" alt="Büyük Başkent" class="city-background">
-        
-        <!-- Şehir Başlığı -->
-        <div class="city-header">
-            <h1 class="city-title" data-i18n="city_name">ALTIN BAŞKENT: ELDORIA</h1>
-            <p class="city-subtitle" data-i18n="act1_complete">1. Perde Tamamlandı</p>
+        <!-- SOL OK -->
+        <div id="btn-city-left" class="city-nav-arrow left" onclick="changeCityDistrict(-1)">
+            <i class="fas fa-chevron-left"></i>
+            <span id="city-label-left" class="district-hint"></span>
         </div>
 
-        <!-- Şehirdeki Binalar (Farklı Konumlar) -->
-        <div class="city-building" id="city-palace" onclick="openBuilding('palace')">
-            <span class="city-label-text" data-i18n="city_palace">SARAY</span>
-        </div>
-        
-        <div class="city-building" id="city-vault" onclick="toggleVault()">
-            <span class="city-label-text" data-i18n="city_bank">BANKA / KASA</span>
-        </div>
-        
-        <div class="city-building" id="city-arena" onclick="alert('Arena yakında eklenecek!')">
-            <span class="city-label-text" data-i18n="city_arena">ARENA</span>
+        <!-- SAĞ OK -->
+        <div id="btn-city-right" class="city-nav-arrow right" onclick="changeCityDistrict(1)">
+            <span id="city-label-right" class="district-hint"></span>
+            <i class="fas fa-chevron-right"></i>
         </div>
 
-        <div class="city-building" id="city-market" onclick="openBuilding('merchant')">
-            <span class="city-label-text" data-i18n="city_market">BÜYÜK PAZAR</span>
-        </div>
-		<div class="city-building" id="city-veteran" onclick="openVeteranMaster()">
-			<span class="city-label-text" data-i18n="city_veteran">GAZİ ÜSTAD</span>
+        <!-- 1. BÖLGE: ZANAATKARLAR (LEFT) -->
+        <div id="city-district-craft" class="city-sub-screen hidden">
+			<img src="images/utils/city_craft_bg.webp" class="city-background">
+    
+			<!-- DEMİRCİ -->
+			<div class="city-building" id="city-blacksmith" onclick="openBuilding('blacksmith')">
+				<span class="city-label-text" data-i18n="building_blacksmith"></span>
+			</div>
+    
+			<!-- SİMYACI -->
+			<div class="city-building" id="city-alchemist" onclick="openBuilding('alchemist')">
+				<span class="city-label-text" data-i18n="building_alchemist"></span>
+			</div>
+    
+			<!-- ULU TÜCCAR (Ahır yerine geldi) -->
+			<div class="city-building" id="city-grand-merchant" onclick="openBuilding('merchant')">
+				<span class="city-label-text" data-i18n="city_market">ULU TÜCCAR</span>
+			</div>
 		</div>
+
+        <!-- 2. BÖLGE: ANA MEYDAN (CENTER) -->
+        <div id="city-district-main" class="city-sub-screen">
+            <img src="images/utils/city_bg.webp" class="city-background">
+            <div class="city-header">
+                <h1 id="city-district-title" class="city-title">ELDORIA</h1>
+            </div>
+            <div class="city-building" id="city-palace" onclick="openBuilding('palace')">
+                <span class="city-label-text" data-i18n="city_palace"></span>
+            </div>
+            <div class="city-building" id="city-vault" onclick="toggleVault()"><span class="city-label-text" data-i18n="city_bank"></span></div>
+            <div class="city-building" id="city-arena" onclick="alert('Arena yakında!')"><span class="city-label-text" data-i18n="city_arena"></span></div>
+        </div>
+
+        <!-- 3. BÖLGE: EFSANELER (RIGHT) -->
+        <div id="city-district-legends" class="city-sub-screen hidden">
+            <img src="images/utils/city_legends_bg.webp" class="city-background">
+            <div class="city-building" id="city-veteran-master" onclick="openVeteranMaster()">
+                <span class="city-label-text" data-i18n="city_veteran"></span>
+            </div>
+            <div class="city-building" id="city-chronicler" onclick="window.openCompendium()">
+				<span class="city-label-text" data-i18n="city_chronicler">TARİHÇİ</span>
+			</div>
+        </div>
 		
 		<!-- Gazi Üstad Modalı -->
 		<div id="modal-veteran" class="npc-modal hidden" style="z-index: 6000;">
@@ -1101,6 +1129,27 @@
         <hr class="stat-separator" style="margin: 15px 0;">
         <h3 style="font-size: 1em; color: #f0e68c; margin-bottom: 10px;" data-i18n="nav_inv">Çanta</h3>
         <div id="transmute-bag-grid" class="bag-grid" style="margin: 0 auto;"></div>
+    </div>
+</div>
+<!-- Compendium Modalı -->
+<div id="compendium-modal" class="npc-modal hidden" style="z-index: 7000;">
+    <div class="skill-book-window compendium-window">
+        <div class="skill-book-header">
+            <h2 data-i18n="compendium_title">DİYAR KAYITLARI</h2>
+            <button class="close-btn" onclick="document.getElementById('compendium-modal').classList.add('hidden')" style="right: 15px; left: auto;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="skill-tabs">
+            <button class="tab-btn active" onclick="switchCompendiumTab('enemies')"><i class="fas fa-skull"></i> <span data-i18n="compendium_tab_enemies"></span></button>
+            <button class="tab-btn" onclick="switchCompendiumTab('items')"><i class="fas fa-ring"></i> <span data-i18n="compendium_tab_items"></span></button>
+            <button class="tab-btn" onclick="switchCompendiumTab('events')"><i class="fas fa-scroll"></i> <span data-i18n="compendium_tab_events"></span></button>
+        </div>
+
+        <div id="compendium-list" class="skill-list-container">
+            <!-- İçerik JS ile buraya dolacak -->
+        </div>
     </div>
 </div>
 <!-- Eldoria Ansiklopedisi (Codex) Modalı -->

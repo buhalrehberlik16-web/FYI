@@ -18,6 +18,7 @@ window.saveGame = function() {
 			
             hero: window.hero,
             GAME_MAP: window.GAME_MAP,
+			compendiumData: window.StatsManager.currentRun,
             saveDate: new Date().toISOString(),
             version: "0.0.5", // Oyun versiyonun
 			isInsideTown: isTownVisible, // Artık daha garantili
@@ -47,6 +48,7 @@ window.loadGame = function() {
         // Verileri enjekte et
         if (saveData.hero) window.hero = saveData.hero;
         if (saveData.GAME_MAP) window.GAME_MAP = saveData.GAME_MAP;
+		if (saveData.compendiumData) window.StatsManager.currentRun = saveData.compendiumData;
 		if (window.CalendarManager) window.CalendarManager.updateTownUI();
 
         // UI'ı tazele

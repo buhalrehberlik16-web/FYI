@@ -637,7 +637,7 @@ window.showWarningWithToggle = function(msg, onYes, onNo) {
 window.showAlert = function(msg, title = null) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     gModalTitle.textContent = title || (window.gameSettings.lang === 'tr' ? "UYARI" : "WARNING");
-    gModalText.textContent = msg;
+    gModalText.innerHTML = msg;
     gModalActions.innerHTML = `<button class="npc-btn" onclick="closeGlobalModal()" style="width:120px;">${lang.back || 'TAMAM'}</button>`;
     globalModal.classList.remove('hidden');
 };
@@ -646,7 +646,7 @@ window.showAlert = function(msg, title = null) {
 window.showConfirm = function(msg, onYes, onNo = null) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     gModalTitle.textContent = lang.confirm_title || (window.gameSettings.lang === 'tr' ? "ONAY" : "CONFIRM");
-    gModalText.textContent = msg;
+    gModalText.innerHTML = msg;
     
     gModalActions.innerHTML = `
         <button id="g-modal-yes" class="npc-btn confirm-btn-yes" style="width:120px;">${lang.yes || 'EVET'}</button>
@@ -662,6 +662,57 @@ window.showConfirm = function(msg, onYes, onNo = null) {
 window.closeGlobalModal = function() {
     globalModal.classList.add('hidden');
 };
+
+window.currentCityDistrict = 0; // -1: Craft, 0: Main, 1: Legends
+
+window.changeCityDistrict = function(direction) {
+    window.currentCityDistrict += direction;
+    
+    // Sınırları kontrol et
+    if (window.currentCityDistrict < -1) window.currentCityDistrict = -1;
+    if (window.currentCityDistrict > 1) window.currentCityDistrict = 1;
+
+    const lang = window.getCombatLang();
+    const districts = {
+        "-1": { id: "city-district-craft", title: lang.city_district_craft },
+        "0": { id: "city-district-main", title: "ELDORIA" },
+        "1": { id: "city-district-legends", title: lang.city_district_legends }
+    };
+
+    // Tüm ekranları gizle, seçileni aç
+    document.querySelectorAll('.city-sub-screen').forEach(s => s.classList.add('hidden'));
+    document.getElementById(districts[window.currentCityDistrict].id).classList.remove('hidden');
+
+    // Başlığı ve Okları Güncelle
+    const mainTitle = document.getElementById('city-district-title');
+    if (mainTitle) mainTitle.textContent = districts[window.currentCityDistrict].title;
+
+    updateCityArrows();
+};
+
+function updateCityArrows() {
+    const leftArrow = document.getElementById('btn-city-left');
+    const rightArrow = document.getElementById('btn-city-right');
+    const leftLabel = document.getElementById('city-label-left');
+    const rightLabel = document.getElementById('city-label-right');
+    const lang = window.getCombatLang();
+
+    // Sol Ok Kontrolü
+    if (window.currentCityDistrict === -1) {
+        leftArrow.style.display = "none";
+    } else {
+        leftArrow.style.display = "flex";
+        leftLabel.textContent = window.currentCityDistrict === 0 ? lang.city_district_craft : lang.city_district_main;
+    }
+
+    // Sağ Ok Kontrolü
+    if (window.currentCityDistrict === 1) {
+        rightArrow.style.display = "none";
+    } else {
+        rightArrow.style.display = "flex";
+        rightLabel.textContent = window.currentCityDistrict === 0 ? lang.city_district_legends : lang.city_district_main;
+    }
+}
 
 
 window.itemver = function(tier = 1) {
