@@ -932,6 +932,24 @@ window.ENEMY_STATS = {
 		//Fire, Buff, Debuff
         ]
     },
+	"Göçebe": { 
+        tribe: "Humans",
+        maxHp: 180, attack: 35, defense: 22, xp: 0, tier: 4, 
+        idle: 'enemies/nomad.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/nomad_dead.webp',
+        skills: [
+        ]
+    },
+    "Göçebe Savaşçı": { 
+        tribe: "Humans",
+        maxHp: 190, attack: 40, defense: 18, xp: 0, tier: 4, 
+        idle: 'enemies/nomad_warrior.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/nomad_warrior_dead.webp',
+        skills: [
+        ]
+    },
 
     // --- BOSS ---
     "Goblin Şefi": { 
@@ -1013,7 +1031,7 @@ window.TIER_ENEMIES = {
     2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
-    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi"], 
+    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı"], 
     5: [], 
     6: [],
     "B2": [],
@@ -1062,6 +1080,8 @@ window.BIOME_WEIGHTS = {
     "Ork Fedaisi":    	{ forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
     "İskelet Şövalye":	{ forest: 0.1, plains: 0.0, cave: 0.2, iceland: 0.0,  mountain: 0.1, urban: 0.6 },
     "Gulyabani":      	{ forest: 0.1,  plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+	"Göçebe":			{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+	"Göçebe Savaşçı":	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	//Ejderkelam'ı buraya ve yukarıdaki havuza tekrar koymak gerekli mi?
     "Kemik Golemi":   	{ forest: 0.0, plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.2, urban: 0.4 },
 // B1
