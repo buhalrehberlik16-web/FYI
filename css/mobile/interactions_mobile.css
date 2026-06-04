@@ -543,17 +543,54 @@
 }
 
 .city-building:hover .city-label-text {
-    background: #ffd700;
-    color: #000;
-    transform: translate(-50%, -50%) scale(1.1);
-    box-shadow: 0 0 20px #ffd700;
+    background: rgba(0, 0, 0, 0.7); /* Orijinal şeffaf siyah arka planı koru */
+    color: #ffd700; /* Sadece yazı rengini altın sarısı yap */
+    
+    transform: translate(-50%, -50%) scale(1.1); /* Hafif büyüme kalsın */
+    
+    /* Çirkin siyah gölge yerine sadece altın bir parlama (glow) verelim */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); 
 }
 
 /* Şehir Bina Yerleşimleri */
 #city-palace { top: 35%; left: 50%; }
 #city-vault  { top: 60%; left: 25%; }
 #city-arena  { top: 65%; right: 25%; }
-#city-market { top: 75%; left: 50%; }
+/*#city-market { top: 75%; left: 50%; }*/
+
+/* Bina Konumları (Sub-Screen bazlı) */
+#city-blacksmith { top: 40%; left: 20%; }
+#city-alchemist { top: 35%; left: 50%; }
+#city-grand-merchant { top: 60%; left: 80%; }
+
+#city-veteran-master { top: 40%; left: 30%; }
+#city-chronicler { top: 50%; left: 70%; }
+
+#city-district-craft .city-label-text {
+    font-size: 0.8rem;
+    padding: 5px 12px;
+}
+
+.city-nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    color: #ffd700;
+    padding: 10px 1px;
+    cursor: pointer;
+    z-index: 200;
+    border: 1px solid #6b5c3b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.city-nav-arrow.left { left: 0; border-radius: 0 15px 15px 0; }
+.city-nav-arrow.right {right: 0;border-radius: 15px 0 0 15px;}
+.city-nav-arrow:hover { background: #3e2723; color: #fff; padding: 8px 2px; }
 
 /* ============================================================
    2. GEÇİŞ BUTONU (NEXT ACT)
@@ -584,4 +621,9 @@
     transform: scale(1.1);
     box-shadow: 0 0 50px rgba(255, 215, 0, 0.8) !important;
 }
+
+ .compendium-window .close-btn {
+        right: 10px !important;
+        top: 10px !important;
+    }
 }
