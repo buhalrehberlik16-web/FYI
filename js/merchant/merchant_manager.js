@@ -296,6 +296,19 @@ window.buyItemFromMerchant = function(index) {
         if (emptySlot !== -1) {
             hero.gold -= price;
             hero.inventory[emptySlot] = item;
+			// --- YENİ: EVENT ALIŞVERİŞİNİ KAYDET ---
+			// Eğer bir event içindeysek (Gezgin Tüccar veya Broşçu)
+			if (window.isBroochTrade || window.currentMerchantDiscount < 1.0) {
+            const eventId = window.isBroochTrade ? "brooch_peddler" : "traveling_merchant";
+            
+            // Tarihçi'deki son kayıtları bul ve bu itemı oraya 'sonuç' olarak işle
+            const lastEvent = StatsManager.currentRun.seenEvents.reverse().find(e => e.id === eventId);
+            if (lastEvent) {
+                lastEvent.result = { type: 'item', value: item };
+            }
+            StatsManager.currentRun.seenEvents.reverse(); // Listeyi eski haline çevir
+			}
+			// --------------------------------------
             window.merchantStock.splice(index, 1);
             updateGoldUI();
             renderMerchantUI();
