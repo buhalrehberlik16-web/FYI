@@ -21,7 +21,7 @@
     right: 50px;
     color: #a89373; /* Eskitilmiş pirinç/altın rengi */
     font-family: 'Cinzel', serif;
-    font-size: 1.8rem;
+    font-size: 1.1rem;
     font-weight: 700;
     text-shadow: 0 0 10px rgba(0,0,0,0.8), 2px 2px 2px #000;
     z-index: 5;
@@ -312,9 +312,9 @@
 /* --- MOBİL UYUMLULUK --- */
 @media (max-width: 768px) {
     .town-calendar-text {
-        top: 15px;      /* Mobilde biraz daha yukarıya çekiyoruz */
-        right: 20px;    /* Kenar boşluğunu daraltıyoruz */
-        font-size: 1.1rem; /* Yazıyı mobilde küçültüyoruz ki butonlara binmesin */
+        top: 1px;      /* Mobilde biraz daha yukarıya çekiyoruz */
+        right: 2px;    /* Kenar boşluğunu daraltıyoruz */
+        font-size: 0.7rem; /* Yazıyı mobilde küçültüyoruz ki butonlara binmesin */
         padding: 5px 15px;
         letter-spacing: 1px;
         border-right-width: 2px;
