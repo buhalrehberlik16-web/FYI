@@ -169,11 +169,11 @@ const MAGUS_SKILLS = {
 	Zap: {
 		data: {
 			name: "Zap",
-            menuDescription: "Hasar: <b style='color:orange'>0.8xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>1.2xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 1,
 			exhaustion: 3,
-			cooldown: 2,
+			cooldown: 1,
             icon: 'skills/magus/elemental/zap.webp',
             type: 'attack',
             category: 'elemental', 
@@ -182,7 +182,7 @@ const MAGUS_SKILLS = {
                 physical: { atkMult: 0.0, stat: "int", statMult: 0.0 },
                 elemental: { 
                     fire: 0, cold: 0, 
-                    lightning: { stat: "int", statMult: 0.8 }, 
+                    lightning: { stat: "int", statMult: 1.2 }, 
                     poison: 0, curse: 0 
                 }
             }
@@ -196,7 +196,7 @@ const MAGUS_SKILLS = {
                 turns: 3, 
                 resetOnCombatEnd: true 
             });
-            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Zap', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Zap', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
 			dmgPack.skillKey = 'Zap';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
@@ -378,7 +378,8 @@ const MAGUS_SKILLS = {
 	Thorn_Whip: {
 		data: {
 			name: "Thorn Whip",
-            menuDescription: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
+			//Tier 1'e düşürürken çarpanları tekrar 0.7'ye çek
+            menuDescription: "Hasar: <b style='color:orange'>0.9xINT (Fiz) + 0.9xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			exhaustion: 2,
@@ -388,8 +389,8 @@ const MAGUS_SKILLS = {
             category: 'nature', 
             tier: 2,
             scaling: { 
-                physical: { atkMult: 0.0, stat: "int", statMult: 0.7 },
-                elemental: { fire: 0, cold: 0, lightning: 0, poison: {stat: "int", statMult: 0.7}, curse: 0 }
+                physical: { atkMult: 0.0, stat: "int", statMult: 0.9 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: {stat: "int", statMult: 0.9}, curse: 0 }
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
