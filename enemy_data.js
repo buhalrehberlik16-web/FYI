@@ -1041,7 +1041,7 @@ window.TIER_ENEMIES = {
     "B3": [],
     10: []
 };
-
+// tribe sırası: Greenskins, Humans, Beasts&Monstrosities, B&M, Plants, Undead, Dragonkind, Magical Creatures
 window.BIOME_WEIGHTS = {
     // Düşman İsmi: { biyom_adi: ihtimal_orani }
 	"Gremlin": 			{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
@@ -1053,44 +1053,45 @@ window.BIOME_WEIGHTS = {
     "İskelet":        	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
     "Hırsız Kobold":  	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
 // TIER 2
-	"Kemik Yürüyen":	{ forest: 0.1, plains: 0.1, cave: 0.3, iceland: 0.0, mountain: 0.1, urban: 0.4 },
-    "Goblin Devriyesi":	{ forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
-	"Haydut Gözcü":   	{ forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
-    "Kaçak Haydut":   	{ forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
-    "Şaman": 		  	{ forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.0, mountain: 0.3, urban: 0.2 },
-	"Haydut Simyacı":	{ forest: 0.1, plains: 0.3, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.5},
-    "Genç Ayı": 	  	{ forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
-    "Gri Kurt":       	{ forest: 0.3, plains: 0.2, cave: 0.0, iceland: 0.4,  mountain: 0.1,  urban: 0.0 },
-	"Kobold Devriye": 	{ forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
-	"Treant Sapling":  	{ forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
+    "Goblin Devriyesi":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
+	"Haydut Gözcü":   	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+    "Kaçak Haydut":   	{ forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.2, mountain: 0.2, urban: 0.4 },
+    "Şaman": 		  	{ forest: 0.2, plains: 0.2, cave: 0.2, iceland: 0.2, mountain: 0.2, urban: 0.4 },
+	"Haydut Simyacı":	{ forest: 0.0, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+    "Genç Ayı": 	  	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+    "Gri Kurt":       	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+	"Treant Sapling":  	{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
+	"Kemik Yürüyen":	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
+	"Kobold Devriye": 	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
+	//Magical Creature1 "imp?": { forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 }
 // TIER 3
-	"Goblin Şaman":		{ forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
-    "Goblin Savaşçısı":	{ forest: 0.2, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.3 },
-	"Haydut Devriye":  	{ forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
-	"Haydut Okçu":  	{ forest: 0.3, plains: 0.3, cave: 0.1, iceland: 0.0, mountain: 0.1, urban: 0.2 },
-	"Boz Ayı": 	  		{ forest: 0.4, plains: 0.2, cave: 0.2, iceland: 0.1, mountain: 0.1, urban: 0.0 },
-    "Yaban Domuzu":   	{ forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.1, mountain: 0.1, urban: 0.0 },
-	"Treant":   		{ forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
-	"Canavar Tohum": 	{ forest: 0.5, plains: 0.3, cave: 0.1, iceland: 0, mountain: 0.1, urban: 0.0 },
-	"Kadim Mantar":		{ forest: 0.6, plains: 0.1, cave: 0.15, iceland: 0, mountain: 0.15, urban: 0.0 },
-	"Ejderkelam": 		{ forest: 0.4, plains: 0.4, cave: 0.0, iceland: 0.0, mountain: 0.1,  urban: 0.1},
-	"Kil Golem":    	{  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
-    "Kaya Golemi":   	{  forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.0,  mountain: 0.6, urban: 0.0 },
+	"Goblin Şaman":		{ forest: 0.3, plains: 0.3, cave: 0.2, iceland: 0.1, mountain: 0.2,  urban: 0.4 },
+    "Goblin Savaşçısı":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4 },
+	"Haydut Devriye":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+	"Haydut Okçu":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+	"Boz Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+    "Yaban Domuzu":   	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+	"Treant":   		{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
+	"Canavar Tohum": 	{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
+	"Kadim Mantar":		{ forest: 0.5, plains: 0.1, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
+	"Ejderkelam": 		{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2},
+	"Kil Golem":    	{ forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
+    "Kaya Golemi":   	{ forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
 // TIER 4
-    "Ork Fedaisi":    	{ forest: 0.1, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.4, urban: 0.3 },
+    "Ork Fedaisi":    	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4 },
     "İskelet Şövalye":	{ forest: 0.1, plains: 0.0, cave: 0.2, iceland: 0.0,  mountain: 0.1, urban: 0.6 },
-    "Gulyabani":      	{ forest: 0.1,  plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.1, urban: 0.4 },
+    "Gulyabani":      	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
 	"Göçebe":			{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Göçebe Savaşçı":	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	//Ejderkelam'ı buraya ve yukarıdaki havuza tekrar koymak gerekli mi?
-    "Kemik Golemi":   	{ forest: 0.0, plains: 0.0, cave: 0.4, iceland: 0.0, mountain: 0.2, urban: 0.4 },
+    "Kemik Golemi":   	{ forest: 0.0, plains: 0.2, cave: 0.2, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
 // B1
     "Goblin Şefi":    	{ forest: 0.0, plains: 0.2, cave: 0.0, iceland: 0.0, mountain: 0.1, urban: 0.7 }
 };
 
 // Savaş dışı node'lar (Town, Choice) için varsayılan ağırlıklar
 
-window.DEFAULT_BIOME_WEIGHTS = { forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.1, mountain: 0.2, urban: 0.2 };
+window.DEFAULT_BIOME_WEIGHTS = { forest: 0.1, plains: 0.1, cave: 0.1, iceland: 0.1, mountain: 0.1, urban: 0.1 };
 
 
 
