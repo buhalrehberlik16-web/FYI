@@ -41,13 +41,13 @@ const CLASS_CONFIG = {
     "Magus": {
         startingStats: { str: 2, dex: 2, int: 4, vit: 3, mp_pow: 6 },
         startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
-        startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
+        startingElementalDamage: { fire: 1, cold: 1, lightning: 1, curse: 0, poison: 0 },
         
-        baseHp: 18,
-		baseResource: 100, // Başlangıç Mana sınırı
+        baseHp: 23,
+		baseResource: 80, // Başlangıç Mana sınırı
 		onHitRageGain: 0,
-		baseAttack: 12,  
-        baseDefense: 1,
+		baseAttack: 9,  
+        baseDefense: 0,
 		resourceName: "mana",
         resourceColor: "#3498db",
 		resourcePerDay: 0.10, // 1 Tam günde 10 Mana kazanır
@@ -56,10 +56,10 @@ const CLASS_CONFIG = {
         scaling: {
             hp: { stat: "vit", mult: 4 },       // Magus VIT'ten daha çok can alır
             resource: { stat: "int", mult: 5 },  // 1 INT = 5 Max Mana
-            atk: { stat: "str", mult: 0.8 },     // Magus atağını Str'den alır!
-            def: { stat: "dex", mult: 0.2 },     // Magus zırhı daha zayıf ölçeklenir
+            atk: { stat: "str", mult: 0.5 },     // Magus atağını Str'den alır!
+            def: { stat: "dex", mult: 0.5 },     // Magus zırhı daha zayıf ölçeklenir
             block: { stat: "dex", mult: 0.8 },    // Magus zekasıyla blok yapar
-            regen: { stat: "mp_pow", mult: 1.0 }  // Magus MP'den tam verim alır
+            regen: { stat: "mp_pow", mult: 0.34 }  // Magus MP'den tam verim alır
         },
 		visuals: {
             idle: 'images/heroes/magus/magus_idle.webp',
