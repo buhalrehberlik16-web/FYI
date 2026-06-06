@@ -447,20 +447,20 @@
 
 
 /* --- HANCI (INN) --- */
-#modal-inn .npc-title {top: 20.4%;}
-#modal-inn .npc-dialogue {bottom: 19%; font-size: 0.8em}
-#modal-inn .npc-actions-left { top: 33%;  left: 23.1%; }
-#modal-inn .npc-actions-right { top: 33%;  right: 25.4%; }
-#modal-inn .npc-stats-left {left:27%;}
+#modal-inn .npc-title {top: 18.8%;}
+#modal-inn .npc-dialogue {bottom: 19%;}
+#modal-inn .npc-stats-left {left: 27%;}
 #modal-inn .npc-stats-right {right:30%;}
-#modal-inn .npc-stats-header {top:22.8%;}
+#modal-inn .npc-stats-header {top:21%;}
+#modal-inn .npc-actions-left {top: 32%; left: 23%}
+#modal-inn .npc-actions-right {top: 32%; right: 25%}
 
 /* --- SİMYACI (ALCHEMIST) --- */
-#modal-alchemist .npc-actions-left { top: 32%;  left: 22.8%; }
+#modal-alchemist .npc-actions-left { top: 32%;  left: 23%; }
 #modal-alchemist .npc-actions-right { top: 32%;  right: 25%; }
-#modal-alchemist .npc-title {top: 18.9%;}
+#modal-alchemist .npc-title {top: 18.8%;}
 #modal-alchemist .npc-dialogue {bottom: %19; font-size: 0.9em}
-#modal-alchemist .npc-stats-left {left:26.5%;}
+#modal-alchemist .npc-stats-left {left:27%;}
 #modal-alchemist .npc-stats-right {right:30%;}
 #modal-alchemist .npc-stats-header {top:21.3%;}
 
@@ -557,13 +557,13 @@
 }
 
 /* --- TÜCCAR (MERCHANT) --- */
-#modal-merchant .npc-title {top: 20.3%;}
-#modal-merchant .npc-dialogue {bottom: 19.5%; font-size: 0.9em}
-#modal-merchant .npc-stats-left {left: 27.3%;}
+#modal-merchant .npc-title {top: 18.8%;}
+#modal-merchant .npc-dialogue {bottom: 19%; font-size: 0.9em}
+#modal-merchant .npc-stats-left {left: 27%;}
 #modal-merchant .npc-stats-right {right:30%;}
-#modal-merchant .npc-stats-header {top:22.7%;}
-#modal-merchant .npc-actions-left {top: 33%; left: 23.3%}
-#modal-merchant .npc-actions-right {top: 33%; right: 25.4%}
+#modal-merchant .npc-stats-header {top:21%;}
+#modal-merchant .npc-actions-left {top: 32%; left: 23%}
+#modal-merchant .npc-actions-right {top: 32%; right: 25%}
 /*============================================================
    Merchant Trade
 ============================================================ */
@@ -625,13 +625,13 @@
 ============================================================ */
 
 /* --- AHIR (STABLE) --- */
-#modal-stable .npc-title {top: 20.3%;}
-#modal-stable .npc-dialogue {bottom: 20%; font-size: 0.9em}
-#modal-stable .npc-stats-left {left: 27.3%;}
+#modal-stable .npc-title {top: 18.8%;}
+#modal-stable .npc-dialogue {bottom: 19%;}
+#modal-stable .npc-stats-left {left: 27%;}
 #modal-stable .npc-stats-right {right:30%;}
-#modal-stable .npc-stats-header {top:22.8%;}
-#modal-stable .npc-actions-left {top: 33%; left: 23.5%}
-#modal-stable .npc-actions-right {top: 33%; right: 25.4%}
+#modal-stable .npc-stats-header {top:21%;}
+#modal-stable .npc-actions-left {top: 32%; left: 22.5%}
+#modal-stable .npc-actions-right {top: 32%; right: 25%}
 
 .scouted-node {
     box-shadow: 0 0 15px #00ccff !important;
