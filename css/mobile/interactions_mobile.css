@@ -28,10 +28,34 @@
     }
 
     /* NPC Pencereleri (Han, Demirci vb.) */
-	.npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	.npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	.npc-window {
+        width: 100vw !important;
+        /* 1280x900 oranını korumak için (900/1280 = 0.703) */
+        height: 70.3vw !important; 
+        background-size: 100% 100% !important; /* contain yerine tam kapla */
+        margin: auto;
+    }
+
+    /* 2. Butonları ve Yazıları Boyutlandır */
+    .npc-actions-left, .npc-actions-right { 
+        width: 18% !important; 
+		gap: 6px; !important;
+    }
+
+    .npc-btn { 
+        padding: 2% 1% !important; 
+        font-size: 0.6rem !important; /* Piksel bazlı font daha stabil durur */
+        min-height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+    }
 	
-	 /* 1. HAN (INN) MOBİL */
+	/*.npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
+	/*.npc-btn { padding: 3px 0.2px !important; font-size: 0.6em !important; }
+	
+	 /* 1. HAN (INN) MOBİL 
 	#modal-inn .npc-actions-left { top: 42% !important; left: 10.5% !important; } 
     #modal-inn .npc-actions-right { top: 42% !important; right: 13% !important; }
 	#modal-inn .npc-title { top: 36.9% !important; font-size: 1em !important;}
@@ -39,7 +63,7 @@
 	modal-inn .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-inn .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 
-    /* 2. DEMİRCİ (BLACKSMITH) MOBİL */
+    2. DEMİRCİ (BLACKSMITH) MOBİL 
      #modal-blacksmith .npc-actions-left {top: 41% !important; left: 9.7% !important; } 
     #modal-blacksmith .npc-actions-right { top: 41% !important; right: 12% !important; }
 	#modal-blacksmith .npc-title { top: 36.2% !important; font-size: 1em !important;}
@@ -50,13 +74,14 @@
 	modal-blacksmith .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
 	modal-blacksmith .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
 
-    /* 3. TÜCCAR (MERCHANT) MOBİL */
+    3. TÜCCAR (MERCHANT) MOBİL 
     #modal-merchant .npc-actions-left { top: 41% !important; left: 10.7% !important; }
     #modal-merchant .npc-actions-right { top: 41% !important; right: 13% !important; }
 	#modal-merchant .npc-title { top: 36.9% !important; font-size: 1em !important;}
 	#modal-merchant .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.46em !important; }
 	modal-merchant .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; } */
+	
 	/* Onay Butonları Konteynırı */
 #trade-confirm-modal .stat-window {
     background: #1a150e !important;
@@ -98,24 +123,37 @@
     font-family: 'Georgia', serif;
 }
 	/* 1.Merchant */
-	#modal-merchant .npc-actions-left { top: 43% !important; left: 10.7% !important; }
-    #modal-merchant  .npc-actions-right { top: 41% !important; right: 13% !important; }
+	#modal-merchant .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-merchant .npc-dialogue {bottom: 18.6%; font-size: 0.5em}
+	#modal-merchant .npc-actions-left { top: 38%;  left: 9.5%; }
+	#modal-merchant .npc-actions-right { top: 38%;  right: 13.5%; }
+	#modal-merchant .npc-stats-left {left:16%;}
+	#modal-merchant .npc-stats-right {right:20%;}
+	#modal-merchant .npc-stats-header {top:21.3%;}
 	/* 2. INN */
-	#modal-inn .npc-actions-left { top: 43% !important; left: 10.5% !important; }
-    #modal-inn  .npc-actions-right { top: 41% !important; right: 13% !important; }
+	#modal-inn .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-inn .npc-dialogue {bottom: 18.6%; font-size: 0.455rem}
+	#modal-inn .npc-actions-left { top: 38%;  left: 9.5%;}
+	#modal-inn .npc-actions-right { top: 38%;  right: 13.5%; }
+	#modal-inn .npc-stats-left {left:16%;}
+	#modal-inn .npc-stats-right {right:20%;}
+	#modal-inn .npc-stats-header {top:21.3%;}
 	/* 3. Blacksmith */
-	#modal-blacksmith .npc-actions-left { top: 43% !important; left: 9.7% !important; }
-    #modal-blacksmith  .npc-actions-right { top: 41% !important; right: 12% !important; }
+	#modal-blacksmith .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-blacksmith .npc-dialogue {bottom: 18.6%; font-size: 0.5em}
+	#modal-blacksmith .npc-actions-left { top: 38%;  left: 9.5%; }
+	#modal-blacksmith .npc-actions-right { top: 38%;  right: 13.5%; }
+	#modal-blacksmith .npc-stats-left {left:16%;}
+	#modal-blacksmith .npc-stats-right {right:20%;}
+	#modal-blacksmith .npc-stats-header {top:21.3%;}
     /* 4. SİMYACI (ALCHEMIST) MOBİL */
-    #modal-alchemist .npc-actions-left { top: 43% !important; left: 9.7% !important; }
-    #modal-alchemist .npc-actions-right { top: 41% !important; right: 12% !important; }
-	#modal-alchemist .npc-title { top: 36.2% !important; font-size: 1em !important;}
-	#modal-alchemist .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.46em !important; }
-	#modal-alchemist .npc-stats-left {left:18%;}
+   	#modal-alchemist .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-alchemist .npc-dialogue {bottom: 18.6%; font-size: 0.45rem}
+	#modal-alchemist .npc-actions-left { top: 38%;  left: 9.5%;}
+	#modal-alchemist .npc-actions-right { top: 38%;  right: 13.5%; }
+	#modal-alchemist .npc-stats-left {left:16%;}
 	#modal-alchemist .npc-stats-right {right:20%;}
-	#modal-alchemist .npc-stats-header {top:37.5%;}
-	modal-alchemist .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-alchemist .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	#modal-alchemist .npc-stats-header {top:21.5%;}
 	
 	.transmute-container {
         min-height: 280px !important; /* Kutunun boyu eşya olsa da olmasa da sabit kalsın */
@@ -163,17 +201,15 @@
         margin-bottom: 5px !important;
         font-size: 0.9rem !important;
     }
-	
-	
-	
 
     /* 5. AHIR (STABLE) MOBİL */
-    #modal-stable .npc-actions-left { top: 43% !important; left: 11% !important; }
-    #modal-stable .npc-actions-right { top: 42% !important; right: 13% !important; }
-	#modal-stable .npc-title { top: 36.9% !important; font-size: 1em !important;}
-	#modal-stable .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.47em !important; }
-	modal-stable .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-stable .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
+	#modal-stable .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-stable .npc-dialogue {bottom: 18.6%; font-size: 0.54rem}
+	#modal-stable .npc-actions-left { top: 38%;  left: 9.5%;}
+	#modal-stable .npc-actions-right { top: 38%;  right: 13.5%; }
+	#modal-stable .npc-stats-left {left:16%;}
+	#modal-stable .npc-stats-right {right:20%;}
+	#modal-stable .npc-stats-header {top:21.3%;}
 	
 	.npc-stats-header {
     position: absolute;
@@ -530,26 +566,28 @@
     position: absolute;
     transform: translate(-50%, -50%);
     white-space: nowrap;
-    color: #fff;
-    font-family: 'Georgia', serif;
-    font-weight: bold;
-    font-size: 0.5em;
-    padding: 4px 2px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #ffd700;
-    border-radius: 20px;
+    color: #e0d0b0; /* Antik beyaz/pirinç tonu */
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+	text-shadow: 
+        2px 2px 4px #000, 
+        -1px -1px 0 #000, 
+        1px -1px 0 #000, 
+        -1px 1px 0 #000, 
+        1px 1px 0 #000,
+        0 0 10px rgba(0,0,0,0.8);
+    
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    pointer-events: auto;
 }
 
 .city-building:hover .city-label-text {
-    background: rgba(0, 0, 0, 0.7); /* Orijinal şeffaf siyah arka planı koru */
-    color: #ffd700; /* Sadece yazı rengini altın sarısı yap */
-    
-    transform: translate(-50%, -50%) scale(1.1); /* Hafif büyüme kalsın */
-    
-    /* Çirkin siyah gölge yerine sadece altın bir parlama (glow) verelim */
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); 
+    color: #ffd700; /* Parlak altın rengi */
+    transform: translate(-50%, -50%) scale(1.15); /* Yazı hafif büyüsün */
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.7), 2px 2px 4px #000;
 }
 
 /* Şehir Bina Yerleşimleri */
