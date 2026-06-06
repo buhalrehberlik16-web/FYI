@@ -59,16 +59,9 @@
 }
 .town-building:hover .town-label-text, 
 .city-building:hover .city-label-text {
-    /* SİLİNEN: background: #ffd700; (Siyah kutuyu oluşturan buydu) */
-    /* SİLİNEN: color: #000; (Yazıyı siyaha çeviriyordu) */
-
-    background: rgba(0, 0, 0, 0.7); /* Orijinal şeffaf siyah arka planı koru */
     color: #ffd700; /* Sadece yazı rengini altın sarısı yap */
     
-    transform: translate(-50%, -50%) scale(1.1); /* Hafif büyüme kalsın */
-    
-    /* Çirkin siyah gölge yerine sadece altın bir parlama (glow) verelim */
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); 
+    transform: translate(-50%, -50%) scale(1.1); /* Hafif büyüme kalsın */ 
 }
 
 /* TOWN KOORDİNATLARI (Orijinal Açı ve Yerleşim) */
@@ -152,16 +145,22 @@
     position: absolute;
     transform: translate(-50%, -50%);
     white-space: nowrap;
-    color: #fff;
-    font-family: 'Georgia', serif;
-    font-weight: bold;
-    font-size: 1.1em;
-    padding: 8px 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #ffd700;
-    border-radius: 20px;
+    color: #e0d0b0; /* Antik beyaz/pirinç tonu */
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+	text-shadow: 
+        2px 2px 4px #000, 
+        -1px -1px 0 #000, 
+        1px -1px 0 #000, 
+        -1px 1px 0 #000, 
+        1px 1px 0 #000,
+        0 0 10px rgba(0,0,0,0.8);
+    
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    pointer-events: auto;
 }
 
 /* Şehir Bina Yerleşimleri */
@@ -173,10 +172,10 @@
 
 /* Bina Konumları (Sub-Screen bazlı) */
 #city-blacksmith { top: 15%; left: 28%; }
-#city-alchemist { top: 17%; left: 79%; }
+#city-alchemist { top: 17.7%; left: 79.85%; }
 #city-grand-merchant { top: 37%; left: 48%; }
 
-#city-grand-merchant .city-label-text { transform: translate(-50%, -50%) rotate(0deg); font-size: 0.5em; }
+#city-grand-merchant .city-label-text { transform: translate(-50%, -50%) rotate(0deg); font-size: 1em; }
 #city-alchemist .city-label-text { transform: translate(-50%, -50%) rotate(2deg); }
 #city-blacksmith .city-label-text { transform: translate(-50%, -50%) rotate(-3deg); }
 #city-chronicler .city-label-text { transform: translate(-50%, -50%) rotate(-5deg);  }
@@ -448,25 +447,32 @@
 
 
 /* --- HANCI (INN) --- */
-#modal-inn .npc-title {top: 185px;}
-#modal-inn .npc-dialogue {bottom: 170px; font-size: 0.9em}
+#modal-inn .npc-title {top: 20.4%;}
+#modal-inn .npc-dialogue {bottom: 19%; font-size: 0.8em}
+#modal-inn .npc-actions-left { top: 33%;  left: 23.1%; }
+#modal-inn .npc-actions-right { top: 33%;  right: 25.4%; }
+#modal-inn .npc-stats-left {left:27%;}
+#modal-inn .npc-stats-right {right:30%;}
+#modal-inn .npc-stats-header {top:22.8%;}
 
 /* --- SİMYACI (ALCHEMIST) --- */
 #modal-alchemist .npc-actions-left { top: 32%;  left: 22.8%; }
-#modal-alchemist .npc-actions-right { top: 32%;  right: 24%; }
-#modal-alchemist .npc-title {top: 170px;}
-#modal-alchemist .npc-dialogue {bottom: 170px;}
-#modal-alchemist .npc-stats-left {left:340px;}
-#modal-alchemist .npc-stats-right {right:390px;}
-#modal-alchemist .npc-stats-header {top:192px;}
+#modal-alchemist .npc-actions-right { top: 32%;  right: 25%; }
+#modal-alchemist .npc-title {top: 18.9%;}
+#modal-alchemist .npc-dialogue {bottom: %19; font-size: 0.9em}
+#modal-alchemist .npc-stats-left {left:26.5%;}
+#modal-alchemist .npc-stats-right {right:30%;}
+#modal-alchemist .npc-stats-header {top:21.3%;}
 
 
 /* --- DEMİRCİ (BLACKSMITH) --- */
-#modal-blacksmith .npc-title {top: 170px;}
-#modal-blacksmith .npc-dialogue {bottom: 175px;}
-#modal-blacksmith .npc-stats-left {left:340px;}
-#modal-blacksmith .npc-stats-right {right:390px;}
-#modal-blacksmith .npc-stats-header {top:192px;}
+#modal-blacksmith .npc-title {top: 18.8%;}
+#modal-blacksmith .npc-dialogue {bottom: 19%;}
+#modal-blacksmith .npc-stats-left {left: 27%;}
+#modal-blacksmith .npc-stats-right {right:30%;}
+#modal-blacksmith .npc-stats-header {top:21%;}
+#modal-blacksmith .npc-actions-left {top: 32%; left: 23%}
+#modal-blacksmith .npc-actions-right {top: 32%; right: 25%}
 /*============================================================
    Salvage Ekranı
 ============================================================ */
@@ -551,8 +557,13 @@
 }
 
 /* --- TÜCCAR (MERCHANT) --- */
-#modal-merchant .npc-title {top: 185px;}
-#modal-merchant .npc-dialogue {bottom: 176px;}
+#modal-merchant .npc-title {top: 20.3%;}
+#modal-merchant .npc-dialogue {bottom: 19.5%; font-size: 0.9em}
+#modal-merchant .npc-stats-left {left: 27.3%;}
+#modal-merchant .npc-stats-right {right:30%;}
+#modal-merchant .npc-stats-header {top:22.7%;}
+#modal-merchant .npc-actions-left {top: 33%; left: 23.3%}
+#modal-merchant .npc-actions-right {top: 33%; right: 25.4%}
 /*============================================================
    Merchant Trade
 ============================================================ */
@@ -614,8 +625,13 @@
 ============================================================ */
 
 /* --- AHIR (STABLE) --- */
-#modal-stable .npc-title {top: 185px;}
-#modal-stable .npc-dialogue {bottom: 180px;}
+#modal-stable .npc-title {top: 20.3%;}
+#modal-stable .npc-dialogue {bottom: 20%; font-size: 0.9em}
+#modal-stable .npc-stats-left {left: 27.3%;}
+#modal-stable .npc-stats-right {right:30%;}
+#modal-stable .npc-stats-header {top:22.8%;}
+#modal-stable .npc-actions-left {top: 33%; left: 23.5%}
+#modal-stable .npc-actions-right {top: 33%; right: 25.4%}
 
 .scouted-node {
     box-shadow: 0 0 15px #00ccff !important;
