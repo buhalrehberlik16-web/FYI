@@ -730,6 +730,40 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	"Beyaz Kurt": { 
+        tribe: "B&M",
+        specificResists: { cold: 20 },
+        maxHp: 80, attack: 20, defense: 10, xp: 0, tier: 3, 
+        idle: 'enemies/beyaz_kurt.webp',
+        attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
+        dead: 'enemies/beyaz_kurt_dead.webp',
+        skills: [
+            { 
+                id: "vicious_bite", 
+                template: "stat_debuff", 
+                category: "debuff",
+                subtype: "rage_burn", 
+                value: 30, 
+                textKey: "vicious" 
+            }, 
+            { 
+                id: "alpha_howl", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "atk_up", 
+                value: 12, 
+                duration: 3, 
+                textKey: "howl" 
+            },
+            { 
+                id: "miasma_bite", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { curse: 1.5 }, 
+                textKey: "miasma" 
+            },  
+        ]
+    },
     "Yaban Domuzu": { 
         tribe: "B&M",
         specificResists: { cold: 10 },
@@ -1029,7 +1063,7 @@ Object.assign(ENEMY_STATS, {
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
     2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı", "Canavar Tohum", "Treant"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı", "Beyaz Kurt","Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı"], 
     5: [], 
@@ -1070,6 +1104,7 @@ window.BIOME_WEIGHTS = {
 	"Haydut Devriye":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Haydut Okçu":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Boz Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+	"Beyaz Kurt":		{ forest: 0.1, plains: 0.2, cave: 0.1, iceland: 0.5, mountain: 0.5, urban: 0.0 },
     "Yaban Domuzu":   	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
 	"Treant":   		{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
 	"Canavar Tohum": 	{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
