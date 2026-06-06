@@ -128,7 +128,7 @@ const MAGUS_SKILLS = {
             category: 'arcane', 
             tier: 5,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "mp_pow", statMult: 2.0 },
+                physical: { atkMult: 0.0, stat: "mp_pow", statMult: 2.4 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
 		},
@@ -143,7 +143,7 @@ const MAGUS_SKILLS = {
 	Fire_Bolt: {
 		data: {
 			name: "Fire Bolt",
-            menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>0.5Atk+0.5xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 1,
 			exhaustion: 3,
@@ -153,7 +153,7 @@ const MAGUS_SKILLS = {
             category: 'elemental', 
             tier: 1,
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
+                physical: { atkMult: 0.5, stat: "str", statMult: 0.5 },
                 elemental: { 
                     fire: { stat: "mp_pow", statMult: 0.5 }, 
                     cold: 0, lightning: 0, poison: 0, curse: 0 
@@ -169,7 +169,7 @@ const MAGUS_SKILLS = {
 	Zap: {
 		data: {
 			name: "Zap",
-            menuDescription: "Hasar: <b style='color:orange'>1.2xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>1.1xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>",
             rageCost: 25,
             levelReq: 1,
 			exhaustion: 3,
@@ -182,7 +182,7 @@ const MAGUS_SKILLS = {
                 physical: { atkMult: 0.0, stat: "int", statMult: 0.0 },
                 elemental: { 
                     fire: 0, cold: 0, 
-                    lightning: { stat: "int", statMult: 1.2 }, 
+                    lightning: { stat: "int", statMult: 1.1 }, 
                     poison: 0, curse: 0 
                 }
             }
@@ -436,7 +436,7 @@ const MAGUS_SKILLS = {
             category: 'nature', 
             tier: 5,
             scaling: { 
-                physical: { atkMult: 1.0, stat: "mp_pow", statMult: 0.0 },
+                physical: { atkMult: 0.0, stat: "int", statMult: 1.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
 		},
