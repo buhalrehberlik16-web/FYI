@@ -759,37 +759,22 @@
     font-size: 0.6rem;
     margin-right: 3px;
 }
-/* KAYNAK (RAGE/MANA) ÖNGÖRÜSÜ - SARI */
-.skill-res-preview {
-    position: absolute;
-    bottom: -22px; /* Slotun hemen altına */
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(40, 40, 0, 0.9);
-    color: #ffd700;
-    font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
-    font-weight: 900;
-    padding: 1px 5px;
-    border: 1px solid #6b5c3b;
-    border-radius: 4px;
-    z-index: 55;
-    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-}
 
 /* KENDİNE HASAR (RECOIL/COST) ÖNGÖRÜSÜ - KOYU KIRMIZI */
 .skill-recoil-preview {
     position: absolute;
-    top: 50%;
-    right: -25px; /* Slotun yanına */
-    transform: translateY(-50%);
-    background: rgba(60, 0, 0, 0.9);
+    bottom: -22px; /* Slotun altına taşındı */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(60, 0, 0, 0.95); /* Koyu Kan Kırmızısı */
     color: #ff4d4d;
     font-family: 'Cinzel', serif;
     font-size: 0.7rem;
-    font-weight: bold;
-    padding: 2px 4px;
+    font-weight: 900;
+    padding: 1px 6px;
     border: 1px solid #330000;
     border-radius: 4px;
     z-index: 56;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    animation: fadeIn 0.3s ease;
 }
