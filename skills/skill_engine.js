@@ -40,6 +40,15 @@ const SkillEngine = {
 
         // Savunma bonuslarını ekle (Siper/Blok değil, saf defans değeri)
         let effectiveDef = targetStats.def || 0;
+		// --- YENİ: DÜŞMAN DEFANS DEBUFF KONTROLÜ (Distract vb.) ---
+        if (target.statusEffects) {
+            const weakDef = target.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
+            if (weakDef) {
+                // Eğer düşmanın üzerinde %50 defans azaltma varsa, defansı o oranda düşür
+                effectiveDef = Math.floor(effectiveDef * (1 - weakDef.value));
+            }
+        }
+        // ---------------------------------------------------------
 		// --- 1. ZIRH DELME (Yüzdesel ve Sabit) ---
         // A. Yüzdesel Delme (Delip Geç: %50)
         if (skillData.ignoreDefPercent) {
