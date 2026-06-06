@@ -57,6 +57,7 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common',
             tier: 1,
+			classReq: ["Barbar"], // SADECE BARBAR GÖREBİLİR
             // YENİ SİSTEM: Physical ve Elemental ayrımı
             scaling: { 
                 physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
@@ -86,7 +87,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_defend.webp',
             type: 'defense',
             category: 'common',
-            tier: 1
+            tier: 1,
+			classReq: ["Barbar", "Magus"]
         },
         onCast: function(attacker, defender) {
 			const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
@@ -124,6 +126,7 @@ const COMMON_SKILLS = {
             type: 'attack',
             category: 'common',
             tier: 1,
+			classReq: ["Barbar"], // SADECE BARBAR GÖREBİLİR
             scaling: { 
                 physical: { atkMult: 1.15, stat: "str", statMult: 0.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
@@ -151,7 +154,8 @@ const COMMON_SKILLS = {
             icon: 'skills/common/icon_block.webp',
             type: 'utility',
             category: 'common',
-            tier: 1
+            tier: 1,
+			classReq: ["Barbar", "Magus"]
         },
         onCast: function(attacker, defender) {
             const currentLang = window.gameSettings.lang || 'tr';
@@ -170,6 +174,65 @@ const COMMON_SKILLS = {
             writeLog(`🧱 **${skillName}**: ${blockVal} ${blockLabel} ${logMsg}`);
             
             setTimeout(() => { nextTurn(); }, 1000);
+        }
+    },
+	
+	 // --- MAGUS BAŞLANGIÇ SKİLLERİ (YENİ) ---
+    magus_cut: {
+        data: {
+            name: "Kes",
+            menuDescription: "Atağın kadar hasar.",
+            rageCost: 0,
+            levelReq: 1,
+			exhaustion: 2,
+            icon: 'skills/common/icon_attack.webp',
+            type: 'attack',
+            category: 'common',
+            tier: 1,
+			classReq: ["Magus"], // SADECE Magus GÖREBİLİR
+            // YENİ SİSTEM: Physical ve Elemental ayrımı
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender) {
+            // SkillEngine artık {total, phys, elem} paketi döner
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'cut';       
+            
+            // Animasyona artık sayı değil, paket gönderiyoruz
+            animateCustomAttack(dmgPack, null, this.data.name); 
+        }
+    },
+    staff_strike: {
+        data: {
+            id: "staff_strike",
+            name: "Asa Vuruşu",
+            rageCost: 0, // Kullanırken mana harcamaz
+            levelReq: 1,
+            exhaustion: 2,
+            icon: 'skills/common/icon_magic.webp', // Özel logo
+            type: 'attack',
+            category: 'common',
+            tier: 1,
+            classReq: ["Magus"], // Sadece Magus görebilir
+            // HESAPLAMA: 1x Atak + 0.4x Curse (Lanet)
+            scaling: { 
+                physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
+                elemental: { 
+                    curse: { stat: "mp_pow", statMult: 0.4 }, // Lanet hasarı MP'den beslenir
+                    fire: 0, cold: 0, lightning: 0, poison: 0 
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            dmgPack.skillKey = 'staff_strike';
+            
+            // DÜZELTME: Barbar'daki gibi mana gain (+7 Rage) kodu eklemiyoruz.
+            // Magus sadece hasar verir.
+            animateCustomAttack(dmgPack, null, this.data.name); 
         }
     },
 
