@@ -1706,7 +1706,7 @@ window.showRoomEventBanner = function(eventKey) {
 window.updateSkillDamagePreviews = function() {
     // Savaşta değilsek tüm kutuları sil ve çık
     if (!window.monster || monster.hp <= 0 || !battleScreen.classList.contains('active')) {
-        document.querySelectorAll('.skill-damage-preview, .skill-def-preview, .skill-heal-preview').forEach(el => el.remove());
+        document.querySelectorAll('.skill-damage-preview, .skill-def-preview, .skill-heal-preview, .skill-res-preview, .skill-recoil-preview').forEach(el => el.remove());
         return;
     }
 
@@ -1724,21 +1724,38 @@ window.updateSkillDamagePreviews = function() {
         let currentDmgTotal = 0;
         if (skillObj.data.scaling) {
             const dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
-            currentDmgTotal = dmgPack.total; // Diğer hesaplamalarda kullanmak için tutuyoruz
+            currentDmgTotal = dmgPack.total;
+        }
+
+        // ÖZEL DURUM HESAPLAMALARI:
+        if (skillKey === 'blood_terror') currentDmgTotal = hero.hp - 1;
+        if (skillKey === 'scales_of_fate') {
+             const heroPct = (hero.hp / stats.maxHp);
+             const monPct = (monster.hp / monster.maxHp);
+             if (monPct > heroPct) {
+                 // Düşmanın canı senden çoksa aradaki farkın yarısı kadar bonus hasar (Skill dosyasındaki kural)
+                 currentDmgTotal += Math.floor(monster.maxHp * (monPct - heroPct) * 0.5);
+             }
+        }
+
+        if (currentDmgTotal > 0 || skillObj.data.scaling) {
             let pEl = slot.querySelector('.skill-damage-preview');
             if (!pEl) {
                 pEl = document.createElement('div');
                 pEl.className = 'skill-damage-preview';
                 slot.appendChild(pEl);
             }
-            pEl.textContent = dmgPack.total;
-            pEl.classList.toggle('no-damage', dmgPack.total <= 0);
+            pEl.textContent = currentDmgTotal;
+            pEl.classList.toggle('no-damage', currentDmgTotal <= 0);
+        } else {
+            const existing = slot.querySelector('.skill-damage-preview');
+            if (existing) existing.remove();
         }
 
         // --- B. SAVUNMA / BLOK ÖNGÖRÜSÜ (Mavi) ---
         let defVal = 0;
         switch(skillKey) {
-            case 'guard': defVal = Math.floor(stats.int * 0.25); break;
+            case 'guard': defVal = Math.floor(stats.int * 0.34); break; // Senin kuralın: 0.34
             case 'block': defVal = stats.blockPower; break;
             case 'Ice_Shield': defVal = Math.floor(stats.mp_pow * 2); break;
             case 'blood_shield': defVal = Math.floor(Math.ceil(hero.hp * 0.20) * 1.5); break;
@@ -1762,22 +1779,13 @@ window.updateSkillDamagePreviews = function() {
             if (existingDef) existingDef.remove();
         }
 
-        // --- C. İYİLEŞME ÖNGÖRÜSÜ (Yeşil - YENİ) ---
+        // --- C. İYİLEŞME ÖNGÖRÜSÜ (Yeşil) ---
         let healVal = 0;
         switch(skillKey) {
-            case 'minor_healing': 
-                healVal = 10 + Math.floor(stats.int * 0.5); 
-                break;
-            case 'Cauterize': 
-                healVal = 25; // instant kısmı
-                break;
-            case 'Healing_Light': 
-                healVal = Math.floor(hero.maxHp * 0.20); // instant %20
-                break;
-            case 'blood_lust':
-                // Vurulacak hasarın %50'si kadar anlık iyileşme (Yukarıdaki dmgPack'ten alır)
-                healVal = Math.floor(currentDmgTotal * 0.50);
-                break;
+            case 'minor_healing': healVal = 10 + Math.floor(stats.int * 0.5); break;
+            case 'Cauterize': healVal = 25; break;
+            case 'Healing_Light': healVal = Math.floor(stats.maxHp * 0.20); break;
+            case 'blood_lust': healVal = Math.floor(currentDmgTotal * 0.50); break;
         }
 
         if (healVal > 0) {
@@ -1791,6 +1799,53 @@ window.updateSkillDamagePreviews = function() {
         } else {
             const existingHeal = slot.querySelector('.skill-heal-preview');
             if (existingHeal) existingHeal.remove();
+        }
+
+        // --- D. KAYNAK KAZANIM ÖNGÖRÜSÜ (Sarı - YENİ) ---
+        let resVal = 0;
+        switch(skillKey) {
+            case 'Pommel_Bash': resVal = 12; break;
+            case 'cut': if(hero.class === 'Barbar') resVal = 7; break;
+            case 'strike': if(hero.class === 'Barbar') resVal = 4; break; // Ortalama 0-9
+            case 'wind_up': resVal = 15; break;
+            case 'blood_price': resVal = Math.floor(stats.maxHp * 0.15); break;
+            case 'Meditate': resVal = Math.floor(stats.int + ((stats.maxHp - hero.hp) * 0.5)); break;
+        }
+
+        if (resVal > 0) {
+            let rEl = slot.querySelector('.skill-res-preview');
+            if (!rEl) {
+                rEl = document.createElement('div');
+                rEl.className = 'skill-res-preview';
+                slot.appendChild(rEl);
+            }
+            rEl.textContent = resVal;
+        } else {
+            const existingRes = slot.querySelector('.skill-res-preview');
+            if (existingRes) existingRes.remove();
+        }
+
+        // --- E. KENDİNE HASAR / RECOIL ÖNGÖRÜSÜ (Koyu Kırmızı - YENİ) ---
+        let recoilVal = 0;
+        switch(skillKey) {
+            case 'reckless_strike': recoilVal = Math.floor(currentDmgTotal * 0.25); break;
+            case 'double_blade': recoilVal = Math.floor(currentDmgTotal * 0.25); break;
+            case 'blood_price': recoilVal = Math.floor(stats.maxHp * 0.15); break;
+            case 'blood_shield': recoilVal = Math.ceil(hero.hp * 0.20); break;
+            case 'blood_terror': recoilVal = hero.hp - 1; break;
+        }
+
+        if (recoilVal > 0) {
+            let recEl = slot.querySelector('.skill-recoil-preview');
+            if (!recEl) {
+                recEl = document.createElement('div');
+                recEl.className = 'skill-recoil-preview';
+                slot.appendChild(recEl);
+            }
+            recEl.textContent = "❗" + recoilVal;
+        } else {
+            const existingRec = slot.querySelector('.skill-recoil-preview');
+            if (existingRec) existingRec.remove();
         }
     });
 };
