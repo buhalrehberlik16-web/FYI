@@ -903,23 +903,36 @@ function refreshBookUI() {
 // --- SEÇİM EKRANLARI ---
 window.openBasicSkillSelection = function() { switchScreen(basicSkillSelectionScreen); selectedAttackKey = null; selectedDefenseKey = null; renderBasicSkillSelection(); updateSelectionUI(); };
 window.renderBasicSkillSelection = function() {
-    const atkC = document.getElementById('selection-list-attack'); const defC = document.getElementById('selection-list-defense'); atkC.innerHTML = ''; defC.innerHTML = '';
-	const currentLang = window.gameSettings.lang || 'tr';
-    const lang = window.LANGUAGES[currentLang]; // lang tanımı
-    for (const [key, skill] of Object.entries(SKILL_DATABASE)) {
-        if (skill.data.category === 'common' && skill.data.tier === 1) {
-			const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
-            // --- YENİ: DİNAMİK FİLTRE ---
-		const resourceLabel = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
-		let dynamicDesc = skillTrans.desc.replace(/Rage|Öfke/gi, resourceLabel);
-		// ----------------------------
+    const atkC = document.getElementById('selection-list-attack'); 
+    const defC = document.getElementById('selection-list-defense'); 
+    atkC.innerHTML = ''; defC.innerHTML = '';
+    
+    const lang = window.getCombatLang(); 
 
-		const card = document.createElement('div'); 
-		card.className = 'selection-card'; 
-		card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skillTrans.name}</h4><small>${dynamicDesc}</small></div>`; // dynamicDesc kullanıldı
+    for (const [key, skill] of Object.entries(SKILL_DATABASE)) {
+        // --- KRİTİK FİLTRELEME GÜNCELLEMESİ ---
+        // Sadece Common Tier 1 olan VE karakterin sınıfına uygun olan skilleri göster
+        const isTier1Common = skill.data.category === 'common' && skill.data.tier === 1;
+        const isCompatibleWithClass = skill.data.classReq && skill.data.classReq.includes(hero.class);
+
+        if (isTier1Common && isCompatibleWithClass) {
+            const skillTrans = lang.skills[key] || { name: skill.data.name, desc: skill.data.menuDescription };
+            const resourceLabel = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
+            let dynamicDesc = skillTrans.desc.replace(/Rage|Öfke/gi, resourceLabel);
+
+            const card = document.createElement('div'); 
+            card.className = 'selection-card'; 
+            card.innerHTML = `<img src="images/${skill.data.icon}"><div><h4>${skillTrans.name}</h4><small>${dynamicDesc}</small></div>`;
+            
             card.onclick = () => {
-                if (skill.data.type === 'attack') { selectedAttackKey = key; document.querySelectorAll('#selection-list-attack .selection-card').forEach(c => c.classList.remove('selected')); }
-                else { selectedDefenseKey = key; document.querySelectorAll('#selection-list-defense .selection-card').forEach(c => c.classList.remove('selected')); }
+                if (skill.data.type === 'attack') { 
+                    selectedAttackKey = key; 
+                    document.querySelectorAll('#selection-list-attack .selection-card').forEach(c => c.classList.remove('selected')); 
+                }
+                else { 
+                    selectedDefenseKey = key; 
+                    document.querySelectorAll('#selection-list-defense .selection-card').forEach(c => c.classList.remove('selected')); 
+                }
                 card.classList.add('selected'); updateSelectionUI();
             };
             (skill.data.type === 'attack' ? atkC : defC).appendChild(card);
