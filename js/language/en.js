@@ -420,6 +420,7 @@ window.LANG_EN = {
 			"Genç Ayı": "Young Bear",
 			"Şaman": "Shaman",
             "Yaban Domuzu": "Wild Boar",
+			"Beyaz Kurt": "White Wolf",
             "Goblin Savaşçısı": "Goblin Warrior",
             "Kaya Golemi": "Rock Golem",
             "Ork Fedaisi": "Orc Bodyguard",

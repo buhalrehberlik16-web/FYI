@@ -422,6 +422,7 @@ window.LANG_TR = {
 			"Genç Ayı": "Genç Ayı",
 			"Şaman": "Şaman",
             "Yaban Domuzu": "Yaban Domuzu",
+			"Beyaz Kurt": "Beyaz Kurt",
             "Goblin Savaşçısı": "Goblin Savaşçısı",
             "Kaya Golemi": "Kaya Golemi",
             "Ork Fedaisi": "Ork Fedaisi",
