@@ -749,6 +749,8 @@ window.LANG_EN = {
             guard: { name: "Guard", desc: "Reduces incoming damage by <span style='color:#43FF64'>0.34 x INT</span> for 3 turns.<br><span style='color:cyan'>-10 Rage.</span>", log: "Incoming damage reduced by $1." },
             strike: { name: "Strike", desc: "Deals 115% of Attack as damage. <span style='color:cyan'>+0-9 Rage.</span>" },
             block: { name: "Block", desc: "Gain Block equal to 80% of Dex. Block decays by 50% at turn end. <span style='color:cyan'>-10 Rage.</span>",  log: "Gained $1 Block." },
+			staff_strike: { name: "Staff Strike", desc: "Damage: <b style='color:orange'>1 x ATK + 0.4x MP (Curse)</b>.<br><span style='color:cyan'>0 Mana.</span>" },
+			cut: { name: "Cut", desc: "Deals damage equal to Attack." },
             minor_healing: { name: "Minor Healing", desc: "Quick bandage.<br><span style='color:#43FF64'>Flat 10 HP</span> + (0.5 x INT).<br><span style='color:cyan'>-20 Rage.</span>", log: "Restored $1 HP." },
             distract: { name: "Distract", desc: "<b style='color:green'>(Fast Action)</b><br>Enemy ATK reduced by 25% (1 Turn).<br>Enemy DEF reduced by 50% (2 Turns).<br><span style='color:cyan'>-50 Rage.</span>", log: "Enemy attack 25% and defense reduced by 50%." },
             tactical_strike: { name: "Tactical Strike", desc: "Damage: <b style='color:orange'>Deals 1.3 x ATK.</b><br><span style='color:#b19cd9'>Ignores 5 Defense.</span><br><span style='color:cyan'>-15 Rage.</span>" },
