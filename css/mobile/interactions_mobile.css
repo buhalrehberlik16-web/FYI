@@ -123,15 +123,15 @@
     font-family: 'Georgia', serif;
 }
 	/* 1.Merchant */
-	#modal-merchant .npc-title {top: 17.2%; font-size: 1em;}
-	#modal-merchant .npc-dialogue {bottom: 18.6%; font-size: 0.4em}
+	#modal-merchant .npc-title {top: 17.2%; font-size: 1rem;}
+	#modal-merchant .npc-dialogue {bottom: 18.6%; font-size: 0.4rem}
 	#modal-merchant .npc-actions-left { top: 38%;  left: 9.5%; }
 	#modal-merchant .npc-actions-right { top: 38%;  right: 13.5%; }
 	#modal-merchant .npc-stats-left {left:16%;}
 	#modal-merchant .npc-stats-right {right:20%;}
 	#modal-merchant .npc-stats-header {top:21.3%;}
 	/* 2. INN */
-	#modal-inn .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-inn .npc-title {top: 17.2%; font-size: 1rem;}
 	#modal-inn .npc-dialogue {bottom: 18.6%; font-size: 0.35rem}
 	#modal-inn .npc-actions-left { top: 38%;  left: 9.5%;}
 	#modal-inn .npc-actions-right { top: 38%;  right: 13.5%; }
@@ -139,15 +139,15 @@
 	#modal-inn .npc-stats-right {right:20%;}
 	#modal-inn .npc-stats-header {top:21.3%;}
 	/* 3. Blacksmith */
-	#modal-blacksmith .npc-title {top: 17.2%; font-size: 1em;}
-	#modal-blacksmith .npc-dialogue {bottom: 18.6%; font-size: 0.5em}
+	#modal-blacksmith .npc-title {top: 17.2%; font-size: 1rem;}
+	#modal-blacksmith .npc-dialogue {bottom: 18.6%; font-size: 0.5rem}
 	#modal-blacksmith .npc-actions-left { top: 38%;  left: 9.5%; }
 	#modal-blacksmith .npc-actions-right { top: 38%;  right: 13.5%; }
 	#modal-blacksmith .npc-stats-left {left:16%;}
 	#modal-blacksmith .npc-stats-right {right:20%;}
 	#modal-blacksmith .npc-stats-header {top:21.3%;}
     /* 4. SİMYACI (ALCHEMIST) MOBİL */
-   	#modal-alchemist .npc-title {top: 17.2%; font-size: 1em;}
+   	#modal-alchemist .npc-title {top: 17.2%; font-size: 1rem;}
 	#modal-alchemist .npc-dialogue {bottom: 18.6%; font-size: 0.4rem}
 	#modal-alchemist .npc-actions-left { top: 38%;  left: 9.5%;}
 	#modal-alchemist .npc-actions-right { top: 38%;  right: 13.5%; }
@@ -203,7 +203,7 @@
     }
 
     /* 5. AHIR (STABLE) MOBİL */
-	#modal-stable .npc-title {top: 17.2%; font-size: 1em;}
+	#modal-stable .npc-title {top: 17.2%; font-size: 1rem;}
 	#modal-stable .npc-dialogue {bottom: 18.6%; font-size: 0.45rem}
 	#modal-stable .npc-actions-left { top: 38%;  left: 9.5%;}
 	#modal-stable .npc-actions-right { top: 38%;  right: 13.5%; }
