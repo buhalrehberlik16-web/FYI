@@ -26,15 +26,13 @@ window.CalendarManager = {
         }
 
         // Eğer hero objesinde takvim verisi yoksa veya bozuksa oluştur
-        if (!window.hero.calendar || window.hero.calendar.startDayOfYear === 0) {
             window.hero.calendar = {
                 startDayOfYear: Math.floor(Math.random() * window.CALENDAR_CONFIG.totalCycleDays),
                 daysPassed: 0,
                 isInitialized: true
             };
-        }
         
-        console.log("Zaman Sistemi Başlatıldı.");
+        console.log("📅 Zaman Sistemi Sıfırlandı: 0. Günden başlanıyor.");
         this.updateTownUI();
     },
 
