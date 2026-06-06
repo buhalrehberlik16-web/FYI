@@ -407,6 +407,7 @@ function initGame() {
     hero.autoRestCount = 0;  // Zorunlu dinlenme ceza sayacını sıfırla
     hero.skillUsage = {};    // Yetenek kullanım sayılarını temizle (Maliyetler normale dönsün)
     // ------------------------------------------
+	window.currentBossScaling = 1.0;
 	window.lastExhaustionThreshold = 0;
 	
     hero.unlockedSkills = []; 
