@@ -181,7 +181,7 @@ const COMMON_SKILLS = {
     magus_cut: {
         data: {
             name: "Kes",
-            menuDescription: "Atağın kadar hasar.",
+            menuDescription: "1,25xAtak kadar hasar.",
             rageCost: 0,
             levelReq: 1,
 			exhaustion: 2,
@@ -192,7 +192,7 @@ const COMMON_SKILLS = {
 			classReq: ["Magus"], // SADECE Magus GÖREBİLİR
             // YENİ SİSTEM: Physical ve Elemental ayrımı
             scaling: { 
-                physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
+                physical: { atkMult: 1.25, stat: "str", statMult: 0.0 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
         },
@@ -217,11 +217,11 @@ const COMMON_SKILLS = {
             category: 'common',
             tier: 1,
             classReq: ["Magus"], // Sadece Magus görebilir
-            // HESAPLAMA: 1x Atak + 0.4x Curse (Lanet)
+            // HESAPLAMA: 1x Atak + 0.34x Curse (Lanet)
             scaling: { 
                 physical: { atkMult: 1.0, stat: "str", statMult: 0.0 },
                 elemental: { 
-                    curse: { stat: "mp_pow", statMult: 0.4 }, // Lanet hasarı MP'den beslenir
+                    curse: { stat: "mp_pow", statMult: 0.34 }, // Lanet hasarı MP'den beslenir
                     fire: 0, cold: 0, lightning: 0, poison: 0 
                 }
             }
