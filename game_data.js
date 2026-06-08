@@ -43,10 +43,10 @@ const CLASS_CONFIG = {
         startingResistances: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         startingElementalDamage: { fire: 0, cold: 0, lightning: 0, curse: 0, poison: 0 },
         
-        baseHp: 23,
+        baseHp: 28,
 		baseResource: 80, // Başlangıç Mana sınırı
 		onHitRageGain: 0,
-		baseAttack: 11,  
+		baseAttack: 12,  
         baseDefense: 0,
 		resourceName: "mana",
         resourceColor: "#3498db",
