@@ -434,6 +434,7 @@ window.LANG_TR = {
 			"İskelet": "İskelet",
 			"Haydut Simyacı": "Haydut Simyacı",
 			"Kobold Devriye": "Kobold Devriye",
+			"Kobold Şaman": "Kobold Şaman",
 			"Treant Sapling": "Ağaç Fidanı",
 			"Haydut Devriye": "Haydut Devriye",
 			"Goblin Şaman": "Goblin Şaman",

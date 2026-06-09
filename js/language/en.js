@@ -432,6 +432,7 @@ window.LANG_EN = {
 			"İskelet": "Skeleton",
 			"Haydut Simyacı": "Bandit Bandolier",
 			"Kobold Devriye": "Kobold Patrol",
+			"Kobold Şaman": "Kobold Shaman",
 			"Treant Sapling": "Treant Sapling",
 			"Haydut Devriye": "Highwayman Patrol",
 			"Goblin Şaman": "Goblin Shaman",
