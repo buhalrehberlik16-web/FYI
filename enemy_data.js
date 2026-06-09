@@ -343,6 +343,34 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	"Goblin Gözcü": { 
+        tribe: "Greenskins",
+        maxHp: 65, attack: 10, defense: 7, xp: 0, tier: 2, 
+        idle: 'enemies/goblin_scout.webp',
+        attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
+        dead: 'enemies/goblin_scout_dead.webp',
+        skills: [
+			{ 
+                id: "goblin_yell", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "atk_up", 
+                value: 5, 
+                duration: 2, 
+                textKey: "yell" 
+            }, 
+			{ 
+                id: "sneaky_stab", 
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { poison: 0.8}, 
+				dotType: "poison", 
+				duration: 4,
+				tickMult: 0.2,           // Her tur ne kadar vuracağını belirler  
+                textKey: "poison_stab" 
+			}
+        ]
+    },
 	
 	"Haydut Gözcü": { 
         tribe: "Humans",
@@ -730,6 +758,16 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	"Lanetli Ayı": { 
+        tribe: "B&M",
+        maxHp: 105, attack: 32, defense: 10, xp: 0, tier: 3, 
+        idle: 'enemies/cursed_grizzly.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/cursed_grizzly_dead.webp',
+        skills: [
+		//Basics deal half Curse Dmg
+        ]
+    },
 	"Beyaz Kurt": { 
         tribe: "B&M",
         specificResists: { cold: 20 },
@@ -984,6 +1022,16 @@ window.ENEMY_STATS = {
         skills: [
         ]
     },
+	"Göçebe Kültist": { 
+        tribe: "Humans",
+        maxHp: 180, attack: 38, defense: 16, xp: 0, tier: 4, 
+        idle: 'enemies/nomad_cultist.webp',
+        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
+        dead: 'enemies/nomad_cultist_dead.webp',
+        skills: [
+		//Curse&Debuff
+        ]
+    },
 
     // --- BOSS ---
     "Goblin Şefi": { 
@@ -1062,10 +1110,10 @@ Object.assign(ENEMY_STATS, {
 // Düşman Havuzları
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
-    2: ["Kemik Yürüyen","Goblin Devriyesi", "Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı", "Beyaz Kurt","Canavar Tohum", "Treant"],
+    2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı","Lanetli Ayı","Beyaz Kurt","Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
-    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı"], 
+    4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı","Göçebe Kültist"], 
     5: [], 
     6: [],
     "B2": [],
@@ -1088,6 +1136,7 @@ window.BIOME_WEIGHTS = {
     "Hırsız Kobold":  	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
 // TIER 2
     "Goblin Devriyesi":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
+	"Goblin Gözcü":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
 	"Haydut Gözcü":   	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
     "Kaçak Haydut":   	{ forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.2, mountain: 0.2, urban: 0.4 },
     "Şaman": 		  	{ forest: 0.2, plains: 0.2, cave: 0.2, iceland: 0.2, mountain: 0.2, urban: 0.4 },
@@ -1104,6 +1153,7 @@ window.BIOME_WEIGHTS = {
 	"Haydut Devriye":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Haydut Okçu":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Boz Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+	"Lanetli Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
 	"Beyaz Kurt":		{ forest: 0.1, plains: 0.2, cave: 0.1, iceland: 0.5, mountain: 0.5, urban: 0.0 },
     "Yaban Domuzu":   	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
 	"Treant":   		{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
@@ -1118,6 +1168,7 @@ window.BIOME_WEIGHTS = {
     "Gulyabani":      	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
 	"Göçebe":			{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Göçebe Savaşçı":	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
+	"Göçebe Kültist":	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	//Ejderkelam'ı buraya ve yukarıdaki havuza tekrar koymak gerekli mi?
     "Kemik Golemi":   	{ forest: 0.0, plains: 0.2, cave: 0.2, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
 // B1
