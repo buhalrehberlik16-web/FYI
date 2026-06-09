@@ -579,6 +579,38 @@ window.ENEMY_STATS = {
             } 
         ]
     },
+	 "Kobold Şaman": { 
+        tribe: "Dragonkind",
+        maxHp: 55, attack: 12, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/kobold_shaman.webp',
+        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        dead: 'enemies/kobold_shaman_dead.webp',
+        skills: [
+		{ 
+                id: "spirit_mend", 
+                template: "self_buff", 
+                category: "buff",
+                subtype: "heal", 
+                value: 0.10, 
+                textKey: "regrow" 
+            },
+			{ 
+            id: "attack1", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { poison: 1.0 }, 
+                textKey: "curse" 
+			},
+			
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 1.0 }, 
+                textKey: "gaze" 
+			},
+        ]
+    },
 	"Treant Sapling": { 
         tribe: "Plants",
         specificResists: { poison: 20, curse: -10 },
@@ -1110,7 +1142,7 @@ Object.assign(ENEMY_STATS, {
 // Düşman Havuzları
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
-    2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Treant Sapling"],
+    2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Kobold Şaman", "Treant Sapling"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı","Lanetli Ayı","Beyaz Kurt","Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı","Göçebe Kültist"], 
@@ -1146,6 +1178,7 @@ window.BIOME_WEIGHTS = {
 	"Treant Sapling":  	{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
 	"Kemik Yürüyen":	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
 	"Kobold Devriye": 	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
+	"Kobold Şaman": 	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
 	//Magical Creature1 "imp?": { forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 }
 // TIER 3
 	"Goblin Şaman":		{ forest: 0.3, plains: 0.3, cave: 0.2, iceland: 0.1, mountain: 0.2,  urban: 0.4 },
