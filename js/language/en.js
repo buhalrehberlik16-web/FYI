@@ -414,6 +414,7 @@ window.LANG_EN = {
 			"Dikenli Çalı": "Thorny Shrub",
 			"Kemik Yürüyen": "Bone Walker",
             "Goblin Devriyesi": "Goblin Patrol",
+			"Goblin Gözcü": "Goblin Scout",
             "Kaçak Haydut": "Outlaw Rogue",
             "Gri Kurt": "Grey Wolf",
 			"Haydut Gözcü": "Scout Bandit",
@@ -436,13 +437,15 @@ window.LANG_EN = {
 			"Goblin Şaman": "Goblin Shaman",
 			"Haydut Okçu": "Highwayman Archer",
 			"Boz Ayı": "Grizzly Bear",
+			"Lanetli Ayı": "Cursed Grizzly",
 			"Treant": "Treant",
 			"Canavar Tohum": "Trap Seed",
 			"Kadim Mantar": "Ancient Shroom",
 			"Ejderkelam": "Dragonkin Speaker",
 			"Kil Golem": "Clay Golem",
 			"Göçebe Savaşçı": "Nomad Warrior",
-			"Göçebe": "Nomad"
+			"Göçebe": "Nomad",
+			"Göçebe Kültist": "Nomad Cultist"
         },
 		
 		enemy_effects: {
@@ -458,6 +461,7 @@ window.LANG_EN = {
             broken: "ARMOR BROKEN!",
             fortitude: "+RESIST!",
             yell: "+ATTACK!",
+			sneaky_stab: "POISON STAB",
             dirty: "HEAVY DAMAGE!",
             smoke: "SMOKE BOMB!",
 			f_bomb: "FIRE BOMB",
@@ -496,6 +500,7 @@ window.LANG_EN = {
 			dirty_kick: { name: "Dirty Kick" },
 			thorn_prick: { name: "Thorn Prick" },
 			goblin_yell: { name: "GOBLIN YELL", effect: "+ATTACK" },
+			sneaky_stab: { name: "Sneaky Stab"},
 			shield_wall: { name: "SHIELD WALL", effect: "+DEFENSE" },
 			dirty_strike: { name: "DIRTY STRIKE", effect: "HEAVY DAMAGE" },
 			smoke_bomb: { name: "SMOKE BOMB", effect: "BLINDED" },
@@ -504,6 +509,7 @@ window.LANG_EN = {
 			alpha_howl: { name: "ALPHA HOWL", effect: "+ATTACK" },
 			miasma_bite: { name: "MIASMA BITE", effect: "MIASMA"}, 
 			bear_hug: { name: "Bear Hug" },
+			roar: { name: "roar"},
 			spirit_mend: { name: "Spirit Mend" },
 			totem_curse: { name: "Totem Curse" },
 			trample: { name: "TRAMPLE", effect: "TRAMPLED" },

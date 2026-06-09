@@ -416,6 +416,7 @@ window.LANG_TR = {
 			"Dikenli Çalı": "Dikenli Çalı",
 			"Kemik Yürüyen": "Kemik Yürüyen",
             "Goblin Devriyesi": "Goblin Devriyesi",
+			"Goblin Gözcü": "Goblin Gözcü",
             "Kaçak Haydut": "Kaçak Haydut",
             "Gri Kurt": "Gri Kurt",
 			"Haydut Gözcü": "Haydut Gözcü",
@@ -438,13 +439,15 @@ window.LANG_TR = {
 			"Goblin Şaman": "Goblin Şaman",
 			"Haydut Okçu": "Haydut Okçu",
 			"Boz Ayı": "Boz Ayı",
+			"Lanetli Ayı": "Lanetli Ayı",
 			"Treant": "Treant",
 			"Canavar Tohum": "Canavar Tohum",
 			"Kadim Mantar": "Kadim Mantar",
 			"Ejderkelam": "Ejderkelam",
 			"Kil Golem": "Kil Golem",
 			"Göçebe": "Göçebe",
-			"Göçebe Savaşçı": "Göçebe Savaşçı"
+			"Göçebe Savaşçı": "Göçebe Savaşçı",
+			"Göçebe Kültist": "Göçebe Kültist"
         },
 		
 		enemy_effects: {
@@ -460,6 +463,7 @@ window.LANG_TR = {
             broken: "ZIRH KIRILDI!",
             fortitude: "+DİRENÇ!",
             yell: "+ATAK!",
+			poison_stab: "ZEHİRLİ KESİK",
             dirty: "AĞIR HASAR!",
             smoke: "GÖRÜŞ KAYBI!",
             vicious: "KANAMA!",
@@ -497,6 +501,7 @@ window.LANG_TR = {
 			dirty_kick: { name: "Kirli Tekme" },
 			thorn_prick: { name: "Diken Batması" },
 			goblin_yell: { name: "GOBLİN ÇIĞLIĞI", effect: "+ATAK" },
+			sneaky_stab: { name: "Sinsi Saldırı"},
 			shield_wall: { name: "KALKAN DUVARI", effect: "+DEFANS" },
 			dirty_strike: { name: "KİRLİ VURUŞ", effect: "AĞIR HASAR" },
 			smoke_bomb: { name: "SİS BOMBASI", effect: "KÖRLÜK" },
@@ -505,6 +510,7 @@ window.LANG_TR = {
 			alpha_howl: { name: "ALFA ULUMASI", effect: "+ATAK" },
 			miasma_bite: { name: "İLLET ISIRIĞI", effect: "İLLET"},
 			bear_hug: { name: "Ayı Pençesi" },
+			roar: { name: "Kükreme"},
 			spirit_mend: { name: "Ruh Onarımı" },
 			totem_curse: { name: "Totem Laneti" },
 			trample: { name: "EZME", effect: "EZİLDİN" },
