@@ -38,7 +38,7 @@
 	
 	#turn-counter-box {
     position: absolute;
-    top: 20px;
+    top: 1%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 50;
@@ -92,9 +92,9 @@
 #combat-log-wrapper {
 	    position: absolute;
         width: 92% !important;
-        max-width: 240px !important;
-        left: 31.2cqw;
-        top: 23.2cqw !important; /* Üst bara daha yakın */
+        max-width: 72% !important;
+        left: 35.2cqw;
+        top: 23.5cqw !important; /* Üst bara daha yakın */
         border-radius: 4px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.8) !important;
 		transition: all 0.3s ease-in-out;
