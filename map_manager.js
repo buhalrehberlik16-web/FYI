@@ -639,7 +639,7 @@ function proceedWithNodeAction(node) {
             let enemy = node.enemyName;
             const translatedEnemy = lang.enemy_names[enemy] || enemy;
             const appearanceMsg = lang.enemy_spotted.replace("$1", translatedEnemy);
-            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum, node.roomEvent); 
+            startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum, node.roomEvent, node.isOrange); 
 
         } else if (node.type === 'town') {
             enterTown();
@@ -648,7 +648,7 @@ function proceedWithNodeAction(node) {
             triggerRandomEvent();
 
         } else if (node.type === 'boss') {
-            startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum, node.roomEvent);
+            startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum, node.roomEvent, false);
         }
         else if (node.type === 'city') {
             writeLog("🏆 " + lang.desc_city);

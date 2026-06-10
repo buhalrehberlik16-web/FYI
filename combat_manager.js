@@ -1027,7 +1027,7 @@ window.determineMonsterAction = function() {
     showMonsterIntention(window.monsterNextAction);
 };
 
-window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum, roomEventFromMap = "none") {
+window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMap = false, isWeakFromMap = false, biome, bgNum, roomEventFromMap = "none", isOrangeFromMap = false) {
     const stats = ENEMY_STATS[enemyType]; if (!stats) return;
 	//StatsManager.trackEnemy(enemyType);
 	const lang = window.getCombatLang(); 
@@ -1153,6 +1153,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         isHard: isHardFromMap, 
         isBoss: stats.isBoss, 
         isHalfTier: isHalfTierFromMap,
+		isOrange: isOrangeFromMap,
         xp: stats.xp, 
         tier: stats.tier, 
         idle: stats.idle, dead: stats.dead, attackFrames: stats.attackFrames,

@@ -149,6 +149,23 @@ function levelUp() {
     
     hero.xp = hero.xp - 10; // Gereken XP artık sabit 10
     hero.xpToNextLevel = 10;
+	
+	 // --- YENİ: LEVEL UP ZIPLAMA EFEKTİ ---
+    if (window.gameSettings.levelJump) {
+        const markerContainer = document.getElementById('player-marker-container');
+        if (markerContainer) {
+            // Önce varsa eski sınıfı sil, sonra animasyonu tetikle (Reflow)
+            markerContainer.classList.remove('marker-jump-active');
+            void markerContainer.offsetWidth; 
+            markerContainer.classList.add('marker-jump-active');
+            
+            // Animasyon bitince temizle (1.5 saniye sonra)
+            setTimeout(() => {
+                markerContainer.classList.remove('marker-jump-active');
+            }, 2500);
+        }
+    }
+    // -------------------------------------
     
     writeLog(`⬆️ **SEVİYE ATLADIN!** (Lv. ${hero.level}) - Kazanılan SP: ${spGain} - %50 Can Yenilendi (+${healAmount} HP)`);
     updateStats(); 
