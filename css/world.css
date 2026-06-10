@@ -85,7 +85,6 @@
     bottom: 15%;
     width: 100%;
     text-align: center;
-    pointer-events: none;
 	z-index:999;
 }
 
@@ -308,6 +307,33 @@
     border-color: #8b0000 !important;
 }
 
+#starter-city-msg {
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+/* Her şey hazır olduğunda metnin alacağı hal */
+#starter-city-msg.ready-to-leave {
+    cursor: pointer !important;
+    border-color: #ffd700 !important;
+    color: #ffd700 !important;
+    background: rgba(43, 34, 24, 0.9) !important;
+    /* Oyuncuya "Bana Bas" diyen hafif bir parlama animasyonu */
+    animation: readyPulse 2s infinite ease-in-out;
+}
+
+#starter-city-msg.ready-to-leave:hover {
+    transform: scale(1.05);
+    background: rgba(93, 74, 48, 0.9) !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
+
+@keyframes readyPulse {
+    0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+    50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+    100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+}
+
 /* --- MOBİL UYUMLULUK --- */
 @media (max-width: 768px) {
     .town-calendar-text {
@@ -346,7 +372,7 @@
 }
 
     #starter-city-msg {
-        font-size: 0.9rem;
+        font-size: 0.6rem;
         padding: 10px 20px;
         bottom: 80px;
     }
@@ -362,6 +388,12 @@
     
     .v-skill-text { font-size: 0.7rem !important; max-width: 90px; }
     .v-action-btn { width: 60px !important; font-size: 0.65rem !important; }
+	
+	#starter-city-msg.ready-to-leave:hover {
+    transform: scale(0.7);
+    background: rgba(93, 74, 48, 0.9) !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+}
 }
 	
 }
