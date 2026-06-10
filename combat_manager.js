@@ -1174,26 +1174,35 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     // Urban ise rastgele bir element seç
     if (biome?.toLowerCase() === 'urban') roomElement = ['fire','cold','lightning','poison','curse'][Math.floor(Math.random()*5)];
     monster.roomElement = roomElement; // Canavarın üzerine hangi elementin odasında olduğunu yazdık
-	
-	window.showRoomEventBanner(roomEventFromMap);
 
-    // 1. Magical Reinforcement: +1-5 Atak VEYA Element Hasarı (Hem Hero hem Monster)
+     // 1. Magical Reinforcement: +1-5 Atak VEYA Element Hasarı
     if (monster.roomEvent === "reinforcement") {
         const bonusVal = Math.floor(Math.random() * 5) + 1;
         const isElemental = Math.random() > 0.5;
+        let bonusText = ""; // Gösterge için metin hazırlıyoruz
 
         if (!isElemental) {
             // FİZİKSEL ATAK BONUSU
             monster.attack += bonusVal;
             applyStatusEffect(hero, { id: 'atk_up', value: bonusVal, turns: 99, resetOnCombatEnd: true });
+            
+            // Etiketi hazırla: (+3 Atak)
+            bonusText = `+${bonusVal} ${lang.label_atk}`;
         } else {
             // ELEMENTAL HASAR BONUSU
-            // Kahramana ilgili elementin hasarını ekle
             hero.elementalDamage[roomElement] += bonusVal;
-            // Canavara da element gücü vermek için atağını artırıyoruz (SplitDamage bunu elemente dönüştürecek)
-            monster.attack += bonusVal; 
+            monster.attack += bonusVal;
+            
+            // Etiketi hazırla: (+2 Zehir)
+            const elementName = lang.status[roomElement] || roomElement;
+            bonusText = `+${bonusVal} ${elementName}`;
         }
-        writeLog(lang.combat.log_room_event.replace("$1", lang.room_events.event_reinforcement));
+        
+        // --- KRİTİK: Bilgiyi canavara kaydet ---
+        monster.reinforcementLabel = bonusText;
+        // ---------------------------------------
+        
+        writeLog(lang.combat.log_room_event.replace("$1", `${lang.room_events.event_reinforcement} (${bonusText})`));
     }
 
     // 2. Biome Storm: Kırmızı Enemyler için +3 Resist ve +3 Element Hasarı
@@ -1210,6 +1219,8 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         hero.calendar.daysPassed = Math.max(0, hero.calendar.daysPassed - 1);
         writeLog(lang.combat.log_kings_path);
     }
+	
+	window.showRoomEventBanner(roomEventFromMap);
 	
 	monsterDisplayImg.src = `images/${monster.idle}`;
     monsterDisplayImg.style.filter = 'none'; 
@@ -1740,7 +1751,13 @@ window.showRoomEventBanner = function(eventKey) {
         eventName += ` (${elementTrans})`;
     }
     // ---------------------------------
-
+	
+	// --- YENİ: TAKVİYE BONUSUNU EKLE ---
+    if (safeKey === "reinforcement" && window.monster && monster.reinforcementLabel) {
+        // Örn: "Büyüsel Takviye (+4 Ateş)"
+        eventName += ` (${monster.reinforcementLabel})`;
+    }
+    // -----------------------------------
 
     // 1. BÜYÜK BANNER (Geçici)
     if (banner) {
