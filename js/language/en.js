@@ -580,6 +580,7 @@ window.LANG_EN = {
 			log_blood_mark_drain: "🩸 **Blood Mark**: Drained $1 health! (Total: $2)",
 			log_shield_end: "🛡️ **$1** broke their defensive stance.",
 			log_mp_regen_skill: "✨ **$1**: +$2 $3 restored.",
+			log_astral_trigger: "✨ **Astral Guard**: Attack negated and $1 HP restored!",
 			log_boss_buff: "⚠️ Boss STRENGTHENED by $1% due to the passage of time!",
 			log_boss_weak: "✨ Caught Off Guard! Boss is $1% WEAKER than normal.",
 			log_weak_buff: "✨ **Weak Enemy**: The enemy is 20% weaker because lost its way!",
@@ -775,6 +776,7 @@ window.LANG_EN = {
             bash: { name: "Bash", desc: "Damage: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>30% Chance to Stun (1 Turn).</span><br><span style='color:cyan'>-30 Rage.</span>",},
             pierce_through: { name: "Pierce Through", desc: "Damage: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>Ignores 50% of Enemy Defense.</span><br><span style='color:cyan'>-30 Rage.</span>" },
             daze: { name: "Daze", desc: "Damage: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Turns: Enemy ATK reduced by 25%.</span><br><span style='color:cyan'>-25 Rage.</span>", log: "Enemy attack reduced by 25% for 2 turns." },
+			execute: { name: "Execute", desc: "Damage: <b style='color:orange'>1.5 x ATK + 0.5 x STR</b>.<br><b style='color:orange'>x2 Damage</b> if enemy HP is below 30%.<br><span style='color:cyan'>-40 Rage.</span>", log: "The blow became lethal as the enemy was weak!" },
             armor_break: { name: "Armor Break", desc: "Damage: <b style='color:orange'> 1 x ATK + 1 x STR.</b><br><span style='color:#b19cd9'>2 Turns: Enemy Defense becomes 0</span>.<br><span style='color:cyan'>-30 Rage.</span>", log: "Enemy defense reduced to 0 for 2 turns!" },
             fury: { name: "Fury", desc: "<span style='color:#43FF64'>4 Turns: Gain Rage equal to 25% of damage dealt.<br></span><span style='color:cyan'>-50 Rage.</span>", log: "Will gain Rage equal to 25% of damage for 4 turns." },
 			rend: { name: "Rend", desc: "Damage: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Apply Bleeding for 2 turns equal to 50% of total damage.</span><br><span style='color:cyan'>-40 Rage.</span>"},
@@ -798,6 +800,8 @@ window.LANG_EN = {
             Healing_Light: { name: "Healing Light",  desc: "Holy light envelops everyone. Heals you for <span style='color:#43FF64'>20% Max HP</span> and restores <span style='color:#43FF64'>10% of current HP</span> for 3 turns. Enemy heals for <span style='color:#ff4d4d'>15% Max HP</span>.<br><span style='color:cyan'>-50 Rage.</span>", log: "Holy light healed everyone by $1."},
 			provoke: { name: "Provoke", desc: "Psychological warfare.<br><b style='color:#43FF64'>(Fast Action)</b><br><span style='color:#43FF64'>Forces enemy intention to Attack.</span><br><span style='color:#43FF64'>2 Turns: Gain Regeneration equal to INT.</span><br><span style='color:#b19cd9'>Enemy gains Attack equal to 25% of their Defense.</span><br><span style='color:cyan'>-20 Rage.</span>", log: "Enemy provoked, gains 25% Attack boost for 2 turns." },
 			celestial_judgement: { name: "Celestial Judgement", desc: "Summons divine wrath.<br>Damage: <b style='color:orange'>2.0 x MP (Lightning)</b><br><span style='color:#43FF64'>Damage increases by 10% for each active Buff or Debuff in battle.</span><br><span style='color:cyan'>-30 Rage.</span>" },
+			blade_of_retribution: { name: "Blade of Retribution", desc: "Dispenses justice. <br>Damage: <b style='color:orange'>1.2 x ATK + 1.2 x MP (Lightning)</b><br>Deals <b style='color:orange'>50% More</b> damage if you took damage last turn.", log: "The strike was empowered by vengeful fire!" },
+			astral_barrier: { name: "Astral Barrier", desc: "Provides mystic protection. <br>Damage: <b style='color:orange'>1.0 x MP (Lightning)</b><br>The next hit you take is negated and <span style='color:#43FF64'>heals you for 15 HP</span>.", log: "An astral shield enveloped you." },
 			spiritual_apocalypse: { name: "Spiritual Apocalypse", desc: "Converts all inner holiness into an implosion.<br>Damage: <b style='color:orange'>3.5 x MP (Curse)</b><br><span style='color:#ff4d4d'>Consumes all active Buffs on you.</span><br><span style='color:#43FF64'>Each consumed effect increases damage by 30% and applies Curse DoT equal to 25% of damage dealt.</span><br><span style='color:cyan'>-40 Rage.</span>", log: "Gained 30% Attack for each buff sacrificed." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //

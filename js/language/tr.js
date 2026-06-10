@@ -580,6 +580,7 @@ window.LANG_TR = {
 			log_blood_mark_drain: "🩸 **Blood Mark**: $1 can sömürdün! (Toplam: $2)",
 			log_shield_end: "🛡️ **$1** savunma duruşunu bozdu.",
 			log_mp_regen_skill: "✨ **$1**: +$2 $3 kazanıldı.",
+			log_astral_trigger: "✨ **Astral Koruma**: Darbe engellendi ve $1 HP yenilendi!",
 			log_boss_buff: "⚠️ Boss Karanlık Zamanın Etkisiyle %$1 GÜÇLENDİ!",
 			log_boss_weak: "✨ Hazırlıksız Yakalandı! Boss normalden %$1 daha ZAYIF.",
 			log_half_tier_buff: "⚠️ **Takviyeli Düşman**: Statlar %50 arttırıldı!",
@@ -776,6 +777,7 @@ window.LANG_TR = {
             bash: { name: "Balyoz", desc: "Hasar: <b style='color:orange'>ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>%30 Şansla Sersemletir (1 Tur).</span><br><span style='color:cyan'>-30 Öfke.</span>", },
             pierce_through: { name: "Delip Geç", desc: "Hasar: <b style='color:orange'>1.25 x ATK + 0.4 x STR</b>.<br><span style='color:#b19cd9'>Düşman Defansının %50'sini yok sayar.</span><br><span style='color:cyan'>-30 Öfke.</span>" },
             daze: { name: "Afallat", desc: "Hasar: <b style='color:orange'>2 x ATK</b>.<br><span style='color:#b19cd9'>2 Tur: Düşman ATK %25 azalır.</span><br><span style='color:cyan'>-25 Öfke.</span>", log: "2 Tur düşman atağı %25 azaldı." },
+			execute: { name: "İnfaz", desc: "Hasar: <b style='color:orange'>1.5 x ATK + 0.5 x STR</b>.<br>Canı %30'un altındakilere <b style='color:orange'>x2 Hasar</b>.<br><span style='color:cyan'>-40 Öfke.</span>", log: "Düşman zayıf olduğu için darbe ölümcülleşti!" },
             armor_break: { name: "Zırh Kıran", desc: "Hasar: <b style='color:orange'> 1 x ATK + 1 x STR.</b><br><span style='color:#b19cd9'>2 Tur: Düşman Defansı 0</span>.<br><span style='color:cyan'>-30 Öfke.</span>", log: "2 Tur düşman defansı 0 oldu!" },
             fury: { name: "Hiddet", desc: "<span style='color:#43FF64'>4 Tur: Hasarın %25'i kadar Rage kazan.</span><br><span style='color:cyan'>-50 Öfke.</span>", log: "4 Tur Hasarın %25'i kadar Öfke kazanacaksın." },
 			rend: { name: "Yar", desc: "Hasar: <b style='color:orange'>1.5 x STR</b>.<br><span style='color:#ff4d4d'>Vurulan toplam hasarın %50'si kadar 2 tur kanama verir.</span><br><span style='color:cyan'>-40 Öfke.</span>"},
@@ -799,6 +801,8 @@ window.LANG_TR = {
             Healing_Light: { name: "İyileştiren Işık",  desc: "Kutsal ışık her şeyi sarar. Seni <span style='color:#43FF64'>%20 Max HP</span> iyileştirir ve 3 tur boyunca o anki canının <span style='color:#43FF64'>%10'unu</span> yeniler. Düşman <span style='color:#ff4d4d'>%15 Max HP</span> iyileşir.<br><span style='color:cyan'>-50 Öfke.</span>", log: "Kutsal ışık herkesi $1 iyileştirdi."},
 			provoke: { name: "Kışkırtma", desc: "Düşmanla zihin bağı kurar.<br><b style='color:#43FF64'>(Hızlı Aksiyon)</b><br><span style='color:#43FF64'>Düşman niyetini Saldırıya çevirir.</span><br><span style='color:#43FF64'>2 Tur: INT kadar Yenilenme kazandırır.</span><br><span style='color:#b19cd9'>Düşman, kendi Defansının %25'i kadar Atak kazanır.</span><br><span style='color:cyan'>-20 Öfke.</span>", log: "Düşman kışkırtıldı 2 tur boyunca %25 Atak güçlendirmesi alacak." },
 			celestial_judgement: { name: "Göklerin Hükmü", desc: "Mistik güçleri çağırır.<br>Hasar: <b style='color:orange'>2.0 x MP (Yıldırım)</b><br><span style='color:#43FF64'>Savaş alanındaki her aktif etki (Buff/Debuff) başına hasarı %20 artar.</span><br><span style='color:cyan'>-30 Öfke.</span>" },
+			blade_of_retribution: { name: "Kısas Kılıcı", desc: "Adalet dağıtır. <br>Hasar: <b style='color:orange'>1.2 x ATK + 1.2 x MP (Yıldırım)</b><br>Geçen tur hasar aldıysan <b style='color:orange'>%50 Fazla</b> vurur.", log: "Darbe intikam ateşiyle güçlendi!" },
+			astral_barrier: { name: "Astral Bariyer", desc: "Mistik bir koruma sağlar. <br>Hasar: <b style='color:orange'>1.0 x MP (Yıldırım)</b><br>Alacağın ilk darbe engellenir ve seni <span style='color:#43FF64'>15 HP iyileştirir</span>.", log: "Astral bir kalkan seni sarmaladı." },
 			spiritual_apocalypse: { name: "Ruhani Kıyamet", desc: "İçindeki tüm kutsallığı bir infilaka dönüştürür.<br>Hasar: <b style='color:orange'>3.5 x MP (Lanet)</b><br><span style='color:#ff4d4d'>Üzerindeki tüm olumlu etkileri (Buff) siler.</span><br><span style='color:#43FF64'>Feda edilen her etki için hasar %30 artar verilen hasarın %25'i kadar düşmana Lanet bırakır.</span><br><span style='color:cyan'>-40 Öfke.</span>", log: "Feda edilen her güçlendirme için %30 atak alındı." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
