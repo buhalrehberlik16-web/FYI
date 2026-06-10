@@ -35,7 +35,7 @@ window.LANG_TR = {
 		// Tutorial Şehri
 		building_barracks: "KIŞLA",
 		building_elder: "BİLGE",
-		leave_starter_city: "YOLA ÇIK",
+		starter_ready: "Hazırsın! Maceraya atılmak için buraya dokun...",
 		starter_step_1: "Önce Kışla'ya git ve sınıfını seç.",
 		starter_step_2: "Güzel, şimdi Bilge'den savaş tarzını öğren.",
 		starter_ready: "Hazırsın! Yola çıkma vakti geldi.",
@@ -579,6 +579,7 @@ window.LANG_TR = {
 			log_armor_pierce: "🔨 **Zırh Delme**: Düşmanın savunması yok sayıldı!",
 			log_blood_mark_drain: "🩸 **Blood Mark**: $1 can sömürdün! (Toplam: $2)",
 			log_shield_end: "🛡️ **$1** savunma duruşunu bozdu.",
+			log_mp_regen_skill: "✨ **$1**: +$2 $3 kazanıldı.",
 			log_boss_buff: "⚠️ Boss Karanlık Zamanın Etkisiyle %$1 GÜÇLENDİ!",
 			log_boss_weak: "✨ Hazırlıksız Yakalandı! Boss normalden %$1 daha ZAYIF.",
 			log_half_tier_buff: "⚠️ **Takviyeli Düşman**: Statlar %50 arttırıldı!",
@@ -815,7 +816,7 @@ window.LANG_TR = {
 			Chaos_Rain: { name: "Kaos Yağmuru", desc: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>" },
 			Meditate: { name: "Meditasyon", desc: "<span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>", log: "$1 Mana kazanıldı." },
 			Thorn_Whip: { name: "Dikenli Kırbaç", desc: "Hasar: <b style='color:orange'>0.9xINT (Fiz) + 0.9xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Rejuvanate: { name: "Gençleşme", desc: "<span style='color:#43FF64'>4 Tur: Her tur +INT HP ve +1.5xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "4 Tur: INT kadar HP ve 1.5xINT Mana." },
+			Rejuvanate: { name: "Gençleşme", desc: "<span style='color:#43FF64'>4 Tur: Her tur +1xINT HP ve +1xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "4 Tur: 1xINT HP ve 1xINT Mana." },
 			Natures_Wrath: { name: "Doğanın Öfkesi", desc: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
 		

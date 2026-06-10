@@ -19,7 +19,7 @@ window.LANG_EN = {
 		// Tutorial CITY
 		building_barracks: "BARRACKS",
 		building_elder: "ELDER",
-		leave_starter_city: "SET OUT",
+		starter_ready: "You are ready! Tap here to begin your adventure...",
 		starter_step_1: "Go to the Barracks first to choose your class.",
 		starter_step_2: "Good, now learn your combat style from the Elder.",
 		starter_ready: "You are ready! Time to set out.",
@@ -579,6 +579,7 @@ window.LANG_EN = {
 			log_armor_pierce: "🔨 **Armor Pierce**: Enemy defense ignored!",
 			log_blood_mark_drain: "🩸 **Blood Mark**: Drained $1 health! (Total: $2)",
 			log_shield_end: "🛡️ **$1** broke their defensive stance.",
+			log_mp_regen_skill: "✨ **$1**: +$2 $3 restored.",
 			log_boss_buff: "⚠️ Boss STRENGTHENED by $1% due to the passage of time!",
 			log_boss_weak: "✨ Caught Off Guard! Boss is $1% WEAKER than normal.",
 			log_weak_buff: "✨ **Weak Enemy**: The enemy is 20% weaker because lost its way!",
@@ -814,7 +815,7 @@ window.LANG_EN = {
 			Chaos_Rain: { name: "Chaos Rain", desc: "Hasar: <b style='color:orange'>2.5xMP (Random Element)</b>.<br><span style='color:cyan'>Targets enemy's lowest resistance. -75 Mana.</span>" },
 			Meditate: { name: "Meditate", desc: "<span style='color:#43FF64'>Mana Gained: INT + 50% Missing HP.</span><br><span style='color:cyan'>0 Mana.</span>", log: "Gained $1 Mana." },
 			Thorn_Whip: { name: "Thorn Whip", desc: "Hasar: <b style='color:orange'>0.9xINT (Phys) + 0.9xINT (Poison)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Rejuvanate: { name: "Rejuvenate", desc: "<span style='color:#43FF64'>4 Turns: Restore INT HP and 1.5xINT Mana every turn.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "Restoring HP(1x) and Mana(1.5x) based on INT for 4 turns." },
+			Rejuvanate: { name: "Rejuvenate", desc: "<span style='color:#43FF64'>4 Turns: Restore 1xINT HP and 1xINT Mana every turn.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "Restoring HP(1x) and Mana(1x) based on INT for 4 turns." },
 			Natures_Wrath: { name: "Nature's Wrath", desc: "Hasar: <b style='color:orange'>1.0xMP (Physical)</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy ATK/DEF reduced by 50%.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
     
