@@ -933,9 +933,37 @@ function processMonsterDamage(attacker, dmgPack) {
                 finalDamage -= window.heroBlock; window.heroBlock = 0; 
             }
         }
+		
+		// --- YENİ: ASTRAL BARİYER KONTROLÜ ---
+        const astralIdx = hero.statusEffects.findIndex(e => e.id === 'astral_shield');
+        if (astralIdx !== -1) {
+            const astralEffect = hero.statusEffects[astralIdx];
+            const stats = getHeroEffectiveStats();
+            
+            // 1. Gelen tüm hasarı SIFIRLA
+            finalDamage = 0; 
+            
+            // 2. Kahramanı 15 HP (effect.value) iyileştir
+            const oldHp = hero.hp;
+            hero.hp = Math.min(stats.maxHp, hero.hp + astralEffect.value);
+            
+            // 3. Görsel Efekt ve Log
+            showFloatingText(heroDisplayContainer, astralEffect.value, 'heal');
+            const lang = window.getCombatLang();
+            writeLog(lang.combat.log_astral_trigger.replace("$1", astralEffect.value));
+            
+            // 4. Kalkanı kullanıldığı için SİL (İlk darbede patlar)
+            hero.statusEffects.splice(astralIdx, 1);
+            
+            animateDamage(false); // Sarsılma yerine parlama (isteğe bağlı)
+        }
+        // ------------------------------------
         
         if (finalDamage > 0) { 
             hero.hp = Math.max(0, hero.hp - finalDamage); 
+			// --- EKLE: Bu tur alınan hasarı kaydet ---
+            hero.damageTakenThisRound = (hero.damageTakenThisRound || 0) + finalDamage;
+            // -----------------------------------------
             StatsManager.trackDamageTaken(finalDamage);
             animateDamage(true); 
             showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
@@ -1247,6 +1275,8 @@ window.nextTurn = function() {
 	const lang = window.getCombatLang();
     
     if (window.isHeroTurn) {
+		hero.lastTurnDamageTaken = hero.damageTakenThisRound || 0;
+        hero.damageTakenThisRound = 0;
 		const stats = getHeroEffectiveStats(); // Güncel çarpanları al
     
 		// RAGE REGEN UYGULA
@@ -1756,6 +1786,15 @@ window.updateSkillDamagePreviews = function() {
              const monPct = (monster.hp / monster.maxHp);
              if (monPct > heroPct) currentDmgTotal += Math.floor(monster.maxHp * (monPct - heroPct) * 0.5);
         }
+            if (skillKey === 'blade_of_retribution' && hero.lastTurnDamageTaken > 0) {
+                currentDmgTotal = Math.floor(currentDmgTotal * 1.5);
+            }
+        if (skillKey === 'execute') {
+                // Eğer canavarın canı %30 veya altındaysa göstergeyi 2 ile çarp
+                if (monster.hp / monster.maxHp <= 0.3) {
+                    currentDmgTotal *= 2;
+                }
+            }
 
         let pEl = slot.querySelector('.skill-damage-preview');
         if (currentDmgTotal > 0 || skillObj.data.scaling) {
