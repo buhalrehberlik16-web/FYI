@@ -509,12 +509,46 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Oyuncu İkonu */
 #player-marker-container { 
-    position: absolute; width: 50px; height: 50px; z-index: 20; 
+    position: absolute; 
+    width: 90px; /* 50px'den biraz büyüttük daha iyi görünsün */
+    height: 80px; 
+    z-index: 200; /* Diğer her şeyin üstünde olsun */
     transition: left 0.5s ease-in-out, top 0.5s ease-in-out; 
-    pointer-events: none; display: none; 
+    pointer-events: none; 
+    display: none; 
+    
+    /* --- YENİ: ARKA PLAN IŞIK HALESİ --- */
+    /* Kılıcın arkasında yumuşak altın rengi bir parlama alanı oluşturur */
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 70%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-/* İkon Resmi Küçültme Düzeltmesi */
-#player-marker { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 5px #f0e68c); }
+
+#player-marker { 
+    width: 80%; 
+    height: 80%; 
+    object-fit: contain; 
+    
+    /* --- YENİ: KILIÇ PARLAMASI VE ANİMASYON --- */
+    /* Kılıcın kendi silüetini altın rengiyle parlatır */
+    filter: drop-shadow(0 0 8px #ffd700) brightness(1.2); 
+    
+    /* Nabız gibi atan parlama animasyonu */
+    animation: markerPulse 1.5s infinite alternate ease-in-out;
+}
+
+/* Parlama ve Hafif Büyüme Animasyonu */
+@keyframes markerPulse {
+    from { 
+        filter: drop-shadow(0 0 5px #ffd700) brightness(1.1); 
+        transform: scale(1); 
+    }
+    to { 
+        filter: drop-shadow(0 0 15px #fff) brightness(1.4); 
+        transform: scale(1.15); /* Hafifçe büyüyüp küçülür */
+    }
+}
 
 /* Turuncu Node (Güçlendirmesiz, sadece Seviye Atlamış) */
 .map-node.orange-encounter {
