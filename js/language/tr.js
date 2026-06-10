@@ -115,6 +115,7 @@ window.LANG_TR = {
 		setting_show_notifs: "PUAN BİLDİRİMLERİ",
 		setting_impact_effects: "VURUŞ EFEKTLERİ",
 		setting_combat_log: "SAVAŞ GÜNLÜĞÜ",
+		setting_level_jump: "LEVEL ATLAMA EFEKTİ ",
 		rest_alert_msg: "Gece boyu dinleniyorsun ve yorgunluk değerin 60 azalıyor.",
 		drink_alert_msg: "Biraz ara veriyorsun ve susuzluğunu gideriyorsun yorgunluk değerin 25 azalıyor.",
 
@@ -312,6 +313,7 @@ window.LANG_TR = {
 		stable_rent: "At Kirala  (40G)",
 		stable_scout: "Gözcü (15G)",
 		current_equipment: "KUŞANILMIŞ EŞYALAR",
+		log_orange_gold: "🔸 **Zengin Oda**: Turuncu oda bonusuyla +3 altın kazanıldı.",
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",

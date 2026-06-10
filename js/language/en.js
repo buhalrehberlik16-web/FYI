@@ -116,6 +116,7 @@ window.LANG_EN = {
 		setting_show_notifs: "POINT NOTIFICATIONS",
 		setting_impact_effects: "IMPACT EFFECTS",
 		setting_combat_log: "COMBAT LOG",
+		setting_level_jump: "LEVEL UP JUMP EFFECT",
 		rest_alert_msg: "You rest through the night, and your exhaustion decreases by 60.",
 		drink_alert_msg: "You take a break and quench your thirst, your exhaustion decreases by 25.",
 
@@ -312,6 +313,7 @@ window.LANG_EN = {
 		stable_rent: "Horse Rental(40G)",
 		stable_scout: "Scout(15G)",
 		current_equipment: "CURRENTLY EQUIPPED",
+		log_orange_gold: "🔸 **Rich Node**: Gained +3 extra gold from orange node bonus.",
 		
 		// Exhaust
 		exhaustion_label: "Exhaustion",
