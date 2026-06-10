@@ -146,6 +146,32 @@ const BARBARIAN_SKILLS = {
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack2.webp'], this.data.name);
         }
     },
+	execute: {
+        data: {
+            name: "İnfaz",
+            menuDescription: "Düşman canı %30'un altındaysa <b style='color:orange'>2 kat fazla</b> vurur.",
+            rageCost: 40,
+            levelReq: 6,
+            exhaustion: 6,
+            cooldown: 3,
+            icon: 'skills/barbarian/brutal/brutal_execute.webp',
+            type: 'attack',
+            category: 'brutal',
+            tier: 3,
+            scaling: { 
+                physical: { atkMult: 1.5, stat: "str", statMult: 0.5 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender, dmgPack) {
+            if (defender.hp / defender.maxHp <= 0.3) {
+                dmgPack.total *= 2;
+                dmgPack.phys *= 2;
+            }
+            dmgPack.skillKey = 'execute';
+            animateCustomAttack(dmgPack, null, this.data.name);
+        }
+    },
 
     armor_break: {
         data: {
@@ -1137,6 +1163,79 @@ const BARBARIAN_SKILLS = {
             }
 
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'celestial_judgement', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+        }
+    },
+	blade_of_retribution: {
+        data: {
+            name: "Kısas Kılıcı",
+            menuDescription: "Hasar: <b style='color:orange'>1.2xATK + 1.2xMP</b>.<br><span style='color:#43FF64'>Eğer geçen tur hasar aldıysan %50 daha fazla vurur.</span>",
+            rageCost: 35,
+            levelReq: 10,
+            exhaustion: 8,
+            cooldown: 3,
+            icon: 'skills/barbarian/fervor/fervor_retribution.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 4,
+            scaling: { 
+                physical: { atkMult: 1.2, stat: "mp_pow", statMult: 0 },
+                elemental: { lightning: { stat: "mp_pow", statMult: 1.2 }, fire: 0, cold: 0, poison: 0, curse: 0 }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            dmgPack.skillKey = 'blade_of_retribution';
+
+            // Öngörüde yaptığımız matematiğin aynısını burada da yapıyoruz
+            if (hero.lastTurnDamageTaken > 0) {
+                dmgPack.total = Math.floor(dmgPack.total * 1.5);
+                // Dile duyarlı log yazdırılabilir
+            }
+
+            animateCustomAttack(dmgPack, null, this.data.name);
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'blade_of_retribution', turns: 4, maxTurns: 4, resetOnCombatEnd: true });
+        }
+    },
+	astral_barrier: {
+        data: {
+            id: "astral_barrier",
+            name: "Astral Bariyer",
+            menuDescription: "Hasar: <b style='color:orange'>1.0xMP (Yıldırım)</b>.<br><span style='color:#3498db'>Alacağın ilk darbe engellenir ve seni 15 HP iyileştirir.</span>",
+            rageCost: 45,
+            levelReq: 10,
+            exhaustion: 5,
+            cooldown: 5,
+            icon: 'skills/barbarian/fervor/fervor_barrier.webp',
+            type: 'attack',
+            category: 'fervor',
+            tier: 4,
+            // 1.0 x MP Yıldırım Hasarı
+            scaling: { 
+                physical: { atkMult: 0, stat: "mp_pow", statMult: 0 },
+                elemental: { 
+                    lightning: { stat: "mp_pow", statMult: 1.0 }, 
+                    fire: 0, cold: 0, poison: 0, curse: 0 
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            dmgPack.skillKey = 'astral_barrier';
+
+            // 1. Hasarı vur
+            animateCustomAttack(dmgPack, null, this.data.name);
+            
+            // 2. Astral Bariyer korumasını kahramana ekle (value: 15 HP iyileştirme miktarı)
+            applyStatusEffect(hero, { 
+                id: 'astral_shield', 
+                name: "Astral Koruma", 
+                value: 15, 
+                turns: 99, // Darbe alana kadar gitmez (oda sonuna kadar)
+                resetOnCombatEnd: true 
+            });
+
+            // 3. Bekleme süresi
+            hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'astral_barrier', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
         }
     },
 	
