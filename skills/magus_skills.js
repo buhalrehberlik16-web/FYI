@@ -413,14 +413,19 @@ const MAGUS_SKILLS = {
 			tier: 3
 		},
         onCast: function() {
-            const stats = getHeroEffectiveStats();
-            // HP Regen (Stat id: regen) ve Mana Regen (Stat id: rage_regen_buff) uygula. Mana Regen'i muhtemelen 0.25 çarpana indirip Exhaust iyileştirme verilmeli. Belki Mana Regen'i tamamen kaldırıp Int tabanlı -Exhaust? 0.2*int gibi?  
-            applyStatusEffect(hero, { id: 'regen', name: "Gençleşme", value: stats.int, turns: 4, resetOnCombatEnd: true });
-            applyStatusEffect(hero, { id: 'rage_regen_buff', name: "Doğa Gücü", value: Math.floor(stats.int * 1.5), turns: 4, resetOnCombatEnd: true });
-            window.logSkillEffect('Rejuvanate');
-            updateStats();
-            setTimeout(nextTurn, 1000);
-        }
+        const stats = getHeroEffectiveStats();
+        
+        // HP Yenileme (Açıklamaya göre +INT HP)
+        applyStatusEffect(hero, { id: 'regen', name: "Gençleşme", value: stats.int, turns: 4, resetOnCombatEnd: true });
+        
+        const manaRegenValue = Math.floor(stats.int);
+        applyStatusEffect(hero, { id: 'rage_regen_buff', name: "Doğa Gücü", value: manaRegenValue, turns: 4, resetOnCombatEnd: true });
+        // --------------------------------------------------------------
+
+        window.logSkillEffect('Rejuvanate');
+        updateStats();
+        setTimeout(nextTurn, 1000);
+		}
     },
 
 	Natures_Wrath: {
