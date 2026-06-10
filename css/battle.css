@@ -518,8 +518,8 @@
 
 #combat-log-wrapper {
     position: absolute;
-    top: 20px; /* Üst barın hemen altı */
-    left: 25%;
+    top: 2.6%; /* Üst barın hemen altı */
+    left: 23.4%;
     transform: translateX(-50%);
     width: 450px;
     background: rgba(0, 0, 0, 0.75);
@@ -529,7 +529,7 @@
     font-family: 'Cinzel', serif;
     transition: all 0.3s ease;
     overflow: hidden;
-	transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 #combat-log-header {
