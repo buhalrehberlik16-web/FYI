@@ -143,13 +143,14 @@
             <span class="town-label-text" data-i18n="building_elder">BİLGE</span>
             <div id="status-elder" class="status-dot"></div>
         </div>
+		
+	<div class="starter-city-info">
+        <!-- YENİ: onclick eklendi ve buton kaldırıldı -->
+        <h2 id="starter-city-msg" data-i18n="starter_city_welcome" onclick="window.handleStarterTextClick()"></h2>
+    </div>	
+
     </div>
 
-    <div class="starter-city-info">
-        <h2 id="starter-city-msg" data-i18n="starter_city_welcome">Hoş geldin, yolculuğuna başlamadan önce hazırlanmalısın.</h2>
-    </div>
-
-    <button id="btn-leave-starter-city" class="town-exit-btn hidden" onclick="leaveStarterCity()" data-i18n="leave_starter_city">YOLA ÇIK</button>
 </div>
 <!-- SINIF SEÇİM EKRANI -->
 <div id="class-selection-screen" class="screen hidden">

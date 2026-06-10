@@ -85,22 +85,31 @@ window.updateStarterCityUI = function() {
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
 
-    const leaveBtn = document.getElementById('btn-leave-starter-city');
     const msgEl = document.getElementById('starter-city-msg');
     
     // Lambaları güncelle
     document.getElementById('status-barracks').style.background = window.starterCityProgress.classChosen ? "#43FF64" : "#ff4d4d";
     document.getElementById('status-elder').style.background = window.starterCityProgress.skillsChosen ? "#43FF64" : "#ff4d4d";
 
-    // Mesajları dilden çek
+    // Durumlara göre metni ve tıklanabilirliği ayarla
     if (!window.starterCityProgress.classChosen) {
         msgEl.textContent = lang.starter_step_1;
+        msgEl.classList.remove('ready-to-leave');
     } else if (!window.starterCityProgress.skillsChosen) {
         msgEl.textContent = lang.starter_step_2;
+        msgEl.classList.remove('ready-to-leave');
     } else {
+        // --- KRİTİK: HAZIR OLMA DURUMU ---
         msgEl.textContent = lang.starter_ready;
-        leaveBtn.classList.remove('hidden');
-        leaveBtn.textContent = lang.leave_starter_city; // Buton yazısını da dilden güncelle
+        msgEl.classList.add('ready-to-leave'); // CSS efekti ekler
+    }
+};
+
+// Yeni Tıklama Fonksiyonu (Failsafe için)
+window.handleStarterTextClick = function() {
+    // Sadece her iki seçim de yapıldıysa haritaya gönder
+    if (window.starterCityProgress.classChosen && window.starterCityProgress.skillsChosen) {
+        leaveStarterCity();
     }
 };
 

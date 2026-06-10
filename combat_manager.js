@@ -330,7 +330,8 @@ window.getHeroEffectiveStats = function() {
     let currentResists = { ...hero.baseResistances };
 	let currentElemDmg = { ...hero.elementalDamage };
     let flatAtkBonus = 0;  
-    let flatDefBonus = 0;  
+    let flatDefBonus = 0; 
+	let flatRageRegenBonus = 0;	
     let totalAtkMult = 1.0; 
     let totalDefMult = 1.0; // YENİ: Defans çarpanı eklendi
 	const colorCounts = {}; 
@@ -405,6 +406,9 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'atk_up') flatAtkBonus += e.value;
             if (e.id === 'def_up') flatDefBonus += e.value;
 			if (e.id === 'guard_active') flatDefBonus += e.value; 
+			// --- YENİ EKLEME: MANA YENİLENME BUFFINI TANI ---
+            if (e.id === 'rage_regen_buff') flatRageRegenBonus += e.value;
+            // ------------------------------------------------
             
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
@@ -451,7 +455,8 @@ window.getHeroEffectiveStats = function() {
     const finalMaxRage = rules.baseResource + Math.floor(s[sc.resource.stat] * sc.resource.mult);
     
     // REGEN Hesabı
-    const finalRageRegen = Math.floor((s[sc.regen.stat] * sc.regen.mult) * totalRegenMult);
+    const baseRageRegen = Math.floor((s[sc.regen.stat] * sc.regen.mult) * totalRegenMult);
+    const bonusRageRegen = flatRageRegenBonus;
 
     // 1. Önce Yorgunluk Hariç Her Şeyi (Ekipman + Skill Buffları) hesapla
     let preExhaustAtk = Math.floor(((hero.baseAttack || 10) + flatAtkBonus + Math.floor(s[sc.atk.stat] * sc.atk.mult)) * totalAtkMult);
@@ -507,7 +512,9 @@ window.getHeroEffectiveStats = function() {
         str: s.str, dex: s.dex, int: s.int, vit: s.vit, mp_pow: s.mp_pow,
         maxHp: finalMaxHp,
         maxRage: finalMaxRage,
-        rageRegen: finalRageRegen,
+        rageRegen: baseRageRegen + bonusRageRegen, 
+        baseRageRegen: baseRageRegen,
+        bonusRageRegen: bonusRageRegen,
         resists: currentResists,
         elementalDamage: currentElemDmg,
         atkMultiplier: totalAtkMult 
@@ -1078,6 +1085,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; 
         if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         
         if (isWeakFromMap) hpAtkMultiplier *= 0.8; 
+		if (isWeakFromMap) otherMultiplier *= 0.8; 
     }
     // NOT: Eğer Boss ise, sadece yukarıdaki 'scaling' (zaman bazlı) değerini kullanır.
     // Haritadaki isHard (Kırmızı oda) bilgisi Boss'un canını/atağını bir daha artırmaz.
@@ -1243,16 +1251,34 @@ window.nextTurn = function() {
     
 		// RAGE REGEN UYGULA
 		if (stats.rageRegen > 0) {
-			const oldRage = hero.rage;
-			hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
-			if (hero.rage > oldRage) {
-				const resLabel = globalLang[`resource_${classRules.resourceName}`];
-				const logMsg = combatLang.log_mp_regen
-					.replace("$1", stats.rageRegen)
-					.replace("$2", resLabel);
-				writeLog(`✨ ${window.getHeroClassNameTrans()}: ${logMsg}`);
-			}
-		}
+            const oldRage = hero.rage;
+            hero.rage = Math.min(stats.maxRage, hero.rage + stats.rageRegen);
+            updateStats(); 
+
+            if (hero.rage > oldRage) {
+                const resLabel = lang[`resource_${classRules.resourceName}`];
+                const heroName = window.getHeroClassNameTrans();
+
+                // A. Baz Yenilenme Logu (Örn: +40)
+                if (stats.baseRageRegen > 0) {
+                    const logMsg = lang.combat.log_mp_regen
+                        .replace("$1", stats.baseRageRegen)
+                        .replace("$2", resLabel);
+                    writeLog(`✨ **${heroName}**: ${logMsg}`);
+                }
+
+                // B. Yetenek Bonusu Logu (Örn: +4)
+                if (stats.bonusRageRegen > 0) {
+                    const regenBuff = hero.statusEffects.find(e => e.id === 'rage_regen_buff');
+                    const buffName = regenBuff ? regenBuff.name : "Bonus";
+                    const logBonusMsg = lang.combat.log_mp_regen_skill
+                        .replace("$1", buffName)
+                        .replace("$2", stats.bonusRageRegen)
+                        .replace("$3", resLabel);
+                    writeLog(logBonusMsg);
+                }
+            }
+        }
 
         // --- 1. TUR BAŞLANGICI VE BLOK/REGEN/ZEHİR İŞLEME ---
         window.combatTurnCount++;
