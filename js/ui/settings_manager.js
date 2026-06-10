@@ -7,7 +7,8 @@ window.gameSettings = {
     showNotifs: localStorage.getItem('game_notifs') !== 'false', 
 	showImpacts: localStorage.getItem('game_impacts') !== 'false',
 	showLog: localStorage.getItem('game_log_visible') !== 'false',
-	showGuide: localStorage.getItem('game_guide_visible') !== 'false' // Varsayılan true
+	showGuide: localStorage.getItem('game_guide_visible') !== 'false',
+	levelJump: localStorage.getItem('game_level_jump') !== 'false' // Varsayılan true
 };
 
 window.applySettings = function() {
@@ -51,6 +52,8 @@ window.applySettings = function() {
     // Ayar kapalıysa butonu komple yok et, açıysa göster
     guideBtn.style.display = window.gameSettings.showGuide ? "flex" : "none";
 	}
+	const jumpToggle = document.getElementById('setting-jump-toggle');
+	if (jumpToggle) jumpToggle.checked = window.gameSettings.levelJump;
 
     // --- YENİ: MERKEZİ GÖRÜNÜRLÜK KONTROLÜNÜ ÇAĞIR ---
     if (typeof window.updateLogVisibility === 'function') {
@@ -81,6 +84,11 @@ window.setLanguage = function(langCode) {
 window.setResolution = function(resString) {
     window.gameSettings.resolution = resString;
     window.applySettings();
+};
+
+window.setLevelJumpSetting = function(val) {
+    window.gameSettings.levelJump = val;
+    localStorage.setItem('game_level_jump', val);
 };
 
 function updateUITexts() {
