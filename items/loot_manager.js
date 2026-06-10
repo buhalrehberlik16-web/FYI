@@ -121,10 +121,20 @@ window.LootManager = {
             }
         }
 
-        // 7. ALTIN ÖDÜLÜ
-        const goldVal = Math.floor(Math.random() * 12) + 5;
+		// --- 7. ALTIN ÖDÜLÜ ---
+        // Senin istediğin 5-16 aralığı (* 12) korundu, turuncuysa +3 ekler.
+        const goldVal = Math.floor(Math.random() * 12) + 5 + (monster.isOrange ? 3 : 0);
+
+        // Eğer oda turuncuysa log yazdır (Dile duyarlı)
+        if (monster.isOrange) {
+            const lang = window.getCombatLang();
+            if (lang.combat && lang.combat.log_orange_gold) {
+                writeLog(lang.combat.log_orange_gold);
+            }
+        }
+
         rewards.push({ type: 'gold', value: goldVal });
         
         return rewards;
-    }
-};
+    } // generateLoot fonksiyonunun sonu
+}; // LootManager objesinin sonu
