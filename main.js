@@ -82,16 +82,31 @@ window.openStarterActivity = function(type) {
 };
 
 window.updateStarterCityUI = function() {
+    const barracksLabel = document.querySelector('#building-barracks .town-label-text');
+    const elderLabel = document.querySelector('#building-elder .town-label-text');
+    const msgEl = document.getElementById('starter-city-msg');
+    
     const currentLang = window.gameSettings.lang || 'tr';
     const lang = window.LANGUAGES[currentLang];
 
-    const msgEl = document.getElementById('starter-city-msg');
-    
-    // Lambaları güncelle
-    document.getElementById('status-barracks').style.background = window.starterCityProgress.classChosen ? "#43FF64" : "#ff4d4d";
-    document.getElementById('status-elder').style.background = window.starterCityProgress.skillsChosen ? "#43FF64" : "#ff4d4d";
+    // 1. KIŞLA (Class Seçimi) Kontrolü
+    if (window.starterCityProgress.classChosen) {
+        barracksLabel.classList.remove('task-incomplete');
+        barracksLabel.classList.add('task-complete');
+    } else {
+        barracksLabel.classList.add('task-incomplete');
+    }
 
-    // Durumlara göre metni ve tıklanabilirliği ayarla
+    // 2. BİLGE (Skill Seçimi) Kontrolü
+    if (window.starterCityProgress.skillsChosen) {
+        elderLabel.classList.remove('task-incomplete');
+        elderLabel.classList.add('task-complete');
+    } else {
+        elderLabel.classList.remove('task-complete');
+        elderLabel.classList.add('task-incomplete');
+    }
+
+    // 3. Alt Mesaj ve Yola Çıkış Durumu (Önceki adımda yaptığımız mantık)
     if (!window.starterCityProgress.classChosen) {
         msgEl.textContent = lang.starter_step_1;
         msgEl.classList.remove('ready-to-leave');
@@ -99,9 +114,8 @@ window.updateStarterCityUI = function() {
         msgEl.textContent = lang.starter_step_2;
         msgEl.classList.remove('ready-to-leave');
     } else {
-        // --- KRİTİK: HAZIR OLMA DURUMU ---
         msgEl.textContent = lang.starter_ready;
-        msgEl.classList.add('ready-to-leave'); // CSS efekti ekler
+        msgEl.classList.add('ready-to-leave');
     }
 };
 
@@ -304,6 +318,25 @@ function triggerLevelUpEffect() {
 function selectClass(className) {
     const config = CLASS_CONFIG[className];
     if (!config) return;
+	
+	// --- YENİ: SINIF DEĞİŞTİRME KONTROLÜ VE SIFIRLAMA ---
+    // Eğer oyuncu zaten bir sınıf seçmişse ve şimdi değiştiriyorsa:
+    if (window.starterCityProgress.classChosen) {
+        
+        // 1. Yetenekleri Sıfırla: Sadece 'rest' (Dinlen) yeteneği kalsın, diğerlerini sil.
+        // SEBEP: Eski sınıfın başlangıç yeteneklerinin yeni sınıfa taşınmasını engellemek.
+        hero.unlockedSkills = ['rest']; 
+
+        // 2. Skill Barı Temizle: İlk iki slotu (A ve D) boşalt, rest'i 3. slotta koru.
+        hero.equippedSkills = [null, null, 'rest', null, null, null];
+
+        // 3. İlerleme Bayrağını Sıfırla: Bilge lambasını tekrar kırmızıya çevir.
+        // SEBEP: Oyuncuyu yeni sınıfına uygun yetenekleri seçmesi için Bilge'ye gitmeye zorlamak.
+        window.starterCityProgress.skillsChosen = false;
+        
+        writeLog("Sistem: Sınıf değiştiği için eski yeteneklerin sıfırlandı.");
+    }
+    // ---------------------------------------------------
 
     hero.class = className;
     StatsManager.initNewRun(hero.playerName, className);
