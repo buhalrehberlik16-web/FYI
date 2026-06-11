@@ -121,19 +121,34 @@ window.LootManager = {
             }
         }
 
-		// --- 7. ALTIN ÖDÜLÜ ---
-        // Senin istediğin 5-16 aralığı (* 12) korundu, turuncuysa +3 ekler.
-        const goldVal = Math.floor(Math.random() * 12) + 5 + (monster.isOrange ? 3 : 0);
+		// --- 7. ALTIN ÖDÜLÜ (DİNAMİK BÖLGE BONUSLU) ---
+        
+        // A. Kaç tane kasaba geçtiğimizi hesaplayalım
+        // Mevcut odayı bulup stage numarasını alıyoruz
+        const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+        const currentStage = currentNode ? currentNode.stage : 0;
+        
+        // MAP_CONFIG.townStages içindeki köy duraklarından kaç tanesinin geride kaldığını say
+        const passedTownsCount = MAP_CONFIG.townStages.filter(t => t < currentStage).length;
 
-        // Eğer oda turuncuysa log yazdır (Dile duyarlı)
+        // B. ALTIN HESABI (5-16 baz + Her köy için +1 + Turuncu ise +3)
+        const goldVal = Math.floor(Math.random() * 12) + 5 + passedTownsCount + (monster.isOrange ? 3 : 0);
+
+        // C. LOGLAMA
+        const lang = window.getCombatLang();
+        
+        // Eğer en az 1 kasaba geçildiyse log yazdır
+        if (passedTownsCount > 0) {
+            writeLog(lang.combat.log_town_gold_bonus.replace("$1", passedTownsCount).replace("$2", passedTownsCount));
+        }
+
+        // Turuncu oda bonusu logu (Zaten vardı)
         if (monster.isOrange) {
-            const lang = window.getCombatLang();
-            if (lang.combat && lang.combat.log_orange_gold) {
-                writeLog(lang.combat.log_orange_gold);
-            }
+            writeLog(lang.combat.log_orange_gold);
         }
 
         rewards.push({ type: 'gold', value: goldVal });
+        // ---------------------------------------------
         
         return rewards;
     } // generateLoot fonksiyonunun sonu
