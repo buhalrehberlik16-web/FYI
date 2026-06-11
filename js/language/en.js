@@ -573,6 +573,7 @@ window.LANG_EN = {
 			log_shield_absorb: "🛡️ **$1**'s defense absorbed the blow! (Shield Intact)",
 			log_minor_heal: "💚 **$1**: HP restored.",
 			log_skill_generic: "✨ **$1**: $2", 
+			log_town_gold_bonus: "🏘️ **Region Bonus**: Found +$2 extra gold for passing $1 towns!",
 			log_bleed:"🩸 *Bleed* $1 damage.",
 			log_immunity: "🛡️ **Immunity**: $1 effect was repelled!",
 			log_poison_intense: "☣️ **$1** intensified! (New Damage: $2)",
