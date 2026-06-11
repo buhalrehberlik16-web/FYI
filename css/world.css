@@ -101,6 +101,13 @@
     text-transform: uppercase;
 }
 
+/* Görev tamamlandığında tabelanın alacağı yeşil stil */
+.town-label-text.task-complete {
+    color: #43FF64 !important; /* Başarı Yeşili */
+    border-color: #43FF64 !important;
+    text-shadow: 0 0 10px rgba(67, 255, 100, 0.6), 2px 2px 0 #000 !important;
+}
+
 .event-content {
     width: 500px;
     background: linear-gradient(180deg, #1a150e 0%, #000 100%);
