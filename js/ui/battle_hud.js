@@ -32,12 +32,16 @@ window.updateStatusIcons = function(char, container) {
     displayEffects.forEach(effect => {
         const icon = document.createElement('div'); 
         icon.className = 'status-icon';
-        const buffIds = ['atk_up', 'def_up', 'regen', 'str_up', 'atk_up_percent', 'ignore_def', 'guard_active', 'fury_active', 'insta_kill', 'wind_up'];
+        const buffIds = ['atk_up', 'def_up', 'regen', 'str_up', 'atk_up_percent', 'ignore_def', 'guard_active', 'fury_active', 'insta_kill', 'wind_up', 'elem_dmg_up'];
         const debuffIds = ['block_skill', 'block_type', 'atk_half', 'stun', 'curse_damage', 'monster_stunned', 'defense_zero', 'debuff_webbed', 'debuff_enemy_atk', 'debuff_enemy_def', 'exhaust_def_debuff', 'exhaust_atk_debuff'];
 
         // İkon Belirleme (Yorgunluk İkonları Eklendi)
         if (effect.id === 'atk_up' || effect.id === 'atk_up_percent') icon.innerHTML = '⚔️';
         else if (effect.id === 'def_up' || effect.id === 'guard_active') icon.innerHTML = '🛡️';
+		// --- YENİ: BÜYÜSEL TAKVİYE İKONLARI ---
+        // 1. Elemental Takviye için: Mistik Küre (🔮)
+        else if (effect.id === 'elem_dmg_up') {icon.innerHTML = '🔮';}
+        // --------------------------------------
         else if (effect.id === 'str_up') icon.innerHTML = '💪';
         else if (effect.id === 'regen') icon.innerHTML = '💖';
         else if (effect.id === 'fury_active') icon.innerHTML = '🔥';
