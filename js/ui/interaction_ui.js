@@ -271,7 +271,7 @@ window.restAtInn = function() {
         const stats = getHeroEffectiveStats();
         hero.hp = stats.maxHp; 
 		// --- YENİ: DİNLENME (-60 Yorgunluk) ---
-        hero.exhaustion = Math.max(0, hero.exhaustion - 60);
+        hero.exhaustion = Math.max(0, hero.exhaustion - 50);
         // --------------------------------------
 		
 		// --- YENİ: ALERT EKRANI ---
