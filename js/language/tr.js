@@ -313,7 +313,7 @@ window.LANG_TR = {
 		stable_rent: "At Kirala  (40G)",
 		stable_scout: "Gözcü (15G)",
 		current_equipment: "KUŞANILMIŞ EŞYALAR",
-		log_orange_gold: "🔸 **Zengin Oda**: Turuncu oda bonusuyla +3 altın kazanıldı.",
+		
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",
@@ -574,6 +574,7 @@ window.LANG_TR = {
 			log_minor_heal: "💚 **$1**: HP iyileşti.",
 			log_skill_generic: "✨ **$1**: $2", 
 			log_town_gold_bonus: "🏘️ **Bölge Bonusu**: $1 kasaba geçtiğin için fazladan +$2 altın bulundu!",
+			log_orange_gold: "🔸 **Zengin Oda**: Turuncu oda bonusuyla +3 altın kazanıldı.",
             log_bleed: "🩸 *Kanama* $1 hasarı verdin.*",
 			log_immunity: "🛡️ **Bağışıklık**: $1 etkisi savuşturuldu!",
 			log_poison_intense: "☣️ **$1** etkisi şiddetlendi! (Yeni Hasar: $2)",
@@ -658,6 +659,7 @@ window.LANG_TR = {
 			curse: "Lanet Hasarı",
 			immunity_active: "Bağışıklık",
 			bleed: "Kanama",
+			elem_dmg_up: "Mistik Güç",
 			blood_lust_debuff: "Tükenmişlik",
 			exhaust_atk_debuff: "Atk Kaybı",
 			exhaust_def_debuff: "Defans Kaybı",

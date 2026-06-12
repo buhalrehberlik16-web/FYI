@@ -313,7 +313,6 @@ window.LANG_EN = {
 		stable_rent: "Horse Rental(40G)",
 		stable_scout: "Scout(15G)",
 		current_equipment: "CURRENTLY EQUIPPED",
-		log_orange_gold: "🔸 **Rich Node**: Gained +3 extra gold from orange node bonus.",
 		
 		// Exhaust
 		exhaustion_label: "Exhaustion",
@@ -574,6 +573,7 @@ window.LANG_EN = {
 			log_minor_heal: "💚 **$1**: HP restored.",
 			log_skill_generic: "✨ **$1**: $2", 
 			log_town_gold_bonus: "🏘️ **Region Bonus**: Found +$2 extra gold for passing $1 towns!",
+			log_orange_gold: "🔸 **Rich Node**: Gained +3 extra gold from orange node bonus.",
 			log_bleed:"🩸 *Bleed* $1 damage.",
 			log_immunity: "🛡️ **Immunity**: $1 effect was repelled!",
 			log_poison_intense: "☣️ **$1** intensified! (New Damage: $2)",
@@ -658,6 +658,7 @@ window.LANG_EN = {
 			curse: "Curse",
 			immunity_active: "Immunity",
 			bleed: "Bleed",
+			elem_dmg_up: "Mystic Power",
 			blood_lust_debuff: "Exhaustion",
 			exhaust_def_debuff: "Def Shrink",
 			exhaust_atk_debuff: "Atk Shrink",
