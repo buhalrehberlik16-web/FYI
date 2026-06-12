@@ -642,6 +642,65 @@ window.ENEMY_STATS = {
 		//Heal, Poison
         ]
 	},
+	"Lanetli Muhafız": { 
+        tribe: "Undead",
+        specificResists: { poison: 20 },
+        maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
+        idle: 'enemies/cursed_sentry.webp',
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/cursed_sentry_dead.webp',
+        skills: [
+		{ 
+                id: "undead_fortitude", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 5, 
+                duration: 3, 
+                textKey: "fortitude" 
+            }, 
+			{
+				id: "death_gaze",
+				template: "special_attack",
+				category: "attack",
+				damageSplit: {curse: 1.3},
+				textKey: "gaze"
+			}
+        ]
+    },
+	"Rünlü Totem": { 
+        tribe: "Magical Creatures",
+        maxHp: 85, attack: 8, defense: 6, xp: 0, tier: 2, 
+        idle: 'enemies/rune_stone.webp',
+        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
+        dead: 'enemies/rune_stone_dead.webp',
+        skills: [
+			{
+			id: "attack1", // Normal attack1'i eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { fire: 0.6, curse: 0.4 },  
+                //textKey: "totem" 
+			},
+			{ 
+            id: "attack2", // Normal attack2'yi eziyoruz!
+                template: "special_attack", 
+                category: "attack",
+                damageSplit: { cold: 0.6, curse: 0.4 },  
+                //textKey: "totem" 
+			},
+			{ 
+                id: "runic_stone", 
+                template: "self_buff", 
+                category: "buff",
+                statusId: "def_up", 
+                value: 10, 
+                duration: 3, 
+                textKey: "totem" 
+            }
+		//No Basic, Fire&Cold
+        ]
+    },
 
     // --- TIER 3 ---
 	"Goblin Şaman": { 
@@ -1144,7 +1203,7 @@ Object.assign(ENEMY_STATS, {
 // Düşman Havuzları
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
-    2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Kobold Şaman", "Treant Sapling"],
+    2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Kobold Şaman", "Treant Sapling","Lanetli Muhafız","Rünlü Totem"],
     3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı","Lanetli Ayı","Beyaz Kurt","Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı","Göçebe Kültist"], 
@@ -1170,7 +1229,7 @@ window.BIOME_WEIGHTS = {
     "Hırsız Kobold":  	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
 // TIER 2
     "Goblin Devriyesi":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
-	"Goblin Gözcü":	{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
+	"Goblin Gözcü":		{ forest: 0.2, plains: 0.4, cave: 0.1, iceland: 0.2, mountain: 0.1,  urban: 0.4},
 	"Haydut Gözcü":   	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
     "Kaçak Haydut":   	{ forest: 0.2, plains: 0.2, cave: 0.1, iceland: 0.2, mountain: 0.2, urban: 0.4 },
     "Şaman": 		  	{ forest: 0.2, plains: 0.2, cave: 0.2, iceland: 0.2, mountain: 0.2, urban: 0.4 },
@@ -1181,6 +1240,8 @@ window.BIOME_WEIGHTS = {
 	"Kemik Yürüyen":	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
 	"Kobold Devriye": 	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
 	"Kobold Şaman": 	{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2 },
+	"Lanetli Muhafız":  { forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
+	"Rünlü Totem":   	{ forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
 	//Magical Creature1 "imp?": { forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 }
 // TIER 3
 	"Goblin Şaman":		{ forest: 0.3, plains: 0.3, cave: 0.2, iceland: 0.1, mountain: 0.2,  urban: 0.4 },
@@ -1188,7 +1249,7 @@ window.BIOME_WEIGHTS = {
 	"Haydut Devriye":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Haydut Okçu":  	{ forest: 0.1, plains: 0.4, cave: 0.0, iceland: 0.2, mountain: 0.1, urban: 0.6 },
 	"Boz Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
-	"Lanetli Ayı": 	  		{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
+	"Lanetli Ayı": 	  	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
 	"Beyaz Kurt":		{ forest: 0.1, plains: 0.2, cave: 0.1, iceland: 0.5, mountain: 0.5, urban: 0.0 },
     "Yaban Domuzu":   	{ forest: 0.5, plains: 0.2, cave: 0.4, iceland: 0.1, mountain: 0.3, urban: 0.0 },
 	"Treant":   		{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
