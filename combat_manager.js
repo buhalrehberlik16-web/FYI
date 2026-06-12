@@ -413,6 +413,12 @@ window.getHeroEffectiveStats = function() {
             if (e.id === 'atk_up_percent') totalAtkMult += e.value;
             if (e.id === 'atk_half') totalAtkMult *= 0.5;
             
+			// --- YENİ EKLEME: GEÇİCİ ELEMENTAL HASAR BONUSU ---
+            if (e.id === 'elem_dmg_up') {
+                currentElemDmg[e.element] += e.value;
+            }
+            // --------------------------------------------------
+			
             // ÖRÜMCEK AĞI DEBUFFI (Burada artık hata vermez)
             if (e.id === 'debuff_webbed') {
                 totalAtkMult *= (1 - e.value); // Atak %30 azalır
@@ -1190,8 +1196,15 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
             // Etiketi hazırla: (+3 Atak)
             bonusText = `+${bonusVal} ${lang.label_atk}`;
         } else {
-            // ELEMENTAL HASAR BONUSU
-            hero.elementalDamage[roomElement] += bonusVal;
+            // YENİ: Geçici elemental bonus veriyoruz
+            applyStatusEffect(hero, { 
+                id: 'elem_dmg_up', 
+                name: 'Mistik Güç', 
+                value: bonusVal, 
+                element: roomElement, // Hangi element olduğunu içine yazdık
+                turns: 99, 
+                resetOnCombatEnd: true // <--- KRİTİK: Oda bitince silinir
+            });
             monster.attack += bonusVal;
             
             // Etiketi hazırla: (+2 Zehir)
