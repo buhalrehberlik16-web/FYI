@@ -121,33 +121,27 @@ window.LootManager = {
             }
         }
 
-		// --- 7. ALTIN ÖDÜLÜ (DİNAMİK BÖLGE BONUSLU) ---
-        
-        // A. Kaç tane kasaba geçtiğimizi hesaplayalım
-        // Mevcut odayı bulup stage numarasını alıyoruz
-        const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
-        const currentStage = currentNode ? currentNode.stage : 0;
-        
-        // MAP_CONFIG.townStages içindeki köy duraklarından kaç tanesinin geride kaldığını say
-        const passedTownsCount = MAP_CONFIG.townStages.filter(t => t < currentStage).length;
+		// --- 7. ALTIN ÖDÜLÜ ---
+    const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+    const currentStage = currentNode ? currentNode.stage : 0;
+    const passedTownsCount = MAP_CONFIG.townStages.filter(t => t < currentStage).length;
 
-        // B. ALTIN HESABI (5-16 baz + Her köy için +1 + Turuncu ise +3)
-        const goldVal = Math.floor(Math.random() * 12) + 5 + passedTownsCount + (monster.isOrange ? 3 : 0);
+    const goldVal = Math.floor(Math.random() * 12) + 5 + passedTownsCount + (monster.isOrange ? 3 : 0);
 
-        // C. LOGLAMA
-        const lang = window.getCombatLang();
-        
-        // Eğer en az 1 kasaba geçildiyse log yazdır
-        if (passedTownsCount > 0) {
-            writeLog(lang.combat.log_town_gold_bonus.replace("$1", passedTownsCount).replace("$2", passedTownsCount));
-        }
+    const lang = window.getCombatLang();
+    const combatL = lang.combat || {}; // Güvenli erişim için alt obje
 
-        // Turuncu oda bonusu logu (Zaten vardı)
-        if (monster.isOrange) {
-            writeLog(lang.combat.log_orange_gold);
-        }
+    // A. BÖLGE BONUSU LOGU
+    if (passedTownsCount > 0 && combatL.log_town_gold_bonus) {
+        writeLog(combatL.log_town_gold_bonus.replace("$1", passedTownsCount).replace("$2", passedTownsCount));
+    }
 
-        rewards.push({ type: 'gold', value: goldVal });
+    // B. TURUNCU ODA LOGU
+    if (monster.isOrange && combatL.log_orange_gold) {
+        writeLog(combatL.log_orange_gold);
+    }
+
+    rewards.push({ type: 'gold', value: goldVal });
         // ---------------------------------------------
         
         return rewards;
