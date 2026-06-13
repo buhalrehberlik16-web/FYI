@@ -1112,22 +1112,33 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     const HARD_SCALE = 1.20;      // isHard (Strong) çarpanı
     
     let hpAtkMultiplier = 1.0 * scaling;
+	let otherMultiplier = 1.0 * scaling;
 	
     // --- KRİTİK DÜZELTME: BOSS FİLTRESİ ---
     // Eğer canavar Boss DEĞİLSE harita zorluklarını uygula
     if (!stats.isBoss) {
-        if (isHalfTierFromMap) hpAtkMultiplier *= HALF_TIER_SCALE; 
-        if (isHardFromMap) hpAtkMultiplier *= HARD_SCALE;         
-        if (isWeakFromMap) hpAtkMultiplier *= 0.8; 
-		if (isWeakFromMap) otherMultiplier *= 0.8; 
+        const HALF_TIER_SCALE = 1.5;
+        const HARD_SCALE = 1.20; 
+
+        if (isHalfTierFromMap) {
+            hpAtkMultiplier *= HALF_TIER_SCALE; 
+            otherMultiplier *= HALF_TIER_SCALE;
+        } 
+        if (isHardFromMap) {
+            hpAtkMultiplier *= HARD_SCALE;
+            // Not: Hard odalarda defans artmıyor (senin kuralın)
+        } 
+        if (isWeakFromMap) {
+            hpAtkMultiplier *= 0.8; 
+            otherMultiplier *= 0.8; // Zayıf odada defans da düşer
+        }
     }
     // NOT: Eğer Boss ise, sadece yukarıdaki 'scaling' (zaman bazlı) değerini kullanır.
     // Haritadaki isHard (Kırmızı oda) bilgisi Boss'un canını/atağını bir daha artırmaz.
     // --------------------------------------
 
     // Defans ve Diğerleri için Çarpan (isHard hariç tutulur)
-    let otherMultiplier = 1.0 * scaling;
-    if (isHalfTierFromMap) otherMultiplier *= HALF_TIER_SCALE;
+    //if (isHalfTierFromMap) otherMultiplier *= HALF_TIER_SCALE;
 
     // Yardımcı yuvarlama fonksiyonları
     const scaleHPAtk = (val) => Math.ceil(val * hpAtkMultiplier);
