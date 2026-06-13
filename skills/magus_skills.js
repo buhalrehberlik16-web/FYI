@@ -10,7 +10,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>",
             rageCost: 15,
             levelReq: 1,
-			exhaustion: 3,
+			exhaustion: 1,
 			cooldown: 0,
             icon: 'skills/magus/arcane/magic_arrow.webp',
             type: 'attack',
@@ -33,7 +33,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
-			exhaustion: 5,
+			exhaustion: 4,
 			cooldown: 0,
             icon: 'skills/magus/arcane/arcane_mana_blast.webp',
             type: 'attack',
@@ -121,7 +121,7 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Fiziksel)</b>.<br><span style='color:cyan'>-75 Mana.</span>",
             rageCost: 75,
             levelReq: 15,
-			exhaustion: 14,
+			exhaustion: 12,
 			cooldown: 0,
             icon: 'skills/magus/arcane/arcane_explosion.webp',
             type: 'attack',
@@ -146,16 +146,16 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>0.5Atk+0.5xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 1,
-			exhaustion: 3,
+			exhaustion: 2,
 			cooldown: 0,
             icon: 'skills/magus/elemental/fire_bolt.webp',
             type: 'attack',
             category: 'elemental', 
             tier: 1,
             scaling: { 
-                physical: { atkMult: 0.5, stat: "str", statMult: 0.5 },
+                physical: { atkMult: 0.5, stat: "str", statMult: 0.7 },
                 elemental: { 
-                    fire: { stat: "mp_pow", statMult: 0.5 }, 
+                    fire: { stat: "mp_pow", statMult: 0.4 }, 
                     cold: 0, lightning: 0, poison: 0, curse: 0 
                 }
             }
@@ -208,17 +208,17 @@ const MAGUS_SKILLS = {
             menuDescription: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 1.0xMP (Buz)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
-			exhaustion: 6,
+			exhaustion: 5,
 			cooldown: 0,
             icon: 'skills/magus/elemental/water_whip.webp',
             type: 'attack',
             category: 'elemental', 
             tier: 2,
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.2 },
                 elemental: { 
                     fire: 0, 
-                    cold: { stat: "mp_pow", statMult: 1.0 }, 
+                    cold: { stat: "mp_pow", statMult: 0.8 }, 
                     lightning: 0, poison: 0, curse: 0 
                 }
             }
@@ -291,7 +291,7 @@ const MAGUS_SKILLS = {
             category: 'elemental', 
             tier: 3,
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.4 },
                 elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
             }
 		},
