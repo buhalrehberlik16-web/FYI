@@ -1,8 +1,9 @@
 // save_manager.js - Kayıt Sistemi
 
-const SAVE_KEY = "RPG_Adventure_SaveGame";
+window.activeProfile = localStorage.getItem("RPG_Active_Profile_Name") || null;
 
 window.saveGame = function() {
+	if (!window.activeProfile) return false; // Profil seçili değilse kaydetme
 	window.StatsManager.saveToProfile();
     try {
 		
@@ -26,8 +27,8 @@ window.saveGame = function() {
             currentTownMaster: window.currentTownMaster 
         };
         
-        // Objesini yazıya (string) çevir ve tarayıcıya çivile
-        localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+		const profileKey = "RPG_Save_" + window.activeProfile;
+        localStorage.setItem(profileKey, JSON.stringify(saveData));
         
         writeLog("💾 Oyun başarıyla kaydedildi.");
         return true;
@@ -38,9 +39,12 @@ window.saveGame = function() {
     }
 };
 
-window.loadGame = function() {
+window.loadGame = function(profileName = null) {
+    const targetProfile = profileName || window.activeProfile;
+    if (!targetProfile) return false;
     try {
-        const rawData = localStorage.getItem(SAVE_KEY);
+        const profileKey = "RPG_Save_" + targetProfile;
+        const rawData = localStorage.getItem(profileKey);
         if (!rawData) return false;
 
         const saveData = JSON.parse(rawData);
@@ -70,6 +74,8 @@ window.loadGame = function() {
     }
 }, 150);
 
+		window.activeProfile = targetProfile;
+        localStorage.setItem("RPG_Active_Profile_Name", targetProfile);
         writeLog("📂 Kayıt başarıyla yüklendi.");
         return true;
     } catch (error) {
@@ -78,14 +84,20 @@ window.loadGame = function() {
     }
 };
 
+// --- GÜNCELLEME: PROFİLE DUYARLI KONTROL ---
 window.hasSaveGame = function() {
-    return localStorage.getItem(SAVE_KEY) !== null;
+    if (!window.activeProfile) return false;
+    const profileKey = "RPG_Save_" + window.activeProfile;
+    return localStorage.getItem(profileKey) !== null;
 };
 
+// --- GÜNCELLEME: PROFİLE DUYARLI SİLME ---
 window.deleteSave = function() {
+    if (!window.activeProfile) return false;
     try {
-        localStorage.removeItem(SAVE_KEY);
-        console.log("🗑️ Permadeath Sistemi: Kayıt dosyası başarıyla imha edildi.");
+        const profileKey = "RPG_Save_" + window.activeProfile;
+        localStorage.removeItem(profileKey);
+        console.log(`🗑️ Permadeath Sistemi: ${window.activeProfile} adlı kahramanın kaydı imha edildi.`);
         return true;
     } catch (e) {
         console.error("Kayıt silinemedi:", e);

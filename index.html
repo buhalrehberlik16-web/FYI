@@ -88,6 +88,10 @@
             <h1 class="game-title">SMAUG?</h1>
             <p class="game-subtitle" data-i18n="game_subtitle">Karanlık zindanlarda bir efsane doğuyor?</p>
         </div>
+		<div id="active-profile-info" class="active-profile-box hidden">
+			<span class="active-label" data-i18n="active_hero_label"></span>
+			<span id="display-active-profile-name"></span>
+		</div>
 
         <div class="menu-actions">
             <button id="start-button" class="menu-main-btn" data-i18n="start_adventure">
@@ -95,6 +99,9 @@
             </button>
 			<button id="btn-continue" class="menu-main-btn hidden" data-i18n="continue_game">
 				<i class="fas fa-play"></i> DEVAM ET
+			</button>
+			<button id="btn-show-profiles" class="menu-secondary-btn" onclick="window.openProfileScreen()">
+				<i class="fas fa-users"></i> <span data-i18n="nav_profiles"></span>
 			</button>
 			<button id="btn-show-stats" class="menu-secondary-btn" data-i18n="btn_stats">İSTATİSTİKLER</button>
             <div class="menu-sub-actions">
@@ -106,6 +113,29 @@
         </div>
 
         <div class="version-info">v.0.0.5</div>
+    </div>
+</div>
+
+<!-- Yeni Profil Seçim Modalı (Body sonuna ekle) -->
+<div id="profile-modal" class="npc-modal hidden" style="z-index: 8000;">
+    <div class="stat-window" style="width: 450px; text-align: center; border-color: #ffd700;">
+        <h2 data-i18n="profile_list_title"></h2>
+        <hr class="stat-separator">
+		
+		<!-- YENİ PROFİL BUTONU BURADA SABİT KALSIN -->
+        <div class="profile-create-btn-wrapper">
+            <button class="npc-btn btn-new-profile" onclick="window.startNewProfileFlow()">
+                <i class="fas fa-plus-circle"></i> <span data-i18n="profile_create_btn"></span>
+            </button>
+        </div>
+        
+        <div id="profile-list-container" style="max-height: 350px; overflow-y: auto; margin: 15px 0;">
+            <!-- Profiller buraya dolacak -->
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button class="npc-btn" onclick="document.getElementById('profile-modal').classList.add('hidden')" data-i18n="back">GERİ</button>
+        </div>
     </div>
 </div>
 

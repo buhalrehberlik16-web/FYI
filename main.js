@@ -95,6 +95,7 @@ window.updateStarterCityUI = function() {
         barracksLabel.classList.add('task-complete');
     } else {
         barracksLabel.classList.add('task-incomplete');
+		barracksLabel.classList.remove('task-complete');
     }
 
     // 2. BİLGE (Skill Seçimi) Kontrolü
@@ -131,6 +132,9 @@ window.leaveStarterCity = function() {
     writeLog("Maceran başlıyor...");
     if (typeof generateMap === 'function') {
         generateMap(); 
+    }
+	if (window.saveGame) {
+        window.saveGame(); 
     }
     switchScreen(window.mapScreen);
 };
@@ -469,6 +473,10 @@ function initGame() {
 	window.currentBossScaling = 1.0;
 	window.lastExhaustionThreshold = 0;
 	
+	if (typeof updateStarterCityUI === 'function') {
+        updateStarterCityUI(); 
+    }
+	
     hero.unlockedSkills = []; 
     hero.equippedSkills = [null, null, null, null, null, null]; 
     hero.currentAct = 1;
@@ -562,25 +570,84 @@ document.getElementById('btn-confirm-name').onclick = () => {
         return;
     }
 
-    // Başlatma mantığını bir fonksiyona paketledik
-    const startNewGameLogic = () => {
+    const profileKey = "RPG_Save_" + nick;
+    const exists = localStorage.getItem(profileKey) !== null;
+
+    const startNewProfileLogic = () => {
+        let list = window.getProfileList(); 
+        if (!list.includes(nick)) {
+            list.push(nick);
+            localStorage.setItem("RPG_Profile_List", JSON.stringify(list));
+        }
+
+        window.activeProfile = nick;
+        localStorage.setItem("RPG_Active_Profile_Name", nick);
+
         window.starterCityProgress = { classChosen: false, skillsChosen: false };
-        hero.playerName = nick; 
-        if(window.deleteSave) window.deleteSave();
+
         initGame(); 
+        hero.playerName = nick; 
+        
+        // --- KRİTİK EKLENEN SATIR ---
+        // Yeni profil yaratıldığı an ana menüdeki isim göstergesini güncelle.
+        window.updateActiveProfileUI(); 
+        // ----------------------------
+        
         startCutscene();
     };
 
-    // Kayıt varsa Onay Modalı, yoksa direkt başlat
-    if (window.hasSaveGame()) {
+    if (exists) {
         window.showConfirm(lang.save_warning, () => {
-            startNewGameLogic();
+            startNewProfileLogic();
         });
     } else {
-        startNewGameLogic();
+        startNewProfileLogic();
     }
 };
 
+window.deleteProfile = function(pName) {
+    const lang = window.getCombatLang();
+    
+    window.showConfirm(lang.profile_delete_confirm.replace("$1", pName), () => {
+        // 1. Profili listeden çıkar
+        let list = window.getProfileList();
+        list = list.filter(p => p !== pName);
+        localStorage.setItem("RPG_Profile_List", JSON.stringify(list));
+        
+        // 2. O profile ait save dosyasını sil
+        localStorage.removeItem("RPG_Save_" + pName);
+
+        // --- YENİ AKILLI GEÇİŞ MANTIĞI ---
+        // Eğer sildiğimiz profil şu an seçili olan (aktif) profil ise:
+        if (window.activeProfile === pName) {
+            
+            if (list.length > 0) {
+                // DURUM A: Başka profiller var. Listenin ilk sırasındakine geç.
+                const nextProfile = list[0];
+                window.activeProfile = nextProfile;
+                localStorage.setItem("RPG_Active_Profile_Name", nextProfile);
+                
+                // Yeni seçilen profilin verilerini arka plana yükle (Load)
+                // SEBEP: 'Devam Et' butonunun yeni profile göre güncellenmesini sağlar.
+                window.loadGame(nextProfile);
+                
+                writeLog(`🧹 **Sistem**: Aktif profil silindi. Otomatik olarak '${nextProfile}' profiline geçildi.`);
+            } 
+            else {
+                // DURUM B: Hiç profil kalmadı. Her şeyi temizle.
+                window.activeProfile = null;
+                localStorage.removeItem("RPG_Active_Profile_Name");
+                
+                writeLog("🧹 **Sistem**: Tüm profiller silindi.");
+            }
+        }
+        // ---------------------------------
+
+        // 3. UI'ı ve Profiller Listesini Tazele
+        window.updateActiveProfileUI(); // Ana menüdeki kutuyu ve 'Devam Et' butonunu günceller
+        window.openProfileScreen();     // Modal içindeki listeyi yeniler
+    });
+};
 
 // --- EVENT LISTENERS ---
 
@@ -774,6 +841,105 @@ function updateCityArrows() {
     }
 }
 
+window.getProfileList = () => JSON.parse(localStorage.getItem("RPG_Profile_List") || "[]");
+
+window.openProfileScreen = function() {
+    const modal = document.getElementById('profile-modal');
+    const container = document.getElementById('profile-list-container');
+    const lang = window.getCombatLang();
+    const profiles = window.getProfileList();
+
+    // 1. Önce kutunun içini tamamen boşaltıyoruz
+    container.innerHTML = '';
+
+    // 3. ALT BÖLÜM: Mevcut Profillerin Listesi
+    if (profiles.length === 0) {
+        // Profil yoksa mesaj göster
+        const emptyMsg = document.createElement('p');
+        emptyMsg.style.cssText = "color:#666; padding:20px; font-style:italic;"; // Basit bir görsel ayar
+        emptyMsg.textContent = lang.profile_empty_msg;
+        container.appendChild(emptyMsg);
+    } else {
+        // Profiller varsa her biri için bir satır oluştur
+        profiles.forEach(pName => {
+            const row = document.createElement('div');
+            row.className = 'profile-item'; // CSS: menu.css içinden yönetilir
+            row.innerHTML = `
+                <span class="profile-name">${pName}</span>
+                <div class="profile-actions">
+                    <button class="npc-btn" onclick="window.selectProfile('${pName}')">${lang.profile_select_btn}</button>
+                    <button class="npc-btn confirm-btn-no" onclick="window.deleteProfile('${pName}')">${lang.profile_delete_btn}</button>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    // 4. Pencereyi görünür yap
+    modal.classList.remove('hidden');
+};
+window.selectProfile = function(pName) {
+    // 1. Önce aktif profili hafızaya ve tarayıcıya işle
+    window.activeProfile = pName;
+    localStorage.setItem("RPG_Active_Profile_Name", pName);
+
+    // 2. Bu profile ait bir kayıt dosyası var mı kontrol et ve yükle
+    // loadGame(pName) çağrıldığında save_manager.js içindeki yükleme motoru çalışır
+    const hasData = window.loadGame(pName);
+
+    if (hasData) {
+        writeLog(`👤 **Profil**: ${pName} ve kayıtlı ilerlemesi yüklendi.`);
+    } else {
+        // Eğer bu isimde bir profil varsa ama henüz bir save dosyası oluşmadıysa
+        // (Yani sadece isim yaratılmış ama maceraya hiç başlanmamışsa)
+        writeLog(`👤 **Profil**: ${pName} seçildi (Kayıt dosyası bulunamadı).`);
+    }
+
+    // 3. UI'ı güncelle (İsim ana menüye yazılır, 'Devam Et' butonu duruma göre belirir)
+    window.updateActiveProfileUI();
+    
+    // 4. Modalı kapat
+    document.getElementById('profile-modal').classList.add('hidden');
+};
+
+// YENİ: Ana Menüdeki ismi güncelleyen fonksiyon
+window.updateActiveProfileUI = function() {
+    const infoBox = document.getElementById('active-profile-info');
+    const nameSpan = document.getElementById('display-active-profile-name');
+    const continueBtn = document.getElementById('btn-continue');
+    
+    const currentProfile = localStorage.getItem("RPG_Active_Profile_Name");
+
+    if (currentProfile) {
+        if (infoBox) infoBox.classList.remove('hidden');
+        if (nameSpan) nameSpan.textContent = currentProfile;
+        
+        // --- GÜNCELLEME: KAYIT DOSYASININ İÇERİĞİNİ KONTROL ET ---
+        const rawData = localStorage.getItem("RPG_Save_" + currentProfile);
+        let hasPlayableSave = false;
+
+        if (rawData) {
+            const saveData = JSON.parse(rawData);
+            // Sadece içinde harita (nodes) olan kayıtlar 'Oynanabilir' kabul edilir
+            if (saveData.GAME_MAP && saveData.GAME_MAP.nodes && saveData.GAME_MAP.nodes.length > 0) {
+                hasPlayableSave = true;
+            }
+        }
+
+        // Eğer harita yoksa 'Devam Et' butonu görünmez
+        if (continueBtn) continueBtn.classList.toggle('hidden', !hasPlayableSave);
+        // --------------------------------------------------------
+    } else {
+        if (infoBox) infoBox.classList.add('hidden');
+        if (continueBtn) continueBtn.classList.add('hidden');
+    }
+};
+
+
+window.startNewProfileFlow = function() {
+    document.getElementById('profile-modal').classList.add('hidden');
+    switchScreen(window.nameEntryScreen); // İsim girişine gönder
+};
 
 window.itemver = function(tier = 1) {
     const newItem = generateRandomItem(tier);
@@ -980,25 +1146,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. ANA MENÜ VE SEÇİM BUTONLARI
     if (window.startButton) {
     window.startButton.onclick = () => {
-        const nickInput = document.getElementById('player-nick-input');
+    // EĞER SEÇİLİ BİR PROFİL VARSA
+    if (window.activeProfile) {
         
-        // 1. Önce içeriği temizleyelim (Sıfırlama)
-        if (nickInput) {
-            nickInput.value = ""; 
-        }
-
-        // 2. Ekranı değiştirelim
+        // --- KRİTİK: MACERAYA BAŞLA HER ZAMAN SIFIRLAR ---
+        // Oyuncu 'Devam Et' yerine buna bastıysa, mevcut ismini koruyarak 1. seviyeden başlatır.
+        initGame(); 
+        hero.playerName = window.activeProfile; 
+        
+        // Yeni bir save dosyası oluştur (Mevcut olanın üzerine yazar)
+        window.saveGame();
+        
+        startCutscene();
+        writeLog(`⚔️ **${window.activeProfile}** ile yeni bir maceraya atılıyorsun!`);
+    } 
+    // PROFİL YOKSA
+    else {
+        const nickInput = document.getElementById('player-nick-input');
+        if (nickInput) nickInput.value = ""; 
         switchScreen(window.nameEntryScreen);
-
-        // 3. Odaklanma (Focus) - Süreyi biraz artırdık (150ms) ve ZORLA focus yapıyoruz
-        setTimeout(() => {
-            if (nickInput) {
-                nickInput.focus();
-                // Bazı tarayıcılar için imleci sona atma hilesi
-                nickInput.click(); 
-            }
-        }, 150);
-    };
+        setTimeout(() => { if (nickInput) nickInput.focus(); }, 150);
+    }
+};
 }
 
     if (window.btnConfirmBasicSkills) {
@@ -1137,5 +1306,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-
+	window.updateActiveProfileUI();
 });
