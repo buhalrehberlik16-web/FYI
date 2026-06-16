@@ -1272,39 +1272,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     continueBtn.onclick = () => {
-    // 1. Önce kayıt verisini ham olarak oku (Konum bilgisini kontrol etmek için)
-    const rawData = localStorage.getItem("RPG_Adventure_SaveGame"); // SAVE_KEY string hali
-    if (!rawData) return;
+    // 1. Önce hangi kahramanın seçili olduğunu öğrenelim
+    const currentProfile = localStorage.getItem("RPG_Active_Profile_Name");
+    
+    if (!currentProfile) {
+        console.error("HATA: Seçili bir profil bulunamadı!");
+        return;
+    }
+
+    // --- KRİTİK DÜZELTME: DİNAMİK ANAHTAR ---
+    // SİLİNDİ: const rawData = localStorage.getItem("RPG_Adventure_SaveGame");
+    // SEBEP: Bu sabit isimli anahtar artık kullanılmıyor. 
+    // YENİ: Seçili olan profile özel kayıt dosyasını okuyoruz.
+    const profileKey = "RPG_Save_" + currentProfile;
+    const rawData = localStorage.getItem(profileKey);
+    // ----------------------------------------
+
+    if (!rawData) {
+        console.warn("Sistem: Bu profile ait oynanabilir bir kayıt bulunamadı.");
+        return;
+    }
+
     const saveData = JSON.parse(rawData);
 
     // 2. Oyunu yükle (Değişkenleri doldur)
-    if (window.loadGame()) {
-            // 1. Durum: Köyde miydi?
-            if (saveData.isInsideTown) {
-                window.currentTownMaster = saveData.currentTownMaster;
-                if (typeof enterTown === 'function') {
-                    enterTown(); 
-                } else {
-                    switchScreen(window.townScreen);
-                }
-                writeLog("🏰 Köyde dinlenmeye devam ediyorsun...");
-            } 
-            // --- YENİ 2. Durum: Şehirde miydi? ---
-            else if (saveData.isInsideCity) {
-                if (typeof enterCity === 'function') {
-                    enterCity(); // Şehir fonksiyonunu tetikle
-                } else {
-                    switchScreen(window.cityScreen);
-                }
-                writeLog("🏛️ Başkent Eldoria'da dinlenmeye devam ediyorsun...");
+    if (window.loadGame(currentProfile)) {
+        
+        // 3. Konum Kontrolü (Nerede kaldıysa oraya gönder)
+        if (saveData.isInsideTown) {
+            window.currentTownMaster = saveData.currentTownMaster;
+            if (typeof enterTown === 'function') {
+                enterTown(); 
+            } else {
+                switchScreen(window.townScreen);
             }
-            // -------------------------------------
-            // 3. Durum: Haritadaydı
-            else {
-                switchScreen(window.mapScreen);
-                writeLog("📂 Macera kaldığı yerden devam ediyor...");
+            writeLog(`🏰 **${currentProfile}** köye geri döndü.`);
+        } 
+        else if (saveData.isInsideCity) {
+            if (typeof enterCity === 'function') {
+                enterCity(); 
+            } else {
+                switchScreen(window.cityScreen);
             }
+            writeLog(`🏛️ **${currentProfile}** Eldoria'ya geri döndü.`);
         }
-    };
+        else {
+            // Köyde veya Şehirde değilse: Normal haritaya git
+            switchScreen(window.mapScreen);
+            writeLog(`📂 **${currentProfile}** macerasına devam ediyor...`);
+        }
+    }
+};
 	window.updateActiveProfileUI();
 });
