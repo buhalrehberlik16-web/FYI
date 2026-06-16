@@ -195,4 +195,54 @@
         white-space: nowrap;
     }
 
+	 /* 1. Tüm içeriği dikeyde tam ortalıyoruz */
+    .menu-overlay {
+        justify-content: center !important; /* İçeriği merkeze çeker */
+        padding: 2% !important;
+    }
+
+    /* 2. Logo ve başlık alanını daraltıyoruz */
+    .logo-area {
+        margin-bottom: 3% !important;
+    }
+
+    /* 3. Butonların toplandığı ana kutudaki sabit boşluğu siliyoruz */
+    .menu-actions {
+        /* SİLİNDİ: margin-top: 60px; (Aşağı kaymanın ana sebebi buydu) */
+        margin-top: 5% !important; /* Sabit değer yerine % değerine geçildi */
+        gap: 12px !important;     /* Butonlar arası boşluğu daralttık */
+        width: 100% !important;
+    }
+
+    /* 4. Ana Butonların (Başla / Devam Et) boyutlarını esnetiyoruz */
+    .menu-main-btn {
+        width: 85% !important; /* Ekran genişliğine göre ayarlanır */
+        /* SİLİNDİ: height: 75px; */
+        height: 12% !important; /* Ekran yüksekliğinin %12'si kadar olsun */
+        min-height: 50px !important; /* Çok ezilmesini engeller */
+        font-size: 1.1rem !important;
+        margin-left: 0 !important; /* Ortalamayı bozmasın */
+    }
+
+    /* 5. Alt Butonların (Profil / Ayarlar / Çıkış) boyutları */
+    .menu-secondary-btn {
+        width: 70% !important;
+        height: 40px !important; /* Küçük butonlarda sabit değer mobilde daha stabildir */
+        font-size: 0.8rem !important;
+        margin-left: 0 !important;
+    }
+
+    .menu-sub-actions {
+        width: 100%;
+        flex-direction: column; /* Mobilde yan yana yerine alt alta daha güvenli */
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* 6. Aktif Profil Kutusu */
+    .active-profile-box {
+        margin: 2% auto !important; /* Otomatik orta payı */
+        padding: 5px 15px !important;
+        width: auto !important;
+    }
 }
