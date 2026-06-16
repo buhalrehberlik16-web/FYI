@@ -160,5 +160,39 @@
     from { text-shadow: 0 0 10px rgba(240, 230, 140, 0.5), 4px 4px 0px #4a3b2a; }
     to { text-shadow: 0 0 35px rgba(240, 230, 140, 0.9), 4px 4px 0px #4a3b2a; transform: scale(1.02); }
 }
+.btn-new-profile {
+    font-size: 1rem !important;
+}
+/* 1. Butonların yan yana durduğu kapsayıcıyı daralt */
+    .profile-actions {
+        gap: 5px !important; /* Butonlar arası boşluğu mobilde azalttık */
+        flex-shrink: 0;      /* Butonların ezilmesini engelledik */
+    }
+
+    /* 2. Sadece bu alandaki butonlara özel boyut ver */
+    .profile-actions .npc-btn {
+        /* Genişliği % olarak değil, sabit pikselle kontrol etmek mobilde daha güvenlidir */
+        width: 55px !important; 
+        height: 32px !important;
+        
+        /* Yazıların sığması için padding ve font ayarı */
+        padding: 0 !important; 
+        font-size: 0.65rem !important;
+        
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
+        letter-spacing: 0px; /* Yer kazanmak için harf arasını kapattık */
+    }
+
+    /* 3. İsmin butonları itmesini engellemek için isim alanını sınırla */
+    .profile-name {
+        font-size: 0.9rem !important;
+        max-width: 140px; /* Uzun isimlerde butonların ekran dışına taşmasını önler */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
 }
