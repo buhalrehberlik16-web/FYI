@@ -439,3 +439,83 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #3e3221;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    transition: all 0.2s ease;
+}
+
+.profile-item:hover {
+    border-color: #ffd700;
+    background: rgba(107, 92, 59, 0.2);
+}
+
+.profile-name {
+    color: #ffd700;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- ANA MENÜDEKİ PROFİL GÖSTERGESİ --- */
+.active-profile-box {
+    margin: 20px auto;
+    padding: 8px 20px;
+    background: rgba(43, 34, 24, 0.9);
+    border: 2px solid #ffd700;
+    border-radius: 4px;
+    display: inline-flex; /* Yazı kadar genişlik kaplar */
+    align-items: center;
+    gap: 12px;
+	text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8), 0 0 10px rgba(255, 215, 0, 0.2);
+    animation: fadeIn 0.8s ease;
+}
+
+.active-label {
+    color: #a89373;
+    font-size: 0.75rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+}
+
+#display-active-profile-name {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+/* Yeni Profil Oluştur Butonu (Modal İçindeki) */
+.profile-create-btn-wrapper {
+    margin-top: 10px;
+    margin-bottom: 20px; /* Liste ile buton arasına mesafe koyar */
+    border-bottom: 1px solid rgba(107, 92, 59, 0.5);
+    padding-bottom: 15px;
+}
+
+.btn-new-profile {
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(to bottom, #145a32, #0a2f16) !important;
+    border: 2px solid #43FF64 !important;
+    color: #fff !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+	position: relative; /* Butonun yerleşimini serbest bırakır */
+    left: -2%;         /* Butonu sola doğru %2 oranında iter */
+}
+
+.btn-new-profile:hover {
+    background: #1e8449 !important;
+    transform: scale(1.02);
+}
