@@ -327,6 +327,16 @@ window.LANG_TR = {
 		log_forced_rest: "⚠️ **Zorunlu Dinlenme**: Kaynak yetersiz! Yorgunluk: $1",
 		log_rest_skill: "🧘 **Dinlen**: $1 Yorgunluk atıldı.",
 		
+		//Chronicles
+		profile_list_title: "KAHRAMANLARIMIZ",
+		profile_create_btn: "YENİ PROFİL OLUŞTUR",
+		profile_delete_confirm: "$1 adlı kahramanı ve tüm ilerlemesini ebediyen silmek istediğine emin misin?",
+		profile_select_btn: "SEÇ",
+		profile_delete_btn: "SİL",
+		profile_empty_msg: "Henüz bir kahraman yaratılmamış...",
+		nav_profiles: "PROFİLLER",
+		active_hero_label: "AKTİF KAHRAMAN:",
+		
 		nav_codex: "REHBER (H)",
 		nav_map: "HARİTA (M)",
 		setting_guide: "REHBER BUTONU",

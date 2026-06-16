@@ -326,6 +326,16 @@ window.LANG_EN = {
 		log_forced_rest: "⚠️ **Forced Rest**: Insufficient resources! Exhaustion: $1",
 		log_rest_skill: "🧘 **Rest**: Removed $1 Exhaustion.",
 		
+		//Chronicles
+		profile_list_title: "OUR HEROES",
+		profile_create_btn: "CREATE NEW PROFILE",
+		profile_delete_confirm: "Are you sure you want to delete hero $1 and all progress forever?",
+		profile_select_btn: "SELECT",
+		profile_delete_btn: "DELETE",
+		profile_empty_msg: "No heroes created yet...",
+		nav_profiles: "PROFILES",
+		active_hero_label: "ACTIVE HERO:",
+		
 		nav_codex: "GUIDE (H)",
 		nav_map: "MAP (M)",
 		setting_guide: "GUIDE BUTTON",
