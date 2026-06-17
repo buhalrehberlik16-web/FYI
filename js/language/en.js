@@ -313,6 +313,7 @@ window.LANG_EN = {
 		stable_rent: "Horse Rental(40G)",
 		stable_scout: "Scout(15G)",
 		current_equipment: "CURRENTLY EQUIPPED",
+		buy_stash_btn: "OPEN SECRET STASH (10G)",
 		
 		// Exhaust
 		exhaustion_label: "Exhaustion",
@@ -632,6 +633,7 @@ window.LANG_EN = {
 			log_skill_forgotten: "🧹 **Master**: $1 was forgotten, gained $2 gold.",
 			log_skill_refunded: "🧹 **Master**: $1 forgotten. Spent $2 Gold, $3 Skill Points refunded.",
 			log_skill_chain_refunded: "🧹 **Master**: All skills in the $1 branch were cleared. Spent $2 Gold, $3 Skill Points refunded.",			
+			log_boss_tier_bonus: "👑 **Boss Bonus**: Epic loot found! (+1 Tier)",
         },
 		
 		room_events: {

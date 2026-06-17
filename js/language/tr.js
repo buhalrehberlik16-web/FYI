@@ -313,6 +313,7 @@ window.LANG_TR = {
 		stable_rent: "At Kirala  (40G)",
 		stable_scout: "Gözcü (15G)",
 		current_equipment: "KUŞANILMIŞ EŞYALAR",
+		buy_stash_btn: "GİZLİ ZULAYI AÇ (10G)",
 		
 		
 		// Exhaust
@@ -633,6 +634,7 @@ window.LANG_TR = {
 			log_skill_forgotten: "🧹 **Üstad**: $1 yeteneği unutuldu, $2 altın kazanıldı.",
 			log_skill_refunded: "🧹 **Üstad**: $1 yeteneği unutuldu. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
 			log_skill_chain_refunded: "🧹 **Üstad**: $1 dalındaki tüm yetenekler temizlendi. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
+			log_boss_tier_bonus: "👑 **Boss Bonusu**: Destansı ganimetler bulundu! (+1 Seviye)",
         },
 		
 		room_events: {
@@ -763,7 +765,7 @@ window.LANG_TR = {
 				opt2: "İlgilenme", opt2_b: "", opt2_d: ""
 			},
             flee_option: "Korkup Kaç", // Korkup kaç butonu için ekstra
-            flee_debuff: "-10 HP"
+            flee_debuff: "-10 HP",
 		},
 			
 		
