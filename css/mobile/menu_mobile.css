@@ -245,4 +245,38 @@
         padding: 5px 15px !important;
         width: auto !important;
     }
+	/* 1. Oyun İçi Menü Kapsayıcısını Ortalıyoruz */
+	#in-game-menu-modal .stat-window {
+    width: 85vw !important; /* Ekran genişliğine göre kutuyu ayarla */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; /* Tüm içeriği yatayda ortalar */
+    padding: 20px !important;
+	}
+
+	/* 2. Menü İçindeki Tüm Butonları Eşitliyoruz */
+	#in-game-menu-modal button {
+    /* KRİTİK: Soldaki o çirkin boşluğu (margin-left: 8px) tamamen siliyoruz */
+    margin-left: 0 !important; 
+    margin-right: 0 !important;
+    
+    /* Genişliği kutunun içine tam oturtuyoruz */
+    width: 100% !important; 
+    
+    /* Butonların mobilde devleşmesini engellemek için yükseklik ve font ayarı */
+    min-height: 45px !important;
+    height: auto !important;
+    font-size: 0.9rem !important;
+    padding: 10px !important;
+	}
+
+	/* 3. "Devam Et" (Main) ve "Diğerleri" (Secondary) arasındaki farkları minimize et */
+	#in-game-menu-modal .menu-main-btn {
+    /* Gölge ve tasarım farkı kalsın ama boyutlar aynı olsun */
+    margin-bottom: 10px !important;
+	}
+
+	#in-game-menu-modal .menu-secondary-btn {
+    margin-top: 5px !important;
+	}
 }
