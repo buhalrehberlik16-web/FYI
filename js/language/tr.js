@@ -315,6 +315,9 @@ window.LANG_TR = {
 		current_equipment: "KUŞANILMIŞ EŞYALAR",
 		buy_stash_btn: "GİZLİ ZULAYI AÇ (10G)",
 		
+		//Cheat
+		log_cheat_scout: "🦉 **Hile**: Tüm harita verileri deşifre edildi!",
+		full_scout_title: "TAM KEŞİF RAPORU (HİLE)",
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",

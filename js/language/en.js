@@ -315,6 +315,10 @@ window.LANG_EN = {
 		current_equipment: "CURRENTLY EQUIPPED",
 		buy_stash_btn: "OPEN SECRET STASH (10G)",
 		
+		//Cheat
+		log_cheat_scout: "🦉 **Cheat**: Full map data decrypted!",
+		full_scout_title: "FULL SCOUT REPORT (CHEAT)",
+		
 		// Exhaust
 		exhaustion_label: "Exhaustion",
 		exhaustion_out_of_breath: "OUT OF BREATH",
