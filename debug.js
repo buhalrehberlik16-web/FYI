@@ -199,3 +199,65 @@ window.itemtier = function(val) {
     // Dükkan stoklarını anında yenilemek istersen:
     if (typeof refreshMerchantStock === 'function') refreshMerchantStock(8);
 };
+
+window.scoutver = function() {
+    if (!window.GAME_MAP || window.GAME_MAP.nodes.length === 0) {
+        console.error("HATA: Harita henüz oluşturulmamış!");
+        return;
+    }
+
+    const lang = window.getCombatLang();
+    // Kaydırılabilir şık bir kapsayıcı oluşturuyoruz
+    let report = `<div style="text-align: left; font-family: 'Cinzel', serif; max-height: 450px; overflow-y: auto; padding-right: 10px;">`;
+
+    // Tüm aşamaları (0'dan son aşamaya kadar) tara
+    for (let s = 0; s < MAP_CONFIG.totalStages; s++) {
+        const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === s);
+        
+        if (nodesInStage.length > 0) {
+            report += `<div style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,215,0,0.2); padding-bottom: 5px;">
+                        <strong style="color: #ffd700;">${lang.scout_stage} ${s + 1}:</strong><br>`;
+            
+            nodesInStage.forEach(node => {
+                // Geçilen odaların üzerini çiz (Görsel tutarlılık)
+                const isVisited = window.GAME_MAP.completedNodes.includes(node.id);
+                const isCurrent = GAME_MAP.currentNodeId === node.id;
+                const style = isVisited ? "text-decoration: line-through; opacity: 0.5;" : "";
+                
+                let displayTitle = lang[`node_${node.type}`] || node.type;
+                let color = isVisited ? "#777" : "#bbb";
+
+                // Mevcut odayı parlak sarı yapalım
+                if (isCurrent) { color = "#ffd700"; displayTitle += " [BURADASIN]"; }
+
+                if (node.type === 'encounter') {
+                    const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
+                    displayTitle = enemyName;
+                    if(!isVisited) color = "#ff4d4d";
+                }
+
+                let biomeInfo = "";
+                if (node.biome) {
+                    const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+                    biomeInfo = ` <span style="color: ${isVisited ? '#555' : '#43FF64'}; font-size: 0.8em;">(${biomeLabel})</span>`;
+                }
+
+                let roomEventInfo = "";
+                const isCombat = (node.type === 'encounter' || node.type === 'boss' || node.type === 'start');
+                if (isCombat) {
+                    const eventKey = node.roomEvent || "none";
+                    const eventLabel = lang.room_events[`event_${eventKey}`] || eventKey;
+                    roomEventInfo = ` <span style="color: ${isVisited ? '#555' : '#df9cff'}; font-size: 0.8em;">[${eventLabel}]</span>`;
+                }
+
+                report += `<span style="font-size: 0.85em; margin-left: 10px; color: ${color}; ${style}">• ${displayTitle}${biomeInfo}${roomEventInfo}</span><br>`;
+            });
+            report += `</div>`;
+        }
+    }
+    report += `</div>`;
+
+    // Bilgiyi mor renkli (Hile rengi) bir popup ile göster
+    window.showGameInfo(lang.full_scout_title, report, "#9b59b6");
+    writeLog(lang.log_cheat_scout);
+};

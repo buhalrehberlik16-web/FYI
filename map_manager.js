@@ -156,9 +156,14 @@ function generateMap() {
         const isCombatNode = ['encounter', 'start', 'boss'].includes(nodeType);
         const isRed = (diff.isHard || diff.isWeak); // Kırmızı oda kontrolü
 
-        // --- YENİ: ROOM EVENT GENERATOR (GELİŞMİŞ) ---
+         // --- YENİ: ROOM EVENT GENERATOR ---
         let roomEvent = "none";
-        if (isCombatNode && nodeType !== 'start' && nodeType !== 'boss') {
+
+        // --- GÜNCELLEME: İLK 4 ODA KISITLAMASI ---
+        // Sadece savaş odasıysa, Başlangıç/Boss değilse VE (Act 1'de ilk 4 aşama değilse)
+        const isIntroNode = (act === 1 && stage < 4);
+
+        if (isCombatNode && nodeType !== 'start' && nodeType !== 'boss' && !isIntroNode) {
             const weights = [
                 { id: "reinforcement", w: 0.1 },
                 { id: "wind", w: 0.1 },
@@ -728,46 +733,46 @@ window.enterCity = function() {
     writeLog(lang.desc_city);
 };
 
-// ... Random Event ve Campfire (UI Manager'dan çağrılır) ...
-function startCampfireEvent(node) {
-    const screen = document.getElementById('campfire-screen');
-    const optionsDiv = document.getElementById('campfire-options');
-    const resultDiv = document.getElementById('campfire-result');
-    switchScreen(screen);
-    if(optionsDiv) { optionsDiv.classList.remove('hidden'); optionsDiv.style.display = 'flex'; }
-    if(resultDiv) resultDiv.classList.add('hidden');
+// ... Random Event ve Campfire (UI Manager'dan çağrılır) 
+//function startCampfireEvent(node) {
+ //   const screen = document.getElementById('campfire-screen');
+ //   const optionsDiv = document.getElementById('campfire-options');
+ //   const resultDiv = document.getElementById('campfire-result');
+ //   switchScreen(screen);
+ //   if(optionsDiv) { optionsDiv.classList.remove('hidden'); optionsDiv.style.display = 'flex'; }
+ //   if(resultDiv) resultDiv.classList.add('hidden');
     
-    const btnRest = document.getElementById('btn-camp-rest');
-    const btnTrain = document.getElementById('btn-camp-train');
-    const btnCont = document.getElementById('btn-camp-continue');
+ //   const btnRest = document.getElementById('btn-camp-rest');
+ //   const btnTrain = document.getElementById('btn-camp-train');
+ //   const btnCont = document.getElementById('btn-camp-continue');
 
-    let efficiency = 1.0;
-    let penaltyText = "";
+ //   let efficiency = 1.0;
+ //   let penaltyText = "";
     
-    if (node && typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
-        efficiency = 0.3; 
-        penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin! (%30 Etki)</span>";
-    }
+ ////   if (node && typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
+ //       efficiency = 0.3; 
+//        penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin! (%30 Etki)</span>";
+ //   }
     
-    if(node) hero.lastCampfireStage = node.stage;
+//    if(node) hero.lastCampfireStage = node.stage;
 
-    btnRest.onclick = () => {
-        let baseHeal = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
-        let finalHeal = Math.floor(baseHeal * efficiency); if(finalHeal < 1) finalHeal = 1;
-        hero.hp = Math.min(hero.maxHp, hero.hp + finalHeal);
-        updateStats(); 
-        showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${finalHeal} HP** kazandın.${penaltyText}`);
-    };
+//    btnRest.onclick = () => {
+//        let baseHeal = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
+//        let finalHeal = Math.floor(baseHeal * efficiency); if(finalHeal < 1) finalHeal = 1;
+//        hero.hp = Math.min(hero.maxHp, hero.hp + finalHeal);
+//        updateStats(); 
+//        showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${finalHeal} HP** kazandın.${penaltyText}`);
+//    };
 
-    btnTrain.onclick = () => {
-        let baseXp = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
-        let finalXp = Math.floor(baseXp * efficiency); if(finalXp < 1) finalXp = 1;
-        gainXP(finalXp); 
-        updateStats(); 
-        showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${finalXp} XP** kazandın!${penaltyText}`);
-    };
-    btnCont.onclick = () => switchScreen(mapScreen);
-}
+//    btnTrain.onclick = () => {
+//        let baseXp = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
+//        let finalXp = Math.floor(baseXp * efficiency); if(finalXp < 1) finalXp = 1;
+//        gainXP(finalXp); 
+//        updateStats(); 
+//        showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${finalXp} XP** kazandın!${penaltyText}`);
+//    };
+//    btnCont.onclick = () => switchScreen(mapScreen);
+//}
 
 function showCampfireResult(title, text) {
     document.getElementById('campfire-options').style.display = 'none';
@@ -775,7 +780,7 @@ function showCampfireResult(title, text) {
     res.classList.remove('hidden');
     document.getElementById('campfire-result-title').textContent = title;
     document.getElementById('campfire-result-text').innerHTML = text;
-}
+}//
 
 
 // BIOME EFEKTLERİ
