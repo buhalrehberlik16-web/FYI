@@ -36,12 +36,12 @@ window.refreshMerchantStock = function(count = 8) {
 
         if (count === 4) {
             // Gezgin Tüccar
-            window.merchantStock.push(generateRandomItem(currentTier));
+            window.merchantStock.push(generateRandomItem(currentTier, false));
         } 
         else if (count === 12) {
             // Şehir Tüccarı
             if (i < 4) {
-                window.merchantStock.push(generateRandomItem(currentTier));
+                window.merchantStock.push(generateRandomItem(currentTier, false));
             } else if (i < 6) {
                 const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
                 window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
@@ -50,7 +50,7 @@ window.refreshMerchantStock = function(count = 8) {
                 window.merchantStock.push(generateRandomBrooch(currentTier));
             } else {
                 if (Math.random() < 0.3) {
-                    window.merchantStock.push(generateRandomItem(currentTier));
+                    window.merchantStock.push(generateRandomItem(currentTier, false));
                 } else {
                     const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
                     window.merchantStock.push({ ...baseItem });
@@ -60,13 +60,13 @@ window.refreshMerchantStock = function(count = 8) {
         else {
             // Normal Kasaba Tüccarı
             if (i < 4) {
-                window.merchantStock.push(generateRandomItem(currentTier));
+                window.merchantStock.push(generateRandomItem(currentTier, false));
             } else if (i < 6) {
                 const scrollPool = window.SPECIAL_MERCH_ITEMS.filter(item => item.subtype === "scroll");
                 window.merchantStock.push({ ...scrollPool[Math.floor(Math.random() * scrollPool.length)] });
             } else {
                 if (Math.random() < 0.2) {
-                    window.merchantStock.push(generateRandomItem(currentTier));
+                    window.merchantStock.push(generateRandomItem(currentTier, false));
                 } else {
                     const baseItem = window.SPECIAL_MERCH_ITEMS[Math.floor(Math.random() * window.SPECIAL_MERCH_ITEMS.length)];
                     window.merchantStock.push({ ...baseItem });
@@ -127,6 +127,15 @@ window.renderMerchantUI = function() {
     const goldDisplay = document.getElementById('trade-screen-gold');
     if (goldDisplay) goldDisplay.textContent = hero.gold;
     // ---------------------------------------
+	
+	// --- YENİ: ZULA BUTONU GÖRÜNÜRLÜĞÜ ---
+    const stashContainer = document.getElementById('secret-stash-container');
+    if (stashContainer) {
+        // Eğer bu odada zula varsa VE henüz açılmadıysa VE satın alma (buy) modundaysak göster
+        const shouldShow = window.isStashAvailableInRoom && window.currentTradeMode === 'buy';
+        stashContainer.classList.toggle('hidden', !shouldShow);
+    }
+    // -------------------------------------
 	
 	// --- YENİ: TAKILI EKİPMANLARI ÇİZ ---
     const equipRow = document.getElementById('trade-equip-row');
