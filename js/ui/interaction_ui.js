@@ -520,10 +520,14 @@ window.openSmallMerchant = function() {
     
     // 2. SADECE 4 eşya üret (Fonksiyona 4 gönderiyoruz)
     window.refreshMerchantStock(4); 
+	
+	window.isStashAvailableInRoom = Math.random() < 0.5;
+    window.stashType = 'jewelry';
     
     // 3. Trade ekranını aç
     window.openMerchantTrade('buy');
     writeLog("🎒 Gizemli bir gezgin sana mallarını indirimle sunuyor!");
+	
 };
 
 window.openBroochMerchant = function() {
@@ -543,11 +547,47 @@ window.openBroochMerchant = function() {
         window.merchantStock.push(generateRandomBrooch(currentTier));
     }
     // ----------------------------------------------
-    
+     // --- YENİ: SECRET STASH (BROOCH) ---
+    window.isStashAvailableInRoom = Math.random() < 0.5;
+    window.stashType = 'brooch';
+	
     window.openMerchantTrade('buy');
     const lang = window.getCombatLang();
     writeLog("📿 **İşportacı**: Nadir broşlarını sana sunuyor!");
+	
 };
+// --- GÜNCELLEME: BROŞ İKONU VE ZULA AÇMA ---
+window.unlockSecretStash = function() {
+    const lang = window.getCombatLang();
+    if (hero.gold >= 10) {
+        hero.gold -= 10;
+        generateStashItems(window.stashType);
+        window.isStashAvailableInRoom = false; // Kullanıldığı için kapat
+        updateGoldUI();
+        renderMerchantUI(); // Butonu gizlemesi için tekrar çiz
+    } else {
+        window.showAlert(lang.not_enough_msg);
+    }
+};
+
+function generateStashItems(type) {
+    const progress = hero.highestTierDefeated || 1;
+    const tier = Math.max(1, Math.round(progress / 2));
+    
+    for (let i = 0; i < 4; i++) {
+        if (type === 'jewelry') {
+            const hasDef = Math.random() < 0.5;
+            const itemTier = hasDef ? tier : tier + 1;
+            window.merchantStock.push(generateRandomItem(itemTier, hasDef));
+        } else {
+            // --- KRİTİK İKON DÜZELTMESİ ---
+            let b = window.generateCustomBrooch(tier, 1); 
+            window.merchantStock.push(b);
+        }
+    }
+    renderMerchantUI();
+    writeLog("🤫 **Zula**: Gizli bölme açıldı ve nadir parçalar ortaya çıktı.");
+}
 
 window.openVeteranMaster = function() {
 	// --- YENİ: ANA ÇIKIŞ BUTONUNU GÖSTER ---
