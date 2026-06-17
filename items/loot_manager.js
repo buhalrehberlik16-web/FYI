@@ -99,7 +99,8 @@ window.LootManager = {
                 }
 
                 // B. ÜST SEVİYE VERSİYON (nextTierValue) - Sadece Elite ise açık
-                if (isElite && lpBudget >= rules.nextTierValue) {
+                if (isElite && !monster.isBoss && lpBudget >= rules.nextTierValue) {
+                    // SEBEP: Boss'un Tier 4 (finalLootTier + 1) üretmesini engellemek.
                     possibleChoices.push({ 
                         tier: finalLootTier + 1, 
                         cost: rules.nextTierValue, 
