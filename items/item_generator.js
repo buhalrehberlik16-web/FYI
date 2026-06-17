@@ -1,4 +1,4 @@
-window.generateRandomItem = function(tier) {
+window.generateRandomItem = function(tier, forceDef = null) {
     const types = Object.keys(window.BASE_ITEMS);
     const type = types[Math.floor(Math.random() * types.length)];
     const mainStats = Object.keys(window.BASE_ITEMS[type]);
@@ -20,11 +20,22 @@ window.generateRandomItem = function(tier) {
         implicitDef: 0		
     };
 	
-	// --- KURAL: T2+ EŞYALARDA %30 ŞANSLA SABİT DEFANS ---
-    if (tier > 1 && Math.random() < 0.30) {
-        newItem.implicitDef = (tier * 1) + 1; // T2:3, T3:4, T4:5, T5:6
+	// --- YENİ DEFANS KURALLARI ---
+    if (forceDef === true) {
+        // ZORUNLU DEFANS: Kesinlikle defans verir
+        newItem.implicitDef = Math.max(1, (tier * 1) + 1); 
+    } 
+    else if (forceDef === false) {
+        // YASAKLI DEFANS: Kesinlikle 0 kalır
+        newItem.implicitDef = 0;
     }
-    // --------------------------------------------------
+    else {
+        // VARSAYILAN (ESKİ) MANTIK: Sadece T2+ ise %30 şans
+        if (tier > 1 && Math.random() < 0.30) {
+            newItem.implicitDef = (tier * 1) + 1;
+        }
+    }
+    // ----------------------------
 
     // Stat puanı dağıtımı (Mevcut mantığın aynı kalıyor)
     newItem.stats[mainStat] = window.ITEM_CONFIG.multipliers.stats;

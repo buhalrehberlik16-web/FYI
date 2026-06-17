@@ -3,6 +3,18 @@
 window.LootManager = {
     generateLoot: function(monster) {
         let rewards = [];
+		
+		// --- 1. ADIM: BU CANAVARIN ZIRHLI EŞYA VERME ŞANSINI BELİRLE ---
+        let monsterForceDef = false; // Varsayılan: Zırhsız
+        
+        if (monster.isBoss) {
+            monsterForceDef = true; // Boss ise çıkan tüm takılar kesin zırhlı olur
+        } 
+        else if (monster.isHard || monster.isWeak) {
+            // Kırmızı odalardaysa %50 ihtimalle zırhlı verme şansı kazanır
+            monsterForceDef = Math.random() < 0.5;
+        }
+        // -------------------------------------------------------------
         
         // 1. ELITE KONTROLÜ: Üst seviye (T+1) takı düşürme izni
         // Bosslar ve isHard (Turuncu çerçeveli) düşmanlar 'Elite' kabul edilir.
@@ -24,6 +36,17 @@ window.LootManager = {
         } else {
             finalLootTier = Math.random() < 0.5 ? Math.floor(calcTierBase) : Math.ceil(calcTierBase);
         }
+		
+		// --- YENİ: BOSS TIER BONUSU ---
+        if (monster.isBoss) {
+            // Boss kesildiği için tüm ganimetler +1 Tier seviyesinden hesaplanır
+            finalLootTier += 1;
+            
+            const lang = window.getCombatLang();
+            writeLog(`👑 **Boss Bonus**: ${lang.combat.log_boss_tier_bonus || "Destansı ganimetler bulundu! (+1 Seviye)"}`);
+        }
+        // ------------------------------
+		
         finalLootTier = Math.max(1, finalLootTier); 
 
         // --- 4. DİNAMİK BÜTÇE HESAPLAMA (TAM İSTEDİĞİN FORMÜL) ---
@@ -99,7 +122,7 @@ window.LootManager = {
             } else if (chosen.type === 'charm1') {
                 item = generateRandomCharm(chosen.tier);
             } else {
-                item = generateRandomItem(chosen.tier);
+                item = generateRandomItem(chosen.tier, monsterForceDef);
             }
 
             rewards.push({ type: 'item', value: item });

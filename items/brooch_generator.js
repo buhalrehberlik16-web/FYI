@@ -69,3 +69,50 @@ window.generateRandomBrooch = function(tier) {
 	
     return brooch;
 };
+
+// 10. BROŞ ÜRETİCİSİ (ZULA İÇİN GÜNCELLENDİ)
+// Artık frekansı zorlayarak üretebiliyoruz
+window.generateCustomBrooch = function(tier, forcedFreq = null) {
+    let budget = window.BROOCH_CONFIG.pointsByTier[tier] || 4;
+    let brooch = {
+        id: "brooch_" + Date.now(),
+        type: "brooch", subtype: "brooch", tier: tier,
+        effects: [], nameKey: "item_brooch_custom"
+    };
+
+    // Frekans Belirleme
+    if (forcedFreq) {
+        brooch.frequency = forcedFreq;
+        // Frekans 1'in bedeli olan 3 puanı bütçeden düş
+        budget -= 3; 
+    } else {
+        const possibleFreqs = window.BROOCH_CONFIG.frequencies.filter(f => f.cost <= budget);
+        const chosen = possibleFreqs[Math.floor(Math.random() * possibleFreqs.length)];
+        brooch.frequency = chosen.turns;
+        budget -= chosen.cost;
+    }
+
+    // İkon Belirleme
+    brooch.icon = (brooch.frequency === 1) ? "brooch/brooch_all.webp" : "brooch/brooch_str.webp";
+
+    // Kalan bütçe ile efekt al (En az 1 puan kalmasını garantile)
+    if (budget < 1) budget = 1; 
+
+    while (budget > 0) {
+        const effectBase = window.BROOCH_CONFIG.effectsPool[Math.floor(Math.random() * window.BROOCH_CONFIG.effectsPool.length)];
+        const spend = Math.min(budget, 3);
+        const targetStat = (effectBase.stats) ? effectBase.stats[Math.floor(Math.random() * effectBase.stats.length)] : undefined;
+
+        brooch.effects.push({
+            id: effectBase.id,
+            value: effectBase.values[spend - 1],
+            pointsSpent: spend,
+            targetStat: targetStat
+        });
+        budget -= spend;
+    }
+    
+    const tribes = window.BROOCH_TRIBES || ["Greenskins"]; 
+    brooch.specialtyTribe = tribes[Math.floor(Math.random() * tribes.length)];
+    return brooch;
+};
