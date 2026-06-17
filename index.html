@@ -1045,6 +1045,12 @@
         </div>
         <hr class="stat-separator" style="margin: 10px 0;">
         <div id="trade-grid" class="bag-grid" style="margin: 20px auto;"></div>
+		<!-- YENİ: GİZLİ ZULA BUTONU -->
+        <div id="secret-stash-container" class="hidden" style="margin-bottom: 15px;">
+            <button id="btn-buy-stash" class="npc-btn" style="width: 100%; border-color: #ffd700; background: linear-gradient(to bottom, #3e2723, #1a150e) !important;" onclick="window.unlockSecretStash()">
+                <i class="fas fa-key"></i> <span data-i18n="buy_stash_btn">GİZLİ ZULAYI AÇ (10G)</span>
+            </button>
+        </div>
         <button class="npc-btn" onclick="closeMerchantTrade()" data-i18n="back" style="width:100px; margin:0 auto;">GERİ</button>
     </div>
 </div>
@@ -1377,6 +1383,7 @@
 <script src="combat_manager.js"></script>
 <script src="map_manager.js"></script>
 <script src="save_manager.js"></script>
+<script src="debug.js"></script>
 <script src="main.js" defer></script>
 </body>
 </html>
