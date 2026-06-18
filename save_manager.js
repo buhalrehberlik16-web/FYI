@@ -20,6 +20,13 @@ window.saveGame = function() {
             hero: window.hero,
             GAME_MAP: window.GAME_MAP,
 			compendiumData: window.StatsManager.currentRun,
+			// --- YENİ: TÜCCAR DURUMU ---
+			merchantStock: window.merchantStock,
+			isBroochTrade: window.isBroochTrade,
+			currentMerchantDiscount: window.currentMerchantDiscount,
+			isStashAvailableInRoom: window.isStashAvailableInRoom,
+			stashType: window.stashType,
+			// ---------------------------
             saveDate: new Date().toISOString(),
             version: "0.0.5", // Oyun versiyonun
 			isInsideTown: isTownVisible, // Artık daha garantili
@@ -52,6 +59,13 @@ window.loadGame = function(profileName = null) {
         // Verileri enjekte et
         if (saveData.hero) window.hero = saveData.hero;
         if (saveData.GAME_MAP) window.GAME_MAP = saveData.GAME_MAP;
+		// --- YENİ: TÜCCAR DURUMUNU YÜKLE ---
+		window.merchantStock = saveData.merchantStock || [];
+		window.isBroochTrade = saveData.isBroochTrade || false;
+		window.currentMerchantDiscount = saveData.currentMerchantDiscount || 1.0;
+		window.isStashAvailableInRoom = saveData.isStashAvailableInRoom || false;
+		window.stashType = saveData.stashType || 'jewelry';
+		// -----------------------------------
 		if (saveData.compendiumData) window.StatsManager.currentRun = saveData.compendiumData;
 		if (window.CalendarManager) window.CalendarManager.updateTownUI();
 

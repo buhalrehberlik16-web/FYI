@@ -647,6 +647,9 @@ function proceedWithNodeAction(node) {
             startBattle(enemy, node.isHard, node.isHalfTier, node.isWeak, node.biome, node.battleBgNum, node.roomEvent, node.isOrange); 
 
         } else if (node.type === 'town') {
+			window.isBroochTrade = false;
+            window.currentMerchantDiscount = 1.0;
+            window.refreshMerchantStock(8); 
             enterTown();
         
         } else if (node.type === 'choice') {
@@ -660,6 +663,8 @@ function proceedWithNodeAction(node) {
             
             setTimeout(() => {
                 if (typeof enterCity === 'function') {
+					window.currentMerchantDiscount = 1.0;
+					window.refreshMerchantStock(12);
                     enterCity();
                 } else {
                     switchScreen(window.cityScreen);
@@ -673,10 +678,6 @@ function proceedWithNodeAction(node) {
 // Not: Burada 'onclick' ezen kodlar SİLİNDİ.
 function enterTown() {
 	window.isBroochTrade = false;
-	// --- YENİ: İNDİRİMİ SIFIRLA ---
-    window.currentMerchantDiscount = 1.0; // Köydeki tüccar tam fiyattan satar
-    // ------------------------------
-	window.refreshMerchantStock(8); 
 	window.hasRentedInThisTown = false; // <--- YENİ: Her yeni kasabada kısıtlamayı kaldır
 	// --- YENİ: USTA BANNER'INI GÜNCELLE ---
     const banner = document.getElementById('town-master-banner');
@@ -694,7 +695,6 @@ function enterTown() {
     }
     // --------------------------------------
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-    refreshMerchantStock();
     switchScreen(townScreen);
 	if(window.saveGame) window.saveGame();
     
@@ -711,8 +711,6 @@ function enterTown() {
     }
 }
 window.enterCity = function() {
-	window.currentMerchantDiscount = 1.0; // Şehirde indirim yok
-    window.refreshMerchantStock(12); // Tam stok
 	// --- YENİ: Şehre girerken takvimi güncelle ---
     if (window.CalendarManager) {
         window.CalendarManager.updateTownUI();
