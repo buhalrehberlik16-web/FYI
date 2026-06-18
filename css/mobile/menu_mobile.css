@@ -143,18 +143,6 @@
         height: 45px !important;
         font-size: 0.9rem !important;
     }
-	.menu-main-btn {
-    width: 300px;
-    height: 75px;
-    font-size: 1.2em !important;
-    background: linear-gradient(to bottom, #8b4513, #5d2e0a) !important;
-    border: 3px solid #f0e68c !important;
-    color: #fff !important;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
-    cursor: pointer;
-    transition: all 0.3s ease !important;
-    text-shadow: 2px 2px 4px #000;
-}
 
 @keyframes titleGlow {
     from { text-shadow: 0 0 10px rgba(240, 230, 140, 0.5), 4px 4px 0px #4a3b2a; }
@@ -163,6 +151,14 @@
 .btn-new-profile {
     font-size: 1rem !important;
 }
+
+.name-confirm-btn {
+    width: 100% !important;
+    height: 65px !important;
+    font-size: 1.3rem !important;
+    letter-spacing: 3px !important;
+}
+
 /* 1. Butonların yan yana durduğu kapsayıcıyı daralt */
     .profile-actions {
         gap: 5px !important; /* Butonlar arası boşluğu mobilde azalttık */
@@ -216,12 +212,19 @@
 
     /* 4. Ana Butonların (Başla / Devam Et) boyutlarını esnetiyoruz */
     .menu-main-btn {
-        width: 85% !important; /* Ekran genişliğine göre ayarlanır */
+        width: 85%; /* Ekran genişliğine göre ayarlanır */
         /* SİLİNDİ: height: 75px; */
         height: 12% !important; /* Ekran yüksekliğinin %12'si kadar olsun */
         min-height: 50px !important; /* Çok ezilmesini engeller */
         font-size: 1.1rem !important;
         margin-left: 0 !important; /* Ortalamayı bozmasın */
+		background: linear-gradient(to bottom, #8b4513, #5d2e0a) !important;
+		border: 3px solid #f0e68c !important;
+		color: #fff !important;
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
+		cursor: pointer;
+		transition: all 0.3s ease !important;
+		text-shadow: 2px 2px 4px #000;
     }
 
     /* 5. Alt Butonların (Profil / Ayarlar / Çıkış) boyutları */

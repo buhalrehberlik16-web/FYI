@@ -52,36 +52,6 @@
         white-space: normal !important;
     }
 	
-	/*.npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	/*.npc-btn { padding: 3px 0.2px !important; font-size: 0.6em !important; }
-	
-	 /* 1. HAN (INN) MOBİL 
-	#modal-inn .npc-actions-left { top: 42% !important; left: 10.5% !important; } 
-    #modal-inn .npc-actions-right { top: 42% !important; right: 13% !important; }
-	#modal-inn .npc-title { top: 36.9% !important; font-size: 1em !important;}
-	#modal-inn .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.3em !important;}
-	modal-inn .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-inn .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
-
-    2. DEMİRCİ (BLACKSMITH) MOBİL 
-     #modal-blacksmith .npc-actions-left {top: 41% !important; left: 9.7% !important; } 
-    #modal-blacksmith .npc-actions-right { top: 41% !important; right: 12% !important; }
-	#modal-blacksmith .npc-title { top: 36.2% !important; font-size: 1em !important;}
-	#modal-blacksmith .npc-dialogue { bottom: 36.6% !important; width: 50% !important; font-size: 0.5em !important; }
-	#modal-blacksmith .npc-stats-left {left:18%;}
-	#modal-blacksmith .npc-stats-right {right:20%;}
-	#modal-blacksmith .npc-stats-header {top:37.5%;}
-	modal-blacksmith .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-blacksmith .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; }
-
-    3. TÜCCAR (MERCHANT) MOBİL 
-    #modal-merchant .npc-actions-left { top: 41% !important; left: 10.7% !important; }
-    #modal-merchant .npc-actions-right { top: 41% !important; right: 13% !important; }
-	#modal-merchant .npc-title { top: 36.9% !important; font-size: 1em !important;}
-	#modal-merchant .npc-dialogue { bottom: 36.9% !important; width: 50% !important; font-size: 0.46em !important; }
-	modal-merchant .npc-actions-left, .npc-actions-right { width: 17% !important; gap: 6px !important; }
-	modal-merchant .npc-btn { padding: 5px 0.2px !important; font-size: 0.7em !important; } */
-	
 	/* Onay Butonları Konteynırı */
 #trade-confirm-modal .stat-window {
     background: #1a150e !important;
@@ -368,6 +338,17 @@
         width: 80% !important;
         padding: 10px !important;
         font-size: 1rem !important;
+    }
+	
+	.reward-action-btn {
+        width: 80% !important; /* Mobilde ekranın %80'ini kaplasın */
+        margin-left: auto !important; /* Kesin ortalama için zorla */
+        margin-right: auto !important;
+        margin-top: 10px !important;
+        height: 45px !important;
+        font-size: 0.9rem !important;
+        /* components.css'den gelen 8px margin-left'i sıfırlıyoruz */
+        padding: 0 !important; 
     }
 	
 	/* 1. Ana Pencere Genişliği */
