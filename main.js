@@ -443,6 +443,8 @@ window.addItemToInventory = function(item, amount = 1) {
 // --- INIT GAME (TAM SIFIRLAMA) ---
 function initGame() {
 	
+	hero.highestTierDefeated = 1;
+	window.currentTab = 'common'; 
 	window.starterCityProgress = {
         classChosen: false,
         skillsChosen: false
@@ -958,22 +960,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. ANA MENÜ VE SEÇİM BUTONLARI
     if (window.startButton) {
     window.startButton.onclick = () => {
-    // EĞER SEÇİLİ BİR PROFİL VARSA
+    const currentLang = window.getCombatLang();
+
     if (window.activeProfile) {
-        
-        // --- KRİTİK: MACERAYA BAŞLA HER ZAMAN SIFIRLAR ---
-        // Oyuncu 'Devam Et' yerine buna bastıysa, mevcut ismini koruyarak 1. seviyeden başlatır.
-        initGame(); 
-        hero.playerName = window.activeProfile; 
-        
-        // Yeni bir save dosyası oluştur (Mevcut olanın üzerine yazar)
-        window.saveGame();
-        
-        startCutscene();
-        writeLog(`⚔️ **${window.activeProfile}** ile yeni bir maceraya atılıyorsun!`);
+        // --- YENİ: KAYITLI OYUN KONTROLÜ ---
+        const profileKey = "RPG_Save_" + window.activeProfile;
+        const hasSave = localStorage.getItem(profileKey) !== null;
+
+        const startFresh = () => {
+            initGame(); 
+            hero.playerName = window.activeProfile; 
+            window.saveGame(); // Mevcut save'in üzerine temiz dosya yazar
+            startCutscene();
+            writeLog(currentLang.combat.log_battle_start.replace("$1", window.activeProfile));
+        };
+
+        if (hasSave) {
+            // Eğer kayıt varsa 'Emin misin?' diye sor
+            window.showConfirm(currentLang.confirm_new_game, startFresh);
+        } else {
+            // Kayıt yoksa direkt başla
+            startFresh();
+        }
     } 
-    // PROFİL YOKSA
     else {
+        // Profil yoksa isim ekranına gönder (Eski mantık)
         const nickInput = document.getElementById('player-nick-input');
         if (nickInput) nickInput.value = ""; 
         switchScreen(window.nameEntryScreen);
