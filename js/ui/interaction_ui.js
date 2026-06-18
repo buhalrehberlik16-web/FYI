@@ -29,13 +29,8 @@ window.openRewardScreen = function(rewards) {
     if (!btnTakeAll) {
         btnTakeAll = document.createElement('button');
         btnTakeAll.id = 'btn-take-all-rewards';
-        btnTakeAll.className = 'menu-secondary-btn';
-        // ORTALAMA İÇİN KRİTİK STİLLER:
-        btnTakeAll.style.display = "block";
-        btnTakeAll.style.margin = "0 auto 20px auto"; 
-        btnTakeAll.style.width = "250px";
-        btnTakeAll.style.color = "#43FF64";
-        btnTakeAll.style.borderColor = "#43FF64";
+        btnTakeAll.className = 'npc-btn reward-action-btn'; 
+        btnTakeAll.style.cssText = ""; 
         list.parentNode.insertBefore(btnTakeAll, list);
     }
     btnTakeAll.textContent = lang.loot_all;

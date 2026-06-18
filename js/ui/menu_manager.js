@@ -710,6 +710,9 @@ window.toggleSkillBook = function() {
     if (!isCharacterUIAllowed()) return;
     
     if (skillBookScreen.classList.contains('hidden')) {
+		if (hero.level === 1 && hero.unlockedSkills.length <= 2) {
+             window.currentTab = 'common';
+        }
         // Kitap açılırken sekmeleri de çiz
         renderSkillTabs(); 
         renderSkillBookList();
