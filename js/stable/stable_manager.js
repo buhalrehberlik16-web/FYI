@@ -80,49 +80,57 @@ window.StableManager = {
                             <strong style="color: #ffd700;">${lang.scout_stage} ${targetStage + 1}:</strong><br>`;
                 
                 nodesInStage.forEach(node => {
-                    // --- YENİ: GEÇİLEN ODA KONTROLÜ (LINE-THROUGH) ---
-                    // Eğer oyuncu bu odayı tamamladıysa (completedNodes içindeyse) üzerini çiz.
-                    const isVisited = window.GAME_MAP.completedNodes.includes(node.id);
-                    const strikeStyle = isVisited ? "text-decoration: line-through; opacity: 0.5;" : "";
-                    // -------------------------------------------------
+            // 1. Ziyaret Edilme Kontrolü
+            const isVisited = window.GAME_MAP.completedNodes.includes(node.id);
+            const strikeStyle = isVisited ? "text-decoration: line-through; opacity: 0.5;" : "";
 
-                    let displayTitle = lang[`node_${node.type}`] || node.type;
-                    let color = isVisited ? "#777" : "#bbb"; // Gezilenler gri, gezilmeyenler açık renk
+            let displayTitle = lang[`node_${node.type}`] || node.type;
+            let color = isVisited ? "#777" : "#bbb"; 
 
-                    // EVENT ÖN-TANIMLAMA (Mevcut kodun, dokunmadım)
-                    if (node.type === 'choice') {
-                        if (!node.eventId) {
-                            const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-                            node.eventId = randomEvt.id;
-                        }
-                        const eventData = lang.events[node.eventId];
-                        displayTitle = eventData ? eventData.title : node.eventId;
-                        if (!isVisited) color = "#3498db";
-                    }
+            // --- 2. TIER VE VARYASYON ETİKETİ (GÜVENLİ YAZIM) ---
+            let tierLabel = "";
+            if (!isVisited && (node.type === 'encounter' || node.type === 'start')) {
+                let tText = "T" + node.tier;
+                if (node.isHalfTier) tText += ".5";
+                if (node.isHard) tText += " <span style='color:#ff4d4d'>+25%</span>";
+                if (node.isWeak) tText += " <span style='color:#43FF64'>-20%</span>";
+                
+                tierLabel = " <small style='color:#aaa;'>(" + tText + ")</small>";
+            }
+            // ---------------------------------------------------
 
-                    if (node.type === 'encounter') {
-                        const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
-                        displayTitle = enemyName;
-                        if (!isVisited) color = "#ff4d4d";
-                    }
+            // Olay ve Düşman Belirleme (Mevcut mantık)
+            if (node.type === 'choice') {
+                if (!node.eventId) {
+                    const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+                    node.eventId = randomEvt.id;
+                }
+                const eventData = lang.events[node.eventId];
+                displayTitle = eventData ? eventData.title : node.eventId;
+                if (!isVisited) color = "#3498db";
+            }
 
-                    let biomeInfo = "";
-                    if (node.biome) {
-                        const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
-                        biomeInfo = ` <span style="color: ${isVisited ? '#555' : '#43FF64'}; font-size: 0.8em;">(${biomeLabel})</span>`;
-                    }
-                    
-                    let roomEventInfo = "";
-                    const isCombat = (node.type === 'encounter' || node.type === 'boss' || node.type === 'start');
-                    if (isCombat) {
-                        const eventKey = node.roomEvent || "none";
-                        const eventLabel = lang.room_events[`event_${eventKey}`] || eventKey;
-                        roomEventInfo = ` <span style="color: ${isVisited ? '#555' : '#df9cff'}; font-size: 0.8em;">[${eventLabel}]</span>`;
-                    }
+            if (node.type === 'encounter') {
+                const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
+                displayTitle = enemyName;
+                if (!isVisited) color = "#ff4d4d";
+            }
 
-                    // Satırı birleştirirken strikeStyle ve dinamik renkleri uygula
-                    report += `<span style="font-size: 0.85em; margin-left: 10px; color: ${color}; ${strikeStyle}">• ${displayTitle}${biomeInfo}${roomEventInfo}</span><br>`;
-                });
+            let biomeInfo = "";
+            if (node.biome) {
+                const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+                biomeInfo = " <span style='color: " + (isVisited ? '#555' : '#43FF64') + "; font-size: 0.8em;'>(" + biomeLabel + ")</span>";
+            }
+            
+            let roomEventInfo = "";
+            const isCombat = (node.type === 'encounter' || node.type === 'boss' || node.type === 'start');
+            if (isCombat) {
+                const eventKey = node.roomEvent || "none";
+                const eventLabel = lang.room_events["event_" + eventKey] || eventKey;
+                roomEventInfo = " <span style='color: " + (isVisited ? '#555' : '#df9cff') + "; font-size: 0.8em;'>[" + eventLabel + "]</span>";
+            }
+            report += "<span style='font-size: 0.85em; margin-left: 10px; color: " + color + "; " + strikeStyle + "'>• " + displayTitle + tierLabel + biomeInfo + roomEventInfo + "</span><br>";
+        });
                 report += `</div>`;
             }
         }
