@@ -269,7 +269,7 @@ window.LANG_EN = {
         stable_hello: "The best horses in this land...",
 		rest_success: "You slept soundly. You feel great!",
         rest_fail: "You don't have enough gold, kid...",
-        drink_success: "You drank a cold beer. (+10 Rage)",
+        drink_success: "Drink feels good, rested a bit.)",
         drink_fail: "No gold?, Huh, then no drink!",
 		transmute_title: "Alchemical Transmutation",
 		transmute_btn: "Transmute",
@@ -318,6 +318,8 @@ window.LANG_EN = {
 		//Cheat
 		log_cheat_scout: "🦉 **Cheat**: Full map data decrypted!",
 		full_scout_title: "FULL SCOUT REPORT (CHEAT)",
+		confirm_new_game: "You already have an ongoing adventure! Starting over will DELETE your current progress. Are you sure?",
+		
 		
 		// Exhaust
 		exhaustion_label: "Exhaustion",

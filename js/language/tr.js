@@ -267,7 +267,7 @@ window.LANG_TR = {
         stable_hello: "Bu diyarın en iyi atları...",
 		rest_success: "Mışıl mışıl uyudun. Turp gibisin!",
         rest_fail: "Yeterli altının yok evlat...",
-        drink_success: "Soğuk bir bira içtin. (+10 Rage)",
+        drink_success: "Bir içki iyi geldi, biraz nefeslendin.",
         drink_fail: "Paran yoksa içki de yok!",
 		transmute_title: "Simyasal Dönüşüm",
 		transmute_btn: "Dönüştür",
@@ -318,6 +318,7 @@ window.LANG_TR = {
 		//Cheat
 		log_cheat_scout: "🦉 **Hile**: Tüm harita verileri deşifre edildi!",
 		full_scout_title: "TAM KEŞİF RAPORU (HİLE)",
+		confirm_new_game: "Bu kahramanla zaten bir ilerlemen var! Yeniden başlarsan mevcut maceran SİLİNECEK. Emin misin?",
 		
 		// Exhaust
 		exhaustion_label: "Yorgunluk",
