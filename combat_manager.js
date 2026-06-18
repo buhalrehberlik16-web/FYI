@@ -134,7 +134,7 @@ window.getExhaustionCost = function(skillData, usage) {
     let finalValue = base;
     // Diğer skiller için her kullanımda bir önceki değerin %50'si (Aşağı yuvarlayarak)
     for (let i = 1; i < usage; i++) {
-        if (base > 0) finalValue = Math.floor(finalValue * 1.5);
+        if (base > 0) finalValue = Math.ceil(finalValue * 1.5);
         else finalValue = Math.floor(finalValue * 0.5);
     }
 
