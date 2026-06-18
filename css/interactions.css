@@ -422,6 +422,21 @@
     align-self: center;
 }
 
+.reward-action-btn {
+	width: 220px !important;
+    padding: 12px 20px !important;
+	font-family: 'Cinzel', serif;
+    margin: auto auto 10px auto;
+    background: linear-gradient(to bottom, #5d4a30, #3e3221) !important;
+    border: 1px solid #ffd700 !important;
+    color: #f0e68c !important;
+    align-self: center;
+}
+
+.reward-action-btn:hover {
+    filter: brightness(1.2);
+}
+
 /* ============================================================
    CHOICE (OLAYLAR)
    ============================================================ */
