@@ -425,7 +425,7 @@ window.processTransmutation = async function() {
     if (goldDisplay) goldDisplay.textContent = "0";
 
     writeLog(`${lang.log_transmute_success} ${getTranslatedItemName(newItem)} (T${newItem.tier})`);
-    window.CalendarManager.passDay();
+    window.CalendarManager.passDay(false);
 
     setTimeout(() => {
         resultSlot.classList.remove('result-flash');
