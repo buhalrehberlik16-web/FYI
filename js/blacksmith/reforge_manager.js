@@ -256,7 +256,7 @@ window.processReforge = function() {
 
     // 5. Kayıt ve Temizlik
     writeLog(`🔨 Reforge: ${window.getStatDisplayName(rPropertyToRemove)} silindi, +${newValue} ${window.getStatDisplayName(targetStat)} eklendi.`);
-    window.CalendarManager.passDay();
+    window.CalendarManager.passDay(false);
 	
     rPropertyToRemove = null;
     updateGoldUI();
