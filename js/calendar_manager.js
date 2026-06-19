@@ -65,21 +65,22 @@ window.CalendarManager = {
         return `${info.day} ${info.month.name}`;
     },
 
-    passDay: function() {
+    passDay: function(isTravel = false) {
     if (!window.hero.calendar) this.init();
 	
-	let passed = 0; // Geçen süreyi hesaplamak için değişken
+	let passed = 1.0; // Standart geçen süre
 
-        // EĞER ATLIYSA: Zaman yarı yarıya akar (0.5 gün)
-        if (window.hero.mountedNodesLeft > 0) {
-            passed = 0.5;
-            window.hero.calendar.daysPassed += 0.5;
-            window.hero.mountedNodesLeft--;
-            console.log(`Atlı Yolculuk: 0.5 gün geçti. Kalan Atlı Tur: ${window.hero.mountedNodesLeft}`);
-        } else {
-            passed = 1.0;
-            window.hero.calendar.daysPassed += 1;
-        }
+    // AT KONTROLÜ: Sadece haritada seyahat ediliyorsa (isTravel === true) 
+    // ve at varsa atın süresi azalır ve gün 0.5 ilerler.
+    if (isTravel && window.hero.mountedNodesLeft > 0) {
+        passed = 0.5;
+        window.hero.calendar.daysPassed += 0.5;
+        window.hero.mountedNodesLeft--;
+        console.log(`Atlı Yolculuk: 0.5 gün geçti. Kalan Atlı Tur: ${window.hero.mountedNodesLeft}`);
+    } else {
+        // At yoksa veya dükkan işlemindeysek (isTravel === false) normal 1 gün geçer
+        window.hero.calendar.daysPassed += 1;
+    }
 		
 		// --- YENİ: TOWNDA ZAMAN GEÇİRME (-10 YORGUNLUK) ---
         // Eğer oyuncu şu an town ekranındaysa yorgunluk düşer
