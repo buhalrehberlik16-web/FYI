@@ -831,6 +831,8 @@ window.LANG_TR = {
 			spiritual_apocalypse: { name: "Ruhani Kıyamet", desc: "İçindeki tüm kutsallığı bir infilaka dönüştürür.<br>Hasar: <b style='color:orange'>3.5 x MP (Lanet)</b><br><span style='color:#ff4d4d'>Üzerindeki tüm olumlu etkileri (Buff) siler.</span><br><span style='color:#43FF64'>Feda edilen her etki için hasar %30 artar verilen hasarın %25'i kadar düşmana Lanet bırakır.</span><br><span style='color:cyan'>-40 Öfke.</span>", log: "Feda edilen her güçlendirme için %30 atak alındı." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
+			Fireball: { name: "Fireball", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b>. 3 Tur Yanma Hasarı 0.4 MP + 0.2 INT Lanet<br><span style='color:cyan'>-3 Mana.</span>" },
+			Pireball: { name: "Pireball", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b>. 3 Tur Zehir Hasarı 0.4 MP + 0.2 INT Lanet<br><span style='color:cyan'>-15 Mana.</span>" },
 			Magic_Arrow: { name: "Büyülü Ok", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Mana_Blast: { name: "Mana Patlaması", desc: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Drain: { name: "Öz Sömürüsü", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>" },

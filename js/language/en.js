@@ -831,6 +831,7 @@ window.LANG_EN = {
 			spiritual_apocalypse: { name: "Spiritual Apocalypse", desc: "Converts all inner holiness into an implosion.<br>Damage: <b style='color:orange'>3.5 x MP (Curse)</b><br><span style='color:#ff4d4d'>Consumes all active Buffs on you.</span><br><span style='color:#43FF64'>Each consumed effect increases damage by 30% and applies Curse DoT equal to 25% of damage dealt.</span><br><span style='color:cyan'>-40 Rage.</span>", log: "Gained 30% Attack for each buff sacrificed." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
+			Fireball: { name: "Fireball", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Magic_Arrow: { name: "Magic Arrow", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Mana_Blast: { name: "Mana Blast", desc: "Hasar: <b style='color:orange'>1.4xMP (Physical)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Drain: { name: "Drain", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Ignores defense. Gain Mana equal to damage. -35 Mana.</span>" },
