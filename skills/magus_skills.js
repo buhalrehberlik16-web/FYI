@@ -139,6 +139,81 @@ const MAGUS_SKILLS = {
     },
 	
 	// TAB: Elemental
+	Fireball: {
+        data: {
+            id: "Fireball", // ID ekledik
+            name: "Ateş Topu",
+            type: 'attack',
+            category: 'elemental', // Tabın görünmesini sağlayan anahtar
+            tier: 1,
+            rageCost: 3,
+            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            scaling: { 
+                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
+                elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
+            },
+            dotEffect: {
+                type: 'fire',
+                duration: 3,
+                scaling: {
+                    elemental: { 
+                        fire: { stat: "mp_pow", statMult: 0.4 },
+                        curse: { stat: "int", statMult: 0.2 } 
+                    }
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // GECİKMELİ DoT UYGULAMASI
+            setTimeout(() => {
+                if (window.monster && monster.hp > 0) {
+                    // DİKKAT: this.data gönderiyoruz
+                    window.applySkillDoT(attacker, defender, this.data);
+                }
+            }, 600);
+        }
+    },
+	
+	Pireball: {
+        data: {
+            id: "Fireball", // ID ekledik
+            name: "Ateş Topu",
+            type: 'attack',
+            category: 'elemental', // Tabın görünmesini sağlayan anahtar
+            tier: 2,
+            rageCost: 3,
+            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            scaling: { 
+                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
+                elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
+            },
+            dotEffect: {
+                type: 'poison',
+                duration: 3,
+                scaling: {
+                    elemental: { 
+                        poison: { stat: "mp_pow", statMult: 0.4 },
+                        curse: { stat: "int", statMult: 0.2 } 
+                    }
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // GECİKMELİ DoT UYGULAMASI
+            setTimeout(() => {
+                if (window.monster && monster.hp > 0) {
+                    // DİKKAT: this.data gönderiyoruz
+                    window.applySkillDoT(attacker, defender, this.data);
+                }
+            }, 600);
+        }
+    },
 	
 	Fire_Bolt: {
 		data: {

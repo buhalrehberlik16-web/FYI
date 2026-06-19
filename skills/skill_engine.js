@@ -192,7 +192,39 @@ const SkillEngine = {
     init: function() {
         window.SKILL_DATABASE = { ...COMMON_SKILLS, ...BARBARIAN_SKILLS, ...MAGUS_SKILLS };
         console.log("Skill Engine: Tüm yetenekler (Barbar & Magus) başarıyla birleştirildi.");
+    },
+	
+	calculateDoT: function(attacker, skillData, target) {
+    // --- TAM GÜVENLİK KONTROLÜ ---
+    // Eğer skill içinde dotEffect yoksa veya scaling tanımlanmamışsa hata verme, 0 dön.
+    if (!skillData || !skillData.dotEffect || !skillData.dotEffect.scaling) {
+        return 0; 
     }
+
+    const attackerStats = (attacker === hero) ? getHeroEffectiveStats() : { atk: attacker.attack };
+    const targetStats = (target === hero) ? getHeroEffectiveStats() : { resists: target.resists };
+
+    let totalTickDmg = 0;
+    const s = skillData.dotEffect.scaling;
+
+    // Elemental Tick Hesabı
+    if (s.elemental) {
+        for (const [ele, conf] of Object.entries(s.elemental)) {
+            let eleRaw = 0;
+            if (typeof conf === 'object') {
+                eleRaw = (attackerStats.atk * (conf.atkMult || 0)) + 
+                         ((attackerStats[conf.stat] || 0) * (conf.statMult || 0));
+            } else {
+                eleRaw = attackerStats.atk * (conf || 0);
+            }
+
+            const resist = targetStats.resists[ele] || 0;
+            totalTickDmg += Math.max(0, eleRaw - resist);
+        }
+    }
+    return Math.floor(totalTickDmg);
+	}
+
 };
 
 // Sayfa yüklenince motoru ateşle
