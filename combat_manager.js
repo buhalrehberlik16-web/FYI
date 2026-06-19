@@ -15,7 +15,6 @@ window.applyStatusEffect = function(target, newEffect) {
 	const currentLang = window.gameSettings.lang || 'tr';
 	const lang = window.getCombatLang();
 
-    
     // --- KRİTİK FİX: İsim eksikse dil dosyasından tamamla ---
     if (!newEffect.name) {
         newEffect.name = lang.status[newEffect.id] || newEffect.id;
@@ -43,12 +42,18 @@ window.applyStatusEffect = function(target, newEffect) {
 		const translatedStatusName = lang.status[newEffect.id] || existing.name;
         
         // --- ZEHİR: BİRİKMEYE DEVAM EDER (Log ve Mantık Korundu) ---
-        if (newEffect.id === 'poison') {
-            existing.value += newEffect.value;
-            existing.turns += newEffect.turns;
-            const pName = isTargetHero ? lang.status.poison : (lang.enemy_names.poison || "Poison");
-			writeLog(lang.combat.log_poison_intense.replace("$1", pName).replace("$2", existing.value));
-        } 
+        // --- Üst üste binmesi gereken efektlerin listesi ---
+		const stackableDots = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
+
+		if (stackableDots.includes(newEffect.id)) {
+			existing.value += newEffect.value;
+			existing.turns += newEffect.turns;
+    
+			// Log kısmındaki isimlendirmeyi de dinamik yapalım ki 
+			// Ateş vurduğunda logda "Zehir" yazmasın:
+			const effectLabel = lang.status[newEffect.id] || newEffect.id;
+			writeLog(lang.combat.log_poison_intense.replace("$1", effectLabel.toUpperCase()).replace("$2", existing.value));
+		}
         // --- SİPER: SADECE TAZELEME YAPAR (YENİ MANTIK) ---
         else if (newEffect.id === 'guard_active') {
             // SİLME GEREKÇESİ: existing.value += newEffect.value; satırı silindi.
@@ -527,7 +532,37 @@ window.getHeroEffectiveStats = function() {
     };
 };
 
+window.applySkillDoT = function(attacker, target, skillData) {
+    // --- KRİTİK KONTROL ---
+    // Eğer skillData içinde dotEffect objesi yoksa fonksiyondan sessizce çık.
+    if (!skillData || !skillData.dotEffect) return;
 
+    const dotConfig = skillData.dotEffect;
+    
+    // Motoru çağırıp tick hasarını hesapla
+    const tickValue = SkillEngine.calculateDoT(attacker, skillData, target);
+    
+    // Eğer hesaplanan hasar 0'dan büyükse statü etkisini uygula
+    if (tickValue > 0) {
+        applyStatusEffect(target, {
+            id: dotConfig.type, 
+            value: tickValue,
+            turns: dotConfig.duration,
+            resetOnCombatEnd: true
+        });
+
+        // --- GÜNCELLEME: Hasar rakamı yerine durum ismi göster ---
+        const lang = window.getCombatLang();
+        const statusName = lang.status[dotConfig.type] || dotConfig.type;
+        
+        // Örn: "3" yerine "YANMA" yazısı fırlayacak (Mor/Mistik renk)
+        showFloatingText(
+            document.getElementById(target === hero ? 'hero-display' : 'monster-display'), 
+            statusName.toUpperCase(), 
+            dotConfig.type // Rengi belirleyen tip (fire, curse vb.)
+        );
+    }
+};
 
 // --- KİLİT KONTROLÜ ---
 window.checkIfSkillBlocked = function(skillKey) {
@@ -1912,6 +1947,26 @@ window.updateSkillDamagePreviews = function() {
             // Alt tarafa taşındığı için Ünlem işareti koyup koymamak sana kalmış, ben ekliyorum:
             recEl.textContent = "❗" + recoilVal;
         } else if (recEl) recEl.remove();
+		
+        // --- E. DOT / BEDEL ÖNGÖRÜSÜ (Alt - YENİ YERİ) ---
+		let dotVal = 0;
+		let dotType = "";
+		if (skillObj.data.dotEffect) {
+			dotVal = SkillEngine.calculateDoT(hero, skillObj.data, monster);
+			dotType = skillObj.data.dotEffect.type;
+		}
+
+		let dotEl = slot.querySelector('.skill-dot-preview');
+		if (dotVal > 0) {
+			if (!dotEl) {
+				dotEl = document.createElement('div');
+				dotEl.className = 'skill-dot-preview';
+				slot.appendChild(dotEl);
+			}
+			// Değeri yaz ve elementin rengini uygula
+			dotEl.textContent = "↻" + dotVal; // Tekrar simgesi (↻) DoT olduğunu belli eder
+			dotEl.className = `skill-dot-preview dot-${dotType}`;
+		} else if (dotEl) dotEl.remove();
     });
 };
 
