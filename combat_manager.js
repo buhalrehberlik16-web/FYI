@@ -1479,21 +1479,73 @@ window.nextTurn = function() {
             }
         });
 
-		// --- 2. BROŞLARI SIRALI TETİKLE (Kümülatif Gecikme) ---
-        let currentBroochDelay = 300; 
-        hero.brooches.forEach((brooch) => {
+		// --- 2. BROŞLARI SIRALI TETİKLE ---
+         window.broochBuffer = { 
+            heal: 0, resource: 0, damage: 0, isSpecialist: false,
+            data: { fixedDmg: {}, statScaling: {}, totalHeal: 0, totalResource: 0 }
+        };
+		
+		let currentBroochDelay = 300;
+		hero.brooches.forEach((brooch) => {
             if (!brooch) return;
             if (!hero.broochCooldowns) hero.broochCooldowns = {};
             const bIndex = hero.brooches.indexOf(brooch);
-            if (hero.broochCooldowns[bIndex] === undefined) hero.broochCooldowns[bIndex] = 0;
 
-            if (hero.broochCooldowns[bIndex] <= 0) {
-                window.executeBroochEffects(brooch, currentBroochDelay);
-                currentBroochDelay += 350; 
+            if ((hero.broochCooldowns[bIndex] || 0) <= 0) {
+                window.executeBroochEffects(brooch);
                 hero.broochCooldowns[bIndex] = brooch.frequency;
             }
             hero.broochCooldowns[bIndex]--;
         });
+
+        // --- YENİ: ÖZET LOG JENERATÖRÜ ---
+        const bd = window.broochBuffer.data;
+
+        // 1. Özet Kaynak Logu
+        if (bd.totalResource > 0) {
+            const classRules = CLASS_CONFIG[hero.class];
+            const rLabel = lang[`resource_${classRules.resourceName}`];
+            writeLog(lang.combat.log_brooch_resource.replace("$1", bd.totalResource).replace("$2", rLabel));
+        }
+
+        // 2. Özet Şifa Logu
+        if (bd.totalHeal > 0) {
+            writeLog(lang.combat.log_brooch_heal.replace("$1", bd.totalHeal));
+        }
+
+        // 3. Özet Sabit Hasar Logları (Kabileye göre gruplanmış)
+        for (const [tribe, val] of Object.entries(bd.fixedDmg)) {
+            const tribeName = lang.enemy_names[tribe] || tribe;
+            writeLog(lang.combat.log_brooch_fixed.replace("$1", lang.items.eff_fixed_dmg).replace("$2", tribeName).replace("$3", val));
+        }
+
+        // 4. Özet Stat Hasar Logları (Stat'a göre gruplanmış)
+        for (const [stat, val] of Object.entries(bd.statScaling)) {
+            const statLabel = lang.items['brostat_' + stat] || stat.toUpperCase();
+            writeLog(lang.combat.log_brooch_stat.replace("$1", statLabel).replace("$2", val));
+        }
+
+        // --- TOPLAM FLOATING TEXT (Görsel Rakamlar) ---
+		if (window.broochBuffer.heal > 0) {
+            showFloatingText(heroDisplayContainer, window.broochBuffer.heal, 'heal');
+        }
+
+        if (window.broochBuffer.resource > 0) {
+            setTimeout(() => {
+                showFloatingText(heroDisplayContainer, `+${window.broochBuffer.resource} Rage`, 'heal');
+            }, 400); // 0.5 saniye sonra
+        }
+
+        if (window.broochBuffer.damage > 0) {
+            setTimeout(() => {
+                const mDisp = document.getElementById('monster-display');
+                const style = window.broochBuffer.isSpecialist ? 'skill' : 'damage';
+                const suffix = window.broochBuffer.isSpecialist ? ` ${lang.combat.f_specialist}` : '';
+                showFloatingText(mDisp, `${window.broochBuffer.damage}${suffix}`, style);
+            }, 300); // 1 saniye sonra
+        }
+
+        updateStats(); // Tek seferde bar güncelleme
 
         // --- 3. DoT İŞLEME (Tüm broşlar bittikten sonra başlar) ---
         const dotStartTime = currentBroochDelay + 200; 
@@ -1715,7 +1767,7 @@ window.nextTurn = function() {
                                 if (effectLabel && effectLabel.trim() !== "") {
                                     const floatingTarget = (packet.category === 'buff') ? document.getElementById('monster-display') : document.getElementById('hero-display');
                                     const floatingType = (packet.category === 'buff') ? 'heal' : 'damage';
-                                    setTimeout(() => { showFloatingText(floatingTarget, effectLabel, floatingType); }, 500);
+                                    setTimeout(() => { showFloatingText(floatingTarget, effectLabel, floatingType); }, 600);
                                 }
 
                                 if (packet.rageReduction) { hero.rage = Math.max(0, hero.rage - packet.rageReduction); updateStats(); }
@@ -2087,6 +2139,8 @@ window.checkGameOver = function() {
     return false;
 };
 
+window.broochBuffer = { heal: 0, resource: 0, damage: 0, isSpecialist: false };
+
 window.executeBroochEffects = function(brooch, startDelay) {
 	 // --- GÜVENLİK KONTROLÜ: Sadece Broşları İşle ---
     // Tılsımlar (charm1) pasif olduğu için burada bir 'effects' listesi barındırmazlar.
@@ -2107,58 +2161,45 @@ window.executeBroochEffects = function(brooch, startDelay) {
 	
     // Her broşun kendi içindeki efektlerini, dışarıdan gelen gecikmenin üzerine ekleyerek sıralıyoruz
     brooch.effects.forEach((eff, index) => {
-        setTimeout(() => {
-            switch(eff.id) {
-                case "fixed_dmg":
-                    let finalFixed = eff.value * damageMult; 
-                    monster.hp = Math.max(0, monster.hp - finalFixed);
-                    if (isSpecialist) {
-                        showFloatingText(monsterDisplay, `${finalFixed} ${lang.combat.f_specialist}`, 'skill');
-                    } else {
-                        showFloatingText(monsterDisplay, finalFixed, 'damage');
-                    }
-                    const tribeName = lang.enemy_names[brooch.specialtyTribe] || brooch.specialtyTribe;
-                    const logFixed = lang.combat.log_brooch_fixed
-						.replace("$1", lang.items.eff_fixed_dmg)
-						.replace("$2", tribeName)
-						.replace("$3", finalFixed);
-					writeLog(logFixed);
-                    break;
-                    
-                case "stat_scaling":
-                    let scaleDmg = Math.floor(stats[eff.targetStat] * eff.value);
-                    if (scaleDmg < 1) scaleDmg = 1;
-                    monster.hp = Math.max(0, monster.hp - scaleDmg);
-                    showFloatingText(monsterDisplay, scaleDmg, 'damage');
-                    const statLabel = lang.items['brostat_' + eff.targetStat] || eff.targetStat.toUpperCase();
-                    const logStat = lang.combat.log_brooch_stat
-						.replace("$1", statLabel)
-						.replace("$2", scaleDmg);
-					writeLog(logStat);
-                    break;
+        // --- A. MATEMATİKSEL İŞLEM (ANINDA) ---
+        // Puanları anında topluyoruz ki nextTurn içinde hemen gösterebilelim.
+        switch(eff.id) {
+            case "fixed_dmg":
+                let fVal = eff.value * damageMult;
+                monster.hp = Math.max(0, monster.hp - fVal);
+                window.broochBuffer.damage += fVal;
+                if (isSpecialist) window.broochBuffer.isSpecialist = true;
+                
+                // Kabileye göre hasarı topla
+                let tribe = brooch.specialtyTribe;
+                window.broochBuffer.data.fixedDmg[tribe] = (window.broochBuffer.data.fixedDmg[tribe] || 0) + fVal;
+                break;
+                
+            case "stat_scaling":
+                let sVal = Math.max(1, Math.floor(stats[eff.targetStat] * eff.value));
+                monster.hp = Math.max(0, monster.hp - sVal);
+                window.broochBuffer.damage += sVal;
+                
+                // Stat türüne göre hasarı topla
+                let stat = eff.targetStat;
+                window.broochBuffer.data.statScaling[stat] = (window.broochBuffer.data.statScaling[stat] || 0) + sVal;
+                break;
 
-                case "heal":
-                    const oldHp = hero.hp;
-                    hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
-                    showFloatingText(display, (hero.hp - oldHp), 'heal');
-                    writeLog(lang.combat.log_brooch_heal.replace("$1", eff.value));
-                    break;
+            case "heal":
+                const oldHp = hero.hp;
+                hero.hp = Math.min(stats.maxHp, hero.hp + eff.value);
+                window.broochBuffer.heal += (hero.hp - oldHp);
+                window.broochBuffer.data.totalHeal += (hero.hp - oldHp);
+                break;
 
-                case "resource_regen":
-                    const classRules = CLASS_CONFIG[hero.class];
-                    hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
-                    const wasBuffering = window.isBufferingRage;
-                    window.isBufferingRage = false;
-                    // Dil hiyerarşisi düzeltildi (lang üzerinden root'a erişim)
-                    const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-                    showFloatingText(display, `+${eff.value} ${globalLang[`resource_${classRules.resourceName}`]}`, 'heal');
-                    window.isBufferingRage = wasBuffering;
-                    const rLabel = globalLang[`resource_${classRules.resourceName}`];
-					writeLog(lang.combat.log_brooch_resource.replace("$1", eff.value).replace("$2", rLabel));
-                    break;
-            }
-            updateStats();
-        }, startDelay + (index * 400)); // Dış gecikme + iç sıra
+            case "resource_regen":
+                const oldRage = hero.rage;
+                hero.rage = Math.min(stats.maxRage, hero.rage + eff.value);
+                let gain = (hero.rage - oldRage);
+                window.broochBuffer.resource += gain;
+                window.broochBuffer.data.totalResource += gain;
+                break;
+        }
     });
 };
 
