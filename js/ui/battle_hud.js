@@ -261,8 +261,12 @@ window.showFloatingText = function(targetContainer, amount, type) {
     
     textEl.className = `floating-text ${type}-text`;
     
-    // Skill text stili kontrolü (Düşman skilleri için mor parlama)
-    if (type === 'skill') textEl.classList.add('skill-text');
+	// ELEMENTAL RENK KONTROLÜ
+    // Eğer type 'fire', 'poison' vb. gelirse CSS'deki .dot-fire sınıfını ekler
+    if (['fire', 'poison', 'cold', 'lightning', 'curse', 'bleed'].includes(type)) {
+        textEl.classList.add(`dot-${type}`);
+        textEl.classList.add('skill-text'); // Mor parlama animasyonunu/fontunu kullanmak için
+    }
     
     targetContainer.appendChild(textEl);
     setTimeout(() => textEl.remove(), 1500);
