@@ -779,3 +779,26 @@
     box-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
     animation: fadeIn 0.3s ease;
 }
+/* DoT Renkleri */
+.dot-fire { color: #ff9800 !important; text-shadow: 0 0 10px #ff4500, 2px 2px 2px #000 !important; }      /* Turuncu */
+.dot-poison { color: #2ecc71 !important; text-shadow: 0 0 10px #27ae60, 2px 2px 2px #000 !important; }    /* Koyu Yeşil */
+.dot-cold { color: #00ccff !important; text-shadow: 0 0 10px #0055ff, 2px 2px 2px #000 !important; }      /* Açık Mavi */
+.dot-lightning { color: #ffd700 !important; text-shadow: 0 0 10px #ffae00, 2px 2px 2px #000 !important; } /* Sarı */
+.dot-curse { color: #9b59b6 !important; text-shadow: 0 0 10px #800080, 2px 2px 2px #000 !important; }    /* Mor */
+.dot-bleed { color: #ff3333 !important; text-shadow: 0 0 10px #8b0000, 2px 2px 2px #000 !important; }    /* Kırmızı */
+
+/* DoT Önizleme Kutusu (Skill Bar için) */
+.skill-dot-preview {
+    position: absolute;
+    bottom: -22px; /* Recoil'in yanına veya yanına yerleştirilebilir */
+    right: -2px;
+    background: rgba(0, 0, 0, 0.9);
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    padding: 1px 5px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    z-index: 60;
+    box-shadow: 0 0 8px rgba(0,0,0,0.8);
+}
