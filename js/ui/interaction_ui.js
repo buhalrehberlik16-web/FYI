@@ -281,7 +281,7 @@ window.restAtInn = function() {
         dialogue.style.color = "#43FF64";
 
         // KRİTİK: Sadece para varsa gün atlar
-        window.CalendarManager.passDay(); 
+        window.CalendarManager.passDay(false); 
 
     } else {
         window.showAlert(lang.rest_fail);
