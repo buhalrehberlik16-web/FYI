@@ -615,7 +615,7 @@ function proceedWithNodeAction(node) {
 	
 	// --- YENİ: GERÇEK İLERLEME BURADA TETİKLENİR ---
     // Artık 'Hayır' denirse burası hiç çalışmaz, karakter eski yerinde kalır.
-    window.CalendarManager.passDay(); 
+    window.CalendarManager.passDay(true); 
     StatsManager.trackNode();        
     
     // Görseli güncellemeden önce eskileri temizle
