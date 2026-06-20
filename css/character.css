@@ -510,4 +510,74 @@
     font-weight: bold;
     font-style: normal;
 }
+.stat-info-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    gap: 12px; /* Metin ile ikon arasındaki boşluk */
+    background: rgba(107, 92, 59, 0.1); 
+    border: 1px dashed #3e3221; 
+    border-radius: 6px;
+    height: 100%;
+    cursor: pointer; /* Tüm kutu artık tıklanabilir */
+    transition: all 0.3s ease;
+}
 
+.stat-info-text {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem; /* Stat isimlerinden biraz daha küçük ve zarif */
+    color: #a89373;
+    letter-spacing: 1px;
+    pointer-events: none; /* Tıklamayı ikonun altındaki kutuya iletir */
+}
+
+.stat-info-trigger {
+    color: #a89373;
+    font-size: 1.1rem;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Kutuya (Container) Hover olunca her iki eleman da parlasın */
+.stat-info-container:hover {
+    background: rgba(107, 92, 59, 0.2);
+    border-color: #ffd700;
+}
+
+.stat-info-container:hover .stat-info-text,
+.stat-info-container:hover .stat-info-trigger {
+    color: #ffd700;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.4));
+}
+/* Bilgi kutusunun içeriğini sola yaslar ve genel padding verir */
+.stat-info-wrapper {
+    text-align: left !important;
+    padding: 0 15px 10px 15px; /* Üst padding'i (0) yaptık */
+    margin-top: -5.5%; /* İçeriği yukarıdaki ana çizgiye yaklaştırır */
+    width: 100%;
+}
+
+.stat-info-title {
+    text-align: center !important; /* Yazıyı tam ortaya çeker */
+    font-size: 1.1rem;
+    margin: 0 !important;
+    padding: 0;
+    display: block;
+    width: 100%; /* Tüm satırı kaplamasını sağlar ki tam ortalansın */
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Wrapper içindeki çizginin mesafesini daraltalım */
+.stat-info-wrapper .stat-separator {
+    margin: 6px 0 12px 0 !important; /* Çizginin üstündeki boşluğu iyice kıstık */
+}
+
+.stat-info-line {
+    white-space: nowrap;
+    margin-bottom: 6px;
+    font-size: 0.85rem; /* Biraz daha kibar dursun */
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+    color: #ccc;
+}
