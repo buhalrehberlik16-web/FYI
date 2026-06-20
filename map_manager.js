@@ -880,6 +880,23 @@ window.startNextAct = function() {
         // Harita verilerini temizle
         window.GAME_MAP.currentNodeId = null;
         window.GAME_MAP.completedNodes = [];
+		
+		// --- YENİ: KILIÇ İKONUNU VE HARİTA KAYDIRMASINI SIFIRLA ---
+        const markerContainer = document.getElementById('player-marker-container');
+        const mapDisplay = document.getElementById('map-display');
+
+        if (markerContainer) {
+            // Animasyonu geçici olarak kapatıyoruz (Uçmasın, direkt ışınlansın)
+            markerContainer.style.transition = 'none'; 
+            markerContainer.style.left = '10px'; // En sol başlangıç noktası
+            markerContainer.style.top = '50%';
+            markerContainer.style.display = 'none'; // İlk node seçilene kadar gizle
+        }
+
+        if (mapDisplay) {
+            mapDisplay.scrollLeft = 0; // Haritayı en sola kaydır
+        }
+        // ---------------------------------------------------------
 
         // Yeni haritayı üret
         if (typeof generateMap === 'function') {

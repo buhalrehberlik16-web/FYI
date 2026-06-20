@@ -471,6 +471,9 @@ function initGame() {
     hero.exhaustion = 0;     // Yorgunluk barını boşalt
     hero.autoRestCount = 0;  // Zorunlu dinlenme ceza sayacını sıfırla
     hero.skillUsage = {};    // Yetenek kullanım sayılarını temizle (Maliyetler normale dönsün)
+	hero.mountedNodesLeft = 0;    // Kiralık atı sıfırla
+    hero.scoutedNodesLeft = 0;    // Gözcü sayacını sıfırla
+    hero.scoutStartStage = undefined; // Gözcü başlangıç noktasını sil
     // ------------------------------------------
 	window.currentBossScaling = 1.0;
 	window.lastExhaustionThreshold = 0;
