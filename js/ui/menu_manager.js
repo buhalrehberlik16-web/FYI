@@ -974,3 +974,16 @@ window.confirmBasicSkills = function() { if (!selectedAttackKey || !selectedDefe
     switchScreen(window.starterCityScreen); // Şehre geri dön
     updateStarterCityUI();
 };
+window.showClassStatInfo = function() {
+    const lang = window.getCombatLang();
+    const heroClass = hero.class; // "Barbar" veya "Magus"
+    
+    // Codex içindeki hazır metinleri kullanıyoruz (Hardcoded metin yok)
+    let infoTitle = lang.char_stats_title; 
+    let infoContent = (heroClass === "Barbar") ? lang.codex.stats_barbarian : lang.codex.stats_magus;
+
+    // Mevcut bilgi penceresini (blue modal) çağırıyoruz
+    if (typeof window.showGameInfo === 'function') {
+        window.showGameInfo(infoTitle, infoContent, "#ffd700");
+    }
+};
