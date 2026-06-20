@@ -119,6 +119,7 @@ window.LANG_EN = {
 		setting_level_jump: "LEVEL UP JUMP EFFECT",
 		rest_alert_msg: "You rest through the night, and your exhaustion decreases by 60.",
 		drink_alert_msg: "You take a break and quench your thirst, your exhaustion decreases by 25.",
+		stat_info_label: "STAT INFO",
 
         // Events & Rewards
         mysterious_altar: "Mysterious Altar",
@@ -365,18 +366,22 @@ window.LANG_EN = {
         "• <b>Biome Storm:</b> Deals elemental damage every turn. Red nodes buff enemies by +3.",
 
 		stats_title: "Stat Mathematics",
-		stats_barbarian: "<b style='color:#ff4d4d'>BARBARIAN:</b><br>" +
-        "• 2 STRENGTH (STR) = 1 Attack<br>" +
-        "• 2 DEXTERITY (DEX) = 1 Defense & 1.2 Block<br>" +
-        "• 1 VITALITY (VIT) = 5 HP<br>" +
-        "• 2 MAGIC POWER (MP) = 1 Rage Regen<br>"+
-		"• 1 INTELLIGENCE (INT) = 5 Max Rage",
-		stats_magus: "<b style='color:#3498db'>MAGUS:</b><br>" +
-        "• 1.25 STRENGTH (STR) = 1 Attack<br>" +
-        "• 5 DEXTERITY (DEX) = 1 Defense & 4 Block<br>" +
-        "• 1 VITALITY (VIT) = 4 HP<br>" +
-        "• 1 MAGIC POWER (MP) = 1 Mana Regen<br>"+
-		"• 1 INTELLIGENCE (INT) = 5 Max Mana",
+		stats_barbarian: "<div class='stat-info-wrapper'>" +
+		"<b style='color:#ff4d4d' class='stat-info-title'>BARBARIAN</b>" +
+		"<hr class='stat-separator'>" +
+        "• 2 <span style='color:#ff4d4d'>STRENGTH (STR)</span> = 1 Attack<br>" +
+		"• 2 <span style='color:#ffd700'>DEXTERITY (DEX)</span> = 1 Defense & 1.2 Block<br>" +
+		"• 1 <span style='color:#43FF64'>VITALITY (VIT)</span> = 5 HP<br>" +
+		"• 2 <span style='color:#3498db'>MAGIC POWER (MP)</span> = 1 Rage Regen<br>"+
+		"• 1 <span style='color:#9b59b6'>INTELLIGENCE (INT)</span> = 5 Max Rage",
+		stats_magus: "<div class='stat-info-wrapper'>" +
+		"<b style='color:#3498db' class='stat-info-title'>MAGUS</b>" +
+		"<hr class='stat-separator'>" +
+        "• 5 <span style='color:#ff4d4d'>STRENGTH (STR)</span> = 4 Attack<br>" +
+		"• 5 <span style='color:#ffd700'>DEXTERITY (DEX)</span> = 1 Defense & 4 Block<br>" +
+		"• 1 <span style='color:#43FF64'>VITALITY (VIT)</span> = 4 HP<br>" +
+		"• 1 <span style='color:#3498db'>MAGIC POWER (MP)</span> = 1 Mana Regen<br>"+
+		"• 1 <span style='color:#9b59b6'>INTELLIGENCE (INT)</span> = 5 Max Mana",
 
 		combat_colors_title: "Combat Colors",
 		combat_colors_desc: "• <b style='color:#1b5e20'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",

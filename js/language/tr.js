@@ -118,6 +118,7 @@ window.LANG_TR = {
 		setting_level_jump: "LEVEL ATLAMA EFEKTİ ",
 		rest_alert_msg: "Gece boyu dinleniyorsun ve yorgunluk değerin 60 azalıyor.",
 		drink_alert_msg: "Biraz ara veriyorsun ve susuzluğunu gideriyorsun yorgunluk değerin 25 azalıyor.",
+		stat_info_label: "STAT BİLGİLERİ",
 
         // Olaylar & Ödüller
         mysterious_altar: "Gizemli Sunak",
@@ -363,18 +364,22 @@ window.LANG_TR = {
         "• <b>Biyom Fırtınası:</b> Her tur element hasarı vurur. Kırmızı odalarda düşman +3 güçlenir.",
 
 		stats_title: "Stat Matematikleri",
-		stats_barbarian: "<b style='color:#ff4d4d'>BARBAR:</b><br>" +
-        "• 2 GÜÇ (STR) = 1 Atak<br>" +
-        "• 2 ÇEVİKLİK (DEX) = 1 Defans & 1.2 Blok<br>" +
-        "• 1 CANLILIK (VIT) = 5 HP<br>" +
-        "• 2 BÜYÜ GÜCÜ (MP) = 1 Öfke Yenileme<br>"+
-		"• 1 ZEKA (INT) = 5 Maks Öfke",
-		stats_magus: "<b style='color:#3498db'>MAGUS:</b><br>" +
-        "• 1.25 GÜÇ (STR) = 1 Atak<br>" +
-        "• 5 ÇEVİKLİK (DEX) = 1 Defans & 4 Blok<br>" +
-        "• 1 CANLILIK (VIT) = 4 HP<br>" +
-        "• 1 BÜYÜ GÜCÜ (MP) = 1 Mana Yenileme<br>"+
-		"• 1 ZEKA (INT) = 5 Maks Mana",
+		stats_barbarian: "<div class='stat-info-wrapper'>" +
+		"<b style='color:#ff4d4d' class='stat-info-title'>BARBAR</b>" +
+		"<hr class='stat-separator'>" +
+        "• 2 <span style='color:#ff4d4d'>GÜÇ (STR)</span> = 1 Saldırı<br>" +
+		"• 2 <span style='color:#ffd700'>ÇEVİKLİK (DEX)</span> = 1 Defans & 1.2 Blok<br>" +
+		"• 1 <span style='color:#43FF64'>CANLILIK (VIT)</span> = 5 HP<br>" +
+		"• 2 <span style='color:#3498db'>BÜYÜ GÜCÜ (MP)</span> = 1 Öfke Yenileme<br>"+
+		"• 1 <span style='color:#9b59b6'>ZEKA (INT)</span> = 5 Maks Öfke",
+		stats_magus: "<div class='stat-info-wrapper'>" +
+		"<b style='color:#3498db' class='stat-info-title'>MAGUS</b>" +
+		"<hr class='stat-separator'>" +
+        "• 5 <span style='color:#ff4d4d'>GÜÇ (STR)</span> = 4 Saldırı<br>" +
+		"• 5 <span style='color:#ffd700'>ÇEVİKLİK (DEX)</span> = 1 Defans & 4 Blok<br>" +
+		"• 1 <span style='color:#43FF64'>CANLILIK (VIT)</span> = 4 HP<br>" +
+		"• 1 <span style='color:#3498db'>BÜYÜ GÜCÜ (MP)</span> = 1 Mana Yenileme<br>"+
+		"• 1 <span style='color:#9b59b6'>ZEKA (INT)</span> = 5 Maks Mana",
 
 		// Dünya Sayfası
 		combat_colors_title: "Savaş Renkleri",
