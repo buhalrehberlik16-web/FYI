@@ -467,6 +467,8 @@ window.LANG_EN = {
 			"Treant": "Treant",
 			"Canavar Tohum": "Trap Seed",
 			"Kadim Mantar": "Ancient Shroom",
+			"Ağlayan Gölge": "Weeping Shadow",
+			"Kül Yürüyen": "Ash Walker",
 			"Ejderkelam": "Dragonkin Speaker",
 			"Kil Golem": "Clay Golem",
 			"Göçebe Savaşçı": "Nomad Warrior",

@@ -468,6 +468,8 @@ window.LANG_TR = {
 			"Treant": "Treant",
 			"Canavar Tohum": "Canavar Tohum",
 			"Kadim Mantar": "Kadim Mantar",
+			"Ağlayan Gölge": "Ağlayan Gölge",
+			"Kül Yürüyen": "Kül Yürüyen",
 			"Ejderkelam": "Ejderkelam",
 			"Kil Golem": "Kil Golem",
 			"Göçebe": "Göçebe",
