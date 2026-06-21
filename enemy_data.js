@@ -991,6 +991,24 @@ window.ENEMY_STATS = {
             }
         ]
     },
+	"Ağlayan Gölge": { 
+        tribe: "Undead",
+        maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
+        idle: 'enemies/weeping_shadow.webp',
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/weeping_shadow_dead.webp',
+        skills: [
+        ]
+    },
+	"Kül Yürüyen": { 
+        tribe: "Undead",
+        maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
+        idle: 'enemies/ash_walker.webp',
+        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
+        dead: 'enemies/ash_walker_dead.webp',
+        skills: [
+        ]
+    },
 	"Ejderkelam": { 
         tribe: "Dragonkind",
         maxHp: 90, attack: 20, defense: 18, xp: 0, tier: 3, 
@@ -1204,7 +1222,7 @@ Object.assign(ENEMY_STATS, {
 window.TIER_ENEMIES = {
     1: ["Gremlin","Zehirli Mantar", "Orman Örümceği", "Hırsız Kobold", "Kan Yarasası", "İskelet", "Serseri", "Dikenli Çalı"],
     2: ["Kemik Yürüyen","Goblin Devriyesi", "Goblin Gözcü","Kaçak Haydut", "Gri Kurt", "Haydut Gözcü", "Genç Ayı", "Şaman", "Haydut Simyacı", "Kobold Devriye", "Kobold Şaman", "Treant Sapling","Lanetli Muhafız","Rünlü Totem"],
-    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ejderkelam", "Boz Ayı","Lanetli Ayı","Beyaz Kurt","Canavar Tohum", "Treant"],
+    3: ["Yaban Domuzu", "Goblin Savaşçısı", "Kaya Golemi", "Haydut Devriye", "Haydut Okçu", "Goblin Şaman", "Kadim Mantar", "Kil Golem", "Ağlayan Gölge", "Kül Yürüyen", "Ejderkelam", "Boz Ayı","Lanetli Ayı","Beyaz Kurt","Canavar Tohum", "Treant"],
     "B1": ["Goblin Şefi"], //Boss
     4: ["İskelet Şövalye", "Gulyabani", "Kemik Golemi", "Ork Fedaisi", "Göçebe", "Göçebe Savaşçı","Göçebe Kültist"], 
     5: [], 
@@ -1255,6 +1273,8 @@ window.BIOME_WEIGHTS = {
 	"Treant":   		{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
 	"Canavar Tohum": 	{ forest: 0.5, plains: 0.2, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
 	"Kadim Mantar":		{ forest: 0.5, plains: 0.1, cave: 0.1, iceland: 0, mountain: 0.2, urban: 0.2 },
+	"Ağlayan Gölge":	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
+	"Kül Yürüyen":	{ forest: 0.1, plains: 0.1, cave: 0.2, iceland: 0.2, mountain: 0.3, urban: 0.5 },
 	"Ejderkelam": 		{ forest: 0.2, plains: 0.3, cave: 0.15, iceland: 0.2, mountain: 0.3, urban: 0.2},
 	"Kil Golem":    	{ forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
     "Kaya Golemi":   	{ forest: 0.0, plains: 0.1, cave: 0.3, iceland: 0.2,  mountain: 0.4, urban: 0.3 },
