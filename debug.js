@@ -191,6 +191,33 @@ window.firtinaGucu = function(val) {
         writeLog(`🛠️ **Hile**: Fırtına gücü normale (Act bazlı) döndürüldü.`);
     }
 };
+
+window.odaver = function(bgName) {
+    const battleScreenEl = document.getElementById('battle-screen');
+    
+    if (!battleScreenEl) {
+        console.error("HATA: Savaş ekranı (battle-screen) bulunamadı!");
+        return;
+    }
+
+    // bgName: "plains1", "forest4", "cave2" gibi gelmeli
+    // Senin sistemindeki dosya yolu: images/utils/battlebg/biyom+numara.webp
+    const fullPath = `images/utils/battlebg/${bgName.toLowerCase()}.webp`;
+
+    // Arka planı değiştir
+    battleScreenEl.style.backgroundImage = `url('${fullPath}')`;
+
+    // Konsola ve Log'a bilgi bas
+    console.log(`🛠️ Debug: Savaş arka planı '${bgName}' olarak değiştirildi.`);
+    
+    // Eğer şu an savaş ekranında değilsek bir uyarı verelim
+    if (!battleScreenEl.classList.contains('active')) {
+        writeLog(`⚠️ **Hile**: Arka plan değiştirildi ama şu an savaşta değilsin!`);
+    } else {
+        writeLog(`🖼️ **Hile**: Savaş alanı '${bgName}' olarak değiştirildi.`);
+    }
+};
+
 window.itemtier = function(val) {
     if (val < 1) val = 1;
     hero.highestTierDefeated = val;

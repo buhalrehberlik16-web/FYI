@@ -955,85 +955,68 @@ window.handleMonsterAttack = function(attacker, defender) {
 
 // Canavar hasarını uygulayan merkezi fonksiyon (Bunu nextTurn içinde kullanacaksın)
 function processMonsterDamage(attacker, dmgPack) {
-    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
+    const lang = window.getCombatLang();
     let finalDamage = dmgPack.total;
 
-     // 1. Animasyonu Başlat
+    // 1. Animasyonu Başlat (Kafa atma/Saldırı efekti)
     monsterDisplayImg.classList.remove('monster-attack-anim');
-    void monsterDisplayImg.offsetWidth; // Sihirli satır: DOM'u zorla yeniler (Reset)
+    void monsterDisplayImg.offsetWidth; 
     monsterDisplayImg.classList.add('monster-attack-anim');
 
-    // Darbe anını animasyonun en eğik olduğu ana (220ms) denk getiriyoruz
     setTimeout(() => {
-        // Blok ve Hasar Hesaplama
+        // 2. Blok ve Savunma Hesaplama
         if (window.heroBlock > 0) {
             if (window.heroBlock >= finalDamage) { 
                 window.heroBlock -= finalDamage; finalDamage = 0; 
-                showFloatingText(heroDisplayContainer, lang.f_block, 'heal'); 
+                showFloatingText(heroDisplayContainer, lang.combat.f_block, 'heal'); 
             } else { 
                 finalDamage -= window.heroBlock; window.heroBlock = 0; 
             }
         }
 		
-		// --- YENİ: ASTRAL BARİYER KONTROLÜ ---
+		// 3. Astral Bariyer Kontrolü
         const astralIdx = hero.statusEffects.findIndex(e => e.id === 'astral_shield');
         if (astralIdx !== -1) {
             const astralEffect = hero.statusEffects[astralIdx];
             const stats = getHeroEffectiveStats();
-            
-            // 1. Gelen tüm hasarı SIFIRLA
             finalDamage = 0; 
-            
-            // 2. Kahramanı 15 HP (effect.value) iyileştir
-            const oldHp = hero.hp;
             hero.hp = Math.min(stats.maxHp, hero.hp + astralEffect.value);
-            
-            // 3. Görsel Efekt ve Log
             showFloatingText(heroDisplayContainer, astralEffect.value, 'heal');
-            const lang = window.getCombatLang();
             writeLog(lang.combat.log_astral_trigger.replace("$1", astralEffect.value));
-            
-            // 4. Kalkanı kullanıldığı için SİL (İlk darbede patlar)
             hero.statusEffects.splice(astralIdx, 1);
-            
-            animateDamage(false); // Sarsılma yerine parlama (isteğe bağlı)
+            animateDamage(false); 
         }
-        // ------------------------------------
-        
+
+        // --- KRİTİK BÖLGE: HASAR İŞLEME VE LOG ---
+        const attackerName = window.getEnemyNameTrans(attacker.name);
+
         if (finalDamage > 0) { 
+            // HASAR VARSA: Normal işleyiş
             hero.hp = Math.max(0, hero.hp - finalDamage); 
-			// --- EKLE: Bu tur alınan hasarı kaydet ---
             hero.damageTakenThisRound = (hero.damageTakenThisRound || 0) + finalDamage;
-            // -----------------------------------------
             StatsManager.trackDamageTaken(finalDamage);
             animateDamage(true); 
             showFloatingText(heroDisplayContainer, finalDamage, 'damage'); 
-			const currentLang = window.gameSettings.lang || 'tr';
-const langRoot = window.LANGUAGES[currentLang];
-const enemyL = langRoot.enemy_names || {};
-const combatL = langRoot.combat || {};
-
-const attackerName = enemyL[attacker.name] || attacker.name;
-
-const logMsg = (combatL.log_monster_hit || "")
-    .replace("$1", attackerName)
-    .replace("$2", finalDamage)
-    .replace("$3", dmgPack.phys)
-    .replace("$4", dmgPack.elem);
-
-writeLog(logMsg);
+            
+            const logMsg = lang.combat.log_monster_hit
+                .replace("$1", attackerName).replace("$2", finalDamage)
+                .replace("$3", dmgPack.phys).replace("$4", dmgPack.elem);
+            writeLog(logMsg);
 
             // Kaynak Kazanımı (Barbar/Magus)
             const stats = getHeroEffectiveStats();
             const classRules = CLASS_CONFIG[hero.class];
             let gainOnHit = classRules.onHitRageGain || 0;
             if (hero.statusEffects.some(e => e.id === 'spirit_shield_active')) gainOnHit += 10;
-
             if (gainOnHit > 0 && hero.hp > 0) {
                 hero.rage = Math.min(stats.maxRage, hero.rage + gainOnHit);
-                updateStats();
             }
+        } else {
+            // HASAR 0 İSE: Geri bildirim ver (Mor parlamayı engelleyen kısım)
+            showFloatingText(heroDisplayContainer, "0", 'damage');
+            writeLog(`🛡️ **${attackerName}**: Saldırısı savunmanı aşamadı! (0 Hasar)`);
         }
+
         updateStats(); 
         if (window.isHeroDefending) { window.isHeroDefending = false; window.heroDefenseBonus = 0; }
 		
@@ -1042,15 +1025,12 @@ writeLog(logMsg);
 			if (window.monsterDefenseTurns === 0) {
 				window.isMonsterDefending = false;
 				window.monsterDefenseBonus = 0;
-				const langInner = window.getCombatLang(); 
-				const mName = window.getEnemyNameTrans(monster.name);
-				writeLog(langInner.combat.log_shield_end.replace("$1", mName));
+				writeLog(lang.combat.log_shield_end.replace("$1", attackerName));
 			}
 		}
         
     }, 250); 
 
-    // Sıra devri (Animasyon bittikten biraz sonra)
     setTimeout(() => {
         window.isHeroTurn = true; 
         if (!checkGameOver()) nextTurn(); 
@@ -1783,7 +1763,7 @@ window.nextTurn = function() {
                                     });
                                 }
 
-                                if (packet.damage && packet.damage.total > 0) {
+                                if (packet.damage) {
                                     processMonsterDamage(monster, packet.damage);
                                 } else {							
                                     animateMonsterSkill();
