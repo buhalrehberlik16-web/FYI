@@ -280,8 +280,8 @@ const MAGUS_SKILLS = {
 	
 	Ignite: {
         data: {
-            id: "Ignite", // ID ekledik
-            name: "Yak",
+            id: "Fireball", // ID ekledik
+            name: "Ignite",
             type: 'attack',
             category: 'elemental', // Tabın görünmesini sağlayan anahtar
             tier: 2,
@@ -517,7 +517,7 @@ const MAGUS_SKILLS = {
 	
 	Strangle: {
         data: {
-            id: "Strangle", // ID ekledik
+            id: "Fireball", // ID ekledik
             name: "Strangle",
             type: 'attack',
             category: 'nature', // Tabın görünmesini sağlayan anahtar
