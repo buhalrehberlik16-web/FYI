@@ -277,6 +277,46 @@ const MAGUS_SKILLS = {
         }
     },
 
+	
+	Ignite: {
+        data: {
+            id: "Ignite", // ID ekledik
+            name: "Yak",
+            type: 'attack',
+            category: 'elemental', // Tabın görünmesini sağlayan anahtar
+            tier: 2,
+            rageCost: 20,
+			exhaustion: 4,
+            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            scaling: { 
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
+                elemental: { fire: { stat: "mp_pow", statMult: 0.0 } }
+            },
+            dotEffect: {
+                type: 'fire',
+                duration: 3,
+                scaling: {
+                    elemental: { 
+                        fire: { stat: "mp_pow", statMult: 0.5 },
+                        curse: { stat: "int", statMult: 0.0 } 
+                    }
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // GECİKMELİ DoT UYGULAMASI
+            setTimeout(() => {
+                if (window.monster && monster.hp > 0) {
+                    // DİKKAT: this.data gönderiyoruz
+                    window.applySkillDoT(attacker, defender, this.data);
+                }
+            }, 600);
+        }
+    },
+
 	Water_Whip: {
 		data: {
 			name: "Water Whip",
@@ -454,7 +494,7 @@ const MAGUS_SKILLS = {
 		data: {
 			name: "Thorn Whip",
 			//Tier 1'e düşürürken çarpanları tekrar 0.7'ye çek
-            menuDescription: "Hasar: <b style='color:orange'>0.9xINT (Fiz) + 0.9xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
+            menuDescription: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>",
             rageCost: 20,
             levelReq: 5,
 			exhaustion: 2,
@@ -462,15 +502,53 @@ const MAGUS_SKILLS = {
             icon: 'skills/magus/nature/thorn_whip.webp',
             type: 'attack',
             category: 'nature', 
-            tier: 2,
+            tier: 1,
             scaling: { 
-                physical: { atkMult: 0.0, stat: "int", statMult: 0.9 },
-                elemental: { fire: 0, cold: 0, lightning: 0, poison: {stat: "int", statMult: 0.9}, curse: 0 }
+                physical: { atkMult: 0.0, stat: "int", statMult: 0.7 },
+                elemental: { fire: 0, cold: 0, lightning: 0, poison: {stat: "int", statMult: 0.7}, curse: 0 }
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
 			dmgPack.skillKey = 'Thorn_Whip';
             animateCustomAttack(dmgPack, null, this.data.name);
+        }
+    },
+
+	
+	Strangle: {
+        data: {
+            id: "Strangle", // ID ekledik
+            name: "Boğ",
+            type: 'attack',
+            category: 'nature', // Tabın görünmesini sağlayan anahtar
+            tier: 2,
+			exhaustion: 4,
+            rageCost: 20,
+            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            scaling: { 
+                physical: { atkMult: 0.5, stat: "int", statMult: 0.5 }
+            },
+            dotEffect: {
+                type: 'poison',
+                duration: 3,
+                scaling: {
+                    elemental: { 
+                        poison: { stat: "int", statMult: 0.8 }
+                    }
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // GECİKMELİ DoT UYGULAMASI
+            setTimeout(() => {
+                if (window.monster && monster.hp > 0) {
+                    // DİKKAT: this.data gönderiyoruz
+                    window.applySkillDoT(attacker, defender, this.data);
+                }
+            }, 600);
         }
     },
 
