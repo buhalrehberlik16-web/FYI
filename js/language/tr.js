@@ -646,6 +646,7 @@ window.LANG_TR = {
 			log_skill_refunded: "🧹 **Üstad**: $1 yeteneği unutuldu. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
 			log_skill_chain_refunded: "🧹 **Üstad**: $1 dalındaki tüm yetenekler temizlendi. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
 			log_boss_tier_bonus: "👑 **Boss Bonusu**: Destansı ganimetler bulundu! (+1 Seviye)",
+			log_monster_hit_zero: "🛡️ **$1**: Saldırısı savunmanı aşamadı! (0 Hasar)",
         },
 		
 		room_events: {

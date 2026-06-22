@@ -647,6 +647,7 @@ window.LANG_EN = {
 			log_skill_refunded: "🧹 **Master**: $1 forgotten. Spent $2 Gold, $3 Skill Points refunded.",
 			log_skill_chain_refunded: "🧹 **Master**: All skills in the $1 branch were cleared. Spent $2 Gold, $3 Skill Points refunded.",			
 			log_boss_tier_bonus: "👑 **Boss Bonus**: Epic loot found! (+1 Tier)",
+			log_monster_hit_zero: "🛡️ **$1**: Attack failed to pierce your defense! (0 Damage)",
         },
 		
 		room_events: {
