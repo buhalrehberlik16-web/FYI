@@ -171,6 +171,16 @@ const SkillEngine = {
 
         // --- 6. YÜZDESEL KORUMALAR (Guard Active vb.) ---
         let totalHasar = physNet + elemNet;
+		
+		// --- YANKI / KURULMA (WIND UP) BONUSU ---
+		// Eğer saldıran kahramansa ve üzerinde wind_up etkisi varsa hasara ekle
+		const windUp = (isAttackerHero ? hero.statusEffects : []).find(e => e.id === 'wind_up' && !e.waitForCombat);
+		if (windUp) {
+			totalHasar += windUp.value;
+			physNet += windUp.value; // Fiziksel hasar kısmına da ekleyelim ki detayda doğru gözüksün
+		}
+		// ----------------------------------------
+		
         // --- 2. LANET VE SON ÇARPANLAR ---
         let finalDamageMultiplier = 1.0;
 
