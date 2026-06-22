@@ -26,6 +26,44 @@ const MAGUS_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
+	Arcane_Echo: {
+		data: {
+			id: "Arcane_Echo",
+			name: "Arcane Echo",
+			rageCost: 15,
+			levelReq: 1,
+			exhaustion: 2,
+			icon: 'skills/magus/arcane/arcane_echo.webp',
+			type: 'attack',
+			category: 'arcane',
+			tier: 1,
+			scaling: { 
+				physical: { atkMult: 0, stat: "mp_pow", statMult: 0.6 }, // Sadece MP'den beslenen düşük hasar
+				elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+			}
+		},
+		onCast: function(attacker, defender, dmgPack) {
+        dmgPack.skillKey = 'Arcane_Echo';
+        
+        // 1. Önce normal hasarı vur (Bu hasar şu an 0 gözükecek, doğru)
+        animateCustomAttack(dmgPack, null, this.data.name);
+
+        // 2. KRİTİK DÜZELTME: Etkiyi vuruş bittikten sonra ekle
+        // 800ms veya 1000ms animasyonun bitişi için ideal süredir
+        setTimeout(() => {
+            if (attacker.hp > 0) { // Karakter ölmediyse etkiyi ver
+                applyStatusEffect(attacker, { 
+                    id: 'wind_up', 
+                    name: "Büyü Yankısı", 
+                    value: 6, 
+                    turns: 2, 
+                    resetOnCombatEnd: true 
+                });
+                 
+            }
+        }, 850); 
+    }
+},
 	
 	Mana_Blast: {
 		data: {
@@ -50,35 +88,34 @@ const MAGUS_SKILLS = {
         }
     },
 	Mana_Ward: {
-    data: {
-        id: "Mana_Ward",
-        name: "Mana Ward",
-        // tr.js/en.js içinde daha detaylı açıklayabilirsin
-        menuDescription: "Mistik bir bariyer kur.<br><span style='color:cyan'>Alacağın ilk darbe HP yerine Manadan (Rage) düşer.</span><br><span style='color:#ff4d4d'>Mana yetmezse, kalan hasar %50 artarak Canına vurur.</span>",
-        rageCost: 20,
-        levelReq: 5,
-        exhaustion: 4,
-        cooldown: 5,
-        icon: 'skills/magus/arcane/mana_ward.webp',
-        type: 'defense',
-        category: 'arcane',
-        tier: 2
-    },
-    onCast: function() {
-        applyStatusEffect(hero, { 
-            id: 'mana_ward_active', 
-            name: "Mana Kalkanı", 
-            turns: 99, // Darbe alana kadar bekler
-            resetOnCombatEnd: true 
-        });
-        
-        // Cooldown ekle
-        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Mana_Ward', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
-        
-        updateStats();
-        window.logSkillEffect('Mana_Ward');
-        setTimeout(nextTurn, 1000);
-    }
+		data: {
+			id: "Mana_Ward",
+			name: "Mana Ward",
+			menuDescription: "Mistik bir bariyer kur.<br><span style='color:cyan'>Alacağın ilk darbe HP yerine Manadan (Rage) düşer.</span><br><span style='color:#ff4d4d'>Mana yetmezse, kalan hasar %50 artarak Canına vurur.</span>",
+			rageCost: 20,
+			levelReq: 5,
+			exhaustion: 4,
+			cooldown: 5,
+			icon: 'skills/magus/arcane/mana_ward.webp',
+			type: 'defense',
+			category: 'arcane',
+			tier: 2
+		},
+		onCast: function() {
+			applyStatusEffect(hero, { 
+				id: 'mana_ward_active', 
+				name: "Mana Kalkanı", 
+				turns: 99, // Darbe alana kadar bekler
+				resetOnCombatEnd: true 
+			});
+			
+			// Cooldown ekle
+			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Mana_Ward', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+			
+			updateStats();
+			window.logSkillEffect('Mana_Ward');
+			setTimeout(nextTurn, 1000);
+		}
 	},
 
 	Drain: {
