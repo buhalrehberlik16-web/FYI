@@ -1014,7 +1014,7 @@ function processMonsterDamage(attacker, dmgPack) {
         } else {
             // HASAR 0 İSE: Geri bildirim ver (Mor parlamayı engelleyen kısım)
             showFloatingText(heroDisplayContainer, "0", 'damage');
-            writeLog(`🛡️ **${attackerName}**: Saldırısı savunmanı aşamadı! (0 Hasar)`);
+            writeLog(lang.combat.log_monster_hit_zero.replace("$1", attackerName));
         }
 
         updateStats(); 
