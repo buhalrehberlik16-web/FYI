@@ -190,12 +190,12 @@ window.ENEMY_STATS = {
         skills: [
             { 
                 id: "thorn_prick", 
-                template: "stat_debuff", 
-                category: "debuff",
+                template: "special_attack", 
+                category: "attack",
                 dotType: "poison",
                 damageSplit: { physical: 0.5, poison: 0.5 }, 
                 duration: 3,
-                tickMult: 0.75,
+                tickMult: 0.6,
                 textKey: "poison_hit" 
             },
             { 
@@ -205,7 +205,7 @@ window.ENEMY_STATS = {
                 dotType: "bleed",
                 damageSplit: { physical: 0.5 }, 
                 duration: 3,
-                tickMult: 0.5,
+                tickMult: 0.75,
                 textKey: "vicious"
 			}
 			
@@ -215,7 +215,7 @@ window.ENEMY_STATS = {
     "İskelet": { 
         tribe: "Undead",
 		specificResists: { fire: -1, cold: 3, lightning: -1, poison: -1, curse: -2 },
-        maxHp: 30, attack: 6, defense: 3, xp: 0, tier: 1, 
+        maxHp: 30, attack: 5, defense: 3, xp: 0, tier: 1, 
         idle: 'enemies/skeleton_idle.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
@@ -250,7 +250,7 @@ window.ENEMY_STATS = {
     "Hırsız Kobold": {
         tribe: "Dragonkind",
 		specificResists: { fire: 3, cold: 3, lightning: -1, poison: -1, curse: -1 },
-        maxHp: 34, attack: 7, defense: 0, xp: 0, tier: 1, 
+        maxHp: 32, attack: 7, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
@@ -487,8 +487,8 @@ window.ENEMY_STATS = {
 			},
 			{ 
                 id: "curse_bomb", 
-				template: "stat_debuff", // Artik 'stat_debuff' şablonunu kullanıyor
-				category: "debuff",      // AI artık bunu zayıflatma olarak görecek
+				template: "special_attack", // Artik 'stat_debuff' şablonunu kullanıyor
+				category: "attack",      // AI artık bunu zayıflatma olarak görecek
 				damageSplit: { curse: 1.0, poison: 0.0 }, // Fiziksel hasar 0, elemental güç 0x Atak
 				dotType: "curse", 
 				duration: 4,
@@ -631,8 +631,8 @@ window.ENEMY_STATS = {
             },
 			{ 
                 id: "thorn_prick", 
-                template: "stat_debuff", 
-                category: "debuff",
+                template: "special_attack", 
+                category: "attack",
                 dotType: "poison",
                 damageSplit: { physical: 0.5, poison: 0.8 }, 
                 duration: 3,
@@ -694,7 +694,7 @@ window.ENEMY_STATS = {
                 template: "self_buff", 
                 category: "buff",
                 statusId: "def_up", 
-                value: 10, 
+                value: 5, 
                 duration: 3, 
                 textKey: "totem" 
             }
