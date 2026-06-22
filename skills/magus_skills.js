@@ -52,10 +52,14 @@ const MAGUS_SKILLS = {
         // 800ms veya 1000ms animasyonun bitişi için ideal süredir
         setTimeout(() => {
             if (attacker.hp > 0) { // Karakter ölmediyse etkiyi ver
+
+                const stats = getHeroEffectiveStats(); 
+                
+                const bonusVal = Math.floor(stats.mp_pow * 0.2) + Math.floor(stats.atk * 0.5); 
                 applyStatusEffect(attacker, { 
                     id: 'wind_up', 
                     name: "Büyü Yankısı", 
-                    value: 6, 
+                    value: bonusVal, 
                     turns: 2, 
                     resetOnCombatEnd: true 
                 });
