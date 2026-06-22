@@ -842,7 +842,7 @@ window.LANG_TR = {
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
 			Magic_Arrow: { name: "Büyülü Ok", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
-			Arcane_Echo: { name: "Arcane Echo", desc: "Hasar: <b style='color:orange'>0.6xMP</b>.<br>Bir sonraki büyüne <span style='color:#43FF64'>+6 Hasar</span>ekler.<br><span style='color:cyan'>-15 Mana.</span>",},
+			Arcane_Echo: { name: "Arcane Echo", desc: "Hasar: <b style='color:orange'>0.6xMP</b>.<br>Bir sonraki büyüne <span style='color:#43FF64'>0.2xMP+0.5ATK</span> ekler.<br><span style='color:cyan'>-15 Mana.</span>",},
 			Mana_Blast: { name: "Mana Patlaması", desc: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Mana_Ward: {name: "Mana Kalkanı", desc: "Mistik bir bariyer kur.<br><span style='color:cyan'>Alacağın ilk darbe HP yerine Manadan (Rage) düşer.</span><br><span style='color:#ff4d4d'>Mana yetmezse, kalan hasar %50 artarak Canına vurur.</span>", log: "Mistik bariyer aktif edildi." },
 			Drain: { name: "Öz Sömürüsü", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>" },

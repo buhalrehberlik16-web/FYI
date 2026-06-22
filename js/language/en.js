@@ -842,7 +842,7 @@ window.LANG_EN = {
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
 			Magic_Arrow: { name: "Magic Arrow", desc: "Damage: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
-			Arcane_Echo: { name: "Arcane Echo", desc: "Damage: <b style='color:orange'>0.6xMP</b>.<br>Adds <span style='color:#43FF64'>+6 Damage</span> to your next spell.<br><span style='color:cyan'>-15 Mana.</span>" },
+			Arcane_Echo: { name: "Arcane Echo", desc: "Damage: <b style='color:orange'>0.6xMP</b>.<br>Adds <span style='color:#43FF64'>0.2xMP+0.5ATK</span> to your next spell.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Mana_Blast: { name: "Mana Blast", desc: "Damage: <b style='color:orange'>1.4xMP (Physical)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Mana_Ward: { name: "Mana Ward", desc: "Summon a mystic barrier.<br><span style='color:cyan'>The next hit you take consumes Mana instead of HP.</span><br><span style='color:#ff4d4d'>If Mana is insufficient, the remaining damage is increased by 50% and hits your Health.</span>", log: "Mystic barrier activated." },
 			Drain: { name: "Drain", desc: "Damage: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Ignores defense. Gain Mana equal to damage. -35 Mana.</span>" },
