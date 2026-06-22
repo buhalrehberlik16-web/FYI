@@ -55,7 +55,7 @@ window.EnemySkillEngine = {
                 statusEffects: [],
                 text: config.textKey,
                 value: config.value || 0,
-                damage: { total: 0, phys: 0, elem: 0 }
+                //damage: { total: 0, phys: 0, elem: 0 }
             };
 
             const dotIds = ['poison', 'fire', 'cold', 'lightning', 'curse', 'bleed'];
