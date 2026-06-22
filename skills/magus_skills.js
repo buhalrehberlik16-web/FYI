@@ -49,6 +49,37 @@ const MAGUS_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
+	Mana_Ward: {
+    data: {
+        id: "Mana_Ward",
+        name: "Mana Ward",
+        // tr.js/en.js içinde daha detaylı açıklayabilirsin
+        menuDescription: "Mistik bir bariyer kur.<br><span style='color:cyan'>Alacağın ilk darbe HP yerine Manadan (Rage) düşer.</span><br><span style='color:#ff4d4d'>Mana yetmezse, kalan hasar %50 artarak Canına vurur.</span>",
+        rageCost: 20,
+        levelReq: 5,
+        exhaustion: 4,
+        cooldown: 5,
+        icon: 'skills/magus/arcane/mana_ward.webp',
+        type: 'defense',
+        category: 'arcane',
+        tier: 2
+    },
+    onCast: function() {
+        applyStatusEffect(hero, { 
+            id: 'mana_ward_active', 
+            name: "Mana Kalkanı", 
+            turns: 99, // Darbe alana kadar bekler
+            resetOnCombatEnd: true 
+        });
+        
+        // Cooldown ekle
+        hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Mana_Ward', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
+        
+        updateStats();
+        window.logSkillEffect('Mana_Ward');
+        setTimeout(nextTurn, 1000);
+    }
+	},
 
 	Drain: {
 		data: {
@@ -146,8 +177,10 @@ const MAGUS_SKILLS = {
             type: 'attack',
             category: 'elemental', // Tabın görünmesini sağlayan anahtar
             tier: 1,
-            rageCost: 3,
-            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            rageCost: 15,
+			exhaustion: 3,
+			cooldown: 1,
+            icon: 'skills/magus/elemental/fireball.webp', // İkon yolu
             scaling: { 
                 physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
                 elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
@@ -177,25 +210,27 @@ const MAGUS_SKILLS = {
         }
     },
 	
-	Pireball: {
+	Iceball: {
         data: {
-            id: "Fireball", // ID ekledik
-            name: "Ateş Topu",
+            id: "Iceball", // ID ekledik
+            name: "Buz Topu",
             type: 'attack',
             category: 'elemental', // Tabın görünmesini sağlayan anahtar
             tier: 2,
-            rageCost: 3,
-            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+			exhaustion: 3,
+			cooldown: 1,
+            rageCost: 15,
+            icon: 'skills/magus/elemental/iceball.webp', // İkon yolu
             scaling: { 
                 physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
                 elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
             },
             dotEffect: {
-                type: 'poison',
+                type: 'cold',
                 duration: 3,
                 scaling: {
                     elemental: { 
-                        poison: { stat: "mp_pow", statMult: 0.4 },
+                        cold: { stat: "mp_pow", statMult: 0.4 },
                         curse: { stat: "int", statMult: 0.2 } 
                     }
                 }
@@ -287,7 +322,7 @@ const MAGUS_SKILLS = {
             tier: 2,
             rageCost: 20,
 			exhaustion: 4,
-            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            icon: 'skills/magus/elemental/ignite.webp', // İkon yolu
             scaling: { 
                 physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
                 elemental: { fire: { stat: "mp_pow", statMult: 0.0 } }
@@ -524,7 +559,7 @@ const MAGUS_SKILLS = {
             tier: 2,
 			exhaustion: 4,
             rageCost: 20,
-            icon: 'skills/magus/elemental/fire_bolt.webp', // İkon yolu
+            icon: 'skills/magus/nature/strangle.webp', // İkon yolu
             scaling: { 
                 physical: { atkMult: 0.5, stat: "int", statMult: 0.5 }
             },
