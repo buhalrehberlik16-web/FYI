@@ -647,6 +647,8 @@ window.LANG_TR = {
 			log_skill_chain_refunded: "🧹 **Üstad**: $1 dalındaki tüm yetenekler temizlendi. $2 Altın harcandı, $3 Yetenek Puanı iade alındı.",
 			log_boss_tier_bonus: "👑 **Boss Bonusu**: Destansı ganimetler bulundu! (+1 Seviye)",
 			log_monster_hit_zero: "🛡️ **$1**: Saldırısı savunmanı aşamadı! (0 Hasar)",
+			log_mana_ward_full: "🌀 **Mana Ward**: Darbe büyü gücün tarafından emildi! ($1 Mana harcandı)",
+			log_mana_ward_break: "🌀 **Mana Ward**: Büyü gücün yetersiz kaldı! $1 emildi ancak kalan hasar %50 şiddetlendi.",
         },
 		
 		room_events: {
@@ -839,16 +841,17 @@ window.LANG_TR = {
 			spiritual_apocalypse: { name: "Ruhani Kıyamet", desc: "İçindeki tüm kutsallığı bir infilaka dönüştürür.<br>Hasar: <b style='color:orange'>3.5 x MP (Lanet)</b><br><span style='color:#ff4d4d'>Üzerindeki tüm olumlu etkileri (Buff) siler.</span><br><span style='color:#43FF64'>Feda edilen her etki için hasar %30 artar verilen hasarın %25'i kadar düşmana Lanet bırakır.</span><br><span style='color:cyan'>-40 Öfke.</span>", log: "Feda edilen her güçlendirme için %30 atak alındı." },
 			// BARBARIAN SKILLS //
 			// MAGUS SKILLS //
-			Fireball: { name: "Fireball", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b>. 3 Tur Yanma Hasarı 0.4 MP + 0.2 INT Lanet<br><span style='color:cyan'>-3 Mana.</span>" },
-			Pireball: { name: "Pireball", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b>. 3 Tur Zehir Hasarı 0.4 MP + 0.2 INT Lanet<br><span style='color:cyan'>-15 Mana.</span>" },
+			Fireball: { name: "Ateş Topu", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b>.<br>3 Tur: <b style='color:orange'>Yanma Hasarı 0.4 MP(Ateş) + 0.2 INT(Lanet)</br><br><span style='color:cyan'>-15 Mana.</span>" },
+			Iceball: { name: "Buz Topu", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.5xMP</b><br>3 Tur: <b style='color:#97C1E6'>Buz Hasarı 0.4 MP(Buz) + 0.2 INT(Lanet)</br><span style='color:cyan'>-15 Mana.</span>" },
 			Magic_Arrow: { name: "Büyülü Ok", desc: "Hasar: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Mana_Blast: { name: "Mana Patlaması", desc: "Hasar: <b style='color:orange'>1.4xMP (Fiziksel)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
+			Mana_Ward: {name: "Mana Kalkanı", desc: "Mistik bir bariyer kur.<br><span style='color:cyan'>Alacağın ilk darbe HP yerine Manadan (Rage) düşer.</span><br><span style='color:#ff4d4d'>Mana yetmezse, kalan hasar %50 artarak Canına vurur.</span>", log: "Mistik bariyer aktif edildi." },
 			Drain: { name: "Öz Sömürüsü", desc: "Hasar: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Düşman zırhını yok sayar. Hasar kadar Mana kazanılır. -35 Mana.</span>" },
 			Arcane_Acuity: { name: "Gizemli Odak", desc: "<b>(Hızlı Aksiyon)</b><br><span style='color:#43FF64'>4 Tur: Her tur +INT kadar Mana.</span><br><span style='color:cyan'>-20 Mana. Tur harcamaz.</span>", log:"4 Tur: INT kadar Mana gelecek." },
 			Arcane_Explosion: { name: "Gizemli Patlama", desc: "Hasar: <b style='color:orange'>ATK + 2.0xMP (Fiziksel)</b>.<br><span style='color:cyan'>-75 Mana.</span>" },
 			Fire_Bolt: { name: "Ateş Oku", desc: "Hasar: <b style='color:orange'>0.5xATK+ 0.5xSTR (Fiz) + 0.5xMP (Ateş)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Zap: { name: "Çarpma", desc: "Hasar: <b style='color:orange'>1.1xINT (Yıldırım)</b>.<br><span style='color:#b19cd9'>3 Tur: Düşman ATK %20 azalır.</span><br><span style='color:cyan'>-25 Mana.</span>" },
-			Ignite: { name: "Yak", desc: "Düşmana anında Str kadar hasar verir ve ardından 3 tur boyunca düşmana her tur <b style='color:orange'> 0.5xMP Ateş </b> hasar verir." },
+			Ignite: { name: "Yak", desc: "Hasar: <b style='color:orange'>1xSTR</b><br>Ardından 3 tur boyunca düşmana her tur <b style='color:orange'> 0.5xMP(Ateş)</b> hasar verir.</br>" },
 			Water_Whip: { name: "Su Kırbacı", desc: "Hasar: <b style='color:orange'>1.0xSTR (Fiz) + 1.0xMP (Buz)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Ice_Shield: { name: "Buz Kalkanı", desc: "Buzdan kalkan.<br><span style='color:#3498db'>Kazanılan Blok: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>", log: "$1 Blok kazanıldı." },
 			Crystalised_Mana: { name: "Mana Kristali", desc: "Manayı yoğunlaştırır.<br><span style='color:#43FF64'>2 Tur sonra +50 Mana kazanılır.</span><br><span style='color:cyan'>-20 Mana.</span>", log: "2 Tur sonra +50 mana kazanılacak." },
@@ -856,7 +859,7 @@ window.LANG_TR = {
 			Chaos_Rain: { name: "Kaos Yağmuru", desc: "Hasar: <b style='color:orange'>2.5xMP (Rastgele Element)</b>.<br><span style='color:cyan'>Düşmanın en düşük direncini hedefler. -75 Mana.</span>" },
 			Meditate: { name: "Meditasyon", desc: "<span style='color:#43FF64'>Kazanılan Mana: INT + %50 Kayıp HP.</span><br><span style='color:cyan'>0 Mana.</span>", log: "$1 Mana kazanıldı." },
 			Thorn_Whip: { name: "Dikenli Kırbaç", desc: "Hasar: <b style='color:orange'>0.7xINT (Fiz) + 0.7xINT (Zehir)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Strangle: { name: "Boğ", desc: "Düşmana anında Int kadar hasar verir ve ardından 3 tur boyunca düşmana her tur <b style='color:orange'> 0.8xInt Zehir </b> hasar verir."},
+			Strangle: { name: "Boğ", desc: "Hasar: <b style='color:orange'>1xInt.</b><br>Ardından 3 tur boyunca düşmana her tur <b style='color:MediumSeaGreen'> 0.8 x Int(Zehir)</b> hasar verir.</b>"},
 			Rejuvanate: { name: "Gençleşme", desc: "<span style='color:#43FF64'>4 Tur: Her tur +1xINT HP ve +1xINT Mana.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "4 Tur: 1xINT HP ve 1xINT Mana." },
 			Natures_Wrath: { name: "Doğanın Öfkesi", desc: "Hasar: <b style='color:orange'>1.0xMP (Fiziksel)</b>.<br><span style='color:#b19cd9'>4 Tur: Düşman ATK/DEF %50 azalır.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
