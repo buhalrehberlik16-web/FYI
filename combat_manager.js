@@ -986,6 +986,36 @@ function processMonsterDamage(attacker, dmgPack) {
             hero.statusEffects.splice(astralIdx, 1);
             animateDamage(false); 
         }
+		// --- MANA WARD KONTROLÜ ---
+		const manaWardIdx = hero.statusEffects.findIndex(e => e.id === 'mana_ward_active');
+		if (manaWardIdx !== -1 && finalDamage > 0) {
+			
+    
+			// 1. Mananın ne kadarını emebileceğini hesapla
+			let absorbedByMana = Math.min(finalDamage, hero.rage);
+			hero.rage -= absorbedByMana; // Manadan düş
+    
+			let remainingDamage = finalDamage - absorbedByMana;
+    
+			if (remainingDamage > 0) {
+			// 2. Mana yetmediyse: Kalan hasarı 1.5 ile çarp ve tam sayıya yuvarla
+			finalDamage = Math.floor(remainingDamage * 1.5);
+        
+			// Görsel uyarı: Kalkanın kırıldığını belirt
+			showFloatingText(heroDisplayContainer, "BREAK!", 'damage');
+			writeLog(lang.combat.log_mana_ward_break?.replace("$1", absorbedByMana) || `🌀 **Mana Ward**: Kalkan yetersiz! ${absorbedByMana} emildi, artan hasar %50 arttı.`);
+			} else {
+			// 3. Mana tam yettiyse: Hasarı sıfırla
+			finalDamage = 0;
+			showFloatingText(heroDisplayContainer, "ABSORBED", 'heal');
+			writeLog(lang.combat.log_mana_ward_full?.replace("$1", absorbedByMana) || `🌀 **Mana Ward**: Tüm hasar (${absorbedByMana}) manadan karşılandı.`);
+			}
+    
+			// Kalkan kullanıldığı için sil
+			hero.statusEffects.splice(manaWardIdx, 1);
+			updateStats();
+			}
+		// --------------------------
 
         // --- KRİTİK BÖLGE: HASAR İŞLEME VE LOG ---
         const attackerName = window.getEnemyNameTrans(attacker.name);
