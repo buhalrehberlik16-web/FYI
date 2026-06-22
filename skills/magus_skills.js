@@ -518,7 +518,7 @@ const MAGUS_SKILLS = {
 	Strangle: {
         data: {
             id: "Strangle", // ID ekledik
-            name: "Boğ",
+            name: "Strangle",
             type: 'attack',
             category: 'nature', // Tabın görünmesini sağlayan anahtar
             tier: 2,
