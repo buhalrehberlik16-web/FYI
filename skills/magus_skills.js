@@ -121,6 +121,36 @@ const MAGUS_SKILLS = {
 			setTimeout(nextTurn, 1000);
 		}
 	},
+	Chain_Blast: {
+		data: {
+			id: "Chain_Blast", // ID, sayaç için kritik!
+			name: "Chain Blast",
+			menuDescription: "Hasar: <b style='color:orange'>1.4xMP</b>.<br><span style='color:#43FF64'>Her kullanımda kalıcı olarak +0.3xMP hasar kazanır (Fight boyu).</span>",
+			rageCost: 25,
+			levelReq: 5,
+			exhaustion: 4,
+			icon: 'skills/magus/arcane/chain_blast.webp',
+			type: 'attack',
+			category: 'arcane',
+			tier: 2,
+			statMultPerUse: 0.3, // İşte sihirli çarpan burada
+			scaling: { 
+				physical: { atkMult: 0, stat: "mp_pow", statMult: 1.4 },
+				elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
+			}
+		},
+		onCast: function(attacker, defender) {
+			// SkillEngine artık statMultPerUse'u tanıdığı için otomatik hesaplar
+			const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+			dmgPack.skillKey = 'Chain_Blast';
+			
+			animateCustomAttack(dmgPack, null, this.data.name);
+			
+			// Log için o anki güncel çarpanı gösterelim (Opsiyonel görsel şov)
+			const usage = hero.skillUsage["Chain_Blast"] || 0;
+			const currentMult = (1.4 + (usage * 0.3)).toFixed(1);
+		}
+	},
 
 	Drain: {
 		data: {
@@ -224,7 +254,7 @@ const MAGUS_SKILLS = {
             icon: 'skills/magus/elemental/fireball.webp', // İkon yolu
             scaling: { 
                 physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
-                elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
+                elemental: { fire: { stat: "mp_pow", statMult: 0.6 } }
             },
             dotEffect: {
                 type: 'fire',
@@ -232,46 +262,6 @@ const MAGUS_SKILLS = {
                 scaling: {
                     elemental: { 
                         fire: { stat: "mp_pow", statMult: 0.4 },
-                        curse: { stat: "int", statMult: 0.2 } 
-                    }
-                }
-            }
-        },
-        onCast: function(attacker, defender) {
-            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
-            animateCustomAttack(dmgPack, null, this.data.name);
-
-            // GECİKMELİ DoT UYGULAMASI
-            setTimeout(() => {
-                if (window.monster && monster.hp > 0) {
-                    // DİKKAT: this.data gönderiyoruz
-                    window.applySkillDoT(attacker, defender, this.data);
-                }
-            }, 600);
-        }
-    },
-	
-	Iceball: {
-        data: {
-            id: "Iceball", // ID ekledik
-            name: "Buz Topu",
-            type: 'attack',
-            category: 'elemental', // Tabın görünmesini sağlayan anahtar
-            tier: 2,
-			exhaustion: 3,
-			cooldown: 1,
-            rageCost: 15,
-            icon: 'skills/magus/elemental/iceball.webp', // İkon yolu
-            scaling: { 
-                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
-                elemental: { fire: { stat: "mp_pow", statMult: 1.0 } }
-            },
-            dotEffect: {
-                type: 'cold',
-                duration: 3,
-                scaling: {
-                    elemental: { 
-                        cold: { stat: "mp_pow", statMult: 0.4 },
                         curse: { stat: "int", statMult: 0.2 } 
                     }
                 }
@@ -352,8 +342,47 @@ const MAGUS_SKILLS = {
             animateCustomAttack(dmgPack, null, this.data.name);
         }
     },
-
 	
+	Iceball: {
+        data: {
+            id: "Iceball", // ID ekledik
+            name: "Buz Topu",
+            type: 'attack',
+            category: 'elemental', // Tabın görünmesini sağlayan anahtar
+            tier: 2,
+			exhaustion: 3,
+			cooldown: 1,
+            rageCost: 15,
+            icon: 'skills/magus/elemental/iceball.webp', // İkon yolu
+            scaling: { 
+                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
+                elemental: { cold: { stat: "mp_pow", statMult: 0.6 } }
+            },
+            dotEffect: {
+                type: 'cold',
+                duration: 3,
+                scaling: {
+                    elemental: { 
+                        cold: { stat: "mp_pow", statMult: 0.4 },
+                        curse: { stat: "int", statMult: 0.2 } 
+                    }
+                }
+            }
+        },
+        onCast: function(attacker, defender) {
+            const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
+            animateCustomAttack(dmgPack, null, this.data.name);
+
+            // GECİKMELİ DoT UYGULAMASI
+            setTimeout(() => {
+                if (window.monster && monster.hp > 0) {
+                    // DİKKAT: this.data gönderiyoruz
+                    window.applySkillDoT(attacker, defender, this.data);
+                }
+            }, 600);
+        }
+    },
+
 	Ignite: {
         data: {
             id: "Ignite", // ID ekledik
@@ -392,6 +421,51 @@ const MAGUS_SKILLS = {
             }, 600);
         }
     },
+	Enhancement: {
+		data: {
+			id: "Enhancement",
+			name: "Enhancement",
+			menuDescription: "Elementlerini güçlendir.<br><span style='color:#43FF64'>5 Tur: STR/2 kadar Ateş, Buz, Yıldırım direnci</span> ve <span style='color:orange'>STR/5 kadar Elemental Hasar</span> kazandırır.",
+			rageCost: 25,
+			levelReq: 5,
+			exhaustion: 2,
+			cooldown: 6,
+			icon: 'skills/magus/elemental/enhancement.webp',
+			type: 'utility',
+			category: 'elemental',
+			tier: 2
+		},
+		onCast: function(attacker, defender) {
+			const stats = getHeroEffectiveStats();
+			const resVal = Math.floor(stats.str / 2);
+			const dmgVal = Math.floor(stats.str / 5);
+
+			// 1. DİRENÇ PAKETİ (Tek İkon)
+			applyStatusEffect(hero, { 
+				id: 'enhancement_resists', 
+				name: "Elementer Savunma", 
+				value: resVal, 
+				turns: 6, 
+				resetOnCombatEnd: true 
+			});
+
+			// 2. HASAR PAKETİ (Tek İkon)
+			applyStatusEffect(hero, { 
+				id: 'enhancement_dmg', 
+				name: "Elementer Güç", 
+				value: dmgVal, 
+				turns: 6, 
+				resetOnCombatEnd: true 
+			});
+
+			// Cooldown ve UI işlemleri aynı kalıyor
+			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Enhancement', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
+			updateStats();
+			showFloatingText(heroDisplayContainer, "ENHANCED!", 'heal');
+			
+			setTimeout(nextTurn, 1000);
+		}
+	},
 
 	Water_Whip: {
 		data: {

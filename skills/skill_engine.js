@@ -86,8 +86,22 @@ const SkillEngine = {
         if (isAttackerHero) {
             const p = sc.physical;
             const bonusStatVal = attackerStats[p.stat] || 0;
+			
+			// --- YENİ ZİNCİRLEME MANTIĞI BURAYA GELİYOR ---
+            // Yeteneğin ana stat çarpanını alıyoruz (Örn: 1.4)
+            let physStatMult = p.statMult || 0;
+
+            // Eğer yetenek bilgisinde 'statMultPerUse' varsa (Chain Blast gibi)
+            // Kullanım sayısına göre çarpanı artırıyoruz.
+            if (skillData.statMultPerUse) {
+                // hero.skillUsage["Chain_Blast"] değerine bakıyoruz
+                const usageCount = hero.skillUsage[skillData.id] || 0;
+                physStatMult += (usageCount * skillData.statMultPerUse);
+            }
+            // ----------------------------------------------
+			
             // Fiziksel hasar: (Atak * Çarpan) + (Stat * Çarpan)
-            physRaw = Math.floor((rawAtk * p.atkMult) + (bonusStatVal * p.statMult));
+            physRaw = Math.floor((rawAtk * p.atkMult) + (bonusStatVal * physStatMult));
         } else {
             // Canavar: (Atak * damageSplit.physical)
             physRaw = Math.floor(rawAtk * (sc.physical || 0));
