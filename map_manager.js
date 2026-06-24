@@ -613,6 +613,11 @@ function triggerNodeAction(node) {
 function proceedWithNodeAction(node) {
     const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 	
+	// --- YENİ: ESKİ ODADAN KALAN DÜKKAN VERİLERİNİ SIFIRLA ---
+    window.isStashAvailableInRoom = false; // Zula durumunu kapat
+    window.currentMerchantDiscount = 1.0;  // İndirimi sıfırla
+    // -------------------------------------------------------
+	
 	// --- YENİ: GERÇEK İLERLEME BURADA TETİKLENİR ---
     // Artık 'Hayır' denirse burası hiç çalışmaz, karakter eski yerinde kalır.
     window.CalendarManager.passDay(true); 
@@ -679,6 +684,8 @@ function proceedWithNodeAction(node) {
 function enterTown() {
 	window.isBroochTrade = false;
 	window.hasRentedInThisTown = false; // <--- YENİ: Her yeni kasabada kısıtlamayı kaldır
+	window.isStashAvailableInRoom = false; // Kasaba dükkanında zula olmasın
+    window.currentMerchantDiscount = 1.0;
 	// --- YENİ: USTA BANNER'INI GÜNCELLE ---
     const banner = document.getElementById('town-master-banner');
     const langu = window.getCombatLang(); // tr/en çeker
