@@ -377,10 +377,10 @@ window.LANG_EN = {
 		stats_magus: "<div class='stat-info-wrapper'>" +
 		"<b style='color:#3498db' class='stat-info-title'>MAGUS</b>" +
 		"<hr class='stat-separator'>" +
-        "• 5 <span style='color:#ff4d4d'>STRENGTH (STR)</span> = 4 Attack<br>" +
-		"• 5 <span style='color:#ffd700'>DEXTERITY (DEX)</span> = 1 Defense & 4 Block<br>" +
+        "• 5 <span style='color:#ff4d4d'>STRENGTH (STR)</span> = 1 Attack<br>" +
+		"• 2 <span style='color:#ffd700'>DEXTERITY (DEX)</span> = 1 Defense & 1.6 Block<br>" +
 		"• 1 <span style='color:#43FF64'>VITALITY (VIT)</span> = 4 HP<br>" +
-		"• 1 <span style='color:#3498db'>MAGIC POWER (MP)</span> = 1 Mana Regen<br>"+
+		"• 3 <span style='color:#3498db'>MAGIC POWER (MP)</span> = 1 Mana Regen<br>"+
 		"• 1 <span style='color:#9b59b6'>INTELLIGENCE (INT)</span> = 5 Max Mana",
 
 		combat_colors_title: "Combat Colors",
@@ -694,6 +694,8 @@ window.LANG_EN = {
 			blood_lust_debuff: "Exhaustion",
 			exhaust_def_debuff: "Def Shrink",
 			exhaust_atk_debuff: "Atk Shrink",
+			enhancement_resists: "Elemental Defense",
+			enhancement_dmg: "Elemental Power",
         },
 
         // Events
@@ -844,23 +846,25 @@ window.LANG_EN = {
 			Magic_Arrow: { name: "Magic Arrow", desc: "Damage: <b style='color:orange'>0.5xATK + 0.8xMP</b>.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Arcane_Echo: { name: "Arcane Echo", desc: "Damage: <b style='color:orange'>0.6xMP</b>.<br>Adds <span style='color:#43FF64'>0.2xMP+0.5ATK</span> to your next spell.<br><span style='color:cyan'>-15 Mana.</span>" },
 			Mana_Blast: { name: "Mana Blast", desc: "Damage: <b style='color:orange'>1.4xMP (Physical)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Mana_Ward: { name: "Mana Ward", desc: "Summon a mystic barrier.<br><span style='color:cyan'>The next hit you take consumes Mana instead of HP.</span><br><span style='color:#ff4d4d'>If Mana is insufficient, the remaining damage is increased by 50% and hits your Health.</span>", log: "Mystic barrier activated." },
-			Drain: { name: "Drain", desc: "Damage: <b style='color:orange'>1.0xMP</b>.<br><span style='color:cyan'>Ignores defense. Gain Mana equal to damage. -35 Mana.</span>" },
+			Mana_Ward: { name: "Mana Ward", desc: "Summon a mystic barrier.<br><span style='color:cyan'>The next hit you take consumes Mana instead of HP.</span><br><span style='color:#ff4d4d'>If Mana is insufficient, the remaining damage is increased by 50% and hits your Health.<br><span style='color:cyan'>-20 Mana.</span>", log: "Mystic barrier activated." },
+			Chain_Blast: { name: "Chain Blast", desc: "Damage: <b style='color:orange'>1.4xMP</b>.<br>Gains <span style='color:#43FF64'>+0.3xMP</span> per use during battle.<br><span style='color:cyan'>-25 Mana.</span>", },
+			Drain: { name: "Drain", desc: "Damage: <b style='color:orange'>1.0xMP</b>.<br><span style='color:#b19cd9'>Ignores defense.<br><span style='color:#43FF64'>Gain Mana equal to damage.<br><span style='color:cyan'>-35 Mana.</span>" },
 			Arcane_Acuity: { name: "Arcane Acuity", desc: "<b>(Fast Action)</b><br><span style='color:#43FF64'>4 Turns: Gain +INT Mana every turn.</span><br><span style='color:cyan'>-20 Mana. No turn end.</span>", log: "Restoring Mana based on INT for 4 turns." },
 			Arcane_Explosion: { name: "Arcane Explosion", desc: "Damage: <b style='color:orange'>ATK + 2.0xMP (Physical)</b>.<br><span style='color:cyan'>-75 Mana.</span>" },
 			Fireball: { name: "Fireball", desc: "Damage: <b style='color:orange'>0.5xATK + 0.5xMP</b>.<br>3 Turns:<b style='color:orange'>DoT: 0.4xMP(Fire) + 0.2xINT(Curse)</br><span style='color:cyan'>-15 Mana.</span>" },
 			Fire_Bolt: { name: "Fire Bolt", desc: "Damage: <b style='color:orange'>0.5xATK+ 0.5xSTR (Phys) + 0.5xMP(Fire)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Zap: { name: "Zap", desc: "Damage: <b style='color:orange'>1.1xINT (Lightning)</b>.<br><span style='color:#b19cd9'>3 Turns: Enemy Attack reduced by 20%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
+			Zap: { name: "Zap", desc: "Damage: <b style='color:orange'>1.1xINT (Lightning)</b>.<br>3 Turns:<span style='color:#b19cd9'>Enemy Attack reduced by 20%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
 			Iceball: { name: "Iceball", desc: "Damage: <b style='color:orange'>0.5xATK + 0.5xMP</b>.<br>3 Turns:<b style='color:#97C1E6'>DoT: 0.4xMP(Cold) + 0.2xINT(Curse)</br><span style='color:cyan'>-15 Mana.</span>" },
-			Ignite: { name: "Ignite", desc: "Damage: <b style='color:orange'>1xSTR</b><br><b style='color:orange'> 0.5xMP(Fire) </b> damage each turn for 3 Turns.</br>"},
+			Ignite: { name: "Ignite", desc: "Damage: <b style='color:orange'>1xSTR</b><br><b style='color:orange'> 0.5xMP(Fire) </b> damage each turn for 3 Turns.<br><span style='color:cyan'>-20 Mana.</span>"},
+			Enhancement: { name: "Enhancement", desc: "Infuse elements with strength.<br>5 Turns: <span style='color:#43FF64'>STR/2 Resist</span> and <span style='color:orange'>STR/5 Dmg Bonus</span> (Fire, Cold, Lightning).<br><span style='color:cyan'>-25 Mana.</span>", },
 			Water_Whip: { name: "Water Whip", desc: "Damage: <b style='color:orange'>1.0xSTR (Phys) + 1.0xMP (Cold)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
 			Ice_Shield: { name: "Ice Shield", desc: "Ice shield.<br><span style='color:#3498db'>Block Gained: 2.0xMP</span>.<br><span style='color:cyan'>-40 Mana.</span>", log: "Gained $1 Block." },
 			Crystalised_Mana: { name: "Crystalised Mana", desc: "Crystalizes mana.<br><span style='color:#43FF64'>Gain +50 Mana after 2 turns.</span><br><span style='color:cyan'>-20 Mana.</span>", log: "Gaining +50 Mana after 2 turns." },
 			Water_Snare: { name: "Water Snare", desc: "Damage: <b style='color:orange'>1.0xSTR</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy Attack reduced by 50%.</span><br><span style='color:cyan'>-25 Mana.</span>" },
-			Chaos_Rain: { name: "Chaos Rain", desc: "Damage: <b style='color:orange'>2.5xMP (Random Element)</b>.<br><span style='color:cyan'>Targets enemy's lowest resistance. -75 Mana.</span>" },
+			Chaos_Rain: { name: "Chaos Rain", desc: "Damage: <b style='color:orange'>2.5xMP (Random Element)</b>.<br><span style='color:#b19cd9'>Targets enemy's lowest resistance.<br><span style='color:cyan'>-75 Mana.</span>" },
 			Meditate: { name: "Meditate", desc: "<span style='color:#43FF64'>Mana Gained: INT + 50% Missing HP.</span><br><span style='color:cyan'>0 Mana.</span>", log: "Gained $1 Mana." },
 			Thorn_Whip: { name: "Thorn Whip", desc: "Damage: <b style='color:orange'>0.7xINT (Phys) + 0.7xINT (Poison)</b>.<br><span style='color:cyan'>-20 Mana.</span>" },
-			Strangle: { name: "Strangle", desc: "Damage: <b style='color:orange'>1xInt.</b><br><b style='color:MediumSeaGreen'> 0.8xInt(Poison)</b> damage each turn for 3 turns.</br>"},
+			Strangle: { name: "Strangle", desc: "Damage: <b style='color:orange'>1xInt.</b><br><b style='color:MediumSeaGreen'> 0.8xInt(Poison)</b> damage each turn for 3 turns.<br><span style='color:cyan'>-20 Mana.</span>"},
 			Rejuvanate: { name: "Rejuvenate", desc: "<span style='color:#43FF64'>4 Turns: Restore 1xINT HP and 1xINT Mana every turn.</span><br><span style='color:cyan'>-75 Mana.</span>", log: "Restoring HP(1x) and Mana(1x) based on INT for 4 turns." },
 			Natures_Wrath: { name: "Nature's Wrath", desc: "Damage: <b style='color:orange'>1.0xMP (Physical)</b>.<br><span style='color:#b19cd9'>4 Turns: Enemy ATK/DEF reduced by 50%.</span><br><span style='color:cyan'>-120 Mana.</span>" },
         },
