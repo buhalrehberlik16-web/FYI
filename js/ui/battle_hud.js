@@ -52,6 +52,8 @@ window.updateStatusIcons = function(char, container) {
         else if (effect.id === 'atk_half') icon.innerHTML = '👎';
         else if (effect.id === 'defense_zero') icon.innerHTML = '💔';
         else if (effect.id === 'debuff_webbed') icon.innerHTML = '🕸️';
+		else if (effect.id === 'enhancement_resists') icon.innerHTML = '💠️'; // Direnç grubu için Kalkan
+		else if (effect.id === 'enhancement_dmg') icon.innerHTML = '🔮';    // Hasar grubu için Küre
         // --- YORGUNLUK ÖZEL SEMBOLLERİ ---
         else if (effect.id === 'exhaust_def_debuff') {
             // RPG Ruhu: Kalkanın içinde eksi (-) işareti
