@@ -33,7 +33,11 @@ window.applyStatusEffect = function(target, newEffect) {
         }
     }
 	
-    const existingIndex = target.statusEffects.findIndex(e => e.id === newEffect.id && e.id !== 'block_skill');
+    const existingIndex = target.statusEffects.findIndex(e => 
+    e.id === newEffect.id && 
+    e.element === newEffect.element && // Element kontrolü eklendi!
+    e.id !== 'block_skill'
+	);
 
 	const targetName = isTargetHero ? window.getHeroClassNameTrans() : window.getEnemyNameTrans(target.name);
 	
@@ -429,7 +433,28 @@ window.getHeroEffectiveStats = function() {
                 totalAtkMult *= (1 - e.value); // Atak %30 azalır
                 totalDefMult *= (1 - e.value); // Defans %30 azalır
             }
-            if (e.id === 'resist_fire') currentResists.fire += e.value;
+            //if (e.id === 'resist_fire') currentResists.fire += e.value;
+			// DİNAMİK DİRENÇ KONTROLÜ (resist_fire, resist_cold vb. hepsini yakalar)
+			if (e.id.startsWith('resist_')) {
+				const eleType = e.id.split('_')[1]; // 'fire', 'cold' vb. kısmını alır
+				if (currentResists.hasOwnProperty(eleType)) {
+					currentResists[eleType] += e.value;
+				}
+			}
+			// --- YENİ GRUP EFEKT KONTROLLERİ BURADAN BAŞLIYOR ---
+            // 1. Enhancement Direnç Paketi (Tek ikon, 3 direnç artırır)
+            if (e.id === 'enhancement_resists') {
+                currentResists.fire += e.value;
+                currentResists.cold += e.value;
+                currentResists.lightning += e.value;
+            }
+
+            // 2. Enhancement Hasar Paketi (Tek ikon, 3 hasar türü artırır)
+            if (e.id === 'enhancement_dmg') {
+                currentElemDmg.fire += e.value;
+                currentElemDmg.cold += e.value;
+                currentElemDmg.lightning += e.value;
+            }
 			// --- YENİ: BLOOD LUST GİDEREK ARTAN ZAYIFLIK ---
             if (e.id === 'blood_lust_debuff') {
                 // turns 3 iken (1. Tur): %20 kayıp (0.8)
@@ -1704,7 +1729,7 @@ window.nextTurn = function() {
             if (!checkGameOver()) {
                 
                 // --- 1. ÖNCE CANAVAR ÜZERİNDEKİ DoT (KANAMA/ZEHİR) İŞLE ---
-                const monsterDoTTypes = ['bleed', 'poison', 'fire', 'curse'];
+                const monsterDoTTypes = ['bleed', 'poison', 'fire', 'cold', 'lightning', 'curse'];
                 monster.statusEffects.filter(e => monsterDoTTypes.includes(e.id) && !e.waitForCombat).forEach((effect, index) => {
                     setTimeout(() => {
                         monster.hp = Math.max(0, monster.hp - effect.value);
