@@ -67,7 +67,7 @@ const MAGUS_SKILLS = {
             }
         }, 850); 
     }
-},
+	},
 	
 	Mana_Blast: {
 		data: {
@@ -87,6 +87,14 @@ const MAGUS_SKILLS = {
             }
 		},
         onCast: function(attacker, defender, dmgPack) {
+			const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+			applyStatusEffect(defender, { 
+                id: 'debuff_enemy_atk', 
+                name: lang.status.debuff_enemy_atk, 
+                value: 0.20, 
+                turns: 3, 
+                resetOnCombatEnd: true 
+            });
 			dmgPack.skillKey = 'Mana_Blast';
             animateCustomAttack(dmgPack, null, this.data.name);
         }
@@ -664,7 +672,6 @@ const MAGUS_SKILLS = {
         }
     },
 
-	
 	Strangle: {
         data: {
             id: "Strangle", // ID ekledik
@@ -701,6 +708,37 @@ const MAGUS_SKILLS = {
             }, 600);
         }
     },
+	
+	Spore_Cloud: {
+		data: {
+			id: "Spore_Cloud",
+			name: "Spore Cloud",
+			menuDescription: "<b>(Hızlı Aksiyon)</b><br>Düşmanı sporlarla kör et.<br><span style='color:#b19cd9'>2 Tur: Düşman atağı %40 azalır.</span><br><span style='color:cyan'>-30 Mana. Tur harcamaz.</span>",
+			rageCost: 30,
+			levelReq: 5,
+			exhaustion: 4,
+			cooldown: 6,
+			icon: 'skills/magus/nature/spore_cloud.webp',
+			type: 'utility',
+			category: 'nature',
+			tier: 2
+		},
+		onCast: function(attacker, defender) {
+			applyStatusEffect(monster, { 
+				id: 'debuff_enemy_atk', 
+				name: "Spor Etkisi", 
+				value: 0.40, 
+				turns: 3, 
+				resetOnCombatEnd: true 
+			});
+
+			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Spore_Cloud', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
+			
+			updateStats();
+			showFloatingText(document.getElementById('monster-display'), "BLINDED!", 'damage');
+			setTimeout(() => { window.isHeroTurn = true; toggleSkillButtons(false); }, 300);
+		}
+	},
 
 	Rejuvanate: {
 		data: {

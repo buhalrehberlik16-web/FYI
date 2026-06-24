@@ -33,52 +33,56 @@ const SkillEngine = {
         const targetResists = targetStats.resists || { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 };
 
         // Düşman atağını kontrol et (Debuff varsa rawAtk düşer)
-        const weakAtk = hero.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
-        if (!isAttackerHero && weakAtk) {
-            rawAtk = Math.floor(rawAtk * (1 - weakAtk.value));
-        }
+        // Saldırganın (Canavarın) üzerinde bu debuff var mı diye bakıyoruz
+		const atkDebuff = attacker.statusEffects.find(e => e.id === 'debuff_enemy_atk' && !e.waitForCombat);
+		if (atkDebuff) {
+			// Eğer varsa, atağı düşür (Örn: 12 * 0.8 = 9.6 -> 9)
+			rawAtk = Math.floor(rawAtk * (1 - atkDebuff.value));
+		}
 
-        // Savunma bonuslarını ekle (Siper/Blok değil, saf defans değeri)
+        // --- 1. SAVUNMA HESAPLAMA VE DEBUFF KONTROLÜ ---
         let effectiveDef = targetStats.def || 0;
-		// --- YENİ: DÜŞMAN DEFANS DEBUFF KONTROLÜ (Distract vb.) ---
+
         if (target.statusEffects) {
+            // A. DÜŞMAN DEFANS DEBUFF (Distract vb. ile canavarın zırhını kırma)
             const weakDef = target.statusEffects.find(e => e.id === 'debuff_enemy_def' && !e.waitForCombat);
             if (weakDef) {
-                // Eğer düşmanın üzerinde %50 defans azaltma varsa, defansı o oranda düşür
                 effectiveDef = Math.floor(effectiveDef * (1 - weakDef.value));
             }
+
+            // B. SABİT DEFANS ARTIŞI (Stone Skin veya Canavarın Kalkanı)
+            const defUpEffect = target.statusEffects.find(e => e.id === 'def_up' && !e.waitForCombat);
+            if (defUpEffect) {
+                effectiveDef += defUpEffect.value; 
+            }
         }
-        // ---------------------------------------------------------
-		// --- 1. ZIRH DELME (Yüzdesel ve Sabit) ---
-        // A. Yüzdesel Delme (Delip Geç: %50)
-        if (skillData.ignoreDefPercent) {
-            effectiveDef *= (1 - skillData.ignoreDefPercent);
-        }
-        // B. Sabit Delme (Taktiksel Vuruş: 5 Puan)
-        if (skillData.ignoreDef) {
-            effectiveDef = Math.max(0, effectiveDef - skillData.ignoreDef);
-        }
-        // -----------------------------------------
-		const defUpEffect = target.statusEffects.find(e => e.id === 'def_up' && !e.waitForCombat);
-		if (defUpEffect) {
-			// Eğer varsa (örn: +8 veya +25), bunu baz defansa ekle
-			effectiveDef += defUpEffect.value; 
-		}
+
+        // C. SİPER / SAVUNMA DURUŞU (A ve D tuşları veya Canavarın Defend hamlesi)
         if (target === hero && window.isHeroDefending) {
             effectiveDef += (window.heroDefenseBonus || 0);
         } else if (target !== hero && window.isMonsterDefending) {
             effectiveDef += (window.monsterDefenseBonus || 0);
         }
-		
-		// --- YENİ: ZIRH DELME VE KIRIK ZIRH KONTROLÜ ---
-        // A. Saldıranın "Zırh Delme" (ignore_def) buff'ı var mı?
-        const hasIgnoreDef = (isAttackerHero ? hero.statusEffects : []).some(e => e.id === 'ignore_def' && !e.waitForCombat);
-        
-        // B. Hedefin "Savunmasız" (defense_zero) debuff'ı var mı? (Reckless Strike veya Bone Shatter'dan gelir)
-        const isTargetVulnerable = (target === hero ? hero.statusEffects : []).some(e => e.id === 'defense_zero' && !e.waitForCombat);
 
+        // --- 2. ZIRH DELME VE KIRIK ZIRH KONTROLÜ (EVRENSEL) ---
+        
+        // DÜZELTME A: Saldıran kimse (Attacker) onun üzerindeki "ignore_def" buff'ına bak
+        const hasIgnoreDef = attacker.statusEffects && attacker.statusEffects.some(e => e.id === 'ignore_def' && !e.waitForCombat);
+        
+        // DÜZELTME B: Hedef kimse (Target) onun üzerindeki "defense_zero" debuff'ına bak
+        const isTargetVulnerable = target.statusEffects && target.statusEffects.some(e => e.id === 'defense_zero' && !e.waitForCombat);
+
+        // Eğer saldırgan zırh deliyorsa VEYA hedef savunmasızsa zırhı 0'la
         if (hasIgnoreDef || isTargetVulnerable) {
-            effectiveDef = 0; // Defans tamamen devre dışı!
+            effectiveDef = 0; 
+        }
+
+        // E. YETENEK BAZLI ZIRH DELME (IgnoreDefPercent/IgnoreDef - skillData'dan gelir)
+        if (skillData.ignoreDefPercent) {
+            effectiveDef *= (1 - skillData.ignoreDefPercent);
+        }
+        if (skillData.ignoreDef) {
+            effectiveDef = Math.max(0, effectiveDef - skillData.ignoreDef);
         }
 
         // --- 2. FİZİKSEL HASAR HESABI ---
@@ -198,18 +202,20 @@ const SkillEngine = {
         // --- 2. LANET VE SON ÇARPANLAR ---
         let finalDamageMultiplier = 1.0;
 
-        // Hedefin (Düşmanın) üzerindeki "Lanet" etkisini kontrol et
-        const curseEffect = target.statusEffects.find(e => e.id === 'curse_damage' && !e.waitForCombat);
-        if (curseEffect) {
-            // Eğer Lanet varsa hasarı %20 (0.20) artır
-            finalDamageMultiplier += curseEffect.value; 
+        // KRİTİK: Hedefin (Target) üzerinde 'curse_damage' var mı diye bakıyoruz
+        if (target.statusEffects) {
+            const curseEffect = target.statusEffects.find(e => e.id === 'curse_damage' && !e.waitForCombat);
+            if (curseEffect) {
+                // Eğer varsa çarpanı artır (Örn: 1.0 + 0.20 = 1.20)
+                finalDamageMultiplier += curseEffect.value; 
+            }
         }
 
         // Nihai paket (Tüm sayılar tam sayı)
         return {
-            total: Math.floor(totalHasar),
-            phys: Math.floor(physNet),
-            elem: Math.floor(elemNet)
+            total: Math.floor(totalHasar * finalDamageMultiplier),
+            phys: Math.floor(physNet * finalDamageMultiplier),
+            elem: Math.floor(elemNet * finalDamageMultiplier)
         };
     },
 
