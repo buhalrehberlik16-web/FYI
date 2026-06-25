@@ -192,7 +192,7 @@ const SkillEngine = {
 		
 		// --- YANKI / KURULMA (WIND UP) BONUSU ---
 		// Eğer saldıran kahramansa ve üzerinde wind_up etkisi varsa hasara ekle
-		const windUp = (isAttackerHero ? hero.statusEffects : []).find(e => e.id === 'wind_up' && !e.waitForCombat);
+		const windUp = attacker.statusEffects && attacker.statusEffects.find(e => (e.id === 'wind_up' || e.id === 'arcane_echo_active') && !e.waitForCombat);
 		if (windUp) {
 			totalHasar += windUp.value;
 			physNet += windUp.value; // Fiziksel hasar kısmına da ekleyelim ki detayda doğru gözüksün

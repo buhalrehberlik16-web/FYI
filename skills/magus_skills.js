@@ -57,8 +57,7 @@ const MAGUS_SKILLS = {
                 
                 const bonusVal = Math.floor(stats.mp_pow * 0.2) + Math.floor(stats.atk * 0.5); 
                 applyStatusEffect(attacker, { 
-                    id: 'wind_up', 
-                    name: "Büyü Yankısı", 
+                    id: 'wind_up',                    
                     value: bonusVal, 
                     turns: 2, 
                     resetOnCombatEnd: true 
@@ -89,8 +88,8 @@ const MAGUS_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
 			const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
 			applyStatusEffect(defender, { 
-                id: 'debuff_enemy_atk', 
-                name: lang.status.debuff_enemy_atk, 
+                id: 'debuff_enemy_def', 
+                name: lang.status.debuff_enemy_def, 
                 value: 0.20, 
                 turns: 3, 
                 resetOnCombatEnd: true 
@@ -115,8 +114,7 @@ const MAGUS_SKILLS = {
 		},
 		onCast: function() {
 			applyStatusEffect(hero, { 
-				id: 'mana_ward_active', 
-				name: "Mana Kalkanı", 
+				id: 'mana_ward_active',  
 				turns: 99, // Darbe alana kadar bekler
 				resetOnCombatEnd: true 
 			});
@@ -211,7 +209,6 @@ const MAGUS_SKILLS = {
             const stats = getHeroEffectiveStats();
             applyStatusEffect(hero, { 
                 id: 'rage_regen_buff', 
-                name: "Odaklanma", 
                 value: stats.int, 
                 turns: 5, 
                 resetOnCombatEnd: true 
@@ -451,7 +448,6 @@ const MAGUS_SKILLS = {
 			// 1. DİRENÇ PAKETİ (Tek İkon)
 			applyStatusEffect(hero, { 
 				id: 'enhancement_resists', 
-				name: "Elementer Savunma", 
 				value: resVal, 
 				turns: 6, 
 				resetOnCombatEnd: true 
@@ -459,8 +455,7 @@ const MAGUS_SKILLS = {
 
 			// 2. HASAR PAKETİ (Tek İkon)
 			applyStatusEffect(hero, { 
-				id: 'enhancement_dmg', 
-				name: "Elementer Güç", 
+				id: 'enhancement_dmg',  
 				value: dmgVal, 
 				turns: 6, 
 				resetOnCombatEnd: true 
@@ -542,7 +537,7 @@ const MAGUS_SKILLS = {
         //"After 2 turns, change this skill to Consume Crystal." demişiz. Mana generator olarak işaretli, 20 mana cost ve 2 tur cd gözüküyor.
         onCast: function() {
             // Şimdilik 2 tur sonra yüksek mana verecek bir buff ekleyelim
-            applyStatusEffect(hero, { id: 'mana_crystal', name: 'Mana Kristali', turns: 3, value: 50, resetOnCombatEnd: true });
+            applyStatusEffect(hero, { id: 'mana_crystal', turns: 3, value: 50, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Crystalised_Mana', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             updateStats();
             writeLog("💎 **Mana Kristali**: 2 tur sonra büyük miktarda mana açığa çıkacak.");
@@ -571,7 +566,7 @@ const MAGUS_SKILLS = {
         onCast: function(attacker, defender, dmgPack) {
             const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
             // Düşman atağını %50 kır
-            applyStatusEffect(monster, { id: 'debuff_enemy_atk', name: "Sıkışmış", value: 0.50, turns: 4, resetOnCombatEnd: true });
+            applyStatusEffect(monster, { id: 'debuff_enemy_atk', value: 0.50, turns: 4, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Water_Snare', turns: 6, maxTurns: 6, resetOnCombatEnd: true });
 			dmgPack.skillKey = 'Water_Snare';
             animateCustomAttack(dmgPack, null, this.data.name);
@@ -726,7 +721,6 @@ const MAGUS_SKILLS = {
 		onCast: function(attacker, defender) {
 			applyStatusEffect(monster, { 
 				id: 'debuff_enemy_atk', 
-				name: "Spor Etkisi", 
 				value: 0.40, 
 				turns: 3, 
 				resetOnCombatEnd: true 
@@ -757,10 +751,10 @@ const MAGUS_SKILLS = {
         const stats = getHeroEffectiveStats();
         
         // HP Yenileme (Açıklamaya göre +INT HP)
-        applyStatusEffect(hero, { id: 'regen', name: "Gençleşme", value: stats.int, turns: 4, resetOnCombatEnd: true });
+        applyStatusEffect(hero, { id: 'regen', value: stats.int, turns: 4, resetOnCombatEnd: true });
         
         const manaRegenValue = Math.floor(stats.int);
-        applyStatusEffect(hero, { id: 'rage_regen_buff', name: "Doğa Gücü", value: manaRegenValue, turns: 4, resetOnCombatEnd: true });
+        applyStatusEffect(hero, { id: 'rage_regen_buff', value: manaRegenValue, turns: 4, resetOnCombatEnd: true });
         // --------------------------------------------------------------
 
         window.logSkillEffect('Rejuvanate');

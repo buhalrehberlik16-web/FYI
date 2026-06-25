@@ -192,7 +192,7 @@ const BARBARIAN_SKILLS = {
         },
         onCast: function(attacker, defender) {
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'armor_break', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
-            applyStatusEffect(defender,{ id: 'ignore_def', name: 'Zırh Kırıldı', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(defender,{ id: 'ignore_def', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             
             // ignore_def aktif olduğu için SkillEngine targetDef'i 0 görecektir
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
@@ -335,7 +335,7 @@ const BARBARIAN_SKILLS = {
 			const currentLang = window.gameSettings.lang || 'tr';
             
             // 1. Defansı 0 yapma etkisi (Mevcut)
-            applyStatusEffect(hero, { id: 'defense_zero', name: 'Savunmasız', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
+            applyStatusEffect(hero, { id: 'defense_zero', turns: 2, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'reckless_strike', turns: 2, maxTurns: 2, resetOnCombatEnd: true });
             
             // 2. Hasar Paketini hesapla
@@ -659,8 +659,7 @@ const BARBARIAN_SKILLS = {
             // 3. Periyodik İyileşme (%25 x 2 Tur)
             const tickHeal = Math.floor(dmgPack.total * 0.25);
             applyStatusEffect(hero, { 
-                id: 'regen', 
-                name: "Kan Emme", 
+                id: 'regen',  
                 value: tickHeal, 
                 turns: 2, 
                 resetOnCombatEnd: true 
@@ -668,8 +667,7 @@ const BARBARIAN_SKILLS = {
 
             // 4. GİDEREK ARTAN DEBUFF BEDELİ
             applyStatusEffect(hero, { 
-                id: 'blood_lust_debuff', 
-                name: "Tükenmişlik", 
+                id: 'blood_lust_debuff',  
                 turns: 3, // Bu tur + 2 tur
                 resetOnCombatEnd: true 
             });
@@ -696,8 +694,7 @@ const BARBARIAN_SKILLS = {
             
             // Etkiyi uygula (value: 0.10 = %10 can çalma)
             applyStatusEffect(hero, { 
-                id: 'blood_mark_active', 
-                name: "Kan Damgası", 
+                id: 'blood_mark_active',  
                 value: 0.20, 
                 turns: 99, // Oda bitene kadar sürer
                 resetOnCombatEnd: true 
@@ -850,7 +847,6 @@ const BARBARIAN_SKILLS = {
             // Ruh Kalkanı etkisini uygula (onHitRageGain'i geçici olarak artıran bir buff)
             applyStatusEffect(hero, { 
                 id: 'spirit_shield_active', 
-                name: "Ruh Kalkanı", 
                 value: 10, // Her darbede +10 kaynak
                 turns: 3, 
                 resetOnCombatEnd: true 
@@ -1068,8 +1064,7 @@ const BARBARIAN_SKILLS = {
 
                 if (bonusAtk > 0) {
                     applyStatusEffect(monster, { 
-                        id: 'atk_up', 
-                        name: "Kışkırtılmış", 
+                        id: 'atk_up',  
                         value: bonusAtk, 
                         turns: 2, // Bu tur ve saldıracağı tur
                         resetOnCombatEnd: true 
@@ -1085,7 +1080,6 @@ const BARBARIAN_SKILLS = {
             const regenVal = Math.floor(stats.int * 1.0);
             applyStatusEffect(hero, { 
                 id: 'regen', 
-                name: "Kışkırtma Şifası", 
                 value: regenVal, 
                 turns: 3, 
                 resetOnCombatEnd: true 
@@ -1227,8 +1221,7 @@ const BARBARIAN_SKILLS = {
             
             // 2. Astral Bariyer korumasını kahramana ekle (value: 15 HP iyileştirme miktarı)
             applyStatusEffect(hero, { 
-                id: 'astral_shield', 
-                name: "Astral Koruma", 
+                id: 'astral_shield',  
                 value: 15, 
                 turns: 99, // Darbe alana kadar gitmez (oda sonuna kadar)
                 resetOnCombatEnd: true 
@@ -1285,7 +1278,6 @@ const BARBARIAN_SKILLS = {
                 const curseVal = Math.floor(dmgPack.total * 0.25); // Toplam hasarın %25'i kadar DoT
                 applyStatusEffect(defender, { 
                     id: 'curse', 
-                    name: "Kıyamet Laneti", 
                     value: curseVal, 
                     turns: 4, 
                     resetOnCombatEnd: true 
