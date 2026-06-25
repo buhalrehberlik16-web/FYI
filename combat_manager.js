@@ -821,7 +821,7 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
     let finalDmg = dmgPack.total;
 
     // 1. Wind Up (Kurulma) Kontrolü
-    const windUpIdx = hero.statusEffects.findIndex(e => e.id === 'wind_up' && !e.waitForCombat);
+    const windUpIdx = hero.statusEffects.findIndex(e => (e.id === 'wind_up' || e.id === 'arcane_echo_active') && !e.waitForCombat);
     if (windUpIdx !== -1) { 
         hero.statusEffects.splice(windUpIdx, 1); 
     }
