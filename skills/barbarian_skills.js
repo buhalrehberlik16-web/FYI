@@ -83,7 +83,7 @@ const BARBARIAN_SKILLS = {
         onCast: function(attacker, defender) {
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'bash';
-            if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', name: 'Düşman Sersem', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
+            if (Math.random() < 0.30) hero.statusEffects.push({ id: 'monster_stunned', turns: 1, waitForCombat: false, resetOnCombatEnd: true });
             hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'bash', turns: 3, maxTurns: 3, resetOnCombatEnd: true });
             animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_attack1.webp', 'images/heroes/barbarian/barbarian_attack3.webp'], this.data.name);
         }
