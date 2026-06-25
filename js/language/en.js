@@ -302,6 +302,7 @@ window.LANG_EN = {
 		synthesis_title: "Synthesis",
 		stable_steed_success: "You rented a swift steed! Journeys will take less time.",
 		stable_scout_success: "The scout is on the way, you now know the dangers ahead.",
+		scout_already_active_msg: "Scout is already on the move! You cannot send another one until the current report expires.",
 		stable_steed_dialogue: "This noble mare will carry you like the wind.",
 		stable_scout_dialogue: "My birds are watching the roads ahead for you.",
 		nav_scout: "SCOUT (S)",
