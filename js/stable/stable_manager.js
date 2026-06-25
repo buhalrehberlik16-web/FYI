@@ -33,9 +33,18 @@ window.StableManager = {
 
     // 2. KEŞİF ULAĞI TUT
     hireScout: function() {
-        const cost = 15;
-        const currentLang = window.gameSettings.lang || 'tr';
+		const currentLang = window.gameSettings.lang || 'tr';
         const lang = window.LANGUAGES[currentLang];
+		
+		// --- YENİ KONTROL: GÖZCÜ ZATEN AKTİF Mİ? ---
+		if (hero.scoutedNodesLeft > 0) {
+			// Eğer zaten bir gözcü tutulmuşsa oyuncuyu uyar ve işlemden çık
+			window.showAlert(lang.scout_already_active_msg, lang.warning_title);
+			return;
+		}
+		// -------------------------------------------
+		
+        const cost = 15;
 		if (hero.gold < cost) { window.showAlert(lang.not_enough_msg); return; }
 
         if (hero.gold >= cost) {
