@@ -474,6 +474,7 @@ function initGame() {
 	hero.mountedNodesLeft = 0;    // Kiralık atı sıfırla
     hero.scoutedNodesLeft = 0;    // Gözcü sayacını sıfırla
     hero.scoutStartStage = undefined; // Gözcü başlangıç noktasını sil
+    hero.eventBonusGold = 0; 
     // ------------------------------------------
 	window.currentBossScaling = 1.0;
 	window.lastExhaustionThreshold = 0;

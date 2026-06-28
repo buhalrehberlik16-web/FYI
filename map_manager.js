@@ -236,6 +236,25 @@ function generateMap() {
 			const masters = ['blacksmith', 'alchemist', 'stable'];
 			m = masters[Math.floor(Math.random() * masters.length)];
 		}
+		
+		const stats = ENEMY_STATS[e];
+		let frozenResists = null;
+
+		if (stats) {
+			// --- DİRENÇLERİ BURADA DONDURUYORUZ ---
+			const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };
+			const specificData = stats.specificResists || {};
+			const elements = ['fire', 'cold', 'lightning', 'poison', 'curse'];
+			const randomScale = (stats.tier || 1) * 0.5;
+			
+			frozenResists = {};
+			elements.forEach(ele => {
+				let base = tribeData[ele] || 0;
+				let spec = specificData[ele] || 0;
+				let randRoll = (Math.floor(Math.random() * 21) - 10);
+				frozenResists[ele] = base + spec + Math.round(randRoll * randomScale);
+			});
+		}
 
 		const node = {
 			id: nodeIdCounter++, 
@@ -246,6 +265,7 @@ function generateMap() {
 			battleBgNum: bBg,
 			biomeImg: img, 
 			enemyName: e, 
+			monsterResists: frozenResists,
 			roomEvent: roomEvent, 
 			isHard: isCombatNode ? diff.isHard : false,
             isHalfTier: isCombatNode ? diff.isHalfTier : false,
@@ -257,6 +277,15 @@ function generateMap() {
 			jitterY: (Math.random() * 16 - 8) + (Math.sin(stage * 0.5) * 40), 
 			next: []
 			};
+			
+			// --- YENİ: EVENT BELİRLEME (HARİTA ÜRETİLİRKEN) ---
+			if (nodeType === 'choice') {
+				// EVENT_POOL içinden rastgele bir tane seç ve ID'sini kaydet
+				const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+				node.eventId = randomEvt.id; 
+			}
+			// --------------------------------------------------
+			
 		nodesInThisStage.push(node);
 	});
 
@@ -664,12 +693,13 @@ function proceedWithNodeAction(node) {
             startBattle("Goblin Şefi", true, false, false, node.biome, node.battleBgNum, node.roomEvent, false);
         }
         else if (node.type === 'city') {
-            writeLog("🏆 " + lang.desc_city);
+            window.isBroochTrade = false;
+            window.currentMerchantDiscount = 1.0;
+            window.refreshMerchantStock(12); // 8 yerine 12 yazdık
             
+            writeLog("🏆 " + lang.desc_city);
             setTimeout(() => {
                 if (typeof enterCity === 'function') {
-					window.currentMerchantDiscount = 1.0;
-					window.refreshMerchantStock(12);
                     enterCity();
                 } else {
                     switchScreen(window.cityScreen);
@@ -737,47 +767,6 @@ window.enterCity = function() {
 	const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
     writeLog(lang.desc_city);
 };
-
-// ... Random Event ve Campfire (UI Manager'dan çağrılır) 
-//function startCampfireEvent(node) {
- //   const screen = document.getElementById('campfire-screen');
- //   const optionsDiv = document.getElementById('campfire-options');
- //   const resultDiv = document.getElementById('campfire-result');
- //   switchScreen(screen);
- //   if(optionsDiv) { optionsDiv.classList.remove('hidden'); optionsDiv.style.display = 'flex'; }
- //   if(resultDiv) resultDiv.classList.add('hidden');
-    
- //   const btnRest = document.getElementById('btn-camp-rest');
- //   const btnTrain = document.getElementById('btn-camp-train');
- //   const btnCont = document.getElementById('btn-camp-continue');
-
- //   let efficiency = 1.0;
- //   let penaltyText = "";
-    
- ////   if (node && typeof hero.lastCampfireStage !== 'undefined' && (node.stage - hero.lastCampfireStage) <= 1) {
- //       efficiency = 0.3; 
-//        penaltyText = "<br><br><span style='color:#ff4d4d; font-weight:bold;'>⚠️ Daha yeni dinlendin! (%30 Etki)</span>";
- //   }
-    
-//    if(node) hero.lastCampfireStage = node.stage;
-
-//    btnRest.onclick = () => {
-//        let baseHeal = (Math.random() < 0.75) ? Math.floor(Math.random() * 6) + 15 : Math.floor(Math.random() * 25) + 21;
-//        let finalHeal = Math.floor(baseHeal * efficiency); if(finalHeal < 1) finalHeal = 1;
-//        hero.hp = Math.min(hero.maxHp, hero.hp + finalHeal);
-//        updateStats(); 
-//        showCampfireResult("Dinlendin", `Ateşin başında uyudun ve **${finalHeal} HP** kazandın.${penaltyText}`);
-//    };
-
-//    btnTrain.onclick = () => {
-//        let baseXp = (Math.random() < 0.75) ? Math.floor(Math.random() * 101) + 100 : Math.floor(Math.random() * 800) + 201;
-//        let finalXp = Math.floor(baseXp * efficiency); if(finalXp < 1) finalXp = 1;
-//        gainXP(finalXp); 
-//        updateStats(); 
-//        showCampfireResult("Antrenman Yaptın", `Kılıç talimi yaptın ve **${finalXp} XP** kazandın!${penaltyText}`);
-//    };
-//    btnCont.onclick = () => switchScreen(mapScreen);
-//}
 
 function showCampfireResult(title, text) {
     document.getElementById('campfire-options').style.display = 'none';

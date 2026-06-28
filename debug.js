@@ -299,3 +299,24 @@ window.scoutver = function() {
     window.showGameInfo(lang.full_scout_title, report, "#9b59b6");
     writeLog(lang.log_cheat_scout);
 };
+
+window.sehreGit = function() {
+    // 1. Şehir için gerekli dükkan ayarlarını yap
+    window.isBroochTrade = false;
+    window.currentMerchantDiscount = 1.0;
+    
+    // 2. 12 slotluk Şehir stoğunu üret
+    if (typeof refreshMerchantStock === 'function') {
+        refreshMerchantStock(12);
+    }
+
+    // 3. Şehir ekranına geçiş yap
+    if (typeof enterCity === 'function') {
+        enterCity();
+    } else {
+        switchScreen(window.cityScreen);
+    }
+
+    writeLog("🌀 **Hile**: Eldoria şehrine ışınlandın ve Ulu Tüccar hazırlandı.");
+    console.log("🛠️ Debug: Şehir moduna 12 slotluk stokla geçiş yapıldı.");
+};

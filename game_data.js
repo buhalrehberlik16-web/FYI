@@ -106,6 +106,7 @@ window.hero = {
     mountedNodesLeft: 0, 
     scoutedNodesLeft: 0,
 	hasSeenSkillWarning: false,
+	eventBonusGold: 0, // Başlangıçta 0 olmalı
 	sessionLifeStolen: 0, // Bu savaştaki toplam çalınan can
     permanentHpBonus: 0,  // Blood Mark'tan gelen kalıcı can bonusu
 	exhaustion: 0,

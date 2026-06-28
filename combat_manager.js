@@ -758,10 +758,11 @@ window.handleSkillUse = function(skillKey) {
     if (!skillObj || checkIfSkillBlocked(skillKey)) return;
 
     // 1. Maliyet kontrolü
+    const lang = window.getCombatLang(); // Eksik tanım eklendi
     if (hero.rage < (skillObj.data.rageCost || 0)) { 
         const resName = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
-		writeLog(lang.combat.log_insufficient_resource.replace("$1", resName)); 
-		return; 
+        writeLog(lang.combat.log_insufficient_resource.replace("$1", resName)); 
+        return; 
     }
 
     window.isHeroTurn = false; 
@@ -771,40 +772,43 @@ window.handleSkillUse = function(skillKey) {
     if(skillObj.data.rageCost > 0) hero.rage -= skillObj.data.rageCost;
     updateStats(); 
 
-    // --- KRİTİK DÜZELTME: TÜM SINIFLAR İÇİN BUFFER'I AÇ ---
-    // Yeteneğin bir hasar çarpanı varsa, gelen kaynak yazılarını biriktir
+    // --- BUFFER KONTROLÜ ---
     if (skillObj.data.scaling) {
         window.rageBuffer = 0;
         window.isBufferingRage = true;
     } else {
         window.isBufferingRage = false; 
     }
-    // ----------------------------------------------------
 
+    // --- A. HASAR PAKETİNİ ÖNCE HESAPLA ---
+    // Önemli: Sayaç henüz artmadığı için 'Preview' (Öngörü) ile aynı değeri bulur.
     let dmgPack = null;
     if (skillObj.data.scaling) {
         dmgPack = SkillEngine.calculate(hero, skillObj.data, monster);
     }
 	
-	// --- YORGUNLUK ARTIŞI ---
+	// --- B. YORGUNLUK VE SAYAÇ ŞİMDİ ARTSIN ---
     const sID = skillObj.data.id || skillKey;
     
     if (skillObj.data.type !== 'passive') {
         if (!hero.skillUsage) hero.skillUsage = {};
         if (hero.skillUsage[sID] === undefined) hero.skillUsage[sID] = 0;
 
-        // --- YENİ MANTIK: Kullanmadan önce maliyeti hesapla ---
+        // Kullanımdan önceki maliyeti hesapla
         const exGain = window.getExhaustionCost(skillObj.data, hero.skillUsage[sID]);
-        
         hero.exhaustion = Math.max(0, hero.exhaustion + exGain); 
-        hero.skillUsage[sID]++; // Artık her kullanımda kesinlikle artar
+
+        // KRİTİK: Sayaç hasar hesaplandıktan sonra artıyor!
+        hero.skillUsage[sID]++; 
         
         window.updateExhaustionUI(); 
         if (window.refreshSkillExhaustionBadges) window.refreshSkillExhaustionBadges();
     }
 
-    // 3. Yeteneği çalıştır (Buffer açık olduğu için buradaki floating textler yutulacak)
-    if (skillObj.onCast) skillObj.onCast(hero, monster, dmgPack);
+    // 3. YETENEĞİ ÇALIŞTIR (Hesaplanmış dmgPack'i içeri gönder)
+    if (skillObj.onCast) {
+        skillObj.onCast(hero, monster, dmgPack);
+    }
 };
 
 // --- ANİMASYONLAR VE HASAR ---
@@ -1123,32 +1127,24 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     }
     // ---------------------------------------
 	
-	 // --- YENİ ELEMENTAL DİRENÇ HESAPLAMA SİSTEMİ ---
-    const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };
-    const specificData = stats.specificResists || {};
-    const elements = ['fire', 'cold', 'lightning', 'poison', 'curse'];
-    
-    // Rastgelelik çarpanı (Tier * 0.5)
-    const randomScale = (stats.tier || 1) * 0.5;
-    
-    let finalMonsterResists = {};
+	// --- KRİTİK: DONDURULMUŞ DİRENÇLERİ OKU ---
+    let finalMonsterResists;
+    const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
 
-    elements.forEach(ele => {
-        // 1. Klanın temel değeri
-        let base = tribeData[ele] || 0;
-        
-        // 2. Canavarın spesifik bonusu
-        let spec = specificData[ele] || 0;
-        
-        // 3. Rastgele Zar (0 ile 10 arası, -5 ofset ile -5 ile +5 arası gibi de yapılabilir)
-        // 0-10 arası ama weakness için - değer de alabilsin:
-        // Mantık: (Rastgele -5 ile +5 arası) * Scale
-        let randRoll = (Math.floor(Math.random() * 21) - 10); // -10 ile +10 arası zar
-        let scaledRandom = Math.round(randRoll * randomScale);
-
-        // Nihai Toplam
-        finalMonsterResists[ele] = base + spec + scaledRandom;
-    });
+    if (currentNode && currentNode.monsterResists) {
+        finalMonsterResists = currentNode.monsterResists;
+    } else {
+        // Failsafe (Debug çağrıları için)
+        const tribeData = window.TRIBE_BASES[stats.tribe] || { fire:0, cold:0, lightning:0, poison:0, curse:0 };
+        const specificData = stats.specificResists || {};
+        const elements = ['fire', 'cold', 'lightning', 'poison', 'curse'];
+        const randomScale = (stats.tier || 1) * 0.5;
+        finalMonsterResists = {};
+        elements.forEach(ele => {
+            let randRoll = (Math.floor(Math.random() * 21) - 10);
+            finalMonsterResists[ele] = (tribeData[ele] || 0) + (specificData[ele] || 0) + Math.round(randRoll * randomScale);
+        });
+    }
 	
 	  // Tier verisini sayıya çevir (B1 -> 4, B2 -> 8 gibi)
     let numericTier = stats.tier;
