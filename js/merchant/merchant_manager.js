@@ -138,32 +138,66 @@ window.renderMerchantUI = function() {
     // -------------------------------------
 	
 	// --- YENİ: TAKILI EKİPMANLARI ÇİZ ---
-    const equipRow = document.getElementById('trade-equip-row');
-	const previewLabel = document.querySelector('.preview-label'); // Başlık etiketi
-    if (equipRow) {
-        equipRow.innerHTML = '';
-        // Gösterilecek slotlar
-        // --- YENİ DİNAMİK ÖNİZLEME MANTIĞI ---
-        if (window.isBroochTrade) {
-            // DURUM A: Broş Satıcısındayız -> Broş Slotlarını Göster
-            if(previewLabel) previewLabel.textContent = lang.items.brooches_label || "TAKILI BROŞLAR";
-            
-            // Kahramanın tüm broş slotlarını (6 slot) tara
-            hero.brooches.forEach(item => {
-                createPreviewSlot(item, equipRow);
-            });
-        } 
-        else {
-            // DURUM B: Normal Tüccardayız -> Takı Slotlarını Göster
-            if(previewLabel) previewLabel.textContent = lang.current_equipment;
-            
-            const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
-            slotsToShow.forEach(slotKey => {
-                createPreviewSlot(hero.equipment[slotKey], equipRow);
-            });
-        }
-    }
-    // -----------------------------------
+	const equipRow = document.getElementById('trade-equip-row');
+	const previewLabel = document.querySelector('.preview-label'); 
+
+		if (equipRow) {
+		equipRow.innerHTML = '';
+		// CSS'i sıfırlayalım (Yan yana dizilimi engellemek için)
+		equipRow.style.flexDirection = "column"; 
+		equipRow.style.gap = "10px";
+
+		const isGrandMerchant = window.merchantStock.length === 12;
+
+		if (isGrandMerchant) {
+			// DURUM C: Ulu Tüccar -> Alt Alta Her İkisini Göster
+			if(previewLabel) previewLabel.textContent = lang.items.all_equipped_label || "TÜM KUŞANILMIŞ EŞYALAR";
+			
+			// 1. TAKI SATIRI
+			const jewelryRow = document.createElement('div');
+			jewelryRow.className = "compact-equip-row"; // Mevcut flex sınıfını kullan
+			const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
+			slotsToShow.forEach(slotKey => {
+				createPreviewSlot(hero.equipment[slotKey], jewelryRow);
+			});
+			equipRow.appendChild(jewelryRow);
+
+			// 2. YATAY AYIRICI
+			const separator = document.createElement('div');
+			separator.className = 'trade-preview-separator-horizontal';
+			equipRow.appendChild(separator);
+
+			// 3. BROŞ SATIRI
+			const broochRow = document.createElement('div');
+			broochRow.className = "compact-equip-row";
+			hero.brooches.forEach(item => {
+				createPreviewSlot(item, broochRow);
+			});
+			equipRow.appendChild(broochRow);
+		} 
+		else if (window.isBroochTrade) {
+			// DURUM A: Broş Satıcısındayız (Tek Satır)
+			if(previewLabel) previewLabel.textContent = lang.items.brooches_label || "TAKILI BROŞLAR";
+			const singleRow = document.createElement('div');
+			singleRow.className = "compact-equip-row";
+			hero.brooches.forEach(item => {
+				createPreviewSlot(item, singleRow);
+			});
+			equipRow.appendChild(singleRow);
+		} 
+		else {
+			// DURUM B: Normal Tüccardayız (Tek Satır)
+			if(previewLabel) previewLabel.textContent = lang.current_equipment;
+			const singleRow = document.createElement('div');
+			singleRow.className = "compact-equip-row";
+			const slotsToShow = ['earring1', 'earring2', 'necklace', 'ring1', 'ring2', 'belt'];
+			slotsToShow.forEach(slotKey => {
+				createPreviewSlot(hero.equipment[slotKey], singleRow);
+			});
+			equipRow.appendChild(singleRow);
+		}
+	}
+	// -----------------------------------
 
     if (window.currentTradeMode === 'buy') {
         title.textContent = lang.buy_btn || "BUY";
