@@ -110,14 +110,10 @@ window.StableManager = {
 
             // Olay ve Düşman Belirleme (Mevcut mantık)
             if (node.type === 'choice') {
-                if (!node.eventId) {
-                    const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-                    node.eventId = randomEvt.id;
-                }
-                const eventData = lang.events[node.eventId];
-                displayTitle = eventData ? eventData.title : node.eventId;
-                if (!isVisited) color = "#3498db";
-            }
+				const eventData = lang.events[node.eventId]; // Haritada zaten kayıtlı olan ID'yi kullan
+				displayTitle = eventData ? eventData.title : node.eventId;
+				if (!isVisited) color = "#3498db";
+			}
 
             if (node.type === 'encounter') {
                 const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
