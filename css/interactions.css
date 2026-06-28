@@ -1031,7 +1031,17 @@
     border-radius: 8px;
     padding: 10px;
     margin: 5px 20px;
+	overflow-x: auto; /* Sığmazsa kaydırılabilir olsun */
 }
+
+.trade-preview-separator-horizontal {
+    width: 80%; /* Tam boy kaplamasın, şık dursun */
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #ffd700, transparent);
+    margin: 5px auto;
+    opacity: 0.5;
+}
+
 
 .preview-label {
     font-size: 0.65rem;
