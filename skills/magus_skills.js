@@ -145,16 +145,21 @@ const MAGUS_SKILLS = {
 				elemental: { fire: 0, cold: 0, lightning: 0, poison: 0, curse: 0 }
 			}
 		},
-		onCast: function(attacker, defender) {
+		onCast: function(attacker, defender, dmgPack) {
 			// SkillEngine artık statMultPerUse'u tanıdığı için otomatik hesaplar
-			const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'Chain_Blast';
-			
 			animateCustomAttack(dmgPack, null, this.data.name);
 			
-			// Log için o anki güncel çarpanı gösterelim (Opsiyonel görsel şov)
-			const usage = hero.skillUsage["Chain_Blast"] || 0;
+			const lang = window.getCombatLang();
+			const skillKey = this.data.id; // "Chain_Blast"
+			
+			const logTemplate = lang.skills[skillKey]?.log || `✨ **${lang.skills[skillKey]?.name}**`;
+			
+			const usage = (hero.skillUsage["Chain_Blast"] || 1) - 1; // Logda artmış halini değil, vurulan halini göster
 			const currentMult = (1.4 + (usage * 0.3)).toFixed(1);
+			
+			
+			writeLog(`${lang.skills.Chain_Blast.log} (${currentMult}x)`);
 		}
 	},
 
@@ -267,7 +272,6 @@ const MAGUS_SKILLS = {
                 scaling: {
                     elemental: { 
                         fire: { stat: "mp_pow", statMult: 0.4 },
-                        curse: { stat: "int", statMult: 0.2 } 
                     }
                 }
             }
@@ -369,7 +373,6 @@ const MAGUS_SKILLS = {
                 scaling: {
                     elemental: { 
                         cold: { stat: "mp_pow", statMult: 0.4 },
-                        curse: { stat: "int", statMult: 0.2 } 
                     }
                 }
             }
@@ -460,11 +463,12 @@ const MAGUS_SKILLS = {
 				turns: 6, 
 				resetOnCombatEnd: true 
 			});
+			const lang = window.getCombatLang();
 
 			// Cooldown ve UI işlemleri aynı kalıyor
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Enhancement', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
 			updateStats();
-			showFloatingText(heroDisplayContainer, "ENHANCED!", 'heal');
+			showFloatingText(heroDisplayContainer, lang.status.enhancement_text.toUpperCase(), 'heal');
 			
 			setTimeout(nextTurn, 1000);
 		}
@@ -725,11 +729,12 @@ const MAGUS_SKILLS = {
 				turns: 3, 
 				resetOnCombatEnd: true 
 			});
+			const lang = window.getCombatLang();
 
 			hero.statusEffects.push({ id: 'block_skill', blockedSkill: 'Spore_Cloud', turns: 7, maxTurns: 7, resetOnCombatEnd: true });
 			
 			updateStats();
-			showFloatingText(document.getElementById('monster-display'), "BLINDED!", 'damage');
+			showFloatingText(document.getElementById('monster-display'), lang.status.spore_cloud_text.toUpperCase(), 'damage');
 			setTimeout(() => { window.isHeroTurn = true; toggleSkillButtons(false); }, 300);
 		}
 	},
