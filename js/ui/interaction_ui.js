@@ -394,25 +394,24 @@ window.triggerRandomEvent = function(forcedEvent = null) {
 	
 	// --- KRİTİK DEĞİŞİKLİK: ÖNCEDEN ATANMIŞ EVENT VAR MI? ---
 	let evt;
-	if (forcedEvent) {
-		evt = forcedEvent;
-	} else {
-    const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
-    
-
-    if (currentNode && currentNode.eventId) {
-        // Scout tarafından belirlenmiş olayı çek
-        evt = EVENT_POOL.find(e => e.id === currentNode.eventId);
-    } 
-    
-    // Eğer Scout belirlenmemişse (Scout tutulmadıysa) rastgele seç
-    if (!evt) {
-        evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+    if (forcedEvent) {
+        evt = forcedEvent;
+    } else {
+        // 1. Üzerinde bulunduğumuz odayı bul
+        const currentNode = GAME_MAP.nodes.find(n => n.id === GAME_MAP.currentNodeId);
+        
+        // 2. Odaya atanmış olan eventId'yi kullanarak EVENT_POOL'dan gerçek eventi çek
+        if (currentNode && currentNode.eventId) {
+            evt = EVENT_POOL.find(e => e.id === currentNode.eventId);
+        }
+        
+        // Failsafe: Eğer bir sebeple event bulunamazsa (hata önleyici)
+        if (!evt) {
+            evt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
+        }
     }
-	}
     // ------------------------------------------------------
 	
-	//StatsManager.trackEvent(evt.id);
 
     const t = lang.events[evt.id];
 	// --- GÜNCELLEME: BAŞLIK VE AÇIKLAMAYI FİLTRELE ---
