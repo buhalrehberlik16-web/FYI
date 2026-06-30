@@ -407,6 +407,20 @@
     transform: scale(1.02);
 }
 
+.hint-text {
+    font-family: 'Cinzel', serif; /* Senin tematik fontun */
+    font-size: 0.74rem; /* Masaüstü için ideal, zarif bir boyut */
+    color: #a89373; /* Pirinç/Eskitilmiş altın tonu */
+    opacity: 0.6; /* Bir tık şeffaf, "ikincil bilgi" hissi verir */
+    text-align: center;
+    margin: 5px 0 15px 0; /* Üstten az, alttan daha fazla boşluk */
+    letter-spacing: 1px;
+    font-style: italic;
+    width: 100%;
+    display: block;
+    text-shadow: 1px 1px 2px #000;
+}
+
 
 .item-tooltip {
     position: fixed;
