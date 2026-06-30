@@ -123,6 +123,20 @@
         font-size: 0.65rem !important;
         line-height: 1.1 !important;
     }
+	
+	.hint-text {
+        font-size: 0.55rem !important; /* Yazıyı ciddi oranda küçülttük */
+        line-height: 1.2 !important;
+        margin: 5px 0 10px 0 !important; /* Alt ve üst boşlukları daralttık */
+        opacity: 0.7; /* Bir tık şeffaflaştırarak arka planda kalmasını sağladık */
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* Alternatif olarak eğer çok uzun geliyorsa padding ekleyebiliriz */
+    .skill-list-container .hint-text {
+        padding: 0 10px;
+    }
 
     /* Alttaki Kuşanılmış Skill Barı */
     #skill-book-equipped-bar {
