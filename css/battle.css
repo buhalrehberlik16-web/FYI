@@ -802,3 +802,70 @@
     z-index: 60;
     box-shadow: 0 0 8px rgba(0,0,0,0.8);
 }
+
+/* Barbar Sprite Kutusu */
+#hero-sprite-viewer {
+    /* Boyutları senin %44'lük yeni resmine göre ayarla */
+    width: 563px; 
+    height: 317px;
+    background-size: 2815px 2536px;
+    background-image: url('../images/heroes/barbarian/barbar_attack_sprite.webp');
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -20px; 
+    left: 52%;
+    transform: translateX(-50%);
+    z-index: 10;
+    
+    /* ÖNEMLİ: Başlangıçta gizli ama yer kaplar (flicker engeller) */
+    visibility: hidden; 
+    opacity: 0;
+    transition: opacity 0.1s; /* Yumuşak geçiş için */
+	/* Titremeyi (Stutter) önleyen komutlar */
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    transform: translateX(-50%) translateZ(0); /* GPU üzerinde sabitler */
+}
+
+/* Animasyon sırasında çalışacak sınıf */
+.sprite-active {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Orijinal IMG etiketini gizleme sınıfı */
+.hero-hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+#hero-idle-viewer {
+    width: 563px; 
+    height: 317px;
+    background-size: 2815px 2536px;
+    background-image: url('../images/heroes/barbarian/barbarian_idle.webp');
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -20px; 
+    left: 52%;
+    transform: translateX(-50%);
+    z-index: 9; /* Saldırı sprite'ının (10) bir tık altında */
+    display: none; /* Sadece Barbar ise ve savaşta ise açılacak */
+	/* Titremeyi (Stutter) önleyen komutlar */
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+    transform: translateX(-50%) translateZ(0); /* GPU üzerinde sabitler */
+}
+
+#hero-death-viewer {
+    width: 563px; 
+    height: 317px;
+    background-size: 2815px 2536px;
+    background-image: url('../images/heroes/barbarian/barbar_death_sprite.webp'); /* Dosya yolunu kontrol et */
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -20px; 
+    left: 52%;
+    transform: translateX(-50%);
+    z-index: 11; /* En üstte görünsün */
+    display: none;
+}
