@@ -434,7 +434,7 @@ const BARBARIAN_SKILLS = {
             showFloatingText(document.getElementById('hero-display'), `-${hpCost}`, 'damage');
             const dmgPack = SkillEngine.calculate(attacker, this.data, defender);
 			dmgPack.skillKey = 'hell_blade';
-            animateCustomAttack(dmgPack, ['images/heroes/barbarian/barbarian_hellblade_strike1.webp', 'images/heroes/barbarian/barbarian_hellblade_strike2.webp', 'images/heroes/barbarian/barbarian_hellblade_strike3.webp'], this.data.name);
+            animateCustomAttack(dmgPack, this.data.name);
         }
     },
 	
