@@ -132,6 +132,32 @@
         height: 220px !important;
         font-size: 0.85rem !important;
     }
+	#hero-sprite-viewer {
+        /* Mobilde karakterin idle resminin yüksekliği yaklaşık 200px civarıdır. */
+        /* Bu yüzden 317px olan sprite'ı yaklaşık %60 oranında küçültüyoruz. */
+        
+        /* ÖNEMLİ: transform-origin: bottom; sayesinde ayaklar sabit kalır, kafa aşağı iner. */
+        transform: translateX(-50%) scale(0.67); 
+        transform-origin: bottom center;
+
+        /* Ayak hizasını mobildeki zemine oturtmak için bu değerle oynayabilirsin */
+        bottom: 0px; 
+        
+        /* left değerini sabit tutuyoruz çünkü translateX(-50%) ile ortalıyoruz */
+        left: 53%; 
+    }
+	 #hero-idle-viewer {
+        transform: translateX(-50%) scale(0.67);
+        transform-origin: bottom center;
+		bottom: 0px;
+		left: 53%;
+    }
+	  #hero-death-viewer {
+        transform: translateX(-50%) scale(0.63);
+        transform-origin: bottom center;
+		bottom: 0px;
+		left: 53%;
+    }
 }
 
 @media (max-height: 600px) {
