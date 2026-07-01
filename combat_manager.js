@@ -811,30 +811,84 @@ window.handleSkillUse = function(skillKey) {
     }
 };
 
+// Global değişkenler
+let idleFrame = 0;
+let idleInterval = null;
+
+window.startHeroIdleAnimation = function() {
+    if (hero.class !== "Barbar") return;
+    
+    const idleViewer = document.getElementById('hero-idle-viewer');
+    const staticImg = document.getElementById('hero-static-img');
+    
+    // Sabit resmi gizle, idle sprite'ı göster
+    staticImg.style.opacity = "0";
+    idleViewer.style.display = "block";
+
+    // Eğer zaten çalışıyorsa temizle (üst üste binmesin)
+    if (idleInterval) clearInterval(idleInterval);
+
+    idleInterval = setInterval(() => {
+        // Saldırı anında idle'ı durdurmak için kontrol
+        const attackViewer = document.getElementById('hero-sprite-viewer');
+        if (attackViewer.classList.contains('sprite-active')) {
+            idleViewer.style.opacity = "0"; // Saldırı varken idle görünmez olsun
+            return;
+        } else {
+            idleViewer.style.opacity = "1";
+        }
+
+        let col = idleFrame % 5;
+        let row = Math.floor(idleFrame / 5);
+        
+        // 563x317 boyutlarına göre kaydır
+        idleViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
+
+        idleFrame++;
+        if (idleFrame >= 40) idleFrame = 0; // Başa dön (Loop)
+    }, 45); // 40 kare için 45-50ms hız idealdir (nefes alma hızı gibi)
+};
+
 // --- ANİMASYONLAR VE HASAR ---
 window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
-    const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'].combat;
-    const globalLang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
-	const classRules = CLASS_CONFIG[hero.class];
+    const lang = window.getCombatLang().combat;
+	const globalLang = window.getCombatLang();
+    const classRules = CLASS_CONFIG[hero.class];
+    const spriteViewer = document.getElementById('hero-sprite-viewer');
+	const idleViewer = document.getElementById('hero-idle-viewer'); // Idle kutusunu aldık
+    const isBarbar = (hero.class === "Barbar");
 
-    // --- GÜVENLİK: Eğer dışarıdan liste gelmezse (null ise) sınıfın karelerini kullan ---
-    const frames = (skillFrames && skillFrames.length > 0) ? skillFrames : classRules.visuals.attackFrames;
-    // ---------------------------------------------------------------------------------
-	
-	
+    // Sprite Ayarları
+    const frameWidth = 563; 
+    const frameHeight = 317;
+    const columns = 5;
+    // 40 karelik sheet olsa bile biz hareketi 25. karede keseceğiz (boş beklemeyi engellemek için)
+    const totalSpriteFrames = isBarbar ? 23 : 40; 
+    const hitFrame = 10;        // 6-15 arası saldırı demiştin, darbe tam ortada (10) olsun
+    const animationSpeed = 35;  // 45ms ağırlık hissi için idealdir
+    // ------------------------------------------------------------------------------
+
+    const frames = (isBarbar) ? new Array(totalSpriteFrames).fill(0) : ((skillFrames && skillFrames.length > 0) ? skillFrames : classRules.visuals.attackFrames);
     let finalDmg = dmgPack.total;
 
-    // 1. Wind Up (Kurulma) Kontrolü
-    const windUpIdx = hero.statusEffects.findIndex(e => (e.id === 'wind_up' || e.id === 'arcane_echo_active') && !e.waitForCombat);
-    if (windUpIdx !== -1) { 
-        hero.statusEffects.splice(windUpIdx, 1); 
-    }
-
     let fIdx = 0;
-    function frame() {
+    function frameLoop() {
         if (fIdx < frames.length) {
-            heroDisplayImg.src = frames[fIdx]; 
-            if (fIdx === 1 || frames.length === 1) { 
+            if (isBarbar && spriteViewer) {
+                // Sınıfları ekle (Ekranda sadece sprite görünür)
+                heroDisplayImg.classList.add('hero-hidden');
+                spriteViewer.classList.add('sprite-active');
+                
+                let col = fIdx % columns;
+                let row = Math.floor(fIdx / columns);
+                spriteViewer.style.backgroundPosition = `-${col * frameWidth}px -${row * frameHeight}px`;
+            } else {
+                heroDisplayImg.src = frames[fIdx];
+            }
+
+
+            // SADECE hitFrame karesinde (20. kare) HASARI UYGULA
+            if (fIdx === (isBarbar ? hitFrame : 1)) {  
                 // Hasarı uygula ve istatistikleri işle
                 monster.hp = Math.max(0, monster.hp - finalDmg);
                 StatsManager.trackDamageDealt(finalDmg);
@@ -956,14 +1010,35 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
 }
                 updateStats();
             }
-            fIdx++; setTimeout(frame, 150); 
+            fIdx++; 
+             setTimeout(frameLoop, isBarbar ? animationSpeed : 150); 
+
         } else {
-            heroDisplayImg.src = classRules.visuals.idle; 
-            window.isBufferingRage = false; // Güvenlik kilidi (animasyon biterken)
+             // --- BİTİŞ: POSE MATCHING GEÇİŞİ ---
+            if (isBarbar && spriteViewer) {
+                
+                // 1. KRİTİK: Idle sayacını 0'a çekiyoruz (Vuruş sonundaki kareyle eşleşmesi için)
+                window.idleFrame = 0; 
+                
+                if (idleViewer) {
+                    // 2. Idle'ı hemen görünür yap (Saldırı sprite'ı hala üstte duruyor)
+                    idleViewer.style.opacity = "1";
+                    
+                    // 3. Saldırı sprite'ını 10ms sonra kapat (Göz kırpmasını engeller)
+                    setTimeout(() => {
+                        spriteViewer.classList.remove('sprite-active');
+                    }, 10); 
+                }
+            } else {
+                heroDisplayImg.classList.remove('hero-hidden');
+                heroDisplayImg.src = classRules.visuals.idle;
+            }
+            
+            window.isBufferingRage = false; 
             if (!checkGameOver()) nextTurn(); 
         }
     }
-    frame();
+    frameLoop();
 };
 
 
@@ -1363,6 +1438,9 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         toggleSkillButtons(false); 
         writeLog(lang.combat.log_battle_start.replace("$1", window.getEnemyNameTrans(monster.name)));
     }, 100);
+	if (hero.class === "Barbar") {
+    window.startHeroIdleAnimation();
+	}
 };
 
 window.nextTurn = function() {
@@ -2065,35 +2143,81 @@ window.animateMonsterSkill = function() {
     }, 600);
 };
 
+window.playHeroDeathAnimation = function(onComplete) {
+    const deathViewer = document.getElementById('hero-death-viewer');
+    const idleViewer = document.getElementById('hero-idle-viewer');
+    const spriteViewer = document.getElementById('hero-sprite-viewer');
+
+    if (idleViewer) idleViewer.style.display = "none";
+    if (spriteViewer) spriteViewer.classList.remove('sprite-active');
+    
+    deathViewer.style.display = "block";
+
+    let dFrame = 0;
+    const totalFrames = 40;
+    const animationSpeed = 50; 
+
+    let deathInterval = setInterval(() => {
+        let col = dFrame % 5;
+        let row = Math.floor(dFrame / 5);
+        // 563x317 senin ideal boyutların
+        deathViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
+
+        // Karakter yere düşerken (20. karede) siyah perdeyi kapatmaya başla
+        if (dFrame === 20) {
+            triggerDeathEffect(); 
+        }
+
+        if (dFrame >= totalFrames - 1) {
+            clearInterval(deathInterval);
+            if (onComplete) onComplete(); // Animasyon bitti, dışarıya haber ver
+        }
+        dFrame++;
+    }, animationSpeed);
+};
 
 window.checkGameOver = function() {
 	const lang = window.getCombatLang(); // <-- BU SATIRI EKLE
     if (hero.hp <= 0) { 
-		const classRules = CLASS_CONFIG[hero.class];
+        const classRules = CLASS_CONFIG[hero.class];
         writeLog(lang.combat.log_defeat);
-        hero.hp = 0; updateStats(); heroDisplayImg.src = classRules.visuals.dead; 
-		
-		// --- PERMADEATH: KAYDI SİL ---
-        if (window.deleteSave) {
-            window.deleteSave(); 
-        }
-        // ----------------------------
-		
-        triggerDeathEffect(); 
-		// --- YENİ: ÖLÜM ANINDA LOGU GENİŞLET ---
-        window.isLogMinimized = false; // Ok modundan çıkar, tam ekran yap
-        window.applySettings(); // Değişikliği ekrana yansıt
+        hero.hp = 0; 
+        updateStats(); 
         
-        // Log alanını en aşağı kaydır (Zamanlama için kısa bir delay)
+        // --- 1. KAYDI SİL VE LOGLARI AYARLA (Sınıf bağımsız, her zaman çalışır) ---
+        if (window.deleteSave) window.deleteSave(); 
+
+        window.isLogMinimized = false; 
+        window.applySettings(); 
+        
         setTimeout(() => {
             const logArea = document.getElementById('combat-log-area');
             if(logArea) logArea.scrollTop = logArea.scrollHeight;
         }, 100); 
-        setTimeout(() => { switchScreen(gameOverScreen); resetDeathEffect(); 
-		// "Devam Et" butonunu ana menüde gizlemek için kontrolü tetikle
-            const continueBtn = document.getElementById('btn-continue');
-            if (continueBtn) continueBtn.classList.add('hidden');
-			}, 1800); 
+
+        // --- 2. SİNEMATİK ÖLÜM AKIŞI ---
+        if (hero.class === "Barbar") {
+            // A. BARBAR İÇİN: Spritesheet animasyonunu başlat
+            window.playHeroDeathAnimation(() => {
+                // Bu kısım animasyon TAMAMLANDIĞINDA çalışır
+                switchScreen(gameOverScreen); 
+                resetDeathEffect(); 
+                const continueBtn = document.getElementById('btn-continue');
+                if (continueBtn) continueBtn.classList.add('hidden');
+                // Barbar yerde serili kalsın diye viewer'ı temizlemiyoruz, ekran zaten değişti
+            });
+        } else {
+            // B. DİĞER SINIFLAR İÇİN: Senin orijinal kodun (Statik Resim + 1.8sn Gecikme)
+            heroDisplayImg.src = classRules.visuals.dead; 
+            triggerDeathEffect(); 
+            
+            setTimeout(() => { 
+                switchScreen(gameOverScreen); 
+                resetDeathEffect(); 
+                const continueBtn = document.getElementById('btn-continue');
+                if (continueBtn) continueBtn.classList.add('hidden');
+            }, 1800); 
+        }
         return true; 
     }
     if (monster && monster.hp <= 0) {

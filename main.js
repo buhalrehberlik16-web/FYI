@@ -479,6 +479,40 @@ function initGame() {
 	window.currentBossScaling = 1.0;
 	window.lastExhaustionThreshold = 0;
 	
+	 // --- SPRITE VE ÖLÜM EKRANI TEMİZLİĞİ ---
+    const deathViewer = document.getElementById('hero-death-viewer');
+    const idleViewer = document.getElementById('hero-idle-viewer');
+    const spriteViewer = document.getElementById('hero-sprite-viewer');
+    const staticImg = document.getElementById('hero-static-img');
+
+    // 1. Ölüm animasyonu kutusunu kapat ve sıfırla
+    if (deathViewer) {
+        deathViewer.style.display = "none";
+        deathViewer.style.backgroundPosition = "0px 0px"; // Pozisyonu başa al
+    }
+
+    // 2. Idle ve Saldırı kutularını temizle
+    if (idleViewer) {
+        idleViewer.style.display = "none";
+        idleViewer.style.opacity = "1"; // Şeffaflığı resetle
+    }
+    if (spriteViewer) {
+        spriteViewer.classList.remove('sprite-active');
+    }
+
+    // 3. Sabit resmi (Gerekirse) tekrar görünür yap
+    if (staticImg) {
+        staticImg.style.opacity = "1";
+        staticImg.classList.remove('hero-hidden');
+    }
+
+    // 4. Arka planda çalışan Idle döngüsü varsa durdur (Önemli!)
+    if (window.idleInterval) {
+        clearInterval(window.idleInterval);
+        window.idleInterval = null;
+    }
+    // ----------------------------------------
+	
 	if (typeof updateStarterCityUI === 'function') {
         updateStarterCityUI(); 
     }
