@@ -257,13 +257,13 @@ const MAGUS_SKILLS = {
             name: "Ateş Topu",
             type: 'attack',
             category: 'elemental', // Tabın görünmesini sağlayan anahtar
-            tier: 1,
-            rageCost: 15,
-			exhaustion: 3,
-			cooldown: 1,
+            tier: 3,
+            rageCost: 25,
+			exhaustion: 4,
+			cooldown: 2,
             icon: 'skills/magus/elemental/fireball.webp', // İkon yolu
             scaling: { 
-                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
+                physical: { atkMult: 0.0, stat: "str", statMult: 1.2 },
                 elemental: { fire: { stat: "mp_pow", statMult: 0.6 } }
             },
             dotEffect: {
@@ -271,7 +271,7 @@ const MAGUS_SKILLS = {
                 duration: 3,
                 scaling: {
                     elemental: { 
-                        fire: { stat: "mp_pow", statMult: 0.4 },
+                        fire: { stat: "mp_pow", statMult: 0.8 },
                     }
                 }
             }
@@ -358,14 +358,14 @@ const MAGUS_SKILLS = {
             name: "Buz Topu",
             type: 'attack',
             category: 'elemental', // Tabın görünmesini sağlayan anahtar
-            tier: 2,
+            tier: 1,
 			exhaustion: 3,
-			cooldown: 1,
+			cooldown: 2,
             rageCost: 15,
             icon: 'skills/magus/elemental/iceball.webp', // İkon yolu
             scaling: { 
-                physical: { atkMult: 0.5, stat: "mp_pow", statMult: 0.5 },
-                elemental: { cold: { stat: "mp_pow", statMult: 0.6 } }
+                physical: { atkMult: 0.5, stat: "str", statMult: 0.5 },
+                elemental: { cold: { stat: "mp_pow", statMult: 0.4 } }
             },
             dotEffect: {
                 type: 'cold',
@@ -400,9 +400,10 @@ const MAGUS_SKILLS = {
             tier: 2,
             rageCost: 20,
 			exhaustion: 4,
+			cooldown:3,
             icon: 'skills/magus/elemental/ignite.webp', // İkon yolu
             scaling: { 
-                physical: { atkMult: 0.0, stat: "str", statMult: 1.0 },
+                physical: { atkMult: 0.0, stat: "str", statMult: 0.0 },
                 elemental: { fire: { stat: "mp_pow", statMult: 0.0 } }
             },
             dotEffect: {
@@ -410,7 +411,7 @@ const MAGUS_SKILLS = {
                 duration: 3,
                 scaling: {
                     elemental: { 
-                        fire: { stat: "mp_pow", statMult: 0.5 },
+                        fire: { stat: "mp_pow", statMult: 1.0 },
                         curse: { stat: "int", statMult: 0.0 } 
                     }
                 }
