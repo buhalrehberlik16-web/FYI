@@ -3,7 +3,12 @@
    ============================================================ */
 @media (max-width: 1024px) {
     #action-bar { min-width: 600px; padding: 15px 25px; }
-    .skill-slot { width: 58px; height: 58px; flex: 0 0 58px !important; }
+    .skill-slot {
+        width: 48px !important; 
+        height: 48px !important;
+        flex: 0 0 48px !important; /* Ezilmeyi engelle, boyutu sabitle */
+        border-width: 1px !important; /* İnce çerçeve yer kazandırır */
+    }
 }
 
 @media (max-width: 768px) {
@@ -24,17 +29,42 @@
 		height: 70px;
     }
 
-    #battle-controls { height: 40%; padding-bottom: 10px; }
+    #battle-controls { height: 30%; padding-bottom: 3%; }
     #action-bar { 
-        flex-direction: column; 
-        width: 95%; 
-        gap: 10px; 
-        padding: 10px; 
-        min-width: unset;
+        flex-direction: row !important; /* Alt alta dizilimi iptal et, yan yana yap */
+        flex-wrap: nowrap !important;  /* Asla alt satıra geçme */
+        width: 98% !important;         /* Ekranın tamamına yayıl */
+        min-width: unset !important;
+        gap: 4px !important;           /* Slotlar arası boşluğu daralt */
+        padding: 15px 5px !important;  /* İç boşluğu azalt */
+        justify-content: center !important;
+        align-items: center !important;
     }
-    .separator { display: none; }
+	.skill-slot {
+        width: 48px !important; 
+        height: 48px !important;
+        flex: 0 0 48px !important; /* Ezilmeyi engelle, boyutu sabitle */
+        border-width: 1px !important; /* İnce çerçeve yer kazandırır */
+    }
+    .separator {
+        display: block !important; 
+        width: 1px !important;
+        height: 35px !important;
+        margin: 0 2px !important;
+        opacity: 0.5;
+    }
+	.skill-slot .key-hint {
+        font-size: 8px !important;
+        padding: 1px 3px !important;
+        top: -3px !important;
+        left: -3px !important;
+    }
+
     .basic-skills-container, 
-    #skill-bar-container { width: 100%; justify-content: center; gap: 8px; }
+    #skill-bar-container { 
+        width: auto !important; 
+        gap: 4px !important; 
+    }
 	
 	#turn-counter-box {
     position: absolute;
@@ -120,10 +150,86 @@
         width: 5cqw;
         height: 10cqw;
     }
-	.skill-rage-badge, .skill-exhaust-badge {
-        font-size: 9px;
-        padding: 1px 4px;
+    .skill-rage-badge {
+        position: absolute !important;
+        bottom: -4px !important;
+        left: -4px !important;
+        width: auto !important;
+        padding: 1px 3px !important;
+        font-size: 8px !important;
+        white-space: nowrap !important;
+        z-index: 50 !important;
+        border-radius: 3px !important;
     }
+	.skill-exhaust-badge {
+        position: absolute !important; /* Akıştan tamamen çıkart */
+        top: -6px !important;      /* Üst köşeye taşı */
+        right: -6px !important;    /* Sağ köşeye taşı */
+        width: auto !important;    /* İçeriği kadar genişlesin */
+        height: auto !important;   /* Yüksekliği metne göre ayarlasın */
+        min-width: 20px !important;
+        padding: 1px 4px !important; /* Kenarlardan çok az boşluk */
+        
+        display: block !important;  /* Flex yerine blok yaparak kolonlaşmayı engelle */
+        white-space: nowrap !important; /* Metnin alt satıra geçmesini veya daralmasını engelle */
+        
+        font-size: 8px !important;  /* Fontu küçült */
+        line-height: 1 !important;  /* Satır yüksekliğini sıfırla */
+        z-index: 50 !important;     /* İkonun en üstünde olsun */
+        
+        background: #000 !important; /* Arka planı siyah yap ki ikonun üstünde okunsun */
+        border: 1px solid #6b5c3b !important;
+        border-radius: 3px !important;
+        box-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    }
+	/* TÜM ÖNGÖRÜ RAKAMLARI (Hasar, Defans, Şifa, DoT, Recoil) */
+    .skill-damage-preview, 
+    .skill-def-preview, 
+    .skill-heal-preview, 
+    .skill-recoil-preview, 
+    .skill-dot-preview {
+        font-size: 0.55rem !important; /* Yazı boyutunu küçült */
+        padding: 1px 3px !important;  /* İç boşluğu daralt */
+        min-width: 18px !important;    /* Minimum genişliği kısıtla */
+        line-height: 1 !important;
+        border-width: 1px !important;  /* İnce çerçeve */
+        border-radius: 3px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+    }
+
+    /* ÜSTTE DURANLAR (Hasar, Def, Heal) */
+    .skill-damage-preview, 
+    .skill-def-preview, 
+    .skill-heal-preview {
+        top: -14px !important; /* Slotun hemen tepesine yapıştır */
+    }
+
+    /* ALTTA DURANLAR (Recoil, DoT) */
+    .skill-recoil-preview, 
+    .skill-dot-preview {
+        bottom: -14px !important; /* Slotun hemen altına yapıştır */
+    }
+
+    /* YATAY KONUMLANDIRMA AYARLARI */
+    .skill-damage-preview, .skill-recoil-preview {
+        left: 50% !important;
+        transform: translateX(-50%) !important; /* Tam orta */
+    }
+
+    .skill-heal-preview {
+        left: -2px !important; /* Sol köşe */
+    }
+
+    .skill-def-preview {
+        right: -2px !important; /* Sağ köşe */
+    }
+
+    /* DoT Öngörüsü (↻6 gibi) */
+    .skill-dot-preview {
+        right: -2px !important; /* Sağ alt köşe */
+        /* Eğer Recoil ile çakışırsa diye bir miktar sola kaydırılabilir */
+    }
+
 	#combat-log-wrapper.death-mode {
         width: 95% !important;
         top: 75% !important;
@@ -141,7 +247,7 @@
         transform-origin: bottom center;
 
         /* Ayak hizasını mobildeki zemine oturtmak için bu değerle oynayabilirsin */
-        bottom: 0px; 
+        bottom: 0%; 
         
         /* left değerini sabit tutuyoruz çünkü translateX(-50%) ile ortalıyoruz */
         left: 53%; 
@@ -149,13 +255,13 @@
 	 #hero-idle-viewer {
         transform: translateX(-50%) scale(0.67);
         transform-origin: bottom center;
-		bottom: 0px;
+		bottom: 0%;
 		left: 53%;
     }
 	  #hero-death-viewer {
         transform: translateX(-50%) scale(0.63);
         transform-origin: bottom center;
-		bottom: 0px;
+		bottom: 0%;
 		left: 53%;
     }
 }
