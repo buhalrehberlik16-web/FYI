@@ -2097,6 +2097,7 @@ window.updateSkillDamagePreviews = function() {
             case 'Cauterize': healVal = 25; break;
             case 'Healing_Light': healVal = Math.floor(stats.maxHp * 0.20); break;
             case 'blood_lust': healVal = Math.floor(currentDmgTotal * 0.50); break;
+            case 'Rejuvanate': healVal = stats.int; break;
         }
 
         let hEl = slot.querySelector('.skill-heal-preview');
@@ -2106,7 +2107,12 @@ window.updateSkillDamagePreviews = function() {
                 hEl.className = 'skill-heal-preview';
                 slot.appendChild(hEl);
             }
-            hEl.textContent = healVal;
+            // Eğer Rejuvanate gibi tur bazlıysa yanına bir döngü simgesi koyabiliriz (isteğe bağlı)
+            if (skillKey === 'Rejuvanate') {
+                hEl.textContent = "↻" + healVal; 
+            } else {
+                hEl.textContent = healVal;
+            }
         } else if (hEl) hEl.remove();
 
         // --- D. ÖZ-HASAR / BEDEL ÖNGÖRÜSÜ (Alt - YENİ YERİ) ---
