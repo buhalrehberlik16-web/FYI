@@ -163,8 +163,8 @@
     }
 	.skill-exhaust-badge {
         position: absolute !important; /* Akıştan tamamen çıkart */
-        top: -6px !important;      /* Üst köşeye taşı */
-        right: -6px !important;    /* Sağ köşeye taşı */
+        top: 36px !important;      /* Üst köşeye taşı */
+        right: 0px !important;    /* Sağ köşeye taşı */
         width: auto !important;    /* İçeriği kadar genişlesin */
         height: auto !important;   /* Yüksekliği metne göre ayarlasın */
         min-width: 20px !important;
@@ -188,9 +188,17 @@
     .skill-heal-preview, 
     .skill-recoil-preview, 
     .skill-dot-preview {
-        font-size: 0.55rem !important; /* Yazı boyutunu küçült */
-        padding: 1px 3px !important;  /* İç boşluğu daralt */
-        min-width: 18px !important;    /* Minimum genişliği kısıtla */
+  /* FLEXBOX AKTİF: İçindeki her şeyi tam ortalar */
+        display: flex !important;
+        justify-content: center !important; /* Yatayda ortala */
+        align-items: center !important;    /* Dikeyde ortala */
+        text-align: center !important;
+        font-size: 0.55rem !important; 
+        /* Boyut Ayarları: Genişliği rakama göre esnet ama bir alt limit koy */
+        min-width: 18px !important; 
+        height: 14px !important; /* Yüksekliği sabitlemek hizalamayı pürüzsüz yapar */
+        /* Padding'i sıfırlıyoruz veya dengeliyoruz ki sola çekmesin */
+        padding: 0 2px !important;  
         line-height: 1 !important;
         border-width: 1px !important;  /* İnce çerçeve */
         border-radius: 3px !important;
