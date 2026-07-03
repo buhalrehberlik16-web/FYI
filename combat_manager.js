@@ -814,39 +814,56 @@ window.handleSkillUse = function(skillKey) {
 // Global değişkenler
 let idleFrame = 0;
 let idleInterval = null;
+let idleDirection = 1; // Sadece Magus veya Yoyo isteyen sınıflar için
 
 window.startHeroIdleAnimation = function() {
-    if (hero.class !== "Barbar") return;
+    if (hero.class !== "Barbar" && hero.class !== "Magus") return;
     
     const idleViewer = document.getElementById('hero-idle-viewer');
     const staticImg = document.getElementById('hero-static-img');
-    
-    // Sabit resmi gizle, idle sprite'ı göster
+    if (!idleViewer || !staticImg) return;
+
+    const idlePath = (hero.class === "Barbar") 
+        ? 'images/heroes/barbarian/barbar_idle_sprite.webp' 
+        : 'images/heroes/magus/magus_idle_sprite.webp';
+
+    idleViewer.style.backgroundImage = `url('${idlePath}')`;
     staticImg.style.opacity = "0";
     idleViewer.style.display = "block";
 
-    // Eğer zaten çalışıyorsa temizle (üst üste binmesin)
     if (idleInterval) clearInterval(idleInterval);
 
+    // HIZLAR: Barbar 45ms, Magus 50ms (Daha sakin)
+    const speed = (hero.class === "Magus") ? 55 : 45;
+
     idleInterval = setInterval(() => {
-        // Saldırı anında idle'ı durdurmak için kontrol
         const attackViewer = document.getElementById('hero-sprite-viewer');
-        if (attackViewer.classList.contains('sprite-active')) {
-            idleViewer.style.opacity = "0"; // Saldırı varken idle görünmez olsun
+        if (attackViewer && attackViewer.classList.contains('sprite-active')) {
+            idleViewer.style.opacity = "0"; 
             return;
         } else {
             idleViewer.style.opacity = "1";
         }
 
+        // --- GÖRSELİ ÇİZ (Ortak) ---
         let col = idleFrame % 5;
         let row = Math.floor(idleFrame / 5);
-        
-        // 563x317 boyutlarına göre kaydır
         idleViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
 
-        idleFrame++;
-        if (idleFrame >= 40) idleFrame = 0; // Başa dön (Loop)
-    }, 45); // 40 kare için 45-50ms hız idealdir (nefes alma hızı gibi)
+        // --- MANTIK AYRIMI ---
+
+        if (hero.class === "Barbar") {
+            // 1. BARBAR: Düz ve seri döngü (Senin mükemmel dediğin ayar)
+            idleFrame++;
+            if (idleFrame >= 40) idleFrame = 0;
+        } 
+        else if (hero.class === "Magus") {
+            // Magus'u da düz döngüye sokuyoruz (Takılma Yoyo'dan kaynaklıysa bu çözecek)
+            idleFrame++;
+            if (idleFrame >= 38) idleFrame = 0;
+        }
+        
+    }, speed); 
 };
 
 // --- ANİMASYONLAR VE HASAR ---
@@ -856,28 +873,37 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
     const classRules = CLASS_CONFIG[hero.class];
     const spriteViewer = document.getElementById('hero-sprite-viewer');
 	const idleViewer = document.getElementById('hero-idle-viewer'); // Idle kutusunu aldık
+    
+	// 1. KISS: Sınıfa Özel Ayarları Baştan Belirle
     const isBarbar = (hero.class === "Barbar");
+    const isMagus = (hero.class === "Magus");
+    const hasSprite = isBarbar || isMagus;
 
-    // Sprite Ayarları
+    // Sınıf bazlı değişkenler
+    const totalSpriteFrames = isBarbar ? 23 : (isMagus ? 40 : 40);
+    const hitFrame = isBarbar ? 10 : 17; // Magus için 17
+    const animationSpeed = 35; 
+    const spritePath = isBarbar 
+        ? 'images/heroes/barbarian/barbar_attack_sprite.webp' 
+        : 'images/heroes/magus/magus_attack_sprite.webp';
+
     const frameWidth = 563; 
     const frameHeight = 317;
     const columns = 5;
-    // 40 karelik sheet olsa bile biz hareketi 25. karede keseceğiz (boş beklemeyi engellemek için)
-    const totalSpriteFrames = isBarbar ? 23 : 40; 
-    const hitFrame = 10;        // 6-15 arası saldırı demiştin, darbe tam ortada (10) olsun
-    const animationSpeed = 35;  // 45ms ağırlık hissi için idealdir
-    // ------------------------------------------------------------------------------
 
-    const frames = (isBarbar) ? new Array(totalSpriteFrames).fill(0) : ((skillFrames && skillFrames.length > 0) ? skillFrames : classRules.visuals.attackFrames);
+    // Kare dizisini hazırla
+    const frames = (hasSprite) ? new Array(totalSpriteFrames).fill(0) : ((skillFrames && skillFrames.length > 0) ? skillFrames : classRules.visuals.attackFrames);
     let finalDmg = dmgPack.total;
 
-    let fIdx = 0;
+	let fIdx = 0;
     function frameLoop() {
         if (fIdx < frames.length) {
-            if (isBarbar && spriteViewer) {
-                // Sınıfları ekle (Ekranda sadece sprite görünür)
+            if (hasSprite && spriteViewer) {
                 heroDisplayImg.classList.add('hero-hidden');
                 spriteViewer.classList.add('sprite-active');
+                
+                // Dinamik resim yükleme (Barbar veya Magus)
+                spriteViewer.style.backgroundImage = `url('${spritePath}')`;
                 
                 let col = fIdx % columns;
                 let row = Math.floor(fIdx / columns);
@@ -886,9 +912,8 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 heroDisplayImg.src = frames[fIdx];
             }
 
-
-            // SADECE hitFrame karesinde (20. kare) HASARI UYGULA
-            if (fIdx === (isBarbar ? hitFrame : 1)) {  
+            // HASAR UYGULAMA (Dinamik hitFrame)
+            if (fIdx === (hasSprite ? hitFrame : 1)) {   
                 // Hasarı uygula ve istatistikleri işle
                 monster.hp = Math.max(0, monster.hp - finalDmg);
                 StatsManager.trackDamageDealt(finalDmg);
@@ -1011,29 +1036,20 @@ window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
                 updateStats();
             }
             fIdx++; 
-             setTimeout(frameLoop, isBarbar ? animationSpeed : 150); 
+            setTimeout(frameLoop, hasSprite ? animationSpeed : 150); 
 
         } else {
-             // --- BİTİŞ: POSE MATCHING GEÇİŞİ ---
-            if (isBarbar && spriteViewer) {
-                
-                // 1. KRİTİK: Idle sayacını 0'a çekiyoruz (Vuruş sonundaki kareyle eşleşmesi için)
+            // --- BİTİŞ ---
+            if (hasSprite && spriteViewer) {
                 window.idleFrame = 0; 
-                
                 if (idleViewer) {
-                    // 2. Idle'ı hemen görünür yap (Saldırı sprite'ı hala üstte duruyor)
                     idleViewer.style.opacity = "1";
-                    
-                    // 3. Saldırı sprite'ını 10ms sonra kapat (Göz kırpmasını engeller)
-                    setTimeout(() => {
-                        spriteViewer.classList.remove('sprite-active');
-                    }, 10); 
+                    setTimeout(() => { spriteViewer.classList.remove('sprite-active'); }, 10); 
                 }
             } else {
                 heroDisplayImg.classList.remove('hero-hidden');
                 heroDisplayImg.src = classRules.visuals.idle;
             }
-            
             window.isBufferingRage = false; 
             if (!checkGameOver()) nextTurn(); 
         }
@@ -1414,7 +1430,13 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     monsterDisplayImg.style.filter = 'none'; 
     monsterDisplayImg.style.opacity = '1';
     monsterDisplayImg.src = `images/${monster.idle}`;
-    heroDisplayImg.src = classRules.visuals.idle;
+    if (hero.class === "Barbar" || hero.class === "Magus") {
+    // Spritesheet kullanıldığı için img etiketine şeffaf bir boşluk atıyoruz (Tarayıcı dosya aramaz)
+    heroDisplayImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+	} else {
+		// Spritesheet kullanmayan başka bir sınıf varsa normal resmini yüklesin
+		heroDisplayImg.src = classRules.visuals.idle;
+	}
 
     window.isMonsterDefending = false; window.monsterDefenseBonus = 0; 
     window.isHeroDefending = false; window.heroDefenseBonus = 0;
@@ -1438,7 +1460,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
         toggleSkillButtons(false); 
         writeLog(lang.combat.log_battle_start.replace("$1", window.getEnemyNameTrans(monster.name)));
     }, 100);
-	if (hero.class === "Barbar") {
+	if (hero.class === "Barbar" || hero.class === "Magus") {
     window.startHeroIdleAnimation();
 	}
 };
@@ -2148,32 +2170,51 @@ window.playHeroDeathAnimation = function(onComplete) {
     const idleViewer = document.getElementById('hero-idle-viewer');
     const spriteViewer = document.getElementById('hero-sprite-viewer');
 
+    if (!deathViewer) return;
+
+    // --- SINIF BAZLI ÖZEL AYARLAR ---
+    const isMagus = (hero.class === "Magus");
+    
+    // Magus ise 60ms (daha yavaş), Barbar ise 50ms hızında ölür
+    const animationSpeed = isMagus ? 75 : 50; 
+    
+    // Magus ise 30. karede (asayı tutarken), Barbar ise 20. karede (düşerken) ekran kararır
+    const fadeStartFrame = isMagus ? 30 : 20; 
+
+    // Doğru spritesheet dosyasını yükle
+    const deathPath = isMagus 
+        ? 'images/heroes/magus/magus_death_sprite.webp' 
+        : 'images/heroes/barbarian/barbar_death_sprite.webp';
+    // --------------------------------
+
+    // Hazırlık
     if (idleViewer) idleViewer.style.display = "none";
     if (spriteViewer) spriteViewer.classList.remove('sprite-active');
     
+    deathViewer.style.backgroundImage = `url('${deathPath}')`;
     deathViewer.style.display = "block";
 
     let dFrame = 0;
     const totalFrames = 40;
-    const animationSpeed = 50; 
 
     let deathInterval = setInterval(() => {
         let col = dFrame % 5;
         let row = Math.floor(dFrame / 5);
-        // 563x317 senin ideal boyutların
+        
+        // 563x317 ölçülerine göre kaydır
         deathViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
 
-        // Karakter yere düşerken (20. karede) siyah perdeyi kapatmaya başla
-        if (dFrame === 20) {
+        // Dinamik kararma zamanlaması
+        if (dFrame === fadeStartFrame) {
             triggerDeathEffect(); 
         }
 
         if (dFrame >= totalFrames - 1) {
             clearInterval(deathInterval);
-            if (onComplete) onComplete(); // Animasyon bitti, dışarıya haber ver
+            if (onComplete) onComplete(); 
         }
         dFrame++;
-    }, animationSpeed);
+    }, animationSpeed); // Dinamik hız
 };
 
 window.checkGameOver = function() {
@@ -2196,7 +2237,7 @@ window.checkGameOver = function() {
         }, 100); 
 
         // --- 2. SİNEMATİK ÖLÜM AKIŞI ---
-        if (hero.class === "Barbar") {
+        if (hero.class === "Barbar" || hero.class === "Magus") {
             // A. BARBAR İÇİN: Spritesheet animasyonunu başlat
             window.playHeroDeathAnimation(() => {
                 // Bu kısım animasyon TAMAMLANDIĞINDA çalışır
