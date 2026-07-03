@@ -163,7 +163,7 @@
     }
 	.skill-exhaust-badge {
         position: absolute !important; /* Akıştan tamamen çıkart */
-        top: 36px !important;      /* Üst köşeye taşı */
+        top: -1px !important;      /* Üst köşeye taşı */
         right: 0px !important;    /* Sağ köşeye taşı */
         width: auto !important;    /* İçeriği kadar genişlesin */
         height: auto !important;   /* Yüksekliği metne göre ayarlasın */
