@@ -410,7 +410,7 @@ window.LANG_EN = {
 		charms_title: "Charms",
 		charms_desc: "Charms provide passive power. Elemental bonuses and resistances directly impact your Attack and Defense calculation.",
 		defense_rule_title: "Jewelry Defense",
-		defense_rule_desc: "Defense (Armor) stats are now rare and cannot be found on regular items. They only drop from:<br>" +
+		defense_rule_desc: "Defense (Armor) stats are rare and cannot be found on regular items. They only drop from:<br>" +
         "• <b>Boss</b> victories,<br>" +
         "• Hidden treasures in <b>Compass (Event)</b> nodes,<br>" +
         "• Powerful foes in <b>Red (Dangerous)</b> nodes.",
