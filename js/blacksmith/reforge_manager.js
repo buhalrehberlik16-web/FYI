@@ -207,56 +207,78 @@ window.processReforge = function() {
     const fragReq = window.CRAFTING_CONFIG.requiredFragments[tier];
     const fragItem = hero.inventory.find(i => i && i.subtype === 'material');
 
-    // --- MATEMATİKSEL DÖNÜŞÜM (Point Pool) ---
-    
-    // 1. Silinen özelliğin "Ham Puan"ını bul (Value / Multiplier)
+    // 1. Silinen özelliğin "Ham Puan"ını bul (Savunma bu döngüye giremez)
     const isOldResist = window.ITEM_CONFIG.resistsPool.includes(rPropertyToRemove);
     const oldMult = isOldResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
     const rawPoints = rSelectedJewelry.stats[rPropertyToRemove] / oldMult;
+
+    // Eskiyi sil
+    delete rSelectedJewelry.stats[rPropertyToRemove];
 
     // 2. Yeni Hedef Özelliği Belirle
     let targetStat = null;
     if (rSelectedModifier && rSelectedModifier.target) {
         targetStat = rSelectedModifier.target;
     } else {
-        // Rastgele seçim (Mevcut statlardan farklı olmasını tercih edebiliriz ama zorunlu değil)
+        // Rastgele seçim (Savunma buraya dahil değil)
         const pool = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
         const currentStats = Object.keys(rSelectedJewelry.stats);
-        const filteredPool = pool.filter(s => s !== rPropertyToRemove);
+        const filteredPool = pool.filter(s => s !== rPropertyToRemove && !currentStats.includes(s));
         targetStat = filteredPool[Math.floor(Math.random() * filteredPool.length)];
     }
 
-    // 3. Eşyayı Güncelle
-    delete rSelectedJewelry.stats[rPropertyToRemove]; // Eskiyi sil
-    
+    // 3. Eşyayı Güncelle ve Puanı Aktar
     const isNewResist = window.ITEM_CONFIG.resistsPool.includes(targetStat);
     const newMult = isNewResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
-    const newValue = rawPoints * newMult;
+    const newValue = Math.floor(rawPoints * newMult);
 
-    // Eğer zaten o stat varsa üzerine ekle, yoksa yeni aç
     rSelectedJewelry.stats[targetStat] = (rSelectedJewelry.stats[targetStat] || 0) + newValue;
     rSelectedJewelry.propertyKeys = Object.keys(rSelectedJewelry.stats);
 
-    // İsim ve İkon Güncelleme (Ana stat değişmiş olabilir)
-    const mainStat = rSelectedJewelry.propertyKeys[0];
-    const template = window.BASE_ITEMS[rSelectedJewelry.type][mainStat] || window.BASE_ITEMS[rSelectedJewelry.type][Object.keys(window.BASE_ITEMS[rSelectedJewelry.type])[0]];
-    rSelectedJewelry.nameKey = template.nameKey;
-    rSelectedJewelry.icon = template.icon;
+    // --- KRİTİK: SET RENGİ VE İKON GÜNCELLEME ---
+    const mainStatsPool = ['str', 'dex', 'int', 'vit', 'mp_pow'];
+    
+    // Eğer yeni stat bir ana stat ise (STR, INT vb.) rengi ve ikonu ona göre güncelle
+    if (mainStatsPool.includes(targetStat)) {
+        rSelectedJewelry.color = targetStat; // Set bonusunu yeni stat'a bağla
+        const template = window.BASE_ITEMS[rSelectedJewelry.type][targetStat];
+        rSelectedJewelry.nameKey = template.nameKey;
+        rSelectedJewelry.icon = template.icon;
+    } else {
+        // Eğer yeni stat bir element ise (Ateş vb.)
+        // İsimlendirme için takıda kalan ilk ana statı bulmaya çalış
+        let fallbackStat = rSelectedJewelry.propertyKeys.find(k => mainStatsPool.includes(k));
+        
+        if (fallbackStat) {
+            // Eğer takıda hala bir ana stat varsa (örn: STR), ismi ve rengi o korur
+            rSelectedJewelry.color = fallbackStat;
+            const template = window.BASE_ITEMS[rSelectedJewelry.type][fallbackStat];
+            rSelectedJewelry.nameKey = template.nameKey;
+            rSelectedJewelry.icon = template.icon;
+        } else {
+            // Eğer hiç ana stat kalmadıysa (sadece elementler varsa), Blank görseli kullan
+            let imgPrefix = rSelectedJewelry.type === 'necklace' ? 'neck' : (rSelectedJewelry.type === 'earring' ? 'ear' : rSelectedJewelry.type);
+            rSelectedJewelry.icon = `accesories/${imgPrefix}_blank.webp`;
+            rSelectedJewelry.nameKey = `item_${imgPrefix}_${targetStat}`;
+            rSelectedJewelry.color = targetStat; 
+        }
+    }
 
     // 4. Ödemeleri Al
     hero.gold -= goldReq;
-    fragItem.count -= fragReq;
-    if (fragItem.count <= 0) {
-        const fIdx = hero.inventory.indexOf(fragItem);
-        hero.inventory[fIdx] = null;
+    if (fragItem) {
+        fragItem.count -= fragReq;
+        if (fragItem.count <= 0) {
+            hero.inventory[hero.inventory.indexOf(fragItem)] = null;
+        }
     }
 
-    // Modifier tek kullanımlıktır, yok et
+    // Modifier tüket
     rSelectedModifier = null;
 
     // 5. Kayıt ve Temizlik
     writeLog(`🔨 Reforge: ${window.getStatDisplayName(rPropertyToRemove)} silindi, +${newValue} ${window.getStatDisplayName(targetStat)} eklendi.`);
-    window.CalendarManager.passDay(false);
+    window.CalendarManager.passDay(false); // Craft işlemi atın süresini düşürmez
 	
     rPropertyToRemove = null;
     updateGoldUI();
