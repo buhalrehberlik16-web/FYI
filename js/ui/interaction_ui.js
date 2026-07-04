@@ -629,6 +629,7 @@ window.openVeteranMaster = function() {
 
             div.innerHTML = `
                 <div class="v-col-name">
+				<i class="fas fa-info-circle v-info-btn" onclick="window.showVeteranSkillDetail('${key}')" title="${lang.veteran_info}"></i>
                     <img src="images/${skill.data.icon}" class="v-skill-icon">
                     <span class="v-skill-text">${skillName} (T${skill.data.tier})</span>
                 </div>
@@ -679,6 +680,7 @@ window.prepareVeteranSwap = function(oldSkillKey) {
         
         div.innerHTML = `
             <div style="display:flex; align-items:center; gap:10px;">
+			<i class="fas fa-info-circle v-info-btn" onclick="window.showVeteranSkillDetail('${newKey}')" style="margin-right:5px;"></i>
                 <img src="images/${newSkill.data.icon}" style="width:30px; height:30px; border-radius:4px;">
                 <span>${lang.skills[newKey].name}</span>
             </div>
@@ -801,6 +803,22 @@ window.processVeteranRefund = function(skillKey) {
             .replace("$2", totalSPRefund);
         window.showConfirm(simpleWarning, performRefund);
     }
+};
+
+window.showVeteranSkillDetail = function(skillKey) {
+    const lang = window.getCombatLang();
+    const skillObj = SKILL_DATABASE[skillKey];
+    if (!skillObj) return;
+
+    // 1. Dil dosyasından isim ve açıklamayı çek
+    const skillTrans = lang.skills[skillKey] || { name: skillKey, desc: "" };
+    
+    // 2. Yetenek Kitabı'ndaki gibi Rage/Mana değişimini yap
+    const resourceLabel = lang[`resource_${CLASS_CONFIG[hero.class].resourceName}`];
+    let dynamicDesc = skillTrans.desc.replace(/Rage|Öfke/gi, resourceLabel);
+
+    // 3. Bilgi kutusunu aç
+    window.showGameInfo(skillTrans.name, `<div style="padding:10px; line-height:1.6;">${dynamicDesc}</div>`, "#f0e68c");
 };
 
 window.currentCompendiumTab = 'enemies';
