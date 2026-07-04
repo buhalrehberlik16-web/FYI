@@ -1657,8 +1657,10 @@ window.nextTurn = function() {
 
         // --- TOPLAM FLOATING TEXT (Görsel Rakamlar) ---
 		if (window.broochBuffer.heal > 0) {
+			setTimeout(() => {
             showFloatingText(heroDisplayContainer, window.broochBuffer.heal, 'heal');
-        }
+        }, 400);
+		}
 
         if (window.broochBuffer.resource > 0) {
             setTimeout(() => {
