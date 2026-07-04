@@ -174,93 +174,117 @@ function renderSynthesisInventory() {
 
 // T5 Stat Bugını Çözen Üretim Fonksiyonu
 window.processSynthesis = function() {
-    // 1. GÜVENLİK KONTROLÜ (Çift tıklamayı engellemek için butonu hemen kilitleyelim)
     const btn = document.getElementById('btn-do-synthesis');
     if (btn.disabled) return; 
 
     const req = window.CRAFTING_CONFIG.requiredFragments[craftTier];
     if (!selectedFragments || selectedFragments.count < req) {
-    const currentLang = window.gameSettings.lang || 'tr';
-    const msg = currentLang === 'tr' ? "Yetersiz materyal!" : "Not enough materials!";
-    window.showAlert(msg); 
-    return;
-}
+        const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+        window.showAlert(lang.not_enough_syn); 
+        return;
+    }
 
-    // Butonu geçici olarak kilitle (Logic bitene kadar)
     btn.disabled = true;
 
-    // 2. MATERYAL TÜKETİMİ
-    // Parçaları eksilt
+    // 1. Materyal Tüketimi
     selectedFragments.count -= req;
-    
-    // Eğer parça kaldıysa değişkende tut, bittiyse null yap
     const leftoverFragments = selectedFragments.count > 0 ? { ...selectedFragments } : null;
     
-    // Scrollardan hedefleri al ve scrolları "tüket" (null yap)
     const finalStat = selectedStatScroll ? selectedStatScroll.target : null;
     const finalType = selectedTypeScroll ? selectedTypeScroll.target : null;
 
-    // 3. EŞYA ÜRETİMİ (Sadece 1 adet newItem oluşturulur)
-    const newItem = generateRandomItem(craftTier);
-    newItem.subtype = "jewelry"; // Merkezi kural sistemine uyum
+    // 2. EŞYA ÜRETİMİ (Başlangıç)
+    const newItem = generateRandomItem(craftTier, false); // false: Sentezde defans yasak
+    newItem.subtype = "jewelry";
+    if (finalType) newItem.type = finalType; // Eğer Type Scroll varsa türü değiştir
 
-    // Eğer Type Scroll (Yüzük, Kolye vb.) konulduysa türü değiştir
-    if (finalType) {
-        newItem.type = finalType;
-    }
-    
-    // Eğer Stat Scroll (STR, DEX vb.) konulduysa statları sıfırla ve scrollunkini yaz
+    // --- 3. KİMLİK BELİRLEME (Kader Zar) ---
+    // Stat dağıtılmadan ÖNCE takının hangi sete ait olacağına karar veriyoruz
+    let coreIdentity = null;
     if (finalStat) {
-        newItem.propertyKeys = [finalStat];
-        newItem.stats = {};
+        coreIdentity = finalStat; // Scroll varsa kimlik odur
+    } else {
+        // Scroll yoksa tüm havuzdan (Statlar + Resistler) rastgele bir kimlik seç
+        const allPossible = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
+        coreIdentity = allPossible[Math.floor(Math.random() * allPossible.length)];
+    }
+
+    // Takının SET RENGİNİ (Identity) şimdi çiviliyoruz
+    newItem.color = coreIdentity;
+    newItem.stats = {};
+    newItem.propertyKeys = [];
+
+    // --- 4. PUAN DAĞITIMI (Transmute ile Senkronize) ---
+    let totalPoints = Math.max(1, Math.floor(craftTier * 2) - 2);
+
+    // KURAL: Karar verilen kimlik (coreIdentity) mutlaka en az 1 puan almalı
+    const addPoint = (statKey) => {
+        if (!newItem.propertyKeys.includes(statKey)) newItem.propertyKeys.push(statKey);
+        const isResist = window.ITEM_CONFIG.resistsPool.includes(statKey);
+        const mult = isResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
+        newItem.stats[statKey] = (newItem.stats[statKey] || 0) + mult;
+    };
+
+    // İlk puanı mecburen kimlik statına veriyoruz
+    addPoint(coreIdentity);
+    totalPoints--;
+
+    // Kalan puanları tamamen rastgele dağıtıyoruz (Kimlikten bağımsız!)
+    // Bu sayede 1 VIT (Kimlik) / 3 STR (Şans) gibi eşyalar oluşabilir.
+    while (totalPoints > 0) {
+        const pool = [...window.ITEM_CONFIG.statsPool, ...window.ITEM_CONFIG.resistsPool];
+        const randomStat = pool[Math.floor(Math.random() * pool.length)];
         
-        const isResist = window.ITEM_CONFIG.resistsPool.includes(finalStat);
-        const multiplier = isResist ? window.ITEM_CONFIG.multipliers.resists : window.ITEM_CONFIG.multipliers.stats;
-        
-        // Tier kadar tam puan ver
-        newItem.stats[finalStat] = craftTier * multiplier;
-        
-        // İsim ve İkonu şablondan güncelle (BASE_ITEMS'tan çek)
-        const template = window.BASE_ITEMS[newItem.type][finalStat] || 
-                         window.BASE_ITEMS[newItem.type][Object.keys(window.BASE_ITEMS[newItem.type])[0]];
-        
+        // Bir eşyada en fazla 3 farklı özellik olabilir kuralını koru
+        if (!newItem.propertyKeys.includes(randomStat) && newItem.propertyKeys.length >= 3) {
+            // Eğer 3 stat dolduysa mevcutlardan birine ekle
+            const existingStat = newItem.propertyKeys[Math.floor(Math.random() * 3)];
+            addPoint(existingStat);
+        } else {
+            addPoint(randomStat);
+        }
+        totalPoints--;
+    }
+
+    // --- 5. İSİMLENDİRME VE GÖRSEL (Kimliğe Göre) ---
+    const mainStatsPool = ['str', 'dex', 'int', 'vit', 'mp_pow'];
+    let imgPrefix = newItem.type === 'necklace' ? 'neck' : (newItem.type === 'earring' ? 'ear' : newItem.type);
+
+    if (mainStatsPool.includes(coreIdentity)) {
+        // Kimlik ana stat ise: İkon ve isim o statın şablonundan gelir
+        const template = window.BASE_ITEMS[newItem.type][coreIdentity];
         newItem.nameKey = template.nameKey;
         newItem.icon = template.icon;
+    } else {
+        // Kimlik Element ise: Siyah (Blank) ikon kullanılır
+        newItem.icon = `accesories/${imgPrefix}_blank.webp`;
+        
+        // İsim için; eğer içinde ana stat varsa onu kullan, yoksa element ismini kullan
+        let luckyMainStat = newItem.propertyKeys.find(k => mainStatsPool.includes(k));
+        if (luckyMainStat) {
+            newItem.nameKey = window.BASE_ITEMS[newItem.type][luckyMainStat].nameKey;
+        } else {
+            newItem.nameKey = `item_${imgPrefix}_${coreIdentity}`;
+        }
     }
 
-    // 4. ENVANTERE EKLEME
-    // Üretilen takıyı ekle
+    // 6. Envantere Ekleme ve Temizlik
     addItemToInventory(newItem, 1);
-    
-    // Varsa artan parçaları (leftover) çantaya geri koy
-    if (leftoverFragments) {
-        addItemToInventory(leftoverFragments, leftoverFragments.count);
-    }
+    if (leftoverFragments) addItemToInventory(leftoverFragments, leftoverFragments.count);
 
-    // 5. TEMİZLİK VE GÖRSEL SONUÇ
-    selectedFragments = null; // Kutudaki parça referansını temizle
+    selectedFragments = null;
     selectedStatScroll = null;
     selectedTypeScroll = null;
     
-    // Sonuç slotunda göster
+    // UI Güncelleme... (Geri kalan kod aynı)
     const resSlot = document.getElementById('synthesis-result-slot');
     if (resSlot) {
-        resSlot.innerHTML = `<img src="items/images/${newItem.icon}">`;
-        resSlot.innerHTML += window.getItemBadgeHTML(newItem);
-        
-        // 3 saniye sonra görseli temizle
+        resSlot.innerHTML = `<img src="items/images/${newItem.icon}">${window.getItemBadgeHTML(newItem)}`;
         setTimeout(() => { resSlot.innerHTML = ''; }, 3000);
     }
-
-    writeLog(`🛠️ ${window.gameSettings.lang === 'tr' ? 'Sentez Başarılı:' : 'Synthesis Success:'} ${getTranslatedItemName(newItem)} (T${newItem.tier})`);
-    
-    // UI ve Ana Envanteri tazele
     renderSynthesisUI();
     renderInventory();
-    
     if(window.saveGame) window.saveGame();
-
-    // İşlem bitti, butonu geri aç (renderSynthesisUI zaten kontrol edecektir ama garanti olsun)
     setTimeout(() => { btn.disabled = false; }, 500);
-	window.CalendarManager.passDay(false);
+    window.CalendarManager.passDay(false);
 };
