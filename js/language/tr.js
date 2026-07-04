@@ -110,6 +110,7 @@ window.LANG_TR = {
 		no: "HAYIR",
 		back: "TAMAM",
 		not_enough_msg: "Yetersiz Altın",
+		not_enough_syn: "Yetersiz Takı Parçası",
 		desc_city: "Büyük Eldoria şehrine ulaştın! Maceranın bu perdesi burada son buluyor.",
 		loot_full_msg: "Yerde ödüllerin var! Onları almadan gitmek istediğine emin misin?",
 		setting_show_notifs: "PUAN BİLDİRİMLERİ",
@@ -395,13 +396,25 @@ window.LANG_TR = {
 		transmute_synth_title: "Dönüşüm ve Sentez (Simyacı)",
 		transmute_synth_desc: "• <b>Dönüşüm:</b> 3 takı verip 1 üst seviye takı alırsın. Malzemelerin statları sonucu etkiler.<br>• <b>Sentez:</b> Parçalar ve Parşömenler kullanarak sıfırdan, istediğin özelliklerde eşya üretmeni sağlar.",
 
+		//Niyetler
+		monster_intentions_title: "Düşman Niyetleri",
+		monster_intentions_desc: "Düşmanın hamlelerini başındaki ikonlardan anlayabilirsin" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_attack.webp'> <b style='color:#000000'>Saldırı:</b> Kendi atağı kadar temel hasar vurur.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_skill_attack.webp'> <b style='color:#8b0000'>Özel Saldırı:</b> Yetenek hasarı verir.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_buff.webp'> <b style='color:#145a32'>Güçlendirme:</b> Kendine avantaj sağlar.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_debuff.webp'> <b style='color:#4a148c'>Zayıflatma:</b> Karakterinize zayıflık verir.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_defend.webp'> <b style='color:#3498db'>Savunma:</b> Gelen hasarı azaltır.</div>",
+		
 		// Ekipman Sayfası
 		brooch_title: "Mistik Broşlar",
 		brooch_desc: "Broşlar her 1-3 turda bir otomatik tetiklenir:<br>• <b>Stat Patlaması:</b> Gücünü kısa süreliğine devleştirir.<br>• <b>Anlık Hasar:</b> Düşmana sabit hasar vurur (Uzmanlık türüne denk gelirse x2 hasar).<br>• <b>Yenileme:</b> Sana her tetiklendiğinde HP veya Öfke/Mana verir.",
 		charms_title: "Tılsımlar (Charms)",
 		charms_desc: "Tılsımlar pasif güç sağlar. Verdikleri Element Bonusu ve Dirençler, doğrudan Atak ve Defans hesaplamalarına dahil edilerek seni kalıcı olarak güçlendirir.",
 		defense_rule_title: "Takılarda Savunma",
-		defense_rule_desc: "Takılarda sabit Defans özelliği Tier 2 ve üzeri eşyalarda %30 şansla belirmeye başlar. Düşük seviyeli takılarda defans aranmaz.",
+		defense_rule_desc: "Savunma (Zırh) özelliği artık her takıda bulunmaz ve üretilemez. Bu nadir özellik sadece;<br>" +
+        "• <b>Boss</b> galibiyetlerinden,<br>" +
+        "• <b>Pusula (Olay)</b> odalarındaki gizli hazinelerden,<br>" +
+        "• <b>Kırmızı (Tehlikeli)</b> odalardaki güçlü rakiplerden ganimet olarak düşebilir.",
 
 		// Hizmetler Sayfası
 		inn_title: "Han (Dinlenme)",
@@ -989,6 +1002,11 @@ window.LANG_TR = {
     set_dex: "ÇEVİKLİK SETİ (Sarı)",
     set_vit: "DİRENÇ SETİ (Yeşil)",
     set_mp_pow: "MİSTİK SET (Mavi)",
+	set_fire: "ALEV SETİ (Kırmızı)",
+	set_cold: "BUZ SETİ (Mavi)",
+	set_lightning: "FIRTINA SETİ (Sarı)",
+	set_poison: "ZEHİR SETİ (Yeşil)",
+	set_curse: "LANET SETİ (Mor)",
 
     // Stat Görüntü İsimleri (Tooltip için)
     stat_str: "Güç (STR)",

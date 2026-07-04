@@ -111,6 +111,7 @@ window.LANG_EN = {
 		no: "NO",
 		back: "OK",
 		not_enough_msg: "Not enough gold",
+		not_enough_syn: "Not enough Jewelry Parts",
 		desc_city: "You reached the Great City of Eldoria! This act of your journey ends here.",
 		loot_full_msg:"There are rewards left on the ground! Are you sure you want to leave without them?",
 		setting_show_notifs: "POINT NOTIFICATIONS",
@@ -394,13 +395,25 @@ window.LANG_EN = {
 		salvage_reforge_desc: "• <b>Salvage:</b> Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
 		transmute_synth_title: "Transmute & Synthesis (Alchemist)",
 		transmute_synth_desc: "• <b>Transmute:</b> Give 3 items for 1 higher tier item. Stats depend on ingredients.<br>• <b>Synthesis:</b> Use Fragments and Scrolls to craft a specific item from scratch.",
+		
+		monster_intentions_title: "Monster Intentions",
+        monster_intentions_desc: "You can anticipate enemy moves by the icons above them" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_attack.webp'> <b style='color:#000000'>Attack:</b> Deals basic damage equal to its Attack.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_skill_attack.webp'> <b style='color:#8b0000'>Special Attack:</b> Performs a skill-based strike.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_buff.webp'> <b style='color:#145a32'>Buff:</b> Strengthens or heals itself.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_debuff.webp'> <b style='color:#4a148c'>Debuff:</b> Applies a negative effect to your hero.</div>" +
+		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_defend.webp'> <b style='color:#3498db'>Defense:</b> Reduces incoming damage.</div>",
+
 
 		brooch_title: "Mystic Brooches",
 		brooch_desc: "Brooches trigger every 1-3 turns:<br>• <b>Stat Burst:</b> Temporarily boosts your power.<br>• <b>Fixed Damage:</b> Direct hit (x2 dmg if specialty tribe matches).<br>• <b>Regen:</b> Grants HP or Resource on trigger.",
 		charms_title: "Charms",
 		charms_desc: "Charms provide passive power. Elemental bonuses and resistances directly impact your Attack and Defense calculation.",
 		defense_rule_title: "Jewelry Defense",
-		defense_rule_desc: "Defense stats start appearing at Tier 2+ with a 30% chance. Lower tiers do not grant base defense.",
+		defense_rule_desc: "Defense (Armor) stats are now rare and cannot be found on regular items. They only drop from:<br>" +
+        "• <b>Boss</b> victories,<br>" +
+        "• Hidden treasures in <b>Compass (Event)</b> nodes,<br>" +
+        "• Powerful foes in <b>Red (Dangerous)</b> nodes.",
 
 		inn_title: "Inn (Recovery)",
 		inn_desc: "• <b>Rest:</b> Full HP/Exhaustion recovery but advances 1 day. Boss may grow stronger!<br>• <b>Drink:</b> Reduces some Exhaustion without skipping time.",
@@ -987,6 +1000,11 @@ window.LANG_EN = {
     set_dex: "AGILITY SET (Yellow)",
     set_vit: "VITALITY SET (Green)",
     set_mp_pow: "MYSTIC SET (Blue)",
+	set_fire: "FLAME SET (Red)",
+	set_cold: "FROST SET (Blue)",
+	set_lightning: "STORM SET (Yellow)",
+	set_poison: "VENOM SET (Green)",
+	set_curse: "BANE SET (Purple)",
 
     stat_str: "Strength (STR)",
     stat_dex: "Dexterity (DEX)",
