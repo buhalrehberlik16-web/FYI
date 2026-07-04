@@ -411,7 +411,7 @@ window.LANG_TR = {
 		charms_title: "Tılsımlar (Charms)",
 		charms_desc: "Tılsımlar pasif güç sağlar. Verdikleri Element Bonusu ve Dirençler, doğrudan Atak ve Defans hesaplamalarına dahil edilerek seni kalıcı olarak güçlendirir.",
 		defense_rule_title: "Takılarda Savunma",
-		defense_rule_desc: "Savunma (Zırh) özelliği artık her takıda bulunmaz ve üretilemez. Bu nadir özellik sadece;<br>" +
+		defense_rule_desc: "Savunma (Zırh) özelliği her takıda bulunmaz ve üretilemez. Bu nadir özellik sadece;<br>" +
         "• <b>Boss</b> galibiyetlerinden,<br>" +
         "• <b>Pusula (Olay)</b> odalarındaki gizli hazinelerden,<br>" +
         "• <b>Kırmızı (Tehlikeli)</b> odalardaki güçlü rakiplerden ganimet olarak düşebilir.",
