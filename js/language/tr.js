@@ -207,6 +207,7 @@ window.LANG_TR = {
 		veteran_slot_warning: "⚠️DİKKAT: Bu yeteneği değiştirmek kapasiteni azaltacak. Son slotlardaki eşyalar (varsa) silinebilir veya yer değiştirebilir. Devam etmek istediğine emin misin?",
 		veteran_tree_warning: "⚠️ZİNCİRLEME ETKİ: Bu yeteneği unutursan, bu daldaki tüm üst seviye yeteneklerini de ($1) kaybedeceksin.<span style='color:#ff4d4d'>Toplam Bedel: $2 Altın. Puan İadesi: $3 YP.</span> \n\nSadece bu yeteneği değiştirmek istersen 'Değiştir' seçeneğini kullanabilirsin. Devam edilsin mi?",
 		veteran_forget_simple_warning: "Bu yeteneği unutmak istediğine emin misin? <br><span style='color:#ff4d4d'>Bedel: $1 Altın. İade: $2 Yetenek Puanı.</span>",
+		veteran_info: "Bilgi",
 		
 		//BIOMES
 		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Şehir Yıkıntıları", biome_plains: "Ova",

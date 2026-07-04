@@ -210,6 +210,7 @@ window.LANG_EN = {
 		veteran_slot_warning: "⚠️WARNING: Removing this skill will reduce your capacity. Items in the last slots (if any) might be lost or moved. Are you sure?",
 		veteran_tree_warning: "⚠️CHAIN EFFECT: If you forget this skill, you will also lose all higher-tier skills ($1) in this branch. <b style='color:#ff4d4d'>Total Cost: $2 Gold.</b> Points Refund: $3 SP. \n\nYou can use 'Swap' if you only want to change this specific tier. Proceed?",
 		veteran_forget_simple_warning: "Are you sure you want to forget this skill? <br><span style='color:#ff4d4d'>Cost: $1 Gold. Refund: $2 Skill Points.</span>",
+		veteran_info: "Information",
 		
 
         // Inventory & Settings
