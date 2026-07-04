@@ -396,6 +396,11 @@ window.getHeroEffectiveStats = function() {
             if (s.hasOwnProperty(statKey)) {
                 s[statKey] += bonusAmount;
             }
+			else if (currentResists.hasOwnProperty(statKey)) {
+            // DURUM B: Elemental Set (Fire, Poison vb.)
+            // 3 parça olunca +3, 6 parça olunca +6 o elementin direncini artırır
+            currentResists[statKey] += bonusAmount;
+        }
         }
 
         // 6 parça tamamlandıysa Sınıf Bonusu (Regen)

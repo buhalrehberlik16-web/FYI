@@ -16,6 +16,8 @@ window.switchCodexTab = function(tabId) {
         // Renkler + Oda Olayları + Hasar Mekaniği
         html = `<h3><i class="fas fa-swords" style="margin-right:10px;"></i>${c.combat_colors_title}</h3>
                 <p>${c.combat_colors_desc}</p>
+				<h3><i class="fas fa-eye" style="margin-right:10px;"></i>${c.monster_intentions_title}</h3>
+                <p>${c.monster_intentions_desc}</p>
                 <h3><i class="fas fa-cloud-bolt" style="margin-right:10px;"></i>${c.room_events_title}</h3>
                 <p>${c.room_events_desc}</p>
                 <h3><i class="fas fa-calculator" style="margin-right:10px;"></i>${c.damage_system_title}</h3>
