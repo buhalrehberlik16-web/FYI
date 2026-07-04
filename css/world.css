@@ -314,6 +314,21 @@
     border-color: #8b0000 !important;
 }
 
+.v-info-btn {
+    color: #a89373; /* Pirinç rengi */
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+    z-index: 10;
+}
+
+.v-info-btn:hover {
+    color: #ffd700; /* Hoverda altın sarısı */
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+
 #starter-city-msg {
     transition: all 0.3s ease;
     cursor: default;
@@ -395,6 +410,10 @@
     
     .v-skill-text { font-size: 0.7rem !important; max-width: 90px; }
     .v-action-btn { width: 60px !important; font-size: 0.65rem !important; }
+	.v-info-btn {
+        padding: 5px;
+        font-size: 1.2rem;
+    }
 	
 	#starter-city-msg.ready-to-leave:hover {
     transform: scale(0.7);
