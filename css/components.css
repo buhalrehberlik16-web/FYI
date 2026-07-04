@@ -293,6 +293,27 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 #codex-content h3 { color: #8b0000; margin-bottom: 10px; font-size: 1.2rem; }
 #codex-content p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px; }
 
+.codex-intent-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+.codex-intent-row img {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));
+}
+
+.codex-intent-row b {
+    min-width: 100px; /* Başlıkların hizalı durması için */
+}
+
 /* Gazi Üstad (Veteran) Yetenek Kartları */
 .reforge-prop-card span {
     white-space: nowrap !important;

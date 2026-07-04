@@ -595,3 +595,11 @@
     letter-spacing: 0.5px;
     color: #ccc;
 }
+#codex-modal .stat-info-wrapper {
+    margin-top: 0px !important; /* Negatif %5.5'i ezip aşağı itiyoruz */
+}
+
+/* Codex içindeki başlığın üst boşluğunu biraz daha açalım */
+#codex-modal .stat-info-title {
+    margin-top: 0px !important;
+}
