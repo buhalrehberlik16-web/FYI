@@ -371,18 +371,27 @@ window.LANG_TR = {
 		"<b style='color:#ff4d4d' class='stat-info-title'>BARBAR</b>" +
 		"<hr class='stat-separator'>" +
         "• 2 <span style='color:#ff4d4d'>GÜÇ (STR)</span> = 1 Saldırı<br>" +
-		"• 2 <span style='color:#ffd700'>ÇEVİKLİK (DEX)</span> = 1 Defans & 1.2 Blok<br>" +
-		"• 1 <span style='color:#43FF64'>CANLILIK (VIT)</span> = 5 HP<br>" +
+		"• 2 <span style='color:#b8860b'>ÇEVİKLİK (DEX)</span> = 1 Defans & 1.2 Blok<br>" +
+		"• 1 <span style='color:#2e7d32'>CANLILIK (VIT)</span> = 5 HP<br>" +
 		"• 2 <span style='color:#3498db'>BÜYÜ GÜCÜ (MP)</span> = 1 Öfke Yenileme<br>"+
 		"• 1 <span style='color:#9b59b6'>ZEKA (INT)</span> = 5 Maks Öfke",
 		stats_magus: "<div class='stat-info-wrapper'>" +
 		"<b style='color:#3498db' class='stat-info-title'>MAGUS</b>" +
 		"<hr class='stat-separator'>" +
         "• 5 <span style='color:#ff4d4d'>GÜÇ (STR)</span> = 1 Saldırı<br>" +
-		"• 2 <span style='color:#ffd700'>ÇEVİKLİK (DEX)</span> = 1 Defans & 1.6 Blok<br>" +
-		"• 1 <span style='color:#43FF64'>CANLILIK (VIT)</span> = 4 HP<br>" +
+		"• 2 <span style='color:#b8860b'>ÇEVİKLİK (DEX)</span> = 1 Defans & 1.6 Blok<br>" +
+		"• 1 <span style='color:#2e7d32'>CANLILIK (VIT)</span> = 4 HP<br>" +
 		"• 3 <span style='color:#3498db'>BÜYÜ GÜCÜ (MP)</span> = 1 Mana Yenileme<br>"+
 		"• 1 <span style='color:#9b59b6'>ZEKA (INT)</span> = 5 Maks Mana",
+		
+		//Exhaust Sistemi
+		exhaustion_mechanics_title: "Yorgunluk ve Tükeniş",
+		exhaustion_mechanics_desc: "Yetenek kullanımı bedene yük bindirir. Yorgunluk 200 puana ulaştığında karakteriniz anında ölür:<br><br>" +
+		"• <b style='color:#8c6d00'>50+ Puan (Savunma Kaybı):</b> Zırhınız zayıflar. <span style='color:#ff4d4d'>%10-%30 arası yüzdesel kayıp</span> ile <span style='color:#ff4d4d'>her 10 puanda artan statik ceza</span> karşılaştırılır; en yüksek olan ceza Savunmanızdan düşer.<br>" +
+		"• <b style='color:#ffae00'>100+ Puan (Saldırı ve Can Kaybı):</b> Nefes darlığı başlar. <span style='color:#ff4d4d'>Saldırı gücü %30 azalır</span> ve her tur <span style='color:#ff4d4d'>Can Kaybı</span> başlar.<br>" +
+		"• <b style='color:#9b59b6'>150+ Puan (Ağır Hasar):</b> Can kaybı her puan için 2 katına çıkar. Limitlerinizi zorlamak ölümcüldür.<br>" +
+		"• <b style='color:#8b0000'>200 Puan:</b> Karakteriniz tükenerek can verir.<br><br>" +
+		"<i>Yenilenme: Hanlarda dinlenmek, 'Dinlen' yeteneği veya yol üzerindeki bazı Olaylar (Events) yorgunluğu azaltır.</i>",
 
 		// Dünya Sayfası
 		combat_colors_title: "Savaş Renkleri",
