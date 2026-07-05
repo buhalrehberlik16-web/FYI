@@ -526,15 +526,34 @@ function handleDrop(e, targetType, targetId) {
         }
     }
 	
-    // 2. Ekipmandan Çantaya Sürükleme
+    // 2. Ekipmandan Çantaya Sürükleme (Veya Çantadakiyle Yer Değiştirme)
     else if (data.source === 'equip' && targetType === 'bag') {
-        const item = hero.equipment[data.id];
-        const oldBagItem = hero.inventory[targetId];
+        const item = hero.equipment[data.id]; // Sürüklediğin (takılı olan) eşya
+        const oldBagItem = hero.inventory[targetId]; // Çantada üzerine bıraktığın eşya
         
-        // Sadece boş yere veya başka bir itemın üstüne bırakma (Swap)
-        hero.equipment[data.id] = oldBagItem; // Eğer bagItem varsa ve tipi uymuyorsa ileride kontrol eklenebilir
-        hero.inventory[targetId] = item;
-		writeLog(`📤 ${getTranslatedItemName(item)} ${currentLang === 'tr' ? 'çıkarıldı.' : 'unequipped.'}`);
+        // --- KRİTİK GÜVENLİK KONTROLÜ ---
+        // Eğer çantadaki slot boşsa (null) zaten sorun yok, çıkarılır.
+        // Eğer çantada bir eşya varsa, o eşyanın tipi takılı olan slotun tipine uymalıdır!
+        let isCompatible = false;
+        if (!oldBagItem) {
+            isCompatible = true; // Boş slot, eşya çıkarılıyor demektir.
+        } else {
+            // Eşya tipi (ring, belt vb.) slot isminin içinde geçiyor mu? 
+            // (ring -> ring1, earring -> earring2 vb. uyumu için startsWith kullanıyoruz)
+            if (data.id.startsWith(oldBagItem.type)) {
+                isCompatible = true;
+            }
+        }
+
+        if (isCompatible) {
+            hero.equipment[data.id] = oldBagItem; 
+            hero.inventory[targetId] = item;
+            writeLog(`📤 ${getTranslatedItemName(item)} ${currentLang === 'tr' ? 'çıkarıldı.' : 'unequipped.'}`);
+        } else {
+            // Eğer tür uymuyorsa oyuncuyu uyar (Opsiyonel)
+            const lang = window.LANGUAGES[window.gameSettings.lang || 'tr'];
+            console.warn("Geçersiz eşya türü!"); // Veya window.showAlert(lang.invalid_item_type);
+        }
     }
     // 3. Çanta İçinde Yer Değiştirme
     else if (data.source === 'bag' && targetType === 'bag') {
