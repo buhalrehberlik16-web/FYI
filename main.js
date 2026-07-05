@@ -28,8 +28,10 @@ window.switchCodexTab = function(tabId) {
     else if (tabId === 'hero') {
         // Stat Dağılımları (Barbar ve Magus)
         html = `<h3><i class="fas fa-chart-line" style="margin-right:10px;"></i>${c.stats_title}</h3>
-                <p>${c.stats_barbarian}</p>
-                <p>${c.stats_magus}</p>`;
+                <div class="codex-stat-section">${c.stats_barbarian}</div>
+                <div class="codex-stat-section">${c.stats_magus}</div>
+				<h3><i class="fas fa-lungs" style="margin-right:10px;"></i>${c.exhaustion_mechanics_title}</h3>
+				<p>${c.exhaustion_mechanics_desc}</p>`;
     } else if (tabId === 'craft') {
         html = `<h3><i class="fas fa-hammer" style="margin-right:10px;"></i>${c.salvage_reforge_title}</h3>
                 <p>${c.salvage_reforge_desc}</p>

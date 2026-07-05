@@ -1670,7 +1670,7 @@ window.nextTurn = function() {
         if (window.broochBuffer.resource > 0) {
             setTimeout(() => {
                 showFloatingText(heroDisplayContainer, `+${window.broochBuffer.resource} Rage`, 'heal');
-            }, 400); // 0.5 saniye sonra
+            }, 700); // 0.5 saniye sonra
         }
 
         if (window.broochBuffer.damage > 0) {
