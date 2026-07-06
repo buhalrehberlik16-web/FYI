@@ -310,6 +310,7 @@ window.sehreGit = function() {
         refreshMerchantStock(12);
     }
 
+	
     // 3. Şehir ekranına geçiş yap
     if (typeof enterCity === 'function') {
         enterCity();
