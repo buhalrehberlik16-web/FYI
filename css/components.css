@@ -293,16 +293,6 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
 #codex-content h3 { color: #8b0000; margin-bottom: 10px; font-size: 1.2rem; }
 #codex-content p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px; }
 
-.codex-intent-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    padding: 5px;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
-}
-
 .codex-intent-row img {
     width: 55px;
     height: 55px;
@@ -310,9 +300,90 @@ button:disabled { background-color: #383838; color: #777; cursor: not-allowed; b
     filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));
 }
 
-.codex-intent-row b {
-    min-width: 100px; /* Başlıkların hizalı durması için */
+.codex-intent-row {
+    display: flex;
+    align-items: center; /* İkon, Başlık ve Açıklamayı dikeyde ortalar */
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    width: 100%;
 }
+
+.codex-intent-row b {
+    /* KRİTİK: Başlıklar için sabit bir genişlik ayırıyoruz */
+    /* 120px "Yıkıntılar:" kelimesi için tam idealdir */
+    min-width: 120px; 
+    display: inline-block;
+    flex-shrink: 0; /* Başlığın sıkışmasını engeller */
+}
+
+.codex-intent-row span {
+    /* Açıklama metni kalan boşluğu doldurur ve düzgünce hizalanır */
+    flex-grow: 1;
+    line-height: 1.4;
+    font-size: 0.85rem;
+}
+
+.codex-node-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #777; /* Standart Gri/Yeşil */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0;
+}
+
+.codex-node-icon img {
+    width: 70%;
+    height: 70%;
+}
+
+/* Zorluk Renkleri */
+.node-orange { border-color: #ff9800 !important; box-shadow: 0 0 8px rgba(255, 152, 0, 0.4); }
+.node-red { border-color: #ff4d4d !important; box-shadow: 0 0 8px rgba(255, 77, 77, 0.4); }
+
+.codex-set-preview {
+    background: rgba(20, 20, 20, 0.95);
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 10px 0;
+    max-width: 280px;
+    text-align: left;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    font-family: 'Cinzel', serif;
+}
+
+.codex-stat-line {
+    color: #3498db; /* Defans Mavisi */
+    font-weight: 900;
+    margin-bottom: 3px;
+    font-size: 0.9rem;
+}
+
+.codex-multi-icons {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.codex-multi-icons img {
+    width: 30px !important;
+    height: 30px !important;
+    border: 1px solid #6b5c3b;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.3);
+}
+
+.codex-dot-row { display: flex; gap: 8px; margin: 6px 0; }
+.codex-dot { width: 8px; height: 8px; background: #333; border-radius: 50%; border: 1px solid #555; }
+.codex-dot.active { background: #43FF64; box-shadow: 0 0 8px #43FF64; border-color: #fff; }
 
 /* Gazi Üstad (Veteran) Yetenek Kartları */
 .reforge-prop-card span {
