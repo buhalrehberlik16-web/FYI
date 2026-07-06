@@ -11,17 +11,22 @@ window.switchCodexTab = function(tabId) {
     const c = lang.codex;
 
     let html = "";
-
-    if (tabId === 'world') {
-        // Renkler + Oda Olayları + Hasar Mekaniği
-        html = `<h3><i class="fas fa-swords" style="margin-right:10px;"></i>${c.combat_colors_title}</h3>
-                <p>${c.combat_colors_desc}</p>
-				<h3><i class="fas fa-eye" style="margin-right:10px;"></i>${c.monster_intentions_title}</h3>
+	
+	if (tabId === 'combat') {
+        // Yeni Savaş Sekmesi
+        html = `<h3><i class="fas fa-eye" style="margin-right:10px;"></i>${c.monster_intentions_title}</h3>
                 <p>${c.monster_intentions_desc}</p>
-                <h3><i class="fas fa-cloud-bolt" style="margin-right:10px;"></i>${c.room_events_title}</h3>
+                <h3><i class="fas fa-bolt" style="margin-right:10px;"></i>${c.room_events_title}</h3>
                 <p>${c.room_events_desc}</p>
                 <h3><i class="fas fa-calculator" style="margin-right:10px;"></i>${c.damage_system_title}</h3>
-                <p>${c.damage_system_desc}</p>
+                <p>${c.damage_system_desc}</p>`;
+    }
+    else if (tabId === 'world') {
+        // Renkler + Oda Olayları + Hasar Mekaniği
+        html = `<h3><i class="fas fa-globe-europe" style="margin-right:10px;"></i>${c.biomes_title}</h3>
+				<p>${c.biomes_desc}</p>
+				<h3><i class="fas fa-map-marked-alt" style="margin-right:10px;"></i>${c.combat_colors_title}</h3>
+                <p>${c.combat_colors_desc}</p>
                 <h3><i class="fas fa-question-circle" style="margin-right:10px;"></i>${c.events_title}</h3>
                 <p>${c.events_desc}</p>`;
     } 
@@ -42,11 +47,13 @@ window.switchCodexTab = function(tabId) {
                 <p>${c.brooch_desc}</p>
                 <h3><i class="fas fa-scroll" style="margin-right:10px;"></i>${c.charms_title}</h3>
                 <p>${c.charms_desc}</p>
+				<h3><i class="fas fa-layer-group" style="margin-right:10px;"></i>${c.set_bonuses_title}</h3>
+                <p>${c.set_bonuses_desc}</p>
                 <h3><i class="fas fa-shield-alt" style="margin-right:10px;"></i>${c.defense_rule_title}</h3>
                 <p>${c.defense_rule_desc}</p>`;
     } else if (tabId === 'town') {
-        html = `<h3><i class="fas fa-crown" style="margin-right:10px;"></i>${c.master_system_title}</h3>
-                <p>${c.master_system_desc}</p>
+        html = `<h3><i class="fas fa-users-cog" style="margin-right:10px;"></i>${c.master_artisans_title}</h3>
+                <p>${c.master_artisans_desc}</p>
                 <h3><i class="fas fa-bed" style="margin-right:10px;"></i>${c.inn_title}</h3>
                 <p>${c.inn_desc}</p>
                 <h3><i class="fas fa-horse" style="margin-right:10px;"></i>${c.stables_title}</h3>
