@@ -359,6 +359,7 @@ window.LANG_EN = {
 		tab_gear: "GEAR",
 		tab_town: "TOWN",
 		tab_hero: "HERO",
+		tab_combat: "COMBAT",
 		
 		room_events_title: "Room Events (Environment)",
 		room_events_desc: "Atmospheric events that randomly appear in combat rooms:<br>" +
@@ -396,9 +397,20 @@ window.LANG_EN = {
 		"<i>Recovery: Staying at an Inn, using the 'Rest' skill, or specific Path Events can reduce exhaustion.</i>",
 
 		combat_colors_title: "Combat Colors",
-		combat_colors_desc: "• <b style='color:#1b5e20'>Green:</b> Standard or mid-tier(%50 buffed) enemies.<br>• <b style='color:#ff9800'>Orange:</b> High Tier without extra buffs.<br>• <b style='color:#ff4d4d'>Red:</b> Either 25% Strong or 20% High Tier Weak enemies.",
+		combat_colors_desc: "The border colors of enemy nodes indicate the level of danger in that room:" +
+		"<div class='codex-intent-row'><div class='codex-node-icon'><img src='images/utils/skull_icon.webp'></div> <b style='color:#145a32'>Green:</b> <span>Standard or mid-tier (%50 buffed) enemies.</span></div>" +
+		"<div class='codex-intent-row'><div class='codex-node-icon node-orange'><img src='images/utils/skull_icon.webp'></div> <b style='color:#a67c00'>Orange:</b> <span>High Tier without extra buffs.</span></div>" +
+		"<div class='codex-intent-row'><div class='codex-node-icon node-red'><img src='images/utils/skull_icon.webp'></div> <b style='color:#8b0000'>Red:</b> <span>Either 20% Strong or 20% High Tier Weak enemies.</span></div>",
 		damage_system_title: "Damage & Defense Mechanics",
 		damage_system_desc: "In battle, every strike passes through two layers:<br><br>• <b>Physical Stage:</b> Your Attack power clashes with enemy Defense. If armor is stronger than the hit, physical damage becomes 0.<br>• <b>Leftover Armor (Mitigation):</b> Armor that blocks physical force is still resilient! After stopping physical damage, <u>half of the remaining Defense</u> attempts to block incoming magical (Elemental) damage.<br>• <b>Elemental Stage:</b> Effects like Fire, Ice, or Poison are first weakened by your Resistances, then pass through any mitigation from leftover armor.<br>• <b>Power of Charms:</b> Charms don't just boost Attack and Defense; they provide a 'Net Damage' advantage in these calculations, making it easier to bypass heavy armor.",
+		biomes_title: "Biomes of the Land",
+		biomes_desc: "Each region you traverse has its own unique atmospheric effects and a dominant element:" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_forest.webp'> <b style='color:#1b5e20'>Forest:</b> <span>Heart of nature. Focuses on <span style='color:#1b5e20'>Poison</span> damage and resistance.</span></div>" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_iceland.webp'> <b style='color:#0056b3'>Iceland:</b> <span>Freezing frost. <span style='color:#0056b3'>Cold</span> based attacks are dominant.</span></div>" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_mountain.webp'> <b style='color:#b8860b'>Mountain:</b> <span>Home of the storm. <span style='color:#b8860b'>Lightning</span> energy is highly volatile.</span></div>" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_cave.webp'> <b style='color:#4a148c'>Cave:</b> <span>Deep shadows. <span style='color:#4a148c'>Curse</span> effects are extremely vital.</span></div>" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_urban.webp'> <b style='color:#8b0000'>Urban:</b> <span>City ruins. Often filled with <span style='color:#8b0000'>Fire</span> and complex magic.</span></div>" +
+		"<div class='codex-intent-row'><img src='images/biomes/biome_plains.webp'> <b style='color:#8b0000'>Plains:</b> <span>Open fields. Usually features <span style='color:#8b0000'>Fire</span> and physical threats.</span></div>",
     
 		salvage_reforge_title: "Salvage & Reforge (Blacksmith)",
 		salvage_reforge_desc: "• <b>Salvage:</b> Break jewelry into 'Fragments'.<br>• <b>Reforge:</b> Remove one stat to add a new one. Use Scrolls or Stones to target specific stats.",
@@ -413,19 +425,39 @@ window.LANG_EN = {
 		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_debuff.webp'> <b style='color:#4a148c'>Debuff:</b> Applies a negative effect to your hero.</div>" +
 		"<div class='codex-intent-row'><img src='images/enemies/intentions/intention_defend.webp'> <b style='color:#3498db'>Defense:</b> Reduces incoming damage.</div>",
 
-
 		brooch_title: "Mystic Brooches",
-		brooch_desc: "Brooches trigger every 1-3 turns:<br>• <b>Stat Burst:</b> Temporarily boosts your power.<br>• <b>Fixed Damage:</b> Direct hit (x2 dmg if specialty tribe matches).<br>• <b>Regen:</b> Grants HP or Resource on trigger.",
+		brooch_desc: "Brooches trigger automatically every 1-3 turns:" +
+        "<div class='codex-intent-row'><img src='items/images/brooch/brooch_all.webp'> <b style='color:#000'>Every Turn:</b> <span>Rare brooches with frequency 1 trigger every turn.</span></div>" +
+        "<div class='codex-intent-row'><img src='items/images/brooch/brooch_str.webp'> <b style='color:#000'>Standard:</b> <span>Frequency 2-3 brooches yield greater effects.</span></div><br>" +
+        "• <b>Stat Damage:</b> Deals damage based on the % value of the related stat.<br>" +
+        "• <b>Instant Damage:</b> Deals fixed damage (x2 if specialty tribe matches).<br>" +
+        "• <b>Regen:</b> Grants HP or Resource on every trigger.",
+
 		charms_title: "Charms",
-		charms_desc: "Charms provide passive power. Elemental bonuses and resistances directly impact your Attack and Defense calculation.",
+		charms_desc: "Charms provide passive power. They must be equipped in **brooch slots** to take effect:" +
+        "<div class='codex-intent-row'>" +
+            "<div class='codex-multi-icons'>" +
+                "<img src='items/images/charm/charm_attack.webp'>" +
+                "<img src='items/images/charm/charm_cold.webp'>" +
+                "<img src='items/images/charm/charm_beast.webp'>" +
+            "</div>" +
+            "<span>Elemental bonuses and resistances are directly added to Atk/Def calculations, strengthening you permanently.</span>" +
+        "</div>",
+
+		set_bonuses_title: "Set Bonuses & Expertise",
+		set_bonuses_desc: "Combining jewelry of the same color/attribute grants immense power:" +
+        "<div class='codex-set-preview'><b>MIGHT SET (3/6)</b><div class='codex-dot-row'><div class='codex-dot active'></div><div class='codex-dot'></div></div><span style='color:#43FF64'>• 3 Pieces: +3 STRENGTH (STR)</span></div>" +
+        "<div class='codex-set-preview'><b>MIGHT SET (6/6)</b><div class='codex-dot-row'><div class='codex-dot active'></div><div class='codex-dot active'></div></div><span style='color:#43FF64'>• 3 Pieces: +3 STRENGTH (STR)</span><br><span style='color:#43FF64'>• 6 Pieces: +6 STRENGTH (STR)</span><hr class='stat-separator' style='margin:5px 0;'><span style='color:#43FF64'>Barbarian: +20% Rage Regen</span></div>",
+
 		defense_rule_title: "Jewelry Defense",
-		defense_rule_desc: "Defense (Armor) stats are rare and cannot be found on regular items. They only drop from:<br>" +
-        "• <b>Boss</b> victories,<br>" +
-        "• Hidden treasures in <b>Compass (Event)</b> nodes,<br>" +
-        "• Powerful foes in <b>Red (Dangerous)</b> nodes.",
+    defense_rule_desc: "Defense (Armor) is rare and cannot be crafted. It only drops from the following sources:<br>" +
+        "• <b style='color:#a67c00'>Boss Victories</b><br>" +
+        "• <b style='color:#0056b3'>Compass (Event) Nodes</b><br>" +
+        "• <b style='color:#8b0000'>Red (Dangerous) Nodes</b>" +
+        "<div class='codex-set-preview'><b style='color:#ffd700'>RING OF STRENGTH</b><br><small style='color:#888'>TIER 2</small><hr class='stat-separator' style='margin:5px 0;'><div class='codex-stat-line'> Defense: +3</div><div style='color:#ccc'>• Strength (STR): +2</div></div>",
 
 		inn_title: "Inn (Recovery)",
-		inn_desc: "• <b>Rest:</b> Full HP/Exhaustion recovery but advances 1 day. Boss may grow stronger!<br>• <b>Drink:</b> Reduces some Exhaustion without skipping time.",
+		inn_desc: "• <b>Rest:</b> Full HP - 60 Exhaustion recovery but advances 1 day. Boss may grow stronger!<br>• <b>Drink:</b> Reduces 25 Exhaustion without skipping time.",
 		stables_title: "Stables (Horse & Scout)",
 		stables_desc: "• <b>Swift Steed:</b> Journeys take 0.5 days for 4 nodes.<br>• <b>Scout:</b> Reveals the next 3 nodes and their events on the map.",
 		merchant_title: "Merchant (Trade)",
@@ -437,7 +469,13 @@ window.LANG_EN = {
 		master_alchemist: "ALCHEMIST MASTER",
 		master_stable: "STABLE MASTER",
 		events_title: "Mysterious Events",
-		events_desc: "Compass mark nodes on the map yield unpredictable results. Some events reward you, while others (like Scavenging Ruins) carry risks. Some might drag you directly into a battle (Lost Child).",
+		events_desc: "Compass nodes on the map yield unpredictable results:" +
+		"<div class='codex-intent-row'><img src='images/utils/choice_icon.webp'> <b style='color:#000000'>Compass (Event):</b> <span>Some events reward you, while others carry risks. Some might drag you directly into a battle (Lost Child).</span></div>",
+		master_artisans_title: "Town Masters",
+		master_artisans_desc: "The silhouettes you see above towns on the map represent the **Master Artisan** residing there:" +
+        "<div class='codex-intent-row'><img src='images/npc/master_blacksmith.webp'> <b style='color:#000000'>Master Blacksmith:</b> Offers 'Reforge' services exclusively in his region.</div>" +
+        "<div class='codex-intent-row'><img src='images/npc/master_alchemist.webp'> <b style='color:#8b0000'>Alchemy Master:</b> Offers 'Synthesis' services exclusively in his region.</div>" +
+        "<div class='codex-intent-row'><img src='images/npc/master_stable.webp'> <b style='color:#145a32'>Stable Master:</b> Offers 'Swift Steed' rentals exclusively in his region.</div>",
 	},
 		
 
