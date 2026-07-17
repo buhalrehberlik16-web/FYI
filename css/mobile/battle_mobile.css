@@ -272,6 +272,12 @@
 		bottom: 0%;
 		left: 53%;
     }
+	    #monster-sprite-viewer {
+        transform: translateX(-50%) scale(0.67)!important;
+        transform-origin: bottom center;
+		bottom: 0%;
+		left: 53%;
+    }
 }
 
 @media (max-height: 600px) {
