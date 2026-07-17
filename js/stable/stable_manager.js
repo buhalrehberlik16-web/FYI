@@ -123,7 +123,7 @@ window.StableManager = {
 
             let biomeInfo = "";
             if (node.biome) {
-                const biomeLabel = lang.items[`biome_${node.biome}`] || node.biome;
+                const biomeLabel = lang[`biome_${node.biome}`] || node.biome;
                 biomeInfo = " <span style='color: " + (isVisited ? '#555' : '#43FF64') + "; font-size: 0.8em;'>(" + biomeLabel + ")</span>";
             }
             
