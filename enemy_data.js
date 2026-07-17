@@ -16,9 +16,12 @@ window.ENEMY_STATS = {
     // --- TIER 1 ---
 	"Gremlin": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/gremlin.webp',
+		visualScale: 0.65,
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: -1, curse: -2 },
         maxHp: 25, attack: 5, defense: 4, xp: 0, tier: 1, 
-        idle: 'enemies/gremlin_idle.webp',
+        idle: 'enemies/Idle/gremlin_idle.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/gremlin_dead.webp',
         skills: [
@@ -285,9 +288,11 @@ window.ENEMY_STATS = {
     // --- TIER 2 ---
 	"Kemik Yürüyen": { 
         tribe: "Undead",
-        specificResists: { poison: 10 },
+		hasIdleSprite: true,
+        spritesheet: 'enemies/bone_walker.webp',
+		specificResists: { poison: 10 },
         maxHp: 52, attack: 12, defense: 4, xp: 0, tier: 2, 
-        idle: 'enemies/bone_walker.webp',
+        idle: 'enemies/Idle/bone_walker.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/bone_walker_dead.webp',
         skills: [
@@ -319,9 +324,12 @@ window.ENEMY_STATS = {
     },
     "Goblin Devriyesi": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/goblin_devriyesi.webp',
+		visualScale: 0.95,
         specificResists: { cold: 5 },
         maxHp: 60, attack: 12, defense: 5, xp: 0, tier: 2, 
-        idle: 'enemies/goblin_devriyesi.webp',
+        idle: 'enemies/Idle/goblin_devriyesi.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
         skills: [
@@ -347,8 +355,11 @@ window.ENEMY_STATS = {
     },
 	"Goblin Gözcü": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/goblin_scout.webp',
+		visualScale: 0.80,
         maxHp: 63, attack: 10, defense: 6, xp: 0, tier: 2, 
-        idle: 'enemies/goblin_scout.webp',
+        idle: 'enemies/Idle/goblin_scout.webp',
         attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_scout_dead.webp',
         skills: [
@@ -469,9 +480,11 @@ window.ENEMY_STATS = {
 	
 	"Haydut Simyacı": { 
         tribe: "Humans",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/bandolier_idle.webp',
         specificResists: { fire: 4 },
         maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
-        idle: 'enemies/bandolier_idle.webp',
+        idle: 'enemies/Idle/bandolier_idle.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/bandolier_dead.webp',
         skills: [
@@ -644,9 +657,11 @@ window.ENEMY_STATS = {
 	},
 	"Lanetli Muhafız": { 
         tribe: "Undead",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/cursed_sentry.webp',
         specificResists: { poison: 20 },
         maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
-        idle: 'enemies/cursed_sentry.webp',
+        idle: 'enemies/Idle/cursed_sentry.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/cursed_sentry_dead.webp',
         skills: [
@@ -705,8 +720,11 @@ window.ENEMY_STATS = {
     // --- TIER 3 ---
 	"Goblin Şaman": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/goblin_shaman.webp',
+		visualScale: 0.88,
         maxHp: 70, attack: 30, defense: 10, xp: 0, tier: 3, 
-        idle: 'enemies/goblin_shaman_idle.webp',
+        idle: 'enemies/Idle/goblin_shaman_idle.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_shaman_dead.webp',
         skills: [ 
@@ -747,9 +765,12 @@ window.ENEMY_STATS = {
     },	
     "Goblin Savaşçısı": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/goblin_savascisi.webp',
+		visualScale: 0.75,
         specificResists: { cold: 5 },
         maxHp: 90, attack: 30, defense: 15, xp: 0, tier: 3, 
-        idle: 'enemies/goblin_savascisi.webp',
+        idle: 'enemies/Idle/goblin_savascisi.webp',
         attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
@@ -826,8 +847,11 @@ window.ENEMY_STATS = {
 	},
 	"Boz Ayı": { 
         tribe: "B&M",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/grizzly.webp',
+		visualScale: 0.85,
         maxHp: 90, attack: 30, defense: 10, xp: 0, tier: 3, 
-        idle: 'enemies/grizzly_idle.webp',
+        idle: 'enemies/Idle/grizzly_idle.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/grizzly_dead.webp',
         skills: [
@@ -853,8 +877,11 @@ window.ENEMY_STATS = {
     },
 	"Lanetli Ayı": { 
         tribe: "B&M",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/cursed_grizzly.webp',
+		visualScale: 0.85,
         maxHp: 105, attack: 32, defense: 10, xp: 0, tier: 3, 
-        idle: 'enemies/cursed_grizzly.webp',
+        idle: 'enemies/Idle/cursed_grizzly.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/cursed_grizzly_dead.webp',
         skills: [
@@ -863,9 +890,12 @@ window.ENEMY_STATS = {
     },
 	"Beyaz Kurt": { 
         tribe: "B&M",
+		hasIdleSprite: true,
+		visualScale: 0.85,
         specificResists: { cold: 12 },
         maxHp: 80, attack: 20, defense: 10, xp: 0, tier: 3, 
-        idle: 'enemies/beyaz_kurt.webp',
+		spritesheet: 'enemies/beyaz_kurt.webp',
+        idle: 'enemies/Idle/beyaz_kurt.webp',
         attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
         dead: 'enemies/beyaz_kurt_dead.webp',
         skills: [
@@ -964,9 +994,11 @@ window.ENEMY_STATS = {
     },
     "Kadim Mantar": { 
         tribe: "Plants",
+		hasIdleSprite: true, // BU SATIRI EKLE
         specificResists: { poison: 20 },
         maxHp: 110, attack: 15, defense: 20, xp: 0, tier: 3, 
-        idle: 'enemies/ancient_mushroom.webp',
+        idle: 'enemies/Idle/ancient_mushroom.webp',
+		spritesheet: 'enemies/ancient_mushroom.webp', // NEFES ALMA (40 karelik sheet)
         attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/ancient_mushroom_dead.webp',
         skills: [
@@ -1002,8 +1034,10 @@ window.ENEMY_STATS = {
     },
 	"Kül Yürüyen": { 
         tribe: "Undead",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/ash_walker.webp',
         maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
-        idle: 'enemies/ash_walker.webp',
+        idle: 'enemies/Idle/ash_walker.webp',
         attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/ash_walker_dead.webp',
         skills: [
@@ -1011,8 +1045,10 @@ window.ENEMY_STATS = {
     },
 	"Ejderkelam": { 
         tribe: "Dragonkind",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/dragonkin_speaker.webp',
         maxHp: 90, attack: 20, defense: 18, xp: 0, tier: 3, 
-        idle: 'enemies/dragonkin_speaker.webp',
+        idle: 'enemies/Idle/dragonkin_speaker.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/dragonkin_speaker_dead.webp',
         skills: [
@@ -1033,8 +1069,10 @@ window.ENEMY_STATS = {
     },
 	 "Kil Golem": { 
         tribe: "Magical Creatures",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/clay_golem.webp',
         maxHp: 100, attack: 22, defense: 20, xp: 0, tier: 3, 
-        idle: 'enemies/clay_golem.webp',
+        idle: 'enemies/Idle/clay_golem.webp',
         attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/clay_golem_dead.webp',
         skills: [
@@ -1147,6 +1185,9 @@ window.ENEMY_STATS = {
     // --- BOSS ---
     "Goblin Şefi": { 
         tribe: "Greenskins",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/goblin_sef.webp',
+		//visualScale: 0.95,
         specificResists: { cold: 10 },
         maxHp: 200, attack: 30, defense: 20, isBoss:true, tier: 4, 
         idle: 'enemies/goblin_sef.webp',

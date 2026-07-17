@@ -234,10 +234,8 @@ window.scoutver = function() {
     }
 
     const lang = window.getCombatLang();
-    // Kaydırılabilir şık bir kapsayıcı oluşturuyoruz
-    let report = "<div style='text-align: left; font-family: \"Cinzel\", serif; max-height: 450px; overflow-y: auto; padding-right: 10px; -ms-overflow-style: none; scrollbar-width: none;'>";
+    let report = "<div style='text-align: left; font-family: \"Cinzel\", serif; max-height: 450px; overflow-y: auto; padding-right: 10px; scrollbar-width: none;'>";
 
-    // Tüm aşamaları (0'dan son aşamaya kadar) tara
     for (let s = 0; s < MAP_CONFIG.totalStages; s++) {
         const nodesInStage = window.GAME_MAP.nodes.filter(n => n.stage === s);
         
@@ -255,40 +253,48 @@ window.scoutver = function() {
 
                 if (isCurrent) { color = "#ffd700"; displayTitle += " [BURADASIN]"; }
 
-                // --- YENİ: TIER ETİKETİ (GÜVENLİ YAZIM) ---
-                // SİLME YAPILMADI: Mantık eklendi, tırnak hataları giderildi.
-                let tierLabel = "";
-                if (node.type === 'encounter' || node.type === 'start') {
-                    let tText = "T" + node.tier;
-                    if (node.isHalfTier) tText += ".5";
-                    if (node.isHard) tText += " <span style='color:#ff4d4d'>+25%</span>";
-                    if (node.isWeak) tText += " <span style='color:#43FF64'>-20%</span>";
-                    
-                    tierLabel = " <small style='color:#666;'>(" + tText + ")</small>";
-                }
-                // ------------------------------------------
-
+                // --- 1. DÜŞMAN İSİMLERİ ---
                 if (node.type === 'encounter') {
                     const enemyName = lang.enemy_names[node.enemyName] || node.enemyName;
                     displayTitle = enemyName;
                     if(!isVisited) color = "#ff4d4d";
                 }
 
-                let biomeInfo = "";
-                if (node.biome) {
-                    const biomeLabel = lang.items["biome_" + node.biome] || node.biome;
-                    biomeInfo = " <span style='color: " + (isVisited ? '#555' : '#43FF64') + "; font-size: 0.8em;'>(" + biomeLabel + ")</span>";
+                // --- 2. OLAY İSİMLERİ (YENİ) ---
+                if (node.type === 'choice') {
+                    // node.eventId üzerinden dil dosyasındaki title'a ulaşıyoruz
+                    const eventData = lang.events[node.eventId];
+                    displayTitle = eventData ? eventData.title : (node.eventId || "Gizemli Olay");
+                    if(!isVisited) color = "#3498db"; // Olaylar mavi görünsün
                 }
 
+                // --- TIER VE VARYASYON ETİKETİ ---
+                let tierLabel = "";
+                if (node.type === 'encounter' || node.type === 'start') {
+                    let tText = "T" + node.tier;
+                    if (node.isHalfTier) tText += ".5";
+                    if (node.isHard) tText += " <span style='color:#ff4d4d'>+25%</span>";
+                    if (node.isWeak) tText += " <span style='color:#43FF64'>-20%</span>";
+                    tierLabel = " <small style='color:#666;'>(" + tText + ")</small>";
+                }
+
+                // --- BİYOM VE ODA OLAYI ---
+                let biomeInfo = "";
+				if (node.biome) {
+					// Burada node.biome "mountain" gelirse, dilde "biome_mountain" anahtarını arar.
+					const biomeKey = "biome_" + node.biome.toLowerCase();
+					const biomeLabel = lang[biomeKey] || node.biome;
+					
+					biomeInfo = " <span style='color: " + (isVisited ? '#555' : '#43FF64') + "; font-size: 0.8em;'>(" + biomeLabel + ")</span>";
+				}
+
                 let roomEventInfo = "";
-                const isCombat = (node.type === 'encounter' || node.type === 'boss' || node.type === 'start');
-                if (isCombat) {
+                if (node.type === 'encounter' || node.type === 'boss' || node.type === 'start') {
                     const eventKey = node.roomEvent || "none";
                     const eventLabel = lang.room_events["event_" + eventKey] || eventKey;
                     roomEventInfo = " <span style='color: " + (isVisited ? '#555' : '#df9cff') + "; font-size: 0.8em;'>[" + eventLabel + "]</span>";
                 }
 
-                // Satır birleştirme (Unexpected token hatasını önleyen temiz yapı)
                 report += "<span style='font-size: 0.85em; margin-left: 10px; color: " + color + "; " + style + "'>• " + displayTitle + tierLabel + biomeInfo + roomEventInfo + "</span><br>";
             });
             report += "</div>";
@@ -310,7 +316,6 @@ window.sehreGit = function() {
         refreshMerchantStock(12);
     }
 
-	
     // 3. Şehir ekranına geçiş yap
     if (typeof enterCity === 'function') {
         enterCity();

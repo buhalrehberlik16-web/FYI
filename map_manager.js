@@ -117,8 +117,19 @@ function generateMap() {
 
     let nodeIdCounter = 0;
     const biomes = ['forest', 'iceland', 'mountain', 'cave', 'urban', 'plains'];
+	
+	// --- YENİ EKLENDİ: TEKRAR ENGELLEME HAFIZASI ---
+    let lastStageEnemies = []; 
+    let lastStageEvents = [];  
+    // ----------------------------------------------
 
     for (let stage = 0; stage < MAP_CONFIG.totalStages; stage++) {
+		
+		// --- YENİ EKLENDİ: BU STAGE'DE SEÇİLENLERİ TAKİP ET ---
+        let currentStageEnemies = [];
+        let currentStageEvents = [];
+        // ----------------------------------------------------
+		
         let nodeCountInStage = 0;
         let isChokepoint = false;
 		const diff = getTierAndDifficultyForStage(stage, act);
@@ -217,25 +228,37 @@ function generateMap() {
     
 		let b = null, e = null, m = null, img = null;
 
-		// Sadece Savaş odalarına Biyom ve Canavar ata
-		if (['encounter', 'start', 'boss'].includes(nodeType)) {
-			b = (nodeType === 'boss') ? 'urban' : biomes[Math.floor(Math.random() * biomes.length)];
-			
-			// --- YENİ: BATTLE ARKA PLANI ATAMASI ---
-            // 1-4 arası rastgele bir numara seçiyoruz
-            bBg = Math.floor(Math.random() * 4) + 1; 
-            // ---------------------------------------
-       
-			// e (Düşman ismi) seçimi
-			e = (nodeType === 'boss') ? "Goblin Şefi" : pickEnemyForBiome(b, t);
-        
-			const variation = Math.floor(Math.random() * 4);
-			img = variation === 0 ? `biome_${b}.webp` : `biome_${b}${variation}.webp`;
-		} 
-		else if (nodeType === 'town') {
-			const masters = ['blacksmith', 'alchemist', 'stable'];
-			m = masters[Math.floor(Math.random() * masters.length)];
-		}
+			// --- 1. DÜŞMAN SEÇİMİ (AYNI AŞAMADA TEKRAR ETMEZ) ---
+            if (isCombatNode) {
+                b = (nodeType === 'boss') ? 'urban' : biomes[Math.floor(Math.random() * biomes.length)];
+                bBg = Math.floor(Math.random() * 4) + 1; 
+
+                if (nodeType === 'boss') {
+                    e = "Goblin Şefi";
+                } else {
+                    let tierPool = window.TIER_ENEMIES[t] || [];
+                    
+                    // KRİTİK FİLTRE: Hem bir önceki stage'de kullanılanları 
+                    // HEM DE bu stage'de diğer lane'lerde (yollarda) seçilenleri havuzdan çıkar.
+                    let filteredPool = tierPool.filter(name => 
+                        !lastStageEnemies.includes(name) && 
+                        !currentStageEnemies.includes(name)
+                    );
+
+                    let finalPool = filteredPool.length > 0 ? filteredPool : tierPool;
+                    e = pickEnemyFromCustomPool(finalPool, b);
+                    
+                    // Hafızaya ekle (Aynı aşamadaki sonraki lane bunu görmesin)
+                    currentStageEnemies.push(e); 
+                }
+            
+                const variation = Math.floor(Math.random() * 4);
+                img = variation === 0 ? `biome_${b}.webp` : `biome_${b}${variation}.webp`;
+            } 
+            else if (nodeType === 'town') {
+                const masters = ['blacksmith', 'alchemist', 'stable'];
+                m = masters[Math.floor(Math.random() * masters.length)];
+            }
 		
 		const stats = ENEMY_STATS[e];
 		let frozenResists = null;
@@ -278,16 +301,24 @@ function generateMap() {
 			next: []
 			};
 			
-			// --- YENİ: EVENT BELİRLEME (HARİTA ÜRETİLİRKEN) ---
-			if (nodeType === 'choice') {
-				// EVENT_POOL içinden rastgele bir tane seç ve ID'sini kaydet
-				const randomEvt = EVENT_POOL[Math.floor(Math.random() * EVENT_POOL.length)];
-				node.eventId = randomEvt.id; 
-			}
-			// --------------------------------------------------
-			
-		nodesInThisStage.push(node);
-	});
+			// --- 2. EVENT SEÇİMİ (AYNI AŞAMADA TEKRAR ETMEZ) ---
+            if (nodeType === 'choice') {
+                // KRİTİK FİLTRE: Hem önceki stage hem bu stage lane'leri kontrol edilir
+                let availableEvents = EVENT_POOL.filter(ev => 
+                    !lastStageEvents.includes(ev.id) && 
+                    !currentStageEvents.includes(ev.id)
+                );
+                
+                let finalEventPool = availableEvents.length > 0 ? availableEvents : EVENT_POOL;
+                const randomEvt = finalEventPool[Math.floor(Math.random() * finalEventPool.length)];
+                
+                node.eventId = randomEvt.id; 
+                currentStageEvents.push(node.eventId); 
+            }
+                
+            nodesInThisStage.push(node);
+        });
+
 
         // Anti-Pacifist Mantığı (Savaşsız stage kalmasın)
         if (!isChokepoint && stage !== 0) {
@@ -307,21 +338,42 @@ function generateMap() {
                 target.isWeak = diff.isWeak;     // Artık Zayıf odayı tanıyacak
                 // ------------------------------
 				
-				if (!target.biome) {
-                    target.biome = biomes[Math.floor(Math.random() * biomes.length)];
-                }
-				
-                target.enemyName = pickEnemyForBiome(target.biome, target.tier);
+				// Anti-Pacifist için de tekrarsız seçim yapalım
+                let tPool = window.TIER_ENEMIES[target.tier] || [];
+                let fPool = tPool.filter(name => !lastStageEnemies.includes(name));
+                target.enemyName = pickEnemyFromCustomPool(fPool.length > 0 ? fPool : tPool, target.biome);
                 const v = Math.floor(Math.random() * 4);
                 target.biomeImg = v === 0 ? `biome_${target.biome}.webp` : `biome_${target.biome}${v}.webp`;
             }
         }
+		
+		// --- YENİ EKLENDİ: HAFIZAYI BİR SONRAKİ STAGE'E DEVRET ---
+        lastStageEnemies = [...currentStageEnemies];
+        lastStageEvents = [...currentStageEvents];
+        // ------------------------------------------------------
 
         nodesInThisStage.forEach(n => GAME_MAP.nodes.push(n));
     }
 
     createMapConnections();
     renderMap();
+}
+
+// --- YENİ YARDIMCI FONKSİYON: Filtrelenmiş havuzdan biyoma göre seçer ---
+function pickEnemyFromCustomPool(pool, biome) {
+    let candidates = [];
+    let totalWeight = 0;
+    pool.forEach(enemyName => {
+        const weight = window.BIOME_WEIGHTS[enemyName]?.[biome] || 0.1;
+        candidates.push({ name: enemyName, weight: weight });
+        totalWeight += weight;
+    });
+    let rand = Math.random() * totalWeight;
+    for (let c of candidates) {
+        if (rand < c.weight) return c.name;
+        rand -= c.weight;
+    }
+    return pool[0];
 }
 
 function createMapConnections() {

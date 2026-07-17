@@ -871,6 +871,57 @@ window.startHeroIdleAnimation = function() {
     }, speed); 
 };
 
+let monsterIdleFrame = 0;
+let monsterIdleInterval = null;
+
+window.applyMonsterIdle = function() {
+    if (!window.monster) return;
+    
+    const spriteViewer = document.getElementById('monster-sprite-viewer');
+    const staticImg = document.getElementById('monster-static-img');
+
+    // --- YENİ: BOYUT ÖLÇEĞİNİ BELİRLE ---
+    // Eğer canavarda visualScale tanımı yoksa varsayılan olarak 1.0 (tam boy) kullan
+    const scale = monster.visualScale || 1.0;
+    
+    // Tarayıcıya "Bu canavarın ölçeği şudur" diye bir not bırakıyoruz (--m-scale)
+    if (spriteViewer) {
+        spriteViewer.style.setProperty('--m-scale', scale);
+        spriteViewer.style.transform = `translateX(-50%) scale(${scale})`;
+    }
+    if (staticImg) {
+        staticImg.style.setProperty('--m-scale', scale);
+        staticImg.style.transform = `translateX(-50%) scale(${scale})`;
+    }
+    // -------------------------------------------------------
+
+    if (monsterIdleInterval) clearInterval(monsterIdleInterval);
+
+    if (monster.hasIdleSprite) {
+        if (spriteViewer) {
+            spriteViewer.style.display = "block";
+            const path = `images/${monster.spritesheet}`;
+            spriteViewer.style.backgroundImage = `url('${path}')`;
+        }
+
+        monsterIdleInterval = setInterval(() => {
+            // Grid hesaplamaların (563x317) aynı kalıyor, scale bunları bozmaz
+            let col = monsterIdleFrame % 5;
+            let row = Math.floor(monsterIdleFrame / 5);
+            if (spriteViewer) {
+                spriteViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
+            }
+            monsterIdleFrame++;
+            if (monsterIdleFrame >= 40) monsterIdleFrame = 0;
+        }, 50); 
+        
+        if (staticImg) staticImg.style.display = "none";
+    } else {
+        if (spriteViewer) spriteViewer.style.display = "none";
+        if (staticImg) staticImg.style.display = "block";
+    }
+};
+
 // --- ANİMASYONLAR VE HASAR ---
 window.animateCustomAttack = function(dmgPack, skillFrames, skillName) {
     const lang = window.getCombatLang().combat;
@@ -1082,10 +1133,22 @@ function processMonsterDamage(attacker, dmgPack) {
     const lang = window.getCombatLang();
     let finalDamage = dmgPack.total;
 
-    // 1. Animasyonu Başlat (Kafa atma/Saldırı efekti)
-    monsterDisplayImg.classList.remove('monster-attack-anim');
-    void monsterDisplayImg.offsetWidth; 
-    monsterDisplayImg.classList.add('monster-attack-anim');
+    // 1. Animasyonu Başlat: Her iki kutuya da sınıfı ekle
+    // Hangi kutu görünürse (display:block) o sarsılacaktır
+    const staticImg = document.getElementById('monster-static-img');
+    const spriteViewer = document.getElementById('monster-sprite-viewer');
+    
+    // Animasyonu ikisine de ekle (Hangisi görünürse o hareket edecektir)
+    if (staticImg) {
+        staticImg.classList.remove('monster-attack-anim');
+        void staticImg.offsetWidth; // Resetle (Reflow)
+        staticImg.classList.add('monster-attack-anim');
+    }
+    if (spriteViewer) {
+        spriteViewer.classList.remove('monster-attack-anim');
+        void spriteViewer.offsetWidth; // Resetle (Reflow)
+        spriteViewer.classList.add('monster-attack-anim');
+    }
 
     setTimeout(() => {
         // 2. Blok ve Savunma Hesaplama
@@ -1187,6 +1250,10 @@ function processMonsterDamage(attacker, dmgPack) {
 
     setTimeout(() => {
         window.isHeroTurn = true; 
+		    // Animasyon bitince sınıfları temizle
+        if (staticImg) staticImg.classList.remove('monster-attack-anim');
+        if (spriteViewer) spriteViewer.classList.remove('monster-attack-anim');
+
         if (!checkGameOver()) nextTurn(); 
     }, 550); 
 }
@@ -1320,6 +1387,11 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     monster = { 
         name: enemyType, 
         tribe: stats.tribe,
+		// --- KRİTİK EKLENEN SATIR ---
+		hasIdleSprite: stats.hasIdleSprite || false, 
+		spritesheet: stats.spritesheet || null, // Hareketli olan (ancient_mushroom_idle.webp)
+		visualScale: stats.visualScale || 1.0,
+		// ----------------------------
         resists: finalMonsterResists,
         // --- KRİTİK DEĞİŞİKLİK: SADECE HP VE ATK HARD MULTIPLIER ALIR ---
         maxHp: scaleHPAtk(stats.maxHp), 
@@ -1432,9 +1504,17 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
     if (scaling > 1) writeLog(lang.combat.log_boss_scaling.replace("$1", scaling.toFixed(2)));
 	
 	const classRules = CLASS_CONFIG[hero.class];
-    monsterDisplayImg.style.filter = 'none'; 
-    monsterDisplayImg.style.opacity = '1';
-    monsterDisplayImg.src = `images/${monster.idle}`;
+    const staticImg = document.getElementById('monster-static-img');
+    if (staticImg) {
+        staticImg.src = `images/${monster.idle}`; // enemies/ancient_mushroom_idle.webp
+        staticImg.style.filter = 'none'; 
+        staticImg.style.opacity = '1';
+        staticImg.className = ""; // Animasyonları temizle
+    }
+
+    // Motoru çağır
+    window.applyMonsterIdle();
+	
     if (hero.class === "Barbar" || hero.class === "Magus") {
     // Spritesheet kullanıldığı için img etiketine şeffaf bir boşluk atıyoruz (Tarayıcı dosya aramaz)
     heroDisplayImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -2286,8 +2366,30 @@ window.checkGameOver = function() {
         }
         writeLog(lang.combat.log_victory.replace("$1", window.getEnemyNameTrans(monster.name)));
         monster.hp = 0; updateStats(); 
-        monsterDisplayImg.src = `images/${monster.dead}`; 
-        monsterDisplayImg.style.filter = 'grayscale(100%) brightness(0.5)'; 
+        const staticImg = document.getElementById('monster-static-img');
+        const spriteViewer = document.getElementById('monster-sprite-viewer');
+
+        // 1. Spritesheet'i durdur ve temizle
+        if (window.monsterIdleInterval) {
+            clearInterval(window.monsterIdleInterval);
+            window.monsterIdleInterval = null;
+        }
+
+        // 2. Sprite kutusunu kapat, Statik kutuyu aç
+        if (spriteViewer) spriteViewer.style.display = "none";
+        
+        if (staticImg) {
+            // Ölü resmini yükle
+            staticImg.src = `images/${monster.dead}`; 
+            
+            // Görsel efektleri uygula
+            staticImg.style.display = "block";
+            staticImg.style.opacity = "1";
+            staticImg.style.filter = 'grayscale(100%) brightness(0.5)';
+            
+            // NOT: Koordinat atamalarını JS'den sildik çünkü yukarıda CSS ile sabitledik.
+            // Bu sayede "yukarı kayma" sorunu tamamen ortadan kalkar.
+        }
 		
 		// EN YÜKSEK TIER GÜNCELLEME
     if (monster.tier > hero.highestTierDefeated) {
