@@ -884,12 +884,18 @@ window.applyMonsterIdle = function() {
     // Eğer canavarda visualScale tanımı yoksa varsayılan olarak 1.0 (tam boy) kullan
     const scale = monster.visualScale || 1.0;
 	const offsetY = monster.visualY || 0;
+	const offsetX = monster.visualX || 0;
+	// FPS ve Gecikme Hesaplama (1000ms / FPS = milisaniye gecikme)
+    const fps = monster.idleFps || 24;
+    const intervalDelay = 1000 / fps;
+    const totalFrames = monster.idleTotalFrames || 40;
     
     // Tarayıcıya "Bu canavarın ölçeği şudur" diye bir not bırakıyoruz (--m-scale)
 	[spriteViewer, staticImg].forEach(el => {
         if (el) {
             el.style.setProperty('--m-scale', scale);
             el.style.setProperty('--m-y', offsetY + 'px');
+			el.style.setProperty('--m-x', offsetX + 'px'); // YENİ DEĞİŞKEN
         }
     });
     // -------------------------------------------------------
@@ -911,8 +917,9 @@ window.applyMonsterIdle = function() {
                 spriteViewer.style.backgroundPosition = `-${col * 563}px -${row * 317}px`;
             }
             monsterIdleFrame++;
-            if (monsterIdleFrame >= 40) monsterIdleFrame = 0;
-        }, 50); 
+            if (monsterIdleFrame >= totalFrames) monsterIdleFrame = 0;
+            
+        }, intervalDelay); // Artik dinamik hızda çalışıyor
         
         if (staticImg) staticImg.style.display = "none";
     } else {
@@ -1391,6 +1398,9 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 		spritesheet: stats.spritesheet || null, // Hareketli olan (ancient_mushroom_idle.webp)
 		visualScale: stats.visualScale || 1.0,
 		visualY: stats.visualY || 0,
+		visualX: stats.visualX || 0, // YENİ VERİ
+		idleFps: stats.idleFps || 24,          // Tanımlanmamışsa varsayılan 24 FPS
+		idleTotalFrames: stats.idleTotalFrames || 40, // Tanımlanmamışsa varsayılan 40 kare
 		// ----------------------------
         resists: finalMonsterResists,
         // --- KRİTİK DEĞİŞİKLİK: SADECE HP VE ATK HARD MULTIPLIER ALIR ---
