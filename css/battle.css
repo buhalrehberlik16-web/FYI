@@ -474,14 +474,14 @@
 /* Düşman Saldırı Animasyonu (Hacivat-Karagöz Tarzı) */
 @keyframes enemyHeadbutt {
     0% { 
-        transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
+        transform: translateX(calc(-50% + var(--final-x))) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
     }
     50% { 
-        /* Saldırı anında sola kayma (-68%) ve eğilme, ama boyutu/yüksekliği değişkenlerden al */
-        transform: translateX(-68%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(-12deg); 
+        /* Saldırı anında ekstra öne atılma (-68%) + X kayması koruması */
+        transform: translateX(calc(-68% + var(--final-x))) translateY(var(--final-y)) scale(var(--final-scale)) rotate(-12deg); 
     }
     100% { 
-        transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
+        transform: translateX(calc(-50% + var(--final-x))) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
     }
 }
 
@@ -887,21 +887,24 @@
     position: absolute;
     bottom: -20px; 
     left: 52%;
-    transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale));
+    transform: translateX(calc(-50% + var(--final-x))) translateY(var(--final-y)) scale(var(--final-scale));
     z-index: 9;
     display: none;
     image-rendering: auto;
 	transform-origin: bottom center !important;
     --m-mobile-mult: 1;   /* Masaüstünde 1, Mobilde 0.67 olacak */
     --m-y-mult: 1;        /* Yüksekliği de çarpmak için */
+	--m-x-mult: 1; /* YENİ: Masaüstü çarpanı */
     --final-scale: calc(var(--m-scale, 1) * var(--m-mobile-mult, 1));
     --final-y: calc(var(--m-y, 0px) * var(--m-y-mult, 1));
+	--final-x: calc(var(--m-x, 0px) * var(--m-x-mult, 1)); /* YENİ: Nihai X kayması */
 }
 #monster-static-img {
 	--m-mobile-mult: 1;   /* Masaüstünde 1, Mobilde 0.67 olacak */
     --m-y-mult: 1;        /* Yüksekliği de çarpmak için */
     --final-scale: calc(var(--m-scale, 1) * var(--m-mobile-mult, 1));
     --final-y: calc(var(--m-y, 0px) * var(--m-y-mult, 1));
+	--final-x: calc(var(--m-x, 0px) * var(--m-x-mult, 1)); /* YENİ: Nihai X kayması */
     position: absolute !important;
     bottom: -18px !important; /* Senin ideal değerin */
     left: 52% !important;     /* Senin ideal değerin */
