@@ -275,7 +275,8 @@
 	   #monster-sprite-viewer, #monster-static-img {
         /* Mobilde olduğumuzu değişkenlere fısıldıyoruz */
         --m-mobile-mult: 0.67;
-        --m-y-mult: 0.67; 
+        --m-y-mult: 0.67;
+		--m-x-mult: 0.67; 		
         
         /* ÖNEMLİ: transformu burada !important ile zorluyoruz ama değişkenleri bozmadan */
         transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) !important;
