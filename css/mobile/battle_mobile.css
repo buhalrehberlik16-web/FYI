@@ -272,11 +272,16 @@
 		bottom: 0%;
 		left: 53%;
     }
-	    #monster-sprite-viewer {
-        transform: translateX(-50%) scale(0.67)!important;
-        transform-origin: bottom center;
-		bottom: 0%;
-		left: 53%;
+	   #monster-sprite-viewer, #monster-static-img {
+        /* Mobilde olduğumuzu değişkenlere fısıldıyoruz */
+        --m-mobile-mult: 0.67;
+        --m-y-mult: 0.67; 
+        
+        /* ÖNEMLİ: transformu burada !important ile zorluyoruz ama değişkenleri bozmadan */
+        transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) !important;
+        
+        bottom: 0% !important;
+        left: 53% !important;
     }
 }
 
