@@ -473,10 +473,16 @@
 
 /* Düşman Saldırı Animasyonu (Hacivat-Karagöz Tarzı) */
 @keyframes enemyHeadbutt {
-    0% {transform: translateX(-50%) scale(var(--m-scale, 1)) rotate(0deg); }
-    25% {transform: translateX(-53%) scale(var(--m-scale, 1)) rotate(-4deg); } 
-    50% {transform: translateX(-68%) scale(var(--m-scale, 1)) rotate(-12deg); }
-    100% {transform: translateX(-50%) scale(var(--m-scale, 1)) rotate(0deg); }
+    0% { 
+        transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
+    }
+    50% { 
+        /* Saldırı anında sola kayma (-68%) ve eğilme, ama boyutu/yüksekliği değişkenlerden al */
+        transform: translateX(-68%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(-12deg); 
+    }
+    100% { 
+        transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale)) rotate(0deg); 
+    }
 }
 
 .monster-attack-anim {
@@ -881,17 +887,25 @@
     position: absolute;
     bottom: -20px; 
     left: 52%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale));
     z-index: 9;
     display: none;
     image-rendering: auto;
 	transform-origin: bottom center !important;
+    --m-mobile-mult: 1;   /* Masaüstünde 1, Mobilde 0.67 olacak */
+    --m-y-mult: 1;        /* Yüksekliği de çarpmak için */
+    --final-scale: calc(var(--m-scale, 1) * var(--m-mobile-mult, 1));
+    --final-y: calc(var(--m-y, 0px) * var(--m-y-mult, 1));
 }
 #monster-static-img {
+	--m-mobile-mult: 1;   /* Masaüstünde 1, Mobilde 0.67 olacak */
+    --m-y-mult: 1;        /* Yüksekliği de çarpmak için */
+    --final-scale: calc(var(--m-scale, 1) * var(--m-mobile-mult, 1));
+    --final-y: calc(var(--m-y, 0px) * var(--m-y-mult, 1));
     position: absolute !important;
     bottom: -18px !important; /* Senin ideal değerin */
     left: 52% !important;     /* Senin ideal değerin */
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(var(--final-y)) scale(var(--final-scale));
     width: 563px; 
     height: 317px;
     object-fit: contain;
