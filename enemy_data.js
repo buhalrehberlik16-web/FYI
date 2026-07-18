@@ -111,9 +111,13 @@ window.ENEMY_STATS = {
 	
     "Kan Yarasası": { 
         tribe: "B&M",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/kan_yarasasi.webp',
+		visualScale: 0.85,
+		visualY: -40,
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: -1, curse: 0 },
         maxHp: 24, attack: 8, defense: 0, xp: 0, tier: 1, 
-        idle: 'enemies/kan_yarasasi.webp',
+        idle: 'enemies/Idle/kan_yarasasi.webp',
         attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
         skills: [				
@@ -252,9 +256,12 @@ window.ENEMY_STATS = {
 	
     "Hırsız Kobold": {
         tribe: "Dragonkind",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/hirsiz_kobold.webp',
+		visualScale: 0.90,
 		specificResists: { fire: 3, cold: 3, lightning: -1, poison: -1, curse: -1 },
         maxHp: 32, attack: 7, defense: 0, xp: 0, tier: 1, 
-        idle: 'enemies/hirsiz_kobold.webp',
+        idle: 'enemies/Idle/hirsiz_kobold.webp',
         attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
@@ -416,9 +423,11 @@ window.ENEMY_STATS = {
 	
     "Kaçak Haydut": { 
         tribe: "Humans",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/kacak_haydut.webp',
         specificResists: { cold: 1 },
         maxHp: 58, attack: 14, defense: 4, xp: 0, tier: 2, 
-        idle: 'enemies/kacak_haydut.webp',
+        idle: 'enemies/Idle/kacak_haydut.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
@@ -795,6 +804,8 @@ window.ENEMY_STATS = {
     },
 	"Haydut Devriye": { 
         tribe: "Humans",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/highwayman.webp',
         maxHp: 80, attack: 20, defense: 15, xp: 0, tier: 3, 
         idle: 'enemies/highwayman_idle.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
@@ -821,8 +832,10 @@ window.ENEMY_STATS = {
     },
 	"Haydut Okçu": { 
         tribe: "Humans",
+		hasIdleSprite: true,
+        spritesheet: 'enemies/highwayman_archer.webp',
         maxHp: 75, attack: 25, defense: 13, xp: 0, tier: 3, 
-        idle: 'enemies/highwayman_archer.webp',
+        idle: 'enemies/Idle/highwayman_archer.webp',
         attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/highwayman_archer_dead.webp',
         skills: [

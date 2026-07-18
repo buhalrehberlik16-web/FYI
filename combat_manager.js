@@ -883,16 +883,15 @@ window.applyMonsterIdle = function() {
     // --- YENİ: BOYUT ÖLÇEĞİNİ BELİRLE ---
     // Eğer canavarda visualScale tanımı yoksa varsayılan olarak 1.0 (tam boy) kullan
     const scale = monster.visualScale || 1.0;
+	const offsetY = monster.visualY || 0;
     
     // Tarayıcıya "Bu canavarın ölçeği şudur" diye bir not bırakıyoruz (--m-scale)
-    if (spriteViewer) {
-        spriteViewer.style.setProperty('--m-scale', scale);
-        spriteViewer.style.transform = `translateX(-50%) scale(${scale})`;
-    }
-    if (staticImg) {
-        staticImg.style.setProperty('--m-scale', scale);
-        staticImg.style.transform = `translateX(-50%) scale(${scale})`;
-    }
+	[spriteViewer, staticImg].forEach(el => {
+        if (el) {
+            el.style.setProperty('--m-scale', scale);
+            el.style.setProperty('--m-y', offsetY + 'px');
+        }
+    });
     // -------------------------------------------------------
 
     if (monsterIdleInterval) clearInterval(monsterIdleInterval);
@@ -1391,6 +1390,7 @@ window.startBattle = function(enemyType, isHardFromMap = false, isHalfTierFromMa
 		hasIdleSprite: stats.hasIdleSprite || false, 
 		spritesheet: stats.spritesheet || null, // Hareketli olan (ancient_mushroom_idle.webp)
 		visualScale: stats.visualScale || 1.0,
+		visualY: stats.visualY || 0,
 		// ----------------------------
         resists: finalMonsterResists,
         // --- KRİTİK DEĞİŞİKLİK: SADECE HP VE ATK HARD MULTIPLIER ALIR ---
