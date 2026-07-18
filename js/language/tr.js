@@ -211,7 +211,7 @@ window.LANG_TR = {
 		veteran_info: "Bilgi",
 		
 		//BIOMES
-		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Şehir Yıkıntıları", biome_plains: "Ova",
+		biome_forest: "Orman", biome_iceland: "Buzul", biome_mountain: "Dağ", biome_cave: "Mağara", biome_urban: "Yıkıntılar", biome_plains: "Ova",
 
         // Envanter & Ayarlar
         inventory_title: "ENVANTER",
