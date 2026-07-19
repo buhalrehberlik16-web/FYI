@@ -186,6 +186,55 @@ window.updateStatScreen = function() {
             el.innerHTML = `<span style="color:#ffd700">${totalDmg}</span> <span style="color:#666">|</span> <span style="color:#3498db">${totalRes}</span>`;
         }
     });
+	// --- Kabile Sayfası Çizimi ---
+	const tribeGrid = document.getElementById('stat-tribe-grid');
+	if (tribeGrid && currentStatPage === 'tribes') {
+		const lang = window.getCombatLang();
+		tribeGrid.innerHTML = '';
+		
+		// 1. Veri Yapısını Hazırla (Hem dmg hem def için)
+		let tribeStats = { 
+			"Greenskins": { dmg: 0, def: 0 }, 
+			"Humans": { dmg: 0, def: 0 }, 
+			"B&M": { dmg: 0, def: 0 }, 
+			"Plants": { dmg: 0, def: 0 }, 
+			"Undead": { dmg: 0, def: 0 }, 
+			"Dragonkind": { dmg: 0, def: 0 }, 
+			"Magical Creatures": { dmg: 0, def: 0 } 
+		};
+
+		// 2. Tüm Eşyalardan Verileri Topla
+		const allItems = [...Object.values(hero.equipment), ...hero.inventory, ...hero.brooches];
+		allItems.forEach(item => {
+			if (item && item.type === "charm1" && item.bonuses) {
+				item.bonuses.forEach(b => {
+					if (b.type === 'tribe_mod') {
+						tribeStats[b.tribe].dmg += b.skillDmg || 0;
+						tribeStats[b.tribe].def += b.defense || 0;
+					}
+				});
+			}
+		});
+
+		// 3. Ekrana Çiz
+		for (const [tribe, val] of Object.entries(tribeStats)) {
+			const item = document.createElement('div');
+			item.className = 'res-item';
+			
+			const iconName = tribe.toLowerCase().replace(/\s+/g, '_').replace('&', '');
+			
+			item.innerHTML = `
+				<img src="images/utils/tribes/${iconName}.webp" class="tribe-icon">
+				<label class="tribe-label">${lang.enemy_names[tribe] || tribe}</label>
+				<div class="tribe-stat-values">
+					<span class="t-dmg">${val.dmg}</span>
+					<span class="t-sep">|</span>
+					<span class="t-def">${val.def}</span>
+				</div>
+			`;
+			tribeGrid.appendChild(item);
+		}
+	}
 };
 
 // --- ENVANTER ---
@@ -1005,4 +1054,28 @@ window.showClassStatInfo = function() {
     if (typeof window.showGameInfo === 'function') {
         window.showGameInfo(infoTitle, infoContent, "#ffd700");
     }
+};
+let currentStatPage = 'elements'; // Takip değişkeni
+
+window.toggleStatPage = function() {
+    const resGrid = document.getElementById('stat-res-grid');
+    const tribeGrid = document.getElementById('stat-tribe-grid');
+    const title = document.getElementById('stat-page-title');
+    const arrow = document.getElementById('stat-page-arrow');
+    const lang = window.getCombatLang();
+
+    if (currentStatPage === 'elements') {
+        currentStatPage = 'tribes';
+        resGrid.classList.add('hidden');
+        tribeGrid.classList.remove('hidden');
+        title.textContent = lang.tribe_damage_title || "KABİLE HASARLARI";
+        arrow.classList.add('rotate-arrow'); // CSS'teki animasyonu tetikler
+    } else {
+        currentStatPage = 'elements';
+        resGrid.classList.remove('hidden');
+        tribeGrid.classList.add('hidden');
+        title.textContent = lang.resistances_title || "ELEMENTLER";
+        arrow.classList.remove('rotate-arrow'); // CSS'teki animasyonu tetikler
+    }
+    updateStatScreen(); // Yeni sayfayı çizmesi için tetikle
 };
