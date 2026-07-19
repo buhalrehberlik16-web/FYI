@@ -121,6 +121,21 @@ function updateUITexts() {
             }
         }
     });
+	// 2. YENİ SİSTEM: Tooltip (Mouse-over) Çevirisi
+    // Bu blok sadece data-i18n-title özelliği olan elementlere bakar.
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const path = el.dataset.i18nTitle;
+        const keys = path.split('.');
+        let translatedText = lang;
+
+        keys.forEach(key => {
+            if (translatedText) translatedText = translatedText[key];
+        });
+
+        if (translatedText) {
+            el.title = translatedText; // Tooltip metnini dilden gelenle değiştirir
+        }
+    });
 }
 
 // Yeni toggle fonksiyonunu en alta ekle:
