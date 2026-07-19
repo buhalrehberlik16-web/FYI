@@ -596,40 +596,48 @@
 				</div>
             </div>
 
-            <!-- --- DİRENÇLER --- -->
-            <hr style="border-color: #444; margin: 15px 0;">
-            
-            <h3 style="text-align:center; color:#aaa; font-size:1em; margin-bottom:10px; margin-top:0;" data-i18n="resistances_title">DİRENÇLER</h3>
+            <!-- --- SAYFALI STAT BAŞLIĞI --- -->
+			<hr style="border-color: #444; margin: 15px 0;">
 
-            <div class="res-grid">                
+			<div class="stat-page-header" onclick="window.toggleStatPage()" style="cursor:pointer; display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:10px;">
+				<h3 id="stat-page-title" style="color:#aaa; font-size:1em; margin:0;" data-i18n="resistances_title">DİRENÇLER</h3>
+				<i class="fas fa-chevron-right" id="stat-page-arrow" style="color:#a89373; font-size:0.8rem; transition: transform 0.3s;"></i>
+			</div>
+
+			<!-- 1. SAYFA: ELEMENTLER (Senin mevcut içeriğin bunun içine girdi) -->
+			<div id="stat-res-grid" class="res-grid">                
 				<div class="res-item" title="Zehir Direnci">
-                    <span class="res-icon" style="color:#43FF64;">🤢</span> 
-                    <label data-i18n="res_poison">Zehir</label>
-                    <span id="res-poison">0</span>
-                </div>
-                <div class="res-item" title="Lanet Direnci">
-                    <span class="res-icon" style="color:#b19cd9;">💀</span> 
-                    <label data-i18n="res_curse">Lanet</label>
-                    <span id="res-curse">0</span>
-                </div>
-                <div class="res-item" title="Ateş Direnci">
-                    <span class="res-icon" style="color:#ff4d4d;">🔥</span> 
-                    <label data-i18n="res_fire">Ateş</label>
-                    <span id="res-fire">0</span>
-                </div>
-                <div class="res-item" title="Soğuk Direnci">
-                    <span class="res-icon" style="color:#00ccff;">❄️</span> 
-                    <label data-i18n="res_cold">Buz</label>
-                    <span id="res-cold">0</span>
-                </div>
-                <div class="res-item" title="Yıldırım Direnci">
-                    <span class="res-icon" style="color:#ffd700;">⚡</span> 
-                    <label data-i18n="res_lightning">Yıldırım</label>
-                    <span id="res-lightning">0</span>
-                </div>
-                
-            </div>
-            <!-- ----------------------------------------- -->
+					<img src="images/utils/resistances/poison.webp" class="res-img-icon"> 
+					<label data-i18n="res_poison">Zehir</label>
+					<span id="res-poison">0</span>
+				</div>
+				<div class="res-item" title="Lanet Direnci">
+					<img src="images/utils/resistances/curse.webp" class="res-img-icon"> 
+					<label data-i18n="res_curse">Lanet</label>
+					<span id="res-curse">0</span>
+				</div>
+				<div class="res-item" title="Ateş Direnci">
+					<img src="images/utils/resistances/fire.webp" class="res-img-icon"> 
+					<label data-i18n="res_fire">Ateş</label>
+					<span id="res-fire">0</span>
+				</div>
+				<div class="res-item" title="Soğuk Direnci">
+					<img src="images/utils/resistances/cold.webp" class="res-img-icon"> 
+					<label data-i18n="res_cold">Buz</label>
+					<span id="res-cold">0</span>
+				</div>
+				<div class="res-item" title="Yıldırım Direnci">
+					<img src="images/utils/resistances/lightning.webp" class="res-img-icon"> 
+					<label data-i18n="res_lightning">Yıldırım</label>
+					<span id="res-lightning">0</span>
+				</div>
+			</div>
+
+			<!-- 2. SAYFA: KABİLE HASARLARI (Başlangıçta gizli ve boş) -->
+			<div id="stat-tribe-grid" class="res-grid hidden">
+				<!-- Burası JS (updateStatScreen) tarafından doldurulacak -->
+			</div>
+			<!-- ----------------------------------------- -->
 
         </div> <!-- stat-content BİTİŞİ -->
 
