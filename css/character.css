@@ -603,3 +603,160 @@
 #codex-modal .stat-info-title {
     margin-top: 0px !important;
 }
+.stat-page-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    padding: 5px;
+    transition: all 0.2s ease;
+    user-select: none; /* Çift tıklamada yazının seçilmesini engeller */
+}
+
+/* Hoverda başlık ve ok beraber parlasın */
+.stat-page-header:hover #stat-page-title,
+.stat-page-header:hover #stat-page-arrow {
+    color: #ffd700 !important;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+
+/* OK İKONU: Daha büyük ve akıcı bir animasyon */
+#stat-page-arrow {
+    font-size: 1rem;
+    color: #a89373;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Zıplama efekti ekler */
+}
+
+/* BASILMA HİSSİYATI (Mekanik Çökme) */
+.stat-page-header:active {
+    transform: scale(0.95); /* Basınca hafifçe içeri çöker */
+}
+
+/* SAYFA 2'DEYKEN OKUN DURUMU */
+.rotate-arrow {
+    transform: rotate(180deg) scale(1.2) !important; /* Hem döner hem biraz büyür */
+    color: #ffd700 !important;
+}
+
+#stat-tribe-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Alttaki 3 öğeyi yatayda ortalar */
+    gap: 10px;
+    width: 100%;
+    padding: 10px 5px;
+}
+
+#stat-tribe-grid .res-item label {
+    margin-right: 0 !important; /* Genel kuraldan gelen 10px'i ezer */
+    padding: 0 !important;
+    width: 100%;
+    text-align: center;
+    display: block;
+}
+
+#stat-tribe-grid .res-item {
+    /* KRİTİK AYAR: 4 tanesinin tam sığması için %25'ten pay düşüyoruz */
+    flex: 0 0 calc(25% - 12px); 
+    
+    /* 70px görselin yanlardan taşmaması için min-width */
+    min-width: 85px; 
+	min-height: 130px !important;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;    /* İkon ve metni kutu içinde tam ortalar */
+    justify-content: flex-start;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid #3e3221;
+    border-radius: 6px;
+    padding: 10px 2px;
+    min-height: 125px;
+    transition: all 0.2s ease;
+	
+}
+
+/* Hover efekti (Uyum için) */
+#stat-tribe-grid .res-item:hover {
+    border-color: #ffd700;
+    background: rgba(107, 92, 59, 0.1);
+}
+
+/* İkon, Label ve Değer sınıfları (Önceki mesajdaki gibi kalabilir) */
+.tribe-icon {
+    width:70px; /* 70 çok büyük gelirse 60'a çekebilirsin, 4-3'e daha iyi sığar */
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+
+.tribe-label {
+    font-size: 0.6rem !important;
+    color: #a89373 !important;
+    font-family: 'Cinzel', serif;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    white-space: nowrap;
+}
+
+.tribe-val {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+/* Kabile Değerleri Kapsayıcısı */
+.tribe-stat-values {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 0.9rem;
+}
+
+/* SOL TARAF: Hasar (Sarı/Altın) */
+.t-dmg {
+    color: #ffd700 !important; 
+    text-shadow: 1px 1px 2px #000;
+}
+
+/* ORTA: Ayırıcı (Gri) */
+.t-sep {
+    color: #666 !important;
+    font-weight: normal;
+    font-size: 0.7rem;
+}
+
+/* SAĞ TARAF: Savunma (Mavi) */
+.t-def {
+    color: #3498db !important; /* Tam olarak Dirençler sayfasındaki mavi */
+    text-shadow: 1px 1px 2px #000;
+}
+.res-img-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+}
+
+/* Direnç öğelerini kabile kutuları gibi merkezleyelim */
+#stat-res-grid .res-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Margin-right kısıtlamasını Dirençler sayfasında da kaldıralım */
+#stat-res-grid .res-item label {
+    margin-right: 0 !important;
+    width: 100%;
+    text-align: center;
+}
