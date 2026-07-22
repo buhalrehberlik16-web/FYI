@@ -24,7 +24,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: -1, curse: -2 },
         maxHp: 25, attack: 5, defense: 4, xp: 0, tier: 1, 
         idle: 'enemies/Idle/gremlin_idle.webp',
-        attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/gremlin_dead.webp',
         skills: [
 			{
@@ -53,7 +52,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: -1, curse: -2 },
         maxHp: 32, attack: 8, defense: 1, xp: 0, tier: 1, 
         idle: 'enemies/vagabond_idle.webp',
-        attackFrames: ['enemies/vagabond_attack1.webp', 'enemies/vagabond_attack2.webp', 'enemies/vagabond_attack3.webp'],
         dead: 'enemies/vagabond_dead.webp',
         skills: [
             { 
@@ -80,7 +78,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: 3, curse: -2 },
         maxHp: 32, attack: 9, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/orman_orumcegi.webp',
-        attackFrames: ['enemies/orman_orumcegi_attack1.webp', 'enemies/orman_orumcegi_attack2.webp', 'enemies/orman_orumcegi_attack3.webp'],
         dead: 'enemies/orman_orumcegi_dead.webp',
         skills: [
             { 
@@ -122,7 +119,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: -1, curse: 0 },
         maxHp: 24, attack: 8, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/Idle/kan_yarasasi.webp',
-        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kan_yarasasi_dead.webp',
         skills: [				
             { 
@@ -165,7 +161,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: 10, curse: -2 },
         maxHp: 36, attack: 3, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/zehirli_mantar.webp',
-        attackFrames: ['enemies/zehirli_mantar_attack1.webp', 'enemies/zehirli_mantar_attack2.webp', 'enemies/zehirli_mantar_attack3.webp'],
         dead: 'enemies/zehirli_mantar_dead.webp',
         firstTurnAction: "spore_poison", 
         skills: [
@@ -196,7 +191,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: -1, lightning: -1, poison: 1, curse: -2 },
         maxHp: 28, attack: 6, defense: 2, xp: 0, tier: 1, 
         idle: 'enemies/thorn_idle.webp',
-        attackFrames: ['enemies/thorn_attack1.webp', 'enemies/thorn_attack2.webp', 'enemies/thorn_attack3.webp'],
         dead: 'enemies/thorn_dead.webp',
         skills: [
             { 
@@ -228,7 +222,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: -1, cold: 3, lightning: -1, poison: -1, curse: -2 },
         maxHp: 30, attack: 5, defense: 3, xp: 0, tier: 1, 
         idle: 'enemies/skeleton_idle.webp',
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
         skills: [
             { 
@@ -268,7 +261,6 @@ window.ENEMY_STATS = {
 		specificResists: { fire: 3, cold: 3, lightning: -1, poison: -1, curse: -1 },
         maxHp: 32, attack: 7, defense: 0, xp: 0, tier: 1, 
         idle: 'enemies/Idle/hirsiz_kobold.webp',
-        attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/hirsiz_kobold_dead.webp',
         skills: [
 			{ 
@@ -307,7 +299,6 @@ window.ENEMY_STATS = {
 		specificResists: { poison: 10 },
         maxHp: 52, attack: 12, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/Idle/bone_walker.webp',
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/bone_walker_dead.webp',
         skills: [
 		{ 
@@ -347,7 +338,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 5 },
         maxHp: 60, attack: 12, defense: 5, xp: 0, tier: 2, 
         idle: 'enemies/Idle/goblin_devriyesi.webp',
-        attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_devriyesi_dead.webp',
         skills: [
             { 
@@ -379,7 +369,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 63, attack: 10, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/Idle/goblin_scout.webp',
-        attackFrames: ['enemies/goblin_devriyesi_attack1.webp', 'enemies/goblin_devriyesi_attack2.webp'],
         dead: 'enemies/goblin_scout_dead.webp',
         skills: [
 			{ 
@@ -408,7 +397,6 @@ window.ENEMY_STATS = {
         tribe: "Humans",
         maxHp: 52, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/scout_bandit_idle.webp',
-        attackFrames: ['enemies/scout_bandit_attack1.webp', 'enemies/scout_bandit_attack2.webp', 'enemies/scout_bandit_attack3.webp'],
         dead: 'enemies/scout_bandit_dead.webp',
         skills: [
             { 
@@ -442,7 +430,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 1 },
         maxHp: 58, attack: 14, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/Idle/kacak_haydut.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/kacak_haydut_dead.webp',
         skills: [
             { 
@@ -478,7 +465,6 @@ window.ENEMY_STATS = {
         tribe: "Humans",
         maxHp: 50, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/shaman_idle.webp',
-        attackFrames: ['enemies/shaman_attack1.webp', 'enemies/shaman_attack2.webp', 'enemies/shaman_attack3.webp'],
         dead: 'enemies/shaman_dead.webp',
         skills: [
             { 
@@ -510,7 +496,6 @@ window.ENEMY_STATS = {
         specificResists: { fire: 4 },
         maxHp: 58, attack: 12, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/Idle/bandolier_idle.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/bandolier_dead.webp',
         skills: [
 			{ 
@@ -540,7 +525,6 @@ window.ENEMY_STATS = {
         tribe: "B&M",
         maxHp: 70, attack: 16, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/young_bear_idle.webp',
-        attackFrames: ['enemies/young_bear_attack1.webp', 'enemies/young_bear_attack2.webp', 'enemies/young_bear_attack3.webp'],
         dead: 'enemies/young_bear_dead.webp',
         skills: [
             { 
@@ -562,10 +546,14 @@ window.ENEMY_STATS = {
 	
     "Gri Kurt": { 
         tribe: "B&M",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/kurt_surusu.webp',
+		idleFps: 21,           
+		idleTotalFrames: 40,
+		visualScale: 0.80,
         specificResists: { cold: 10 },
         maxHp: 54, attack: 16, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/kurt_surusu.webp',
-        attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
         dead: 'enemies/kurt_surusu_dead.webp',
         skills: [
             { 
@@ -603,7 +591,6 @@ window.ENEMY_STATS = {
 		visualX: 40,
         maxHp: 62, attack: 13, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/Idle/kobold_patrol_idle.webp',
-        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/kobold_patrol_dead.webp',
         skills: [ 
 			{ 
@@ -626,9 +613,12 @@ window.ENEMY_STATS = {
     },
 	 "Kobold Şaman": { 
         tribe: "Dragonkind",
+		hasIdleSprite: true,
+		spritesheet: 'enemies/kobold_shaman.webp',
+		idleFps: 21,           
+		idleTotalFrames: 40,
         maxHp: 55, attack: 12, defense: 6, xp: 0, tier: 2, 
-        idle: 'enemies/kobold_shaman.webp',
-        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
+        idle: 'enemies/Idle/kobold_shaman.webp',
         dead: 'enemies/kobold_shaman_dead.webp',
         skills: [
 		{ 
@@ -661,7 +651,6 @@ window.ENEMY_STATS = {
         specificResists: { poison: 10, curse: -5 },
         maxHp: 58, attack: 13, defense: 8, xp: 0, tier: 2, 
         idle: 'enemies/treant_sapling_idle.webp',
-        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_sapling_dead.webp',
         skills: [ 
 			{ 
@@ -694,7 +683,6 @@ window.ENEMY_STATS = {
         specificResists: { poison: 20 },
         maxHp: 68, attack: 14, defense: 4, xp: 0, tier: 2, 
         idle: 'enemies/Idle/cursed_sentry.webp',
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/cursed_sentry_dead.webp',
         skills: [
 		{ 
@@ -719,7 +707,6 @@ window.ENEMY_STATS = {
         tribe: "Magical Creatures",
         maxHp: 85, attack: 8, defense: 6, xp: 0, tier: 2, 
         idle: 'enemies/rune_stone.webp',
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/rune_stone_dead.webp',
         skills: [
 			{
@@ -760,7 +747,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 70, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/Idle/goblin_shaman_idle.webp',
-        attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_shaman_dead.webp',
         skills: [ 
 			{ 
@@ -809,7 +795,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 5 },
         maxHp: 90, attack: 30, defense: 15, xp: 0, tier: 3, 
         idle: 'enemies/Idle/goblin_savascisi.webp',
-        attackFrames: ['enemies/goblin_savascisi_attack1.webp', 'enemies/goblin_savascisi_attack2.webp'],
         dead: 'enemies/goblin_savascisi_dead.webp',
         skills: [
             { 
@@ -839,7 +824,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 80, attack: 20, defense: 15, xp: 0, tier: 3, 
         idle: 'enemies/Idle/highwayman_idle.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/highwayman_dead.webp',
         skills: [
             { 
@@ -869,7 +853,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 75, attack: 25, defense: 13, xp: 0, tier: 3, 
         idle: 'enemies/Idle/highwayman_archer.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/highwayman_archer_dead.webp',
         skills: [
 			{ 
@@ -900,7 +883,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 90, attack: 30, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/Idle/grizzly_idle.webp',
-        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/grizzly_dead.webp',
         skills: [
 		{ 
@@ -933,7 +915,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 105, attack: 32, defense: 10, xp: 0, tier: 3, 
         idle: 'enemies/Idle/cursed_grizzly.webp',
-        attackFrames: ['enemies/kan_yarasasi_attack1.webp', 'enemies/kan_yarasasi_attack2.webp'], 
         dead: 'enemies/cursed_grizzly_dead.webp',
         skills: [
 		//Basics deal half Curse Dmg
@@ -950,7 +931,6 @@ window.ENEMY_STATS = {
         maxHp: 80, attack: 20, defense: 10, xp: 0, tier: 3, 
 		spritesheet: 'enemies/beyaz_kurt.webp',
         idle: 'enemies/Idle/beyaz_kurt.webp',
-        attackFrames: ['enemies/kurt_surusu_attack1.webp', 'enemies/kurt_surusu_attack2.webp', 'enemies/kurt_surusu_attack3.webp'],
         dead: 'enemies/beyaz_kurt_dead.webp',
         skills: [
             { 
@@ -984,7 +964,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 6 },
         maxHp: 105, attack: 25, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/yaban_domuzu.webp',
-        attackFrames: ['enemies/yaban_domuzu_attack1.webp', 'enemies/yaban_domuzu_attack2.webp', 'enemies/yaban_domuzu_attack3.webp'],
         dead: 'enemies/yaban_domuzu_dead.webp',
         skills: [
             { 
@@ -1011,7 +990,6 @@ window.ENEMY_STATS = {
         tribe: "Plants",
         maxHp: 90, attack: 18, defense: 18, xp: 0, tier: 3, 
         idle: 'enemies/treant_idle.webp',
-        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/treant_dead.webp',
         skills: [
 		{ 
@@ -1030,7 +1008,6 @@ window.ENEMY_STATS = {
         tribe: "Plants",
         maxHp: 50, attack: 50, defense: 0, xp: 0, tier: 3, 
         idle: 'enemies/trap_seed.webp',
-        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/trap_seed_dead.webp',
         skills: [
 			{ 
@@ -1055,7 +1032,6 @@ window.ENEMY_STATS = {
         maxHp: 110, attack: 15, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/Idle/ancient_mushroom.webp',
 		spritesheet: 'enemies/ancient_mushroom.webp', // NEFES ALMA (40 karelik sheet)
-        attackFrames: ['enemies/treant_attack1.webp', 'enemies/treant_attack2.webp', 'enemies/treant_attack3.webp'],
         dead: 'enemies/ancient_mushroom_dead.webp',
         skills: [
             { 
@@ -1083,7 +1059,6 @@ window.ENEMY_STATS = {
         tribe: "Undead",
         maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/weeping_shadow.webp',
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/weeping_shadow_dead.webp',
         skills: [
         ]
@@ -1096,7 +1071,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 90, attack: 22, defense: 12, xp: 0, tier: 3, 
         idle: 'enemies/Idle/ash_walker.webp',
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/ash_walker_dead.webp',
         skills: [
         ]
@@ -1110,7 +1084,6 @@ window.ENEMY_STATS = {
 		visualX: 20,
         maxHp: 90, attack: 20, defense: 18, xp: 0, tier: 3, 
         idle: 'enemies/Idle/dragonkin_speaker.webp',
-        attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
         dead: 'enemies/dragonkin_speaker_dead.webp',
         skills: [
 			{ 
@@ -1137,7 +1110,6 @@ window.ENEMY_STATS = {
 		idleTotalFrames: 40,
         maxHp: 100, attack: 22, defense: 20, xp: 0, tier: 3, 
         idle: 'enemies/Idle/clay_golem.webp',
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/clay_golem_dead.webp',
         skills: [
         ]
@@ -1151,7 +1123,6 @@ window.ENEMY_STATS = {
         specificResists: { lightning: 10 },
         maxHp: 110, attack: 18, defense: 23, xp: 0, tier: 3, 
         idle: 'enemies/Idle/kaya_golemi.webp',
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp', 'enemies/kaya_golemi_attack3.webp', 'enemies/kaya_golemi_attack4.webp'],
         dead: 'enemies/kaya_golemi_dead.webp',
         skills: [
             { 
@@ -1179,7 +1150,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 10 },
         maxHp: 150, attack: 35, defense: 21, xp: 0, tier: 4, 
         idle: 'enemies/orc_fedaisi.webp',
-        attackFrames: ['enemies/orc_fedaisi_attack1.webp', 'enemies/orc_fedaisi_attack2.webp'],
         dead: 'enemies/orc_fedaisi_dead.webp',
         skills: [
             { 
@@ -1203,7 +1173,6 @@ window.ENEMY_STATS = {
     //    tribe: "Dragonkind",
     //    maxHp: 165, attack: 24, defense: 22, xp: 0, tier: 4, 
     //    idle: 'enemies/dragonkin_speaker.webp',
-    //    attackFrames: ['enemies/hirsiz_kobold_attack1.webp', 'enemies/hirsiz_kobold_attack2.webp'],
     //    dead: 'enemies/dragonkin_speaker_dead.webp',
     //    skills: [
 	//		{ 
@@ -1225,7 +1194,6 @@ window.ENEMY_STATS = {
         tribe: "Humans",
         maxHp: 180, attack: 35, defense: 22, xp: 0, tier: 4, 
         idle: 'enemies/nomad.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/nomad_dead.webp',
         skills: [
         ]
@@ -1234,7 +1202,6 @@ window.ENEMY_STATS = {
         tribe: "Humans",
         maxHp: 190, attack: 40, defense: 18, xp: 0, tier: 4, 
         idle: 'enemies/nomad_warrior.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/nomad_warrior_dead.webp',
         skills: [
         ]
@@ -1243,7 +1210,6 @@ window.ENEMY_STATS = {
         tribe: "Humans",
         maxHp: 180, attack: 38, defense: 16, xp: 0, tier: 4, 
         idle: 'enemies/nomad_cultist.webp',
-        attackFrames: ['enemies/kacak_haydut_attack1.webp', 'enemies/kacak_haydut_attack2.webp', 'enemies/kacak_haydut_attack3.webp', 'enemies/kacak_haydut_attack4.webp'],
         dead: 'enemies/nomad_cultist_dead.webp',
         skills: [
 		//Curse&Debuff
@@ -1260,7 +1226,6 @@ window.ENEMY_STATS = {
         specificResists: { cold: 10 },
         maxHp: 200, attack: 30, defense: 20, isBoss:true, tier: 4, 
         idle: 'enemies/goblin_sef.webp',
-        attackFrames: ['enemies/goblin_sef_attack1.webp', 'enemies/goblin_sef_attack2.webp'],
         dead: 'enemies/goblin_sef_dead.webp',
         skills: [
             { 
@@ -1291,7 +1256,6 @@ Object.assign(ENEMY_STATS, {
         specificResists: { cold: 10 },
         maxHp: 230, attack: 30, defense: 25, tier: 4, 
         idle: 'enemies/skeleton_idle.webp', 
-        attackFrames: ['enemies/skeleton_attack1.webp', 'enemies/skeleton_attack2.webp', 'enemies/skeleton_attack3.webp'], 
         dead: 'enemies/skeleton_dead.webp',
         skills: [
 			{ 
@@ -1315,7 +1279,6 @@ Object.assign(ENEMY_STATS, {
         specificResists: { cold: 10 },
         maxHp: 350, attack: 20, defense: 5, tier: 4, 
         idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', 
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'],
         skills: [{ id: "paralyzing_claws", template: "stat_debuff", category: "debuff", subtype: "stun", duration: 1, textKey: "paralyzed" }]
     },
     "Kemik Golemi": { 
@@ -1323,7 +1286,6 @@ Object.assign(ENEMY_STATS, {
         specificResists: { cold: 10 },
         maxHp: 300, attack: 28, defense: 20, tier: 4, 
         idle: 'enemies/kaya_golemi.webp', dead: 'enemies/kaya_golemi_dead.webp', 
-        attackFrames: ['enemies/kaya_golemi_attack1.webp', 'enemies/kaya_golemi_attack2.webp'],
         skills: [{ id: "marrow_drain", template: "special_attack", category: "attack", damageSplit: { physical: 0.3, curse: 1.0 }, healPercent: 0.7, textKey: "marrow" }]
     }
 });
